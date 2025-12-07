@@ -1,6 +1,6 @@
 <!-- ===============================
    UNISCHOOLY - HEADER + HERO + STEP 1 FORM
-   Version: 1.2 (header nav, mobile CTA + bg + phone fix)
+   Version: 1.3 (mobile CTA, phone UI, Supabase integration)
 ================================ -->
 
 <!DOCTYPE html>
@@ -181,15 +181,15 @@ header {
 }
 
 /* Dark + neon gradient overlay to keep content readable
-   while underlying hero image stays very light/faded */
+   while underlying hero image stays visible & light */
 .hero-section::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(132,89,255,0.28), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(54,209,220,0.28), transparent 55%),
-    linear-gradient(135deg, rgba(2,6,23,0.95), rgba(8,1,22,0.97));
+    radial-gradient(circle at top left, rgba(132,89,255,0.22), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(54,209,220,0.22), transparent 55%),
+    linear-gradient(135deg, rgba(2,6,23,0.88), rgba(8,1,22,0.9));
   z-index: 0;
 }
 
@@ -351,6 +351,19 @@ label {
   margin-bottom: 14px;
 }
 
+/* Extra sub-label row for phone field (Country code / Mobile number) */
+.phone-field .phone-sub-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(148,163,184,0.9);
+  margin-top: 4px;
+}
+
+.phone-field input#parentPhone {
+  margin-top: 4px;
+}
+
 /* Telephone input plugin wraps input in .iti */
 .iti {
   width: 100%;
@@ -376,6 +389,34 @@ select:focus {
   border-color: rgba(129,140,248,0.9);
   box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
   background: #020617;
+}
+
+/* Style intl-tel-input dropdown + search for dark theme */
+.iti__country-list {
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  box-shadow: 0 18px 40px rgba(15,23,42,0.9);
+}
+
+.iti__country {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.iti__country.iti__highlight {
+  background: #111827;
+}
+
+.iti__search-input {
+  background: #020617;
+  color: #e5e7eb;
+  border-radius: 8px;
+  border: 1px solid #374151;
+}
+
+.iti__search-input::placeholder {
+  color: #6b7280;
 }
 
 /* Laptop / Desktop question */
@@ -414,7 +455,7 @@ select:focus {
   padding: 15px 0;
   margin-top: 14px;
   background-image: var(--primary-gradient);
-  border-radius: 14px;
+  border-radius: 999px; /* fully round */
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -427,6 +468,7 @@ select:focus {
   justify-content: center;
   gap: 8px;
   box-shadow: 0 12px 30px rgba(15,23,42,0.9);
+  color: #020617; /* black text on gradient */
 }
 
 .submit-btn span.icon {
@@ -438,6 +480,20 @@ select:focus {
   opacity: 0.95;
   transform: translateY(-1px);
   box-shadow: 0 16px 40px rgba(15,23,42,1);
+}
+
+/* Form message */
+.form-message {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.form-message.error {
+  color: #fca5a5;
+}
+
+.form-message.success {
+  color: #bbf7d0;
 }
 
 /* Floating CTA for mobile */
@@ -452,7 +508,7 @@ select:focus {
   outline: none;
   background-image: var(--primary-gradient);
   box-shadow: 0 18px 40px rgba(15,23,42,1);
-  color: #f9fafb;
+  color: #020617;
   font-size: 15px;
   font-weight: 600;
   display: none;
@@ -460,6 +516,7 @@ select:focus {
   justify-content: center;
   gap: 8px;
   z-index: 998;
+  white-space: nowrap; /* keep one line */
 }
 
 /* Only show floating CTA on small screens */
@@ -537,8 +594,12 @@ select:focus {
         </div>
 
         <!-- PHONE (country code + number in one field) -->
-        <div class="field-wrapper">
+        <div class="field-wrapper phone-field">
           <label for="parentPhone">Parent WhatsApp Number</label>
+          <div class="phone-sub-label-row">
+            <span>Country code</span>
+            <span>Mobile number</span>
+          </div>
           <input type="tel" id="parentPhone" name="parentPhone" placeholder="Enter mobile number" />
         </div>
 
@@ -582,10 +643,12 @@ select:focus {
           </div>
         </div>
 
-        <button class="submit-btn" type="button">
+        <button class="submit-btn" type="button" id="submitLead">
           <span>Book a Free Trial Class</span>
           <span class="icon">✨</span>
         </button>
+
+        <div id="formMessage" class="form-message"></div>
       </div>
     </div>
 
@@ -600,6 +663,7 @@ select:focus {
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 function scrollToForm() {
   const form = document.getElementById("formCard");
@@ -608,27 +672,105 @@ function scrollToForm() {
   }
 }
 
-// Initialise international telephone input for parent phone field
 document.addEventListener("DOMContentLoaded", function () {
+  /* PHONE INPUT INITIALISATION */
   const phoneInput = document.querySelector("#parentPhone");
-  if (!phoneInput || !window.intlTelInput) return;
+  let iti;
 
-  const iti = window.intlTelInput(phoneInput, {
-    initialCountry: "us", // Default to USA
-    separateDialCode: true,
-    autoPlaceholder: "polite",
-    preferredCountries: [
-      "us","ca","gb","ae","sa","kw","qa","bh","om",
-      "id","ph","th",
-      "sg","vn","au","nz",
-      "in","bd","jp","my",
-      "za","ng"
-    ],
-    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
-  });
+  if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
+      initialCountry: "us", // Default to USA
+      separateDialCode: true,
+      autoPlaceholder: "polite",
+      preferredCountries: [
+        "us","ca","gb","ae","sa","kw","qa","bh","om",
+        "id","ph","th",
+        "sg","vn","au","nz",
+        "in","bd","jp","my",
+        "za","ng"
+      ],
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+    });
+  }
 
-  // Example: to get full number including country code:
-  // const fullNumber = iti.getNumber();
+  /* SUPABASE SETUP */
+  const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
+  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+
+  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  /* FORM SUBMIT HANDLER */
+  const submitBtn = document.getElementById("submitLead");
+  const messageEl = document.getElementById("formMessage");
+
+  async function handleSubmit() {
+    if (!submitBtn) return;
+
+    const childName   = document.getElementById("childName").value.trim();
+    const childGrade  = document.getElementById("childGrade").value;
+    const parentName  = document.getElementById("parentName").value.trim();
+    const parentEmail = document.getElementById("parentEmail").value.trim();
+    const hasComputer = (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
+    const localNumber = phoneInput ? phoneInput.value.trim() : "";
+
+    messageEl.textContent = "";
+    messageEl.classList.remove("error", "success");
+
+    if (!childName || !parentName || !parentEmail || !localNumber) {
+      messageEl.textContent = "Please fill all required fields.";
+      messageEl.classList.add("error");
+      return;
+    }
+
+    let fullNumber = localNumber;
+    let phoneCountry = "";
+
+    if (iti) {
+      const data = iti.getSelectedCountryData();
+      fullNumber = iti.getNumber() || localNumber;
+      phoneCountry = data && (data.name || data.iso2) ? data.name || data.iso2.toUpperCase() : "";
+    }
+
+    submitBtn.disabled = true;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("demo_leads")
+        .insert([
+          {
+            child_name:   childName,
+            child_grade:  childGrade || null,
+            parent_name:  parentName,
+            parent_email: parentEmail,
+            phone_country: phoneCountry,
+            phone_number: fullNumber,
+            is_whatsapp: true,
+            has_laptop: hasComputer === "yes" ? "yes" : "no"
+          }
+        ]);
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        messageEl.textContent = "Something went wrong while saving your details. Please try again.";
+        messageEl.classList.add("error");
+      } else {
+        messageEl.textContent = "Your trial class request has been submitted successfully!";
+        messageEl.classList.add("success");
+        // Optionally clear form
+        // document.querySelector("form")...
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      messageEl.textContent = "Unexpected error. Please try again.";
+      messageEl.classList.add("error");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener("click", handleSubmit);
+  }
 });
 </script>
 

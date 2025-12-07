@@ -1,198 +1,201 @@
-
-<!-- ===============================
-   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
-   Version: 1.0
-================================ -->
-
+<!-- ========================= -->
+<!--  UNISCHOOLY HEADER + HERO + STEP 1 FORM  -->
+<!-- ========================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Unischooly - Book a Free Trial Class</title>
+<title>Unischooly – Book a Free Coding Class</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
 <style>
-
-/* GLOBAL */
-body {
+/* ---------------- GLOBAL RESET ---------------- */
+* {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: #0d0f1a;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #0d0d0d;
   color: white;
   overflow-x: hidden;
 }
 
-.container {
+/* ---------------- HEADER ---------------- */
+.header {
   width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-/* ===================================
-   HEADER
-=================================== */
-
-header {
-  width: 100%;
-  padding: 18px 0;
-  background: rgba(13, 15, 26, 0.6);
-  backdrop-filter: blur(10px);
+  padding: 18px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   position: fixed;
   top: 0;
-  z-index: 999;
+  left: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
 }
 
-.navbar {
+.header-logo img {
+  height: 48px;
+}
+
+.header-links {
+  display: flex;
+  gap: 34px;
+}
+
+.header-links a {
+  text-decoration: none;
+  color: #ffffffd5;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.header-links a:hover {
+  color: #ffffff;
+}
+
+.book-btn {
+  background: linear-gradient(135deg, #7a3cff, #b87dff);
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 15px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.book-btn:hover {
+  opacity: 0.85;
+}
+
+/* ---------------- HERO SECTION ---------------- */
+.hero {
+  width: 100%;
+  height: 100vh;
+  background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg");
+  background-size: cover;
+  background-position: center;
+  padding-top: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  width: 90%;
+  max-width: 1350px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.book-btn {
-  background: linear-gradient(135deg, #8a2be2, #6f00ff);
-  padding: 10px 22px;
-  border-radius: 10px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.book-btn:hover {
-  opacity: 0.8;
-}
-
-/* ===================================
-   HERO SECTION
-=================================== */
-
-.hero {
-  padding-top: 140px;
-  padding-bottom: 80px;
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
+/* LEFT SIDE TEXT */
 .hero-left {
-  width: 48%;
-  min-width: 320px;
+  width: 50%;
+  color: white;
+  text-shadow: 0px 0px 10px #000;
 }
 
 .hero-left h1 {
-  font-size: 44px;
-  font-weight: 800;
+  font-size: 48px;
+  font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 12px;
-}
-
-.hero-left h1 span {
-  color: #a56bff;
 }
 
 .hero-left p {
-  font-size: 18px;
-  opacity: 0.8;
-  margin-bottom: 20px;
+  margin-top: 14px;
+  opacity: 0.9;
+  font-size: 17px;
 }
 
-/* Badges */
-.badge-row {
+/* BADGES */
+.badges {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 24px;
 }
 
 .badge {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
   padding: 8px 14px;
-  border-radius: 20px;
+  border-radius: 40px;
   font-size: 14px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(6px);
 }
 
-/* ===================================
-   FORM CARD
-=================================== */
-
+/* ---------------- FORM CARD ---------------- */
 .form-card {
   width: 420px;
-  background: #161922;
+  background: rgba(0,0,0,0.55);
   padding: 26px;
   border-radius: 18px;
-  box-shadow: 0px 0px 35px rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 30px rgba(0,0,0,0.4);
 }
 
-.step-tabs {
+.step-indicator {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.tab {
+.step {
   width: 48%;
-  padding: 12px;
+  padding: 10px;
   text-align: center;
-  border-radius: 10px;
-  background: #0f111a;
-  opacity: 0.5;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  background: rgba(255,255,255,0.08);
 }
 
-.tab.active {
-  background: linear-gradient(135deg, #8a2be2, #6f00ff);
-  opacity: 1;
+.step.active {
+  background: linear-gradient(135deg, #7a3cff, #b87dff);
+}
+
+.form-group {
+  margin-bottom: 18px;
 }
 
 label {
+  display: block;
+  margin-bottom: 6px;
   font-size: 14px;
-  opacity: 0.85;
 }
 
 input, select {
   width: 100%;
-  margin-top: 6px;
-  margin-bottom: 16px;
   padding: 12px;
   border-radius: 10px;
   border: none;
   outline: none;
-  background: #0f111a;
+  background: rgba(255,255,255,0.15);
   color: white;
-  font-size: 15px;
 }
 
-.submit-btn {
+/* BUTTON */
+.next-btn {
   width: 100%;
-  padding: 15px 0;
-  margin-top: 10px;
-  background: linear-gradient(135deg, #8a2be2, #6f00ff);
+  margin-top: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #7a3cff, #b87dff);
+  border: none;
   border-radius: 12px;
   font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
-  text-align: center;
-  transition: 0.25s;
 }
-
-.submit-btn:hover {
+.next-btn:hover {
   opacity: 0.85;
-}
-
-/* Responsive */
-@media(max-width: 900px) {
-  .hero {
-    flex-direction: column;
-  }
-  .hero-left, .form-card {
-    width: 100%;
-  }
 }
 
 </style>
@@ -200,76 +203,92 @@ input, select {
 
 <body>
 
-<header>
-  <div class="container navbar">
-    <div class="logo">Unischooly</div>
-    <div class="book-btn" onclick="scrollToForm()">Book Trial Class</div>
+<!-- ============ HEADER ============ -->
+<header class="header">
+  <div class="header-logo">
+    <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" />
   </div>
+
+  <nav class="header-links">
+    <a href="#programs">Programs</a>
+    <a href="#experts">Meet Our Experts</a>
+    <a href="#curriculum">Curriculum</a>
+    <a href="#community">Community</a>
+    <a href="#educators">Educators</a>
+    <a href="#faqs">FAQs</a>
+  </nav>
+
+  <button class="book-btn">Book Now</button>
 </header>
 
-<section class="hero container">
+<!-- ============ HERO SECTION ============ -->
+<section class="hero">
+  <div class="hero-content">
 
-  <!-- LEFT TEXT -->
-  <div class="hero-left">
-    <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
-    <p>A personalised 60‑minute class to introduce your child to coding, logic skills & futuristic learning.</p>
+    <!-- LEFT CONTENT -->
+    <div class="hero-left">
+      <h1>Book a Free Live Coding<br />Class for Your Child.</h1>
+      <p>A personalised 60-minute session to introduce your child to<br />coding, logic skills & futuristic learning.</p>
 
-    <div class="badge-row">
-      <div class="badge">⏱ 60‑min Live Class</div>
-      <div class="badge">💡 Top 1% Certified Teachers</div>
-      <div class="badge">🌍 Kids in 25+ Countries</div>
-    </div>
-  </div>
-
-  <!-- RIGHT FORM -->
-  <div class="form-card" id="formCard">
-
-    <div class="step-tabs">
-      <div class="tab active">1. Child & Parent Details</div>
-      <div class="tab">2. Date & Time</div>
+      <div class="badges">
+        <div class="badge">✨ 60-min Live Class</div>
+        <div class="badge">👨‍🏫 Top 1% Teachers</div>
+        <div class="badge">🌎 Kids in 30+ Countries</div>
+        <div class="badge">🚀 Hands-On Projects</div>
+      </div>
     </div>
 
-    <label>Country Code</label>
-    <select id="countryCode">
-      <option value="+91">🇮🇳 India (+91)</option>
-      <option value="+971">🇦🇪 UAE (+971)</option>
-      <option value="+974">🇶🇦 Qatar (+974)</option>
-      <option value="+966">🇸🇦 Saudi (+966)</option>
-      <option value="+44">🇬🇧 UK (+44)</option>
-      <option value="+1">🇺🇸 USA (+1)</option>
-    </select>
+    <!-- RIGHT FORM -->
+    <div class="form-card">
+      <div class="step-indicator">
+        <div class="step active">1. Child & Parent Details</div>
+        <div class="step">2. Date & Time</div>
+      </div>
 
-    <label>Parent WhatsApp Number</label>
-    <input type="text" id="parentPhone" placeholder="Enter mobile number">
+      <div class="form-group">
+        <label>Country</label>
+        <select>
+          <option>United States</option>
+          <option>India</option>
+          <option>United Kingdom</option>
+          <option>UAE</option>
+        </select>
+      </div>
 
-    <label>Child Name</label>
-    <input type="text" id="childName" placeholder="Enter child's name">
+      <div class="form-group">
+        <label>Parent WhatsApp Number</label>
+        <input type="text" placeholder="Enter number" />
+      </div>
 
-    <label>Child Grade</label>
-    <select id="childGrade">
-      <option value="">Select Grade</option>
-      <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
-      <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
-      <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
-    </select>
+      <div class="form-group">
+        <label>Child Name</label>
+        <input type="text" placeholder="Enter child's name" />
+      </div>
 
-    <label>Parent Name</label>
-    <input type="text" id="parentName" placeholder="Enter parent name">
+      <div class="form-group">
+        <label>Child Grade</label>
+        <select>
+          <option>Grade 1</option>
+          <option>Grade 2</option>
+          <option>Grade 3</option>
+          <option>Grade 4</option>
+          <option>Grade 5</option>
+          <option>Grade 6</option>
+          <option>Grade 7</option>
+          <option>Grade 8</option>
+        </select>
+      </div>
 
-    <label>Parent Email</label>
-    <input type="email" id="parentEmail" placeholder="Enter email">
+      <div class="form-group">
+        <label>Parent Email</label>
+        <input type="email" placeholder="Enter email" />
+      </div>
 
-    <div class="submit-btn">Confirm class booking details →</div>
+      <button class="next-btn">Continue →</button>
+    </div>
 
   </div>
-
 </section>
-
-<script>
-function scrollToForm() {
-  document.getElementById("formCard").scrollIntoView({ behavior: "smooth" });
-}
-</script>
 
 </body>
 </html>

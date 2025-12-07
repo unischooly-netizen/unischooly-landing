@@ -1,6 +1,6 @@
 <!-- ===============================
    UNISCHOOLY - HEADER + HERO + STEP 1 FORM
-   Version: 1.3 (mobile CTA, phone UI, Supabase integration)
+   Version: 1.4 (Supabase column fix + validation)
 ================================ -->
 
 <!DOCTYPE html>
@@ -174,7 +174,7 @@ header {
   padding-bottom: 80px;
   overflow: hidden;
   background-color: #020617;
-  background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg");
+  background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765115647/Terms_and_Conditions_a5qotc.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -716,19 +716,21 @@ document.addEventListener("DOMContentLoaded", function () {
     messageEl.textContent = "";
     messageEl.classList.remove("error", "success");
 
-    if (!childName || !parentName || !parentEmail || !localNumber) {
-      messageEl.textContent = "Please fill all required fields.";
+    // Because child_grade is NOT NULL in your schema, force it to be selected
+    if (!childName || !childGrade || !parentName || !parentEmail || !localNumber) {
+      messageEl.textContent = "Please fill all required fields, including grade.";
       messageEl.classList.add("error");
       return;
     }
 
     let fullNumber = localNumber;
-    let phoneCountry = "";
+    let phoneCountryCode = "";
 
     if (iti) {
       const data = iti.getSelectedCountryData();
       fullNumber = iti.getNumber() || localNumber;
-      phoneCountry = data && (data.name || data.iso2) ? data.name || data.iso2.toUpperCase() : "";
+      // store like +91, +1, etc in phone_country_code column
+      phoneCountryCode = data && data.dialCode ? "+" + data.dialCode : "";
     }
 
     submitBtn.disabled = true;
@@ -739,10 +741,10 @@ document.addEventListener("DOMContentLoaded", function () {
         .insert([
           {
             child_name:   childName,
-            child_grade:  childGrade || null,
+            child_grade:  childGrade,
             parent_name:  parentName,
             parent_email: parentEmail,
-            phone_country: phoneCountry,
+            phone_country_code: phoneCountryCode,
             phone_number: fullNumber,
             is_whatsapp: true,
             has_laptop: hasComputer === "yes" ? "yes" : "no"
@@ -756,8 +758,6 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         messageEl.textContent = "Your trial class request has been submitted successfully!";
         messageEl.classList.add("success");
-        // Optionally clear form
-        // document.querySelector("form")...
       }
     } catch (err) {
       console.error("Unexpected error:", err);

@@ -1,549 +1,139 @@
-<!-- ===============================
-   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
-   Version: 1.4 (Supabase column fix + validation)
-================================ -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Unischooly - Book a Free Trial Class</title>
+<title>Unischooly – Book Free Trial</title>
 
-<!-- International telephone input (for country code + flags + search) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.css"/>
 
 <style>
-/* GLOBAL */
-:root {
-  --primary-gradient: linear-gradient(135deg, #ff6bcb, #8459ff, #36d1dc);
-  --primary-gradient-soft: linear-gradient(135deg, rgba(255,107,203,0.85), rgba(132,89,255,0.9), rgba(54,209,220,0.85));
-  --card-bg: #161922;
-  --page-bg: #050716;
-  --input-bg: #0f111a;
-  --muted: rgba(255,255,255,0.7);
+:root{
+ --grad:linear-gradient(135deg,#ff6bcb,#8459ff,#36d1dc);
+ --bg:#050716;
+ --card:#111827;
+ --input:#0f172a;
+ --muted:#94a3b8;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Inter,system-ui;
+ background:#020617;
+ color:#e5e7eb;
+}
+header{
+ position:fixed;top:0;left:0;right:0;
+ background:rgba(2,6,23,.85);
+ backdrop-filter:blur(14px);
+ z-index:50;
+}
+.container{max-width:1180px;margin:auto;padding:16px}
+.nav{
+ display:flex;align-items:center;gap:16px;
+}
+.logo{
+ width:160px;height:36px;
+ background:var(--grad);
+ -webkit-mask:url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center/contain;
+ mask:url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center/contain;
+}
+.nav-links{margin-left:auto;display:flex;gap:20px}
+.nav-links a{
+ color:#cbd5f5;text-decoration:none;font-size:14px;
+}
+.nav-links a:hover{color:#fff;text-shadow:0 0 12px #ff6bcb}
+.cta{
+ margin-left:16px;
+ padding:10px 20px;
+ border-radius:999px;
+ background:var(--grad);
+ border:none;
+ cursor:pointer;
+ font-weight:600;
+ color:#020617;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+.hero{
+ margin-top:90px;
+ padding:60px 0;
+ background:url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg") center/cover no-repeat;
+ position:relative;
+}
+.hero::before{
+ content:"";position:absolute;inset:0;
+ background:linear-gradient(135deg,rgba(2,6,23,.7),rgba(2,6,23,.6));
+}
+.hero-inner{
+ position:relative;
+ display:flex;gap:40px;flex-wrap:wrap;
+}
+.left{flex:1;min-width:300px}
+.left h1{font-size:42px}
+.left span{background:var(--grad);-webkit-background-clip:text;color:transparent}
+.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+.badge{border:1px solid #334155;padding:10px 14px;border-radius:999px;font-size:14px}
+
+.card{
+ width:420px;max-width:100%;
+ background:var(--card);
+ border-radius:20px;
+ padding:24px;
+ position:relative;
+}
+h2{margin:0 0 6px}
+.stepbar{height:4px;border-radius:999px;background:#1e293b;margin:14px 0}
+.stepbar>div{height:100%;width:50%;background:var(--grad);border-radius:999px}
+
+label{font-size:13px;color:#e2e8f0}
+input,select{
+ width:100%;
+ background:var(--input);
+ border:1px solid #334155;
+ border-radius:10px;
+ padding:12px;
+ margin-top:6px;
+ color:#fff;
+}
+.field{margin-bottom:14px}
+
+.radio-row{display:flex;gap:24px;margin-top:8px}
+.btn{
+ width:100%;
+ padding:14px;
+ border-radius:999px;
+ background:var(--grad);
+ border:none;
+ font-weight:700;
+ color:#020617;
+ cursor:pointer;
+ margin-top:12px;
 }
 
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #020617;
-  color: #f9fafb;
-  overflow-x: hidden;
+.hidden{display:none}
+
+/* step 2 */
+.slot-grid,.date-grid{
+ display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+ gap:10px;margin:10px 0
 }
-
-.container {
-  width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 0 16px;
+.slot, .date{
+ border:1px solid #334155;
+ padding:10px;
+ border-radius:12px;
+ text-align:center;
+ font-size:13px;
+ cursor:pointer;
 }
-
-/* ===================================
-   HEADER
-=================================== */
-
-header {
-  width: 100%;
-  padding: 18px 0;
-  background: rgba(2, 6, 23, 0.85);
-  backdrop-filter: blur(14px);
-  position: fixed;
-  top: 0;
-  z-index: 999;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-}
-
-/* Gradient logo using provided SVG as mask */
-.logo {
-  width: 170px;
-  height: 40px;
-  background-image: var(--primary-gradient);
-  -webkit-mask: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center;
-          mask: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center;
-  -webkit-mask-size: contain;
-          mask-size: contain;
-  cursor: pointer;
-  transition: box-shadow 0.25s ease, transform 0.25s ease, filter 0.25s ease;
-  filter: drop-shadow(0 0 10px rgba(255,107,203,0.18));
-}
-
-.logo:hover,
-.logo:active {
-  transform: translateY(-1px);
-  filter: drop-shadow(0 0 10px rgba(255,107,203,0.9))
-          drop-shadow(0 0 18px rgba(54,209,220,0.9));
-}
-
-/* Nav links */
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  margin-left: auto;
-}
-
-.nav-link {
-  position: relative;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(226,232,240,0.9);
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  border-radius: 999px;
-  background-image: var(--primary-gradient);
-  transition: width 0.25s ease;
-}
-
-.nav-link:hover,
-.nav-link:active {
-  color: #e5e7eb;
-  text-shadow: 0 0 10px rgba(255,107,203,0.9), 0 0 18px rgba(54,209,220,0.9);
-  transform: translateY(-1px);
-}
-
-.nav-link:hover::after,
-.nav-link:active::after {
-  width: 100%;
-}
-
-/* CTA button in header */
-.book-btn {
-  background-image: var(--primary-gradient);
-  padding: 10px 22px;
-  border-radius: 999px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.25s ease;
-  border: none;
-  outline: none;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
-  white-space: nowrap;
-  color: #f9fafb;
-}
-
-/* Mobile: make CTA appear black (as requested) */
-@media (max-width: 640px) {
-  .nav-links {
-    display: none;
-  }
-
-  .book-btn {
-    background: #020617;
-    border: 1px solid rgba(148,163,184,0.85);
-    box-shadow: 0 6px 16px rgba(15,23,42,0.9);
-  }
-}
-
-.book-btn:hover,
-.book-btn:active {
-  opacity: 0.9;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
-  transform: translateY(-1px);
-}
-
-/* ===================================
-   HERO SECTION + BACKGROUND OVERLAY
-=================================== */
-
-.hero-section {
-  position: relative;
-  padding-top: 140px; /* clears fixed header */
-  padding-bottom: 80px;
-  overflow: hidden;
-  background-color: #020617;
-  background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765115647/Terms_and_Conditions_a5qotc.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/* Dark + neon gradient overlay to keep content readable
-   while underlying hero image stays visible & light */
-.hero-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at top left, rgba(132,89,255,0.22), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(54,209,220,0.22), transparent 55%),
-    linear-gradient(135deg, rgba(2,6,23,0.88), rgba(8,1,22,0.9));
-  z-index: 0;
-}
-
-.hero {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-/* LEFT SIDE */
-
-.hero-left {
-  width: 48%;
-  min-width: 320px;
-}
-
-.hero-left h1 {
-  font-size: 44px;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 12px;
-  cursor: default;
-  transition: text-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.hero-left h1 span {
-  background-image: var(--primary-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Glow on hover / click for main heading */
-.hero-left h1:hover,
-.hero-left h1:active {
-  text-shadow: 0 0 18px rgba(255,107,203,0.9), 0 0 32px rgba(54,209,220,0.9);
-  transform: translateY(-1px);
-}
-
-.hero-left p {
-  font-size: 18px;
-  color: var(--muted);
-  margin-bottom: 20px;
-}
-
-/* Badges */
-.badge-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  max-width: 420px;
-  margin-top: 16px;
-}
-
-.badge {
-  background: rgba(15,23,42,0.9);
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-size: 14px;
-  border: 1px solid rgba(148,163,184,0.45);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-/* ===================================
-   FORM CARD
-=================================== */
-
-.form-card {
-  width: 420px;
-  max-width: 100%;
-  background: var(--card-bg);
-  padding: 26px 24px 24px;
-  border-radius: 20px;
-  box-shadow: 0px 0px 40px rgba(0,0,0,0.55);
-  position: relative;
-  overflow: hidden;
-}
-
-.form-card::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background-image: var(--primary-gradient-soft);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-}
-
-/* Keep inner content above gradient border mask */
-.form-inner {
-  position: relative;
-  z-index: 1;
-}
-
-/* Form header + subtle glow on hover */
-.form-title {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 700;
-  cursor: default;
-  background-image: var(--primary-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  transition: text-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.form-title:hover,
-.form-title:active {
-  text-shadow: 0 0 12px rgba(255,107,203,0.9), 0 0 26px rgba(54,209,220,0.85);
-  transform: translateY(-0.5px);
-}
-
-.form-subtitle {
-  margin: 0 0 14px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-/* Two-step indicator line */
-.step-indicator {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-.step-bar {
-  flex: 1;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(30,64,175,0.5);
-}
-
-.step-bar.active {
-  background-image: var(--primary-gradient);
-}
-
-/* Labels + inputs */
-
-label {
-  font-size: 14px;
-  color: rgba(226,232,240,0.95);
-  display: block;
-}
-
-.field-wrapper {
-  margin-bottom: 14px;
-}
-
-/* Extra sub-label row for phone field (Country code / Mobile number) */
-.phone-field .phone-sub-label-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: rgba(148,163,184,0.9);
-  margin-top: 4px;
-}
-
-.phone-field input#parentPhone {
-  margin-top: 4px;
-}
-
-/* Telephone input plugin wraps input in .iti */
-.iti {
-  width: 100%;
-}
-
-/* Underlying input styling */
-input,
-select {
-  width: 100%;
-  margin-top: 6px;
-  padding: 12px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(30,64,175,0.3);
-  outline: none;
-  background: var(--input-bg);
-  color: #f9fafb;
-  font-size: 15px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-input:focus,
-select:focus {
-  border-color: rgba(129,140,248,0.9);
-  box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
-  background: #020617;
-}
-
-/* Style intl-tel-input dropdown + search for dark theme */
-.iti__country-list {
-  background: #020617;
-  border-radius: 12px;
-  border: 1px solid #374151;
-  box-shadow: 0 18px 40px rgba(15,23,42,0.9);
-}
-
-.iti__country {
-  background: #020617;
-  color: #e5e7eb;
-}
-
-.iti__country.iti__highlight {
-  background: #111827;
-}
-
-.iti__search-input {
-  background: #020617;
-  color: #e5e7eb;
-  border-radius: 8px;
-  border: 1px solid #374151;
-}
-
-.iti__search-input::placeholder {
-  color: #6b7280;
-}
-
-/* Laptop / Desktop question */
-.radio-group {
-  margin: 4px 0 10px;
-}
-
-.radio-label {
-  font-size: 14px;
-  margin: 0 0 6px;
-  color: rgba(226,232,240,0.95);
-}
-
-.radio-options {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.radio-option {
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.radio-option input[type="radio"] {
-  accent-color: #ff6bcb;
-}
-
-/* CTA button inside card */
-
-.submit-btn {
-  width: 100%;
-  padding: 15px 0;
-  margin-top: 14px;
-  background-image: var(--primary-gradient);
-  border-radius: 999px; /* fully round */
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  border: none;
-  outline: none;
-  transition: 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 12px 30px rgba(15,23,42,0.9);
-  color: #020617; /* black text on gradient */
-}
-
-.submit-btn span.icon {
-  font-size: 18px;
-}
-
-.submit-btn:hover,
-.submit-btn:active {
-  opacity: 0.95;
-  transform: translateY(-1px);
-  box-shadow: 0 16px 40px rgba(15,23,42,1);
-}
-
-/* Form message */
-.form-message {
-  margin-top: 8px;
-  font-size: 13px;
-}
-
-.form-message.error {
-  color: #fca5a5;
-}
-
-.form-message.success {
-  color: #bbf7d0;
-}
-
-/* Floating CTA for mobile */
-.floating-cta {
-  position: fixed;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
-  padding: 14px 22px;
-  border-radius: 999px;
-  border: none;
-  outline: none;
-  background-image: var(--primary-gradient);
-  box-shadow: 0 18px 40px rgba(15,23,42,1);
-  color: #020617;
-  font-size: 15px;
-  font-weight: 600;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  z-index: 998;
-  white-space: nowrap; /* keep one line */
-}
-
-/* Only show floating CTA on small screens */
-@media (max-width: 640px) {
-  .floating-cta {
-    display: inline-flex;
-  }
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .hero {
-    flex-direction: column;
-  }
-  .hero-left,
-  .form-card {
-    width: 100%;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero-left h1 {
-    font-size: 34px;
-  }
-  .badge-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.slot.active,.date.active{background:var(--grad);color:#020617}
+.star{display:block;font-size:10px;color:#fde68a}
+
+.consent{font-size:11px;color:#cbd5f5;margin-top:10px}
+
+@media(max-width:768px){
+ .nav-links{display:none}
+ .hero-inner{flex-direction:column}
+ .radio-row{justify-content:space-between}
 }
 </style>
 </head>
@@ -551,228 +141,195 @@ select:focus {
 <body>
 
 <header>
-  <div class="container navbar">
-    <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Unischooly logo"></div>
-
-    <nav class="nav-links">
-      <a href="#programs" class="nav-link">Programs</a>
-      <a href="#experts" class="nav-link">Meet our Experts</a>
-      <a href="#curriculum" class="nav-link">Curriculum</a>
-      <a href="#faqs" class="nav-link">FAQs</a>
-    </nav>
-
-    <button class="book-btn" type="button" onclick="scrollToForm()">Book Trial Class</button>
-  </div>
+ <div class="container nav">
+  <div class="logo"></div>
+  <nav class="nav-links">
+   <a>Programs</a><a>Meet our Experts</a><a>Curriculum</a><a>FAQs</a>
+  </nav>
+  <button class="cta" onclick="scrollToForm()">Book Trial Class</button>
+ </div>
 </header>
 
-<section class="hero-section">
-  <div class="container hero">
-
-    <!-- LEFT TEXT -->
-    <div class="hero-left">
-      <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
-      <p>A personalised 60-minute class to introduce your child to coding, logic skills &amp; futuristic learning.</p>
-
-      <div class="badge-grid">
-        <div class="badge">⏱ <span>60-min Live Class</span></div>
-        <div class="badge">👩‍🏫 <span>Top 1% Certified Teachers</span></div>
-        <div class="badge">🌎 <span>Kids in 30+ Countries</span></div>
-        <div class="badge">🚀 <span>Hands-On Projects</span></div>
-      </div>
-    </div>
-
-    <!-- RIGHT FORM -->
-    <div class="form-card" id="formCard">
-      <div class="form-inner">
-        <h2 class="form-title">Book Now &amp; Get Certified</h2>
-        <p class="form-subtitle">Step 1 of 2 · Share your child &amp; parent details to unlock a personalised trial class.</p>
-
-        <!-- Gradient 2-step indicator line -->
-        <div class="step-indicator">
-          <div class="step-bar active"></div>
-          <div class="step-bar"></div>
-        </div>
-
-        <!-- PHONE (country code + number in one field) -->
-        <div class="field-wrapper phone-field">
-          <label for="parentPhone">Parent WhatsApp Number</label>
-          <div class="phone-sub-label-row">
-            <span>Country code</span>
-            <span>Mobile number</span>
-          </div>
-          <input type="tel" id="parentPhone" name="parentPhone" placeholder="Enter mobile number" />
-        </div>
-
-        <div class="field-wrapper">
-          <label for="childName">Child Name</label>
-          <input type="text" id="childName" name="childName" placeholder="Enter child's name" />
-        </div>
-
-        <div class="field-wrapper">
-          <label for="childGrade">Child Grade</label>
-          <select id="childGrade" name="childGrade">
-            <option value="">Select Grade</option>
-            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
-            <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
-            <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
-          </select>
-        </div>
-
-        <div class="field-wrapper">
-          <label for="parentName">Parent Name</label>
-          <input type="text" id="parentName" name="parentName" placeholder="Enter parent name" />
-        </div>
-
-        <div class="field-wrapper">
-          <label for="parentEmail">Parent Email</label>
-          <input type="email" id="parentEmail" name="parentEmail" placeholder="Enter email" />
-        </div>
-
-        <!-- Laptop / Desktop question -->
-        <div class="radio-group">
-          <p class="radio-label">Do you have a Laptop or Desktop?</p>
-          <div class="radio-options">
-            <label class="radio-option">
-              <input type="radio" name="hasComputer" value="yes" checked />
-              <span>Yes</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="hasComputer" value="no" />
-              <span>No</span>
-            </label>
-          </div>
-        </div>
-
-        <button class="submit-btn" type="button" id="submitLead">
-          <span>Book a Free Trial Class</span>
-          <span class="icon">✨</span>
-        </button>
-
-        <div id="formMessage" class="form-message"></div>
-      </div>
-    </div>
-
+<section class="hero">
+ <div class="container hero-inner">
+  <div class="left">
+   <h1>Book a <span>Free Live Coding Class</span><br/>for your child</h1>
+   <div class="badges">
+    <div class="badge">⏱ 60‑min Live</div>
+    <div class="badge">👩‍🏫 Top 1% Teachers</div>
+    <div class="badge">🌎 Kids in 30+ Countries</div>
+    <div class="badge">🚀 Hands‑On Projects</div>
+   </div>
   </div>
+
+  <!-- FORM -->
+  <div class="card" id="form">
+   <!-- STEP 1 -->
+   <div id="step1">
+    <h2>Book Now & Get Certified</h2>
+    <div class="stepbar"><div></div></div>
+
+    <div class="field">
+     <label>Parent WhatsApp Number</label>
+     <input type="tel" id="phone"/>
+    </div>
+    <div class="field">
+     <label>Child Name</label>
+     <input id="childName"/>
+    </div>
+    <div class="field">
+     <label>Child Grade</label>
+     <select id="childGrade">
+      <option value="">Select Grade</option>
+      <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+      <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+      <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
+      <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+     </select>
+    </div>
+    <div class="field">
+     <label>Parent Name</label>
+     <input id="parentName"/>
+    </div>
+    <div class="field">
+     <label>Parent Email</label>
+     <input id="parentEmail"/>
+    </div>
+
+    <label>Do you have a Laptop or Desktop?</label>
+    <div class="radio-row">
+     <label><input type="radio" name="device" value="yes" checked/> Yes</label>
+     <label><input type="radio" name="device" value="no"/> No</label>
+    </div>
+
+    <button class="btn" onclick="submitStep1()">Book a Free Trial Class ✨</button>
+   </div>
+
+   <!-- STEP 2 -->
+   <div id="step2" class="hidden">
+    <h2>Select Date & Time</h2>
+    <div class="stepbar"><div style="width:100%"></div></div>
+
+    <label>Select Date</label>
+    <div class="date-grid" id="dates"></div>
+
+    <label>Select Time Slot</label>
+    <div class="slot-grid" id="slots"></div>
+
+    <label>Who are you?</label>
+    <div class="slot-grid">
+     <div class="slot" onclick="pick(this,'who','Parent')">Parent</div>
+     <div class="slot" onclick="pick(this,'who','Student')">Student</div>
+     <div class="slot" onclick="pick(this,'who','Guardian')">Guardian</div>
+    </div>
+
+    <label>Why are you booking?</label>
+    <div class="slot-grid">
+     <div class="slot" onclick="pick(this,'reason','Want to buy course')">Want to buy course</div>
+     <div class="slot" onclick="pick(this,'reason','Free demo')">Free demo class</div>
+    </div>
+
+    <label>Purchase timeline</label>
+    <div class="slot-grid">
+     <div class="slot" onclick="pick(this,'timeline','After demo')">After demo</div>
+     <div class="slot" onclick="pick(this,'timeline','This week')">This week</div>
+     <div class="slot" onclick="pick(this,'timeline','This month')">This month</div>
+     <div class="slot" onclick="pick(this,'timeline','Exploring')">Just exploring</div>
+    </div>
+
+    <div class="consent">
+     <input type="checkbox" checked/> I consent to Unischooly contacting me regarding this trial.
+    </div>
+
+    <button class="btn" onclick="submitStep2()">Confirm Free Trial Slot ✨</button>
+   </div>
+  </div>
+ </div>
 </section>
 
-<!-- Floating CTA (mobile) -->
-<button class="floating-cta" type="button" onclick="scrollToForm()">
-  <span>Book a Free Trial Class</span>
-  <span>✨</span>
-</button>
-
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-function scrollToForm() {
-  const form = document.getElementById("formCard");
-  if (form) {
-    form.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
+let iti,leadId=null;
+const supa=window.supabase.createClient(
+ "https://binklfyiypbhuzsvnlzg.supabase.co",
+ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw"
+);
+
+iti=window.intlTelInput(document.getElementById("phone"),{
+ initialCountry:"us",
+ separateDialCode:true,
+ utilsScript:"https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+});
+
+function scrollToForm(){
+ document.getElementById("form").scrollIntoView({behavior:"smooth"})
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  /* PHONE INPUT INITIALISATION */
-  const phoneInput = document.querySelector("#parentPhone");
-  let iti;
+async function submitStep1(){
+ const d=iti.getSelectedCountryData();
+ const {data,error}=await supa.from("demo_leads").insert([{
+  child_name:childName.value,
+  child_grade:childGrade.value,
+  parent_name:parentName.value,
+  parent_email:parentEmail.value,
+  phone_country_code:"+"+d.dialCode,
+  phone_number:iti.getNumber(),
+  is_whatsapp:true,
+  has_laptop:document.querySelector("input[name=device]:checked").value
+ }]).select("id").single();
 
-  if (phoneInput && window.intlTelInput) {
-    iti = window.intlTelInput(phoneInput, {
-      initialCountry: "us", // Default to USA
-      separateDialCode: true,
-      autoPlaceholder: "polite",
-      preferredCountries: [
-        "us","ca","gb","ae","sa","kw","qa","bh","om",
-        "id","ph","th",
-        "sg","vn","au","nz",
-        "in","bd","jp","my",
-        "za","ng"
-      ],
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
-    });
-  }
+ if(!error){
+  leadId=data.id;
+  document.getElementById("step1").classList.add("hidden");
+  document.getElementById("step2").classList.remove("hidden");
+  loadDates();
+  loadSlots();
+ }
+}
 
-  /* SUPABASE SETUP */
-  const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+let selected={};
 
-  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+function pick(el,key,val){
+ el.parentElement.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
+ el.classList.add("active");
+ selected[key]=val;
+}
 
-  /* FORM SUBMIT HANDLER */
-  const submitBtn = document.getElementById("submitLead");
-  const messageEl = document.getElementById("formMessage");
+function loadDates(){
+ const dEl=document.getElementById("dates");
+ for(let i=0;i<7;i++){
+  const d=new Date();d.setDate(d.getDate()+i);
+  const div=document.createElement("div");
+  div.className="date";
+  div.innerHTML=d.toDateString().slice(0,10);
+  div.onclick=()=>{document.querySelectorAll(".date").forEach(x=>x.classList.remove("active"));div.classList.add("active");selected.date=d.toISOString().split("T")[0]};
+  dEl.appendChild(div);
+ }
+}
 
-  async function handleSubmit() {
-    if (!submitBtn) return;
+function loadSlots(){
+ const sEl=document.getElementById("slots");
+ const base=["08:30","09:30","10:30","11:30","12:30","13:30","14:30","15:30","16:30","17:30","18:30","19:30","20:30"];
+ base.forEach((t,i)=>{
+  const d=document.createElement("div");
+  d.className="slot";
+  d.innerHTML=t+(i<3?"<span class='star'>⭐ Star Teacher</span>":"");
+  d.onclick=()=>{document.querySelectorAll(".slot").forEach(x=>x.classList.remove("active"));d.classList.add("active");selected.time=t};
+  sEl.appendChild(d);
+ });
+}
 
-    const childName   = document.getElementById("childName").value.trim();
-    const childGrade  = document.getElementById("childGrade").value;
-    const parentName  = document.getElementById("parentName").value.trim();
-    const parentEmail = document.getElementById("parentEmail").value.trim();
-    const hasComputer = (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
-    const localNumber = phoneInput ? phoneInput.value.trim() : "";
-
-    messageEl.textContent = "";
-    messageEl.classList.remove("error", "success");
-
-    // Because child_grade is NOT NULL in your schema, force it to be selected
-    if (!childName || !childGrade || !parentName || !parentEmail || !localNumber) {
-      messageEl.textContent = "Please fill all required fields, including grade.";
-      messageEl.classList.add("error");
-      return;
-    }
-
-    let fullNumber = localNumber;
-    let phoneCountryCode = "";
-
-    if (iti) {
-      const data = iti.getSelectedCountryData();
-      fullNumber = iti.getNumber() || localNumber;
-      // store like +91, +1, etc in phone_country_code column
-      phoneCountryCode = data && data.dialCode ? "+" + data.dialCode : "";
-    }
-
-    submitBtn.disabled = true;
-
-    try {
-      const { data, error } = await supabaseClient
-        .from("demo_leads")
-        .insert([
-          {
-            child_name:   childName,
-            child_grade:  childGrade,
-            parent_name:  parentName,
-            parent_email: parentEmail,
-            phone_country_code: phoneCountryCode,
-            phone_number: fullNumber,
-            is_whatsapp: true,
-            has_laptop: hasComputer === "yes" ? "yes" : "no"
-          }
-        ]);
-
-      if (error) {
-        console.error("Supabase insert error:", error);
-        messageEl.textContent = "Something went wrong while saving your details. Please try again.";
-        messageEl.classList.add("error");
-      } else {
-        messageEl.textContent = "Your trial class request has been submitted successfully!";
-        messageEl.classList.add("success");
-      }
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      messageEl.textContent = "Unexpected error. Please try again.";
-      messageEl.classList.add("error");
-    } finally {
-      submitBtn.disabled = false;
-    }
-  }
-
-  if (submitBtn) {
-    submitBtn.addEventListener("click", handleSubmit);
-  }
-});
+async function submitStep2(){
+ await supa.from("demo_leads").update({
+  preferred_date:selected.date,
+  preferred_time_slot:selected.time,
+  who_are_you:selected.who,
+  booking_reason:selected.reason,
+  purchase_timeline:selected.timeline
+ }).eq("id",leadId);
+ alert("Your trial class is booked!");
+}
 </script>
-
 </body>
 </html>

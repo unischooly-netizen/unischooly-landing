@@ -1,294 +1,528 @@
-<!-- ========================= -->
-<!--  UNISCHOOLY HEADER + HERO + STEP 1 FORM  -->
-<!-- ========================= -->
+<!-- ===============================
+   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
+   Version: 1.1 (with UI + phone input updates)
+================================ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Unischooly – Book a Free Coding Class</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<title>Unischooly - Book a Free Trial Class</title>
+
+<!-- International telephone input (for country code + flags + search) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/[email protected]/build/css/intlTelInput.css"/>
 
 <style>
-/* ---------------- GLOBAL RESET ---------------- */
-* {
-  margin: 0;
-  padding: 0;
+/* GLOBAL */
+:root {
+  --primary-gradient: linear-gradient(135deg, #ff6bcb, #8459ff, #36d1dc);
+  --primary-gradient-soft: linear-gradient(135deg, rgba(255,107,203,0.85), rgba(132,89,255,0.9), rgba(54,209,220,0.85));
+  --card-bg: #161922;
+  --page-bg: #050716;
+  --input-bg: #0f111a;
+  --muted: rgba(255,255,255,0.7);
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: #0d0d0d;
-  color: white;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #020617;
+  color: #f9fafb;
   overflow-x: hidden;
 }
 
-/* ---------------- HEADER ---------------- */
-.header {
+.container {
   width: 100%;
-  padding: 18px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ===================================
+   HEADER
+=================================== */
+
+header {
+  width: 100%;
+  padding: 18px 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(14px);
   position: fixed;
   top: 0;
-  left: 0;
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
+  z-index: 999;
 }
 
-.header-logo img {
-  height: 48px;
-}
-
-.header-links {
+.navbar {
   display: flex;
-  gap: 34px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.header-links a {
-  text-decoration: none;
-  color: #ffffffd5;
-  font-size: 15px;
-  font-weight: 500;
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  cursor: pointer;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.header-links a:hover {
-  color: #ffffff;
+.logo:hover,
+.logo:active {
+  text-shadow: 0 0 12px rgba(255,107,203,0.8), 0 0 28px rgba(54,209,220,0.8);
+  transform: translateY(-1px);
 }
 
 .book-btn {
-  background: linear-gradient(135deg, #7a3cff, #b87dff);
-  padding: 10px 20px;
-  border-radius: 50px;
+  background-image: var(--primary-gradient);
+  padding: 10px 22px;
+  border-radius: 999px;
   font-size: 15px;
-  color: #fff;
-  border: none;
   cursor: pointer;
-  font-weight: 600;
+  transition: 0.25s ease;
+  border: none;
+  outline: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  white-space: nowrap;
 }
 
-.book-btn:hover {
-  opacity: 0.85;
+.book-btn:hover,
+.book-btn:active {
+  opacity: 0.9;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  transform: translateY(-1px);
 }
 
-/* ---------------- HERO SECTION ---------------- */
+/* ===================================
+   HERO SECTION + OVERLAY
+=================================== */
+
+.hero-section {
+  position: relative;
+  padding-top: 140px; /* clears fixed header */
+  padding-bottom: 80px;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(132,89,255,0.35), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(54,209,220,0.35), transparent 55%),
+    linear-gradient(135deg, rgba(2,6,23,0.96), rgba(8,1,22,0.96));
+  z-index: 0;
+}
+
+/* If you have a hero background image on body or a wrapper,
+   this dark+neon gradient overlay will keep the text readable. */
+
 .hero {
-  width: 100%;
-  height: 100vh;
-  background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg");
-  background-size: cover;
-  background-position: center;
-  padding-top: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-content {
-  width: 90%;
-  max-width: 1350px;
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
 }
 
-/* LEFT SIDE TEXT */
+/* LEFT SIDE */
+
 .hero-left {
-  width: 50%;
-  color: white;
-  text-shadow: 0px 0px 10px #000;
+  width: 48%;
+  min-width: 320px;
 }
 
 .hero-left h1 {
-  font-size: 48px;
-  font-weight: 700;
+  font-size: 44px;
+  font-weight: 800;
   line-height: 1.2;
+  margin-bottom: 12px;
+  cursor: default;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.hero-left h1 span {
+  background-image: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glow on hover / click for main heading */
+.hero-left h1:hover,
+.hero-left h1:active {
+  text-shadow: 0 0 18px rgba(255,107,203,0.9), 0 0 32px rgba(54,209,220,0.9);
+  transform: translateY(-1px);
 }
 
 .hero-left p {
-  margin-top: 14px;
-  opacity: 0.9;
-  font-size: 17px;
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 20px;
 }
 
-/* BADGES */
-.badges {
-  display: flex;
-  gap: 10px;
-  margin-top: 24px;
+/* Badges */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 420px;
+  margin-top: 16px;
 }
 
 .badge {
-  background: rgba(255,255,255,0.1);
-  padding: 8px 14px;
-  border-radius: 40px;
+  background: rgba(15,23,42,0.9);
+  padding: 10px 14px;
+  border-radius: 999px;
   font-size: 14px;
-  border: 1px solid rgba(255,255,255,0.3);
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(148,163,184,0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
 }
 
-/* ---------------- FORM CARD ---------------- */
+/* ===================================
+   FORM CARD
+=================================== */
+
 .form-card {
   width: 420px;
-  background: rgba(0,0,0,0.55);
-  padding: 26px;
-  border-radius: 18px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 0 30px rgba(0,0,0,0.4);
+  max-width: 100%;
+  background: var(--card-bg);
+  padding: 26px 24px 24px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 40px rgba(0,0,0,0.55);
+  position: relative;
+  overflow: hidden;
 }
 
+.form-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background-image: var(--primary-gradient-soft);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+
+/* Keep inner content above gradient border mask */
+.form-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Form header + subtle glow on hover */
+.form-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: default;
+  background-image: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.form-title:hover,
+.form-title:active {
+  text-shadow: 0 0 12px rgba(255,107,203,0.9), 0 0 26px rgba(54,209,220,0.85);
+  transform: translateY(-0.5px);
+}
+
+.form-subtitle {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Two-step indicator line */
 .step-indicator {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-}
-
-.step {
-  width: 48%;
-  padding: 10px;
-  text-align: center;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 15px;
-  background: rgba(255,255,255,0.08);
-}
-
-.step.active {
-  background: linear-gradient(135deg, #7a3cff, #b87dff);
-}
-
-.form-group {
+  gap: 6px;
+  align-items: center;
   margin-bottom: 18px;
 }
 
+.step-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(30,64,175,0.5);
+}
+
+.step-bar.active {
+  background-image: var(--primary-gradient);
+}
+
+/* Labels + inputs */
+
 label {
-  display: block;
-  margin-bottom: 6px;
   font-size: 14px;
+  color: rgba(226,232,240,0.95);
+  display: block;
 }
 
-input, select {
+.field-wrapper {
+  margin-bottom: 14px;
+}
+
+/* Telephone input plugin wraps input in .iti */
+.iti {
   width: 100%;
-  padding: 12px;
+}
+
+/* Underlying input styling */
+input,
+select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 12px;
   border-radius: 10px;
-  border: none;
+  border: 1px solid rgba(30,64,175,0.3);
   outline: none;
-  background: rgba(255,255,255,0.15);
-  color: white;
+  background: var(--input-bg);
+  color: #f9fafb;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* BUTTON */
-.next-btn {
-  width: 100%;
-  margin-top: 12px;
-  padding: 14px;
-  background: linear-gradient(135deg, #7a3cff, #b87dff);
-  border: none;
-  border-radius: 12px;
-  font-size: 17px;
-  font-weight: 600;
+input:focus,
+select:focus {
+  border-color: rgba(129,140,248,0.9);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
+  background: #020617;
+}
+
+/* Laptop / Desktop question */
+.radio-group {
+  margin: 4px 0 10px;
+}
+
+.radio-label {
+  font-size: 14px;
+  margin: 0 0 6px;
+  color: rgba(226,232,240,0.95);
+}
+
+.radio-options {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.radio-option {
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
 }
-.next-btn:hover {
-  opacity: 0.85;
+
+.radio-option input[type="radio"] {
+  accent-color: #ff6bcb;
 }
 
+/* CTA button */
+
+.submit-btn {
+  width: 100%;
+  padding: 15px 0;
+  margin-top: 14px;
+  background-image: var(--primary-gradient);
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  outline: none;
+  transition: 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 12px 30px rgba(15,23,42,0.9);
+}
+
+.submit-btn span.icon {
+  font-size: 18px;
+}
+
+.submit-btn:hover,
+.submit-btn:active {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(15,23,42,1);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+  .hero-left,
+  .form-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-left h1 {
+    font-size: 34px;
+  }
+  .badge-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 </style>
 </head>
 
 <body>
 
-<!-- ============ HEADER ============ -->
-<header class="header">
-  <div class="header-logo">
-    <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" />
+<header>
+  <div class="container navbar">
+    <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">Unischooly</div>
+    <button class="book-btn" type="button" onclick="scrollToForm()">Book Trial Class</button>
   </div>
-
-  <nav class="header-links">
-    <a href="#programs">Programs</a>
-    <a href="#experts">Meet Our Experts</a>
-    <a href="#curriculum">Curriculum</a>
-    <a href="#community">Community</a>
-    <a href="#educators">Educators</a>
-    <a href="#faqs">FAQs</a>
-  </nav>
-
-  <button class="book-btn">Book Now</button>
 </header>
 
-<!-- ============ HERO SECTION ============ -->
-<section class="hero">
-  <div class="hero-content">
+<section class="hero-section">
+  <div class="container hero">
 
-    <!-- LEFT CONTENT -->
+    <!-- LEFT TEXT -->
     <div class="hero-left">
-      <h1>Book a Free Live Coding<br />Class for Your Child.</h1>
-      <p>A personalised 60-minute session to introduce your child to<br />coding, logic skills & futuristic learning.</p>
+      <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
+      <p>A personalised 60‑minute class to introduce your child to coding, logic skills &amp; futuristic learning.</p>
 
-      <div class="badges">
-        <div class="badge">✨ 60-min Live Class</div>
-        <div class="badge">👨‍🏫 Top 1% Teachers</div>
-        <div class="badge">🌎 Kids in 30+ Countries</div>
-        <div class="badge">🚀 Hands-On Projects</div>
+      <div class="badge-grid">
+        <div class="badge">⏱ <span>60‑min Live Class</span></div>
+        <div class="badge">👩‍🏫 <span>Top 1% Certified Teachers</span></div>
+        <div class="badge">🌎 <span>Kids in 30+ Countries</span></div>
+        <div class="badge">🚀 <span>Hands‑On Projects</span></div>
       </div>
     </div>
 
     <!-- RIGHT FORM -->
-    <div class="form-card">
-      <div class="step-indicator">
-        <div class="step active">1. Child & Parent Details</div>
-        <div class="step">2. Date & Time</div>
-      </div>
+    <div class="form-card" id="formCard">
+      <div class="form-inner">
+        <h2 class="form-title">Book Now &amp; Get Certified</h2>
+        <p class="form-subtitle">Step 1 of 2 · Share your child &amp; parent details to unlock a personalised trial class.</p>
 
-      <div class="form-group">
-        <label>Country</label>
-        <select>
-          <option>United States</option>
-          <option>India</option>
-          <option>United Kingdom</option>
-          <option>UAE</option>
-        </select>
-      </div>
+        <!-- Gradient 2-step indicator line -->
+        <div class="step-indicator">
+          <div class="step-bar active"></div>
+          <div class="step-bar"></div>
+        </div>
 
-      <div class="form-group">
-        <label>Parent WhatsApp Number</label>
-        <input type="text" placeholder="Enter number" />
-      </div>
+        <!-- PHONE (country code + number in one field) -->
+        <div class="field-wrapper">
+          <label for="parentPhone">Parent WhatsApp Number</label>
+          <input type="tel" id="parentPhone" name="parentPhone" placeholder="Enter mobile number" />
+        </div>
 
-      <div class="form-group">
-        <label>Child Name</label>
-        <input type="text" placeholder="Enter child's name" />
-      </div>
+        <div class="field-wrapper">
+          <label for="childName">Child Name</label>
+          <input type="text" id="childName" name="childName" placeholder="Enter child's name" />
+        </div>
 
-      <div class="form-group">
-        <label>Child Grade</label>
-        <select>
-          <option>Grade 1</option>
-          <option>Grade 2</option>
-          <option>Grade 3</option>
-          <option>Grade 4</option>
-          <option>Grade 5</option>
-          <option>Grade 6</option>
-          <option>Grade 7</option>
-          <option>Grade 8</option>
-        </select>
-      </div>
+        <div class="field-wrapper">
+          <label for="childGrade">Child Grade</label>
+          <select id="childGrade" name="childGrade">
+            <option value="">Select Grade</option>
+            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+            <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+            <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label>Parent Email</label>
-        <input type="email" placeholder="Enter email" />
-      </div>
+        <div class="field-wrapper">
+          <label for="parentName">Parent Name</label>
+          <input type="text" id="parentName" name="parentName" placeholder="Enter parent name" />
+        </div>
 
-      <button class="next-btn">Continue →</button>
+        <div class="field-wrapper">
+          <label for="parentEmail">Parent Email</label>
+          <input type="email" id="parentEmail" name="parentEmail" placeholder="Enter email" />
+        </div>
+
+        <!-- Laptop / Desktop question -->
+        <div class="radio-group">
+          <p class="radio-label">Do you have a Laptop or Desktop?</p>
+          <div class="radio-options">
+            <label class="radio-option">
+              <input type="radio" name="hasComputer" value="yes" checked />
+              <span>Yes</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="hasComputer" value="no" />
+              <span>No</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="button">
+          <span>Book a Free Trial Class</span>
+          <span class="icon">✨</span>
+        </button>
+      </div>
     </div>
 
   </div>
 </section>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/[email protected]/build/js/intlTelInput.min.js"></script>
+<script>
+function scrollToForm() {
+  const form = document.getElementById("formCard");
+  if (form) {
+    form.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+// Initialise international telephone input for parent phone field
+document.addEventListener("DOMContentLoaded", function () {
+  const phoneInput = document.querySelector("#parentPhone");
+  if (!phoneInput || !window.intlTelInput) return;
+
+  const iti = window.intlTelInput(phoneInput, {
+    initialCountry: "us", // Default to USA
+    separateDialCode: true,
+    autoPlaceholder: "polite",
+    countrySearch: true,
+    preferredCountries: [
+      "us","ca","gb","ae","sa","kw","qa","bh","om",
+      "id","ph","th","sg","vn","au","nz",
+      "in","bd","jp","my","za","ng",
+      "de","fr","it","es","nl","se","no","fi","ie","pl"
+    ],
+    utilsScript: "https://cdn.jsdelivr.net/npm/[email protected]/build/js/utils.js"
+  });
+
+  // If you later need to get the full number including country code:
+  // const fullNumber = iti.getNumber();
+});
+</script>
 
 </body>
 </html>

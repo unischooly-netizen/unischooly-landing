@@ -6,33 +6,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, Inter, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
     body { background: #020617; color: #f9fafb; min-height: 100vh; display: flex; justify-content: center; padding: 24px 12px; }
-    .page { width: 100%; max-width: 960px; background: #020617; border-radius: 20px; border: 1px solid #1f2937; padding: 20px; }
 
-    @media (min-width: 900px) {
-      .page { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+    .page {
+      width: 100%;
+      max-width: 1180px;
+      background: #020617;
+      border-radius: 18px;
+      border: 1px solid #1f2937;
+      padding: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
     }
 
-    .card { background: #020617; border-radius: 18px; border: 1px solid #374151; padding: 16px; }
-    .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-    .tab { flex: 1; padding: 6px 8px; border-radius: 999px; border: 1px solid #374151; text-align: center; }
-    .tab.active { background: #4f46e5; color: #fff; }
+    /* HERO UI */
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .hero-title { font-size: 32px; font-weight: 800; line-height: 1.15; margin-bottom: 10px; }
+    .hero-title span { color: #a5b4fc; }
+    .hero-sub { font-size: 15px; color: #9ca3af; margin-bottom: 18px; max-width: 500px; }
 
-    .form-group { margin-bottom: 10px; }
-    .form-label { font-size: 11px; margin-bottom: 3px; display: block; }
-    .form-input, .form-select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #374151; background: #020617; color: #fff; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .meta-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      font-size: 12px;
+      background: #020617;
+      color: #9ca3af;
+    }
+
+    /* RIGHT FORM CARD */
+    .card {
+      background: #020617;
+      border-radius: 18px;
+      border: 1px solid #374151;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
+    }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab {
+      flex: 1;
+      padding: 8px;
+      border-radius: 999px;
+      text-align: center;
+      border: 1px solid #374151;
+      font-size: 13px;
+      background: #020617;
+      color: #9ca3af;
+    }
+    .tab.active {
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      border-color: #6366f1;
+      color: #fff;
+    }
+
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12px; margin-bottom: 5px; color: #cbd5e1; }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
 
     .btn {
-      width: 100%; margin-top: 12px; padding: 10px;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 999px;
+      border: none;
       background: linear-gradient(120deg, #4f46e5, #8b5cf6);
-      border-radius: 999px; border: none; color: #fff; cursor: pointer;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 12px 25px rgba(79, 70, 229, 0.6);
     }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .error { color: #fca5a5; margin-top: 6px; font-size: 13px; }
+    .success { color: #bbf7d0; margin-top: 6px; font-size: 13px; }
 
     .hidden { display: none; }
-    .error { color: #fca5a5; font-size: 12px; margin-top: 6px; }
-    .success { color: #bbf7d0; font-size: 12px; margin-top: 6px; }
   </style>
+
 </head>
 
 <body>
@@ -40,19 +116,26 @@
 
     <!-- LEFT HERO -->
     <div>
-      <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 12px;">
-        Book a <span style="color:#a5b4fc">Free Live Coding Class</span>
-      </h1>
-      <p style="color:#9ca3af; margin-bottom:16px;">
-        A personalised 45–60 minute class to experience how Unischooly makes coding exciting for kids.
+      <div class="hero-pill">✨ Free trial class • Limited slots today</div>
+
+      <h1 class="hero-title">Book a <span>Free Live Coding Class</span> for your child.</h1>
+
+      <p class="hero-sub">
+        A personalised 45–60 minute class to introduce your child to coding, logic skills & futuristic learning.
       </p>
+
+      <div class="meta-row">
+        <div class="meta-pill">⏱ 45–60 min on Zoom</div>
+        <div class="meta-pill">👨‍🏫 Top 1% vetted teachers</div>
+        <div class="meta-pill">🌍 Kids across India, Middle East, Europe & USA</div>
+      </div>
     </div>
 
     <!-- RIGHT FORM -->
     <div class="card">
 
       <div class="tabs">
-        <div id="tab-step1" class="tab active">1. Details</div>
+        <div id="tab-step1" class="tab active">1. Child & Parent Details</div>
         <div id="tab-step2" class="tab">2. Date & Time</div>
       </div>
 
@@ -64,6 +147,10 @@
           <select id="country" class="form-select">
             <option>India</option>
             <option>United Arab Emirates</option>
+            <option>Saudi Arabia</option>
+            <option>Qatar</option>
+            <option>Kuwait</option>
+            <option>Bahrain</option>
             <option>United States</option>
             <option>Canada</option>
             <option>United Kingdom</option>
@@ -72,7 +159,7 @@
 
         <div class="form-group">
           <label class="form-label">Parent WhatsApp number</label>
-          <input id="phoneNumber" class="form-input" type="tel" placeholder="Enter number" />
+          <input id="phoneNumber" class="form-input" type="tel" placeholder="Enter WhatsApp number" />
         </div>
 
         <div class="form-group">
@@ -83,18 +170,9 @@
         <div class="form-group">
           <label class="form-label">Child grade</label>
           <select id="childGrade" class="form-select">
-            <option>Grade 1</option>
-            <option>Grade 2</option>
-            <option>Grade 3</option>
-            <option>Grade 4</option>
-            <option>Grade 5</option>
-            <option>Grade 6</option>
-            <option>Grade 7</option>
-            <option>Grade 8</option>
-            <option>Grade 9</option>
-            <option>Grade 10</option>
-            <option>Grade 11</option>
-            <option>Grade 12</option>
+            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+            <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+            <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
           </select>
         </div>
 
@@ -108,7 +186,7 @@
           <input id="parentEmail" class="form-input" type="email" />
         </div>
 
-        <button id="btnStep1" class="btn">Confirm details →</button>
+        <button id="btnStep1" class="btn">Confirm class booking details →</button>
         <div id="msgStep1" class="error hidden"></div>
       </div>
 
@@ -123,15 +201,15 @@
         <div class="form-group">
           <label class="form-label">Preferred time</label>
           <select id="preferredTime" class="form-select">
-            <option>10–11 AM</option>
-            <option>11–12 AM</option>
-            <option>4–5 PM</option>
-            <option>5–6 PM</option>
-            <option>7–8 PM</option>
+            <option>10:00 AM – 11:00 AM</option>
+            <option>11:00 AM – 12:00 PM</option>
+            <option>04:00 PM – 05:00 PM</option>
+            <option>05:00 PM – 06:00 PM</option>
+            <option>07:00 PM – 08:00 PM</option>
           </select>
         </div>
 
-        <button id="btnStep2" class="btn">Submit booking</button>
+        <button id="btnStep2" class="btn">Submit booking →</button>
 
         <div id="msgStep2" class="error hidden"></div>
         <div id="msgSuccess" class="success hidden"></div>
@@ -140,94 +218,97 @@
     </div>
   </div>
 
-  <!-- LOGIC + SUPABASE -->
+  <!-- ========================= -->
+  <!-- 🚀 WORKING SUPABASE LOGIC -->
+  <!-- ========================= -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-    const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
-    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";  // <–– replace with your real key
+    const supabase = createClient(
+      "https://binklfyiypbhuzsvnlzg.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw"
+    );
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const step1 = document.getElementById("step1");
+    const step2 = document.getElementById("step2");
+    const tab1 = document.getElementById("tab-step1");
+    const tab2 = document.getElementById("tab-step2");
 
-    const step1El = document.getElementById("step1");
-    const step2El = document.getElementById("step2");
-    const tab1El = document.getElementById("tab-step1");
-    const tab2El = document.getElementById("tab-step2");
-    const btnStep1 = document.getElementById("btnStep1");
-    const btnStep2 = document.getElementById("btnStep2");
-    const msgStep1 = document.getElementById("msgStep1");
-    const msgStep2 = document.getElementById("msgStep2");
-    const msgSuccess = document.getElementById("msgSuccess");
-
-    let currentLeadId = null;
-
-    function showStep(step) {
-      if (step === 1) {
-        step1El.classList.remove("hidden");
-        step2El.classList.add("hidden");
-        tab1El.classList.add("active");
-        tab2El.classList.remove("active");
+    function showStep(n) {
+      if (n === 1) {
+        step1.classList.remove("hidden");
+        step2.classList.add("hidden");
+        tab1.classList.add("active");
+        tab2.classList.remove("active");
       } else {
-        step1El.classList.add("hidden");
-        step2El.classList.remove("hidden");
-        tab1El.classList.remove("active");
-        tab2El.classList.add("active");
+        step1.classList.add("hidden");
+        step2.classList.remove("hidden");
+        tab1.classList.remove("active");
+        tab2.classList.add("active");
       }
     }
 
-    btnStep1.addEventListener("click", async () => {
+    let leadId = null;
+
+    // STEP 1 SUBMIT
+    document.getElementById("btnStep1").onclick = async () => {
       const childName = document.getElementById("childName").value.trim();
-      const childGrade = document.getElementById("childGrade").value;
       const parentName = document.getElementById("parentName").value.trim();
       const parentEmail = document.getElementById("parentEmail").value.trim();
-      const phoneNumber = document.getElementById("phoneNumber").value.trim();
+      const phone = document.getElementById("phoneNumber").value.trim();
+      const grade = document.getElementById("childGrade").value;
 
-      if (!childName || !parentName || !parentEmail || !phoneNumber) {
-        msgStep1.textContent = "Please fill all fields";
-        msgStep1.classList.remove("hidden");
+      const msg = document.getElementById("msgStep1");
+
+      if (!childName || !parentName || !parentEmail || !phone) {
+        msg.textContent = "Please fill all fields.";
+        msg.classList.remove("hidden");
         return;
       }
 
       const { data, error } = await supabase
         .from("demo_leads")
-        .insert([{ child_name: childName, child_grade: childGrade, parent_name: parentName, parent_email: parentEmail, phone_number: phoneNumber }])
+        .insert([{ child_name: childName, child_grade: grade, parent_name: parentName, parent_email: parentEmail, phone_number: phone }])
         .select("id")
         .single();
 
       if (error) {
-        msgStep1.textContent = "Error saving lead";
-        msgStep1.classList.remove("hidden");
+        msg.textContent = "Error saving details.";
+        msg.classList.remove("hidden");
         return;
       }
 
-      currentLeadId = data.id;
+      leadId = data.id;
       showStep(2);
-    });
+    };
 
-    btnStep2.addEventListener("click", async () => {
-      const preferredDate = document.getElementById("preferredDate").value;
-      const preferredTime = document.getElementById("preferredTime").value;
+    // STEP 2 SUBMIT
+    document.getElementById("btnStep2").onclick = async () => {
+      const date = document.getElementById("preferredDate").value;
+      const time = document.getElementById("preferredTime").value;
+      const msg = document.getElementById("msgStep2");
+      const success = document.getElementById("msgSuccess");
 
-      if (!preferredDate || !preferredTime) {
-        msgStep2.textContent = "Please select date & time";
-        msgStep2.classList.remove("hidden");
+      if (!date || !time) {
+        msg.textContent = "Please select a date and time.";
+        msg.classList.remove("hidden");
         return;
       }
 
       const { error } = await supabase
         .from("demo_leads")
-        .update({ preferred_date: preferredDate, preferred_time_slot: preferredTime })
-        .eq("id", currentLeadId);
+        .update({ preferred_date: date, preferred_time_slot: time })
+        .eq("id", leadId);
 
       if (error) {
-        msgStep2.textContent = "Error updating booking";
-        msgStep2.classList.remove("hidden");
+        msg.textContent = "Error submitting booking.";
+        msg.classList.remove("hidden");
         return;
       }
 
-      msgSuccess.textContent = "Booking submitted!";
-      msgSuccess.classList.remove("hidden");
-    });
+      success.textContent = "Booking submitted successfully!";
+      success.classList.remove("hidden");
+    };
   </script>
 
 </body>

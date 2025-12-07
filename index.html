@@ -1,409 +1,275 @@
+
+<!-- ===============================
+   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
+   Version: 1.0
+================================ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Unischooly – Book Your Free Trial Class</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unischooly - Book a Free Trial Class</title>
 
+<style>
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
-    body { background: #020617; color: #f9fafb; min-height: 100vh; display: flex; justify-content: center; padding: 24px 12px; }
+/* GLOBAL */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #0d0f1a;
+  color: white;
+  overflow-x: hidden;
+}
 
+.container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
 
-    .page {
-      width: 100%;
-      max-width: 1180px;
-      background: #020617;
-      border-radius: 18px;
-      border: 1px solid #1f2937;
-      padding: 24px;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 24px;
-    }
+/* ===================================
+   HEADER
+=================================== */
 
+header {
+  width: 100%;
+  padding: 18px 0;
+  background: rgba(13, 15, 26, 0.6);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  top: 0;
+  z-index: 999;
+}
 
-    /* HERO UI */
-    .hero-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(34, 197, 94, 0.7);
-      color: #bbf7d0;
-      font-size: 12px;
-      margin-bottom: 16px;
-    }
-    .hero-title { font-size: 32px; font-weight: 800; line-height: 1.15; margin-bottom: 10px; }
-    .hero-title span { color: #a5b4fc; }
-    .hero-sub { font-size: 15px; color: #9ca3af; margin-bottom: 18px; max-width: 500px; }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
 
-    .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-    .meta-pill {
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid #374151;
-      font-size: 12px;
-      background: #020617;
-      color: #9ca3af;
-    }
+.book-btn {
+  background: linear-gradient(135deg, #8a2be2, #6f00ff);
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.25s;
+}
 
+.book-btn:hover {
+  opacity: 0.8;
+}
 
-    /* RIGHT FORM CARD */
-    .card {
-      background: #020617;
-      border-radius: 18px;
-      border: 1px solid #374151;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
-    }
+/* ===================================
+   HERO SECTION
+=================================== */
 
+.hero {
+  padding-top: 140px;
+  padding-bottom: 80px;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
 
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-    .tab {
-      flex: 1;
-      padding: 8px;
-      border-radius: 999px;
-      text-align: center;
-      border: 1px solid #374151;
-      font-size: 13px;
-      background: #020617;
-      color: #9ca3af;
-    }
-    .tab.active {
-      background: linear-gradient(135deg,#4f46e5,#7c3aed);
-      border-color: #6366f1;
-      color: #fff;
-    }
+.hero-left {
+  width: 48%;
+  min-width: 320px;
+}
 
+.hero-left h1 {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
 
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 12px; margin-bottom: 5px; color: #cbd5e1; }
-    .form-input, .form-select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #374151;
-      background: #020617;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-    }
+.hero-left h1 span {
+  color: #a56bff;
+}
 
+.hero-left p {
+  font-size: 18px;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
 
-    .btn {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(120deg, #4f46e5, #8b5cf6);
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 12px 25px rgba(79, 70, 229, 0.6);
-    }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+/* Badges */
+.badge-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
 
+.badge {
+  background: rgba(255,255,255,0.08);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
 
-    .error { color: #fca5a5; margin-top: 6px; font-size: 13px; }
-    .success { color: #bbf7d0; margin-top: 6px; font-size: 13px; }
+/* ===================================
+   FORM CARD
+=================================== */
 
+.form-card {
+  width: 420px;
+  background: #161922;
+  padding: 26px;
+  border-radius: 18px;
+  box-shadow: 0px 0px 35px rgba(0,0,0,0.45);
+}
 
-    .hidden { display: none; }
-  </style>
+.step-tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
+.tab {
+  width: 48%;
+  padding: 12px;
+  text-align: center;
+  border-radius: 10px;
+  background: #0f111a;
+  opacity: 0.5;
+}
 
+.tab.active {
+  background: linear-gradient(135deg, #8a2be2, #6f00ff);
+  opacity: 1;
+}
+
+label {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+input, select {
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #0f111a;
+  color: white;
+  font-size: 15px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 15px 0;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #8a2be2, #6f00ff);
+  border-radius: 12px;
+  font-size: 17px;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.25s;
+}
+
+.submit-btn:hover {
+  opacity: 0.85;
+}
+
+/* Responsive */
+@media(max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+  .hero-left, .form-card {
+    width: 100%;
+  }
+}
+
+</style>
 </head>
 
-
 <body>
-  <div class="page">
 
+<header>
+  <div class="container navbar">
+    <div class="logo">Unischooly</div>
+    <div class="book-btn" onclick="scrollToForm()">Book Trial Class</div>
+  </div>
+</header>
 
-    <!-- LEFT HERO -->
-    <div>
-      <div class="hero-pill">✨ Free trial class • Limited slots today</div>
+<section class="hero container">
 
+  <!-- LEFT TEXT -->
+  <div class="hero-left">
+    <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
+    <p>A personalised 60‑minute class to introduce your child to coding, logic skills & futuristic learning.</p>
 
-      <h1 class="hero-title">Book a <span>Free Live Coding Class</span> for your child.</h1>
-
-
-      <p class="hero-sub">
-        A personalised 45–60 minute class to introduce your child to coding, logic skills & futuristic learning.
-      </p>
-
-
-      <div class="meta-row">
-        <div class="meta-pill">⏱ 45–60 min on Zoom</div>
-        <div class="meta-pill">👨‍🏫 Top 1% vetted teachers</div>
-        <div class="meta-pill">🌍 Kids across India, Middle East, Europe & USA</div>
-      </div>
-    </div>
-
-
-    <!-- RIGHT FORM -->
-    <div class="card">
-
-
-      <div class="tabs">
-        <div id="tab-step1" class="tab active">1. Child & Parent Details</div>
-        <div id="tab-step2" class="tab">2. Date & Time</div>
-      </div>
-
-
-      <!-- STEP 1 -->
-      <div id="step1">
-
-
-        <div class="form-group">
-          <label class="form-label">Country</label>
-          <select id="country" class="form-select">
-            <option>India</option>
-            <option>United Arab Emirates</option>
-            <option>Saudi Arabia</option>
-            <option>Qatar</option>
-            <option>Kuwait</option>
-            <option>Bahrain</option>
-            <option>United States</option>
-            <option>Canada</option>
-            <option>United Kingdom</option>
-          </select>
-        </div>
-
-
-        <div class="form-group">
-          <label class="form-label">Parent WhatsApp number</label>
-          <input id="phoneNumber" class="form-input" type="tel" placeholder="Enter WhatsApp number" />
-        </div>
-
-
-        <div class="form-group">
-          <label class="form-label">Child name</label>
-          <input id="childName" class="form-input" type="text" />
-        </div>
-
-
-        <div class="form-group">
-          <label class="form-label">Child grade</label>
-          <select id="childGrade" class="form-select">
-            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
-            <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
-            <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
-          </select>
-        </div>
-
-
-        <div class="form-group">
-          <label class="form-label">Parent name</label>
-          <input id="parentName" class="form-input" type="text" />
-        </div>
-
-
-        <div class="form-group">
-          <label class="form-label">Parent email</label>
-          <input id="parentEmail" class="form-input" type="email" />
-        </div>
-
-
-        <button id="btnStep1" class="btn">Confirm class booking details →</button>
-        <div id="msgStep1" class="error hidden"></div>
-      </div>
-
-
-      <!-- STEP 2 -->
-      <div id="step2" class="hidden">
-
-
-        <div class="form-group">
-          <label class="form-label">Preferred date</label>
-          <input id="preferredDate" class="form-input" type="date" />
-        </div>
-
-
-        <div class="form-group">
-          <label class="form-label">Preferred time</label>
-          <select id="preferredTime" class="form-select">
-            <option>10:00 AM – 11:00 AM</option>
-            <option>11:00 AM – 12:00 PM</option>
-            <option>04:00 PM – 05:00 PM</option>
-            <option>05:00 PM – 06:00 PM</option>
-            <option>07:00 PM – 08:00 PM</option>
-          </select>
-        </div>
-
-
-        <button id="btnStep2" class="btn">Submit booking →</button>
-
-
-        <div id="msgStep2" class="error hidden"></div>
-        <div id="msgSuccess" class="success hidden"></div>
-      </div>
-
-
+    <div class="badge-row">
+      <div class="badge">⏱ 60‑min Live Class</div>
+      <div class="badge">💡 Top 1% Certified Teachers</div>
+      <div class="badge">🌍 Kids in 25+ Countries</div>
     </div>
   </div>
 
+  <!-- RIGHT FORM -->
+  <div class="form-card" id="formCard">
 
-  <!-- ========================= -->
-  <!--  SUPABASE (CDN + UMD)     -->
-  <!-- ========================= -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    // 1) CREATE CLIENT (UMD STYLE)
-    const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
-    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+    <div class="step-tabs">
+      <div class="tab active">1. Child & Parent Details</div>
+      <div class="tab">2. Date & Time</div>
+    </div>
 
+    <label>Country Code</label>
+    <select id="countryCode">
+      <option value="+91">🇮🇳 India (+91)</option>
+      <option value="+971">🇦🇪 UAE (+971)</option>
+      <option value="+974">🇶🇦 Qatar (+974)</option>
+      <option value="+966">🇸🇦 Saudi (+966)</option>
+      <option value="+44">🇬🇧 UK (+44)</option>
+      <option value="+1">🇺🇸 USA (+1)</option>
+    </select>
 
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-    console.log("✅ Supabase client ready", supabase);
+    <label>Parent WhatsApp Number</label>
+    <input type="text" id="parentPhone" placeholder="Enter mobile number">
 
+    <label>Child Name</label>
+    <input type="text" id="childName" placeholder="Enter child's name">
 
-    // 2) BASIC STEP HANDLING
-    const step1 = document.getElementById("step1");
-    const step2 = document.getElementById("step2");
-    const tab1  = document.getElementById("tab-step1");
-    const tab2  = document.getElementById("tab-step2");
+    <label>Child Grade</label>
+    <select id="childGrade">
+      <option value="">Select Grade</option>
+      <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+      <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+      <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+    </select>
 
+    <label>Parent Name</label>
+    <input type="text" id="parentName" placeholder="Enter parent name">
 
-    function showStep(n) {
-      if (n === 1) {
-        step1.classList.remove("hidden");
-        step2.classList.add("hidden");
-        tab1.classList.add("active");
-        tab2.classList.remove("active");
-      } else {
-        step1.classList.add("hidden");
-        step2.classList.remove("hidden");
-        tab1.classList.remove("active");
-        tab2.classList.add("active");
-      }
-    }
+    <label>Parent Email</label>
+    <input type="email" id="parentEmail" placeholder="Enter email">
 
+    <div class="submit-btn">Confirm class booking details →</div>
 
-    let leadId = null;
+  </div>
 
+</section>
 
-    // 3) STEP 1 SUBMIT → INSERT ROW
-    document.getElementById("btnStep1").onclick = async () => {
-      const childName   = document.getElementById("childName").value.trim();
-      const parentName  = document.getElementById("parentName").value.trim();
-      const parentEmail = document.getElementById("parentEmail").value.trim();
-      const phone       = document.getElementById("phoneNumber").value.trim();
-      const grade       = document.getElementById("childGrade").value;
-      const msg         = document.getElementById("msgStep1");
-      const btn         = document.getElementById("btnStep1");
-
-
-      msg.classList.add("hidden");
-      msg.textContent = "";
-
-
-      if (!childName || !parentName || !parentEmail || !phone) {
-        msg.textContent = "Please fill all fields.";
-        msg.classList.remove("hidden");
-        return;
-      }
-
-
-      btn.disabled = true;
-
-
-      const { data, error } = await supabase
-        .from("demo_leads")
-        .insert([
-          {
-            child_name:   childName,
-            child_grade:  grade,
-            parent_name:  parentName,
-            parent_email: parentEmail,
-            phone_number: phone
-          }
-        ])
-        .select("id")
-        .single();
-
-
-      btn.disabled = false;
-
-
-      if (error) {
-        console.error("Insert error:", error);
-        msg.textContent = "Error saving details.";
-        msg.classList.remove("hidden");
-        return;
-      }
-
-
-      console.log("Row inserted:", data);
-      leadId = data.id;
-      showStep(2);
-    };
-
-
-    // 4) STEP 2 SUBMIT → UPDATE SAME ROW
-    document.getElementById("btnStep2").onclick = async () => {
-      const date    = document.getElementById("preferredDate").value;
-      const time    = document.getElementById("preferredTime").value;
-      const msg     = document.getElementById("msgStep2");
-      const success = document.getElementById("msgSuccess");
-      const btn     = document.getElementById("btnStep2");
-
-
-      msg.classList.add("hidden");
-      success.classList.add("hidden");
-      msg.textContent = "";
-      success.textContent = "";
-
-
-      if (!date || !time) {
-        msg.textContent = "Please select a date and time.";
-        msg.classList.remove("hidden");
-        return;
-      }
-
-
-      if (!leadId) {
-        msg.textContent = "Something went wrong. Please submit Step 1 again.";
-        msg.classList.remove("hidden");
-        return;
-      }
-
-
-      btn.disabled = true;
-
-
-      const { error } = await supabase
-        .from("demo_leads")
-        .update({
-          preferred_date: date,
-          preferred_time: time   // ⚠ uses preferred_time column from your table
-        })
-        .eq("id", leadId);
-
-
-      btn.disabled = false;
-
-
-      if (error) {
-        console.error("Update error:", error);
-        msg.textContent = "Error submitting booking.";
-        msg.classList.remove("hidden");
-        return;
-      }
-
-
-      success.textContent = "Booking submitted successfully!";
-      success.classList.remove("hidden");
-    };
-  </script>
-
+<script>
+function scrollToForm() {
+  document.getElementById("formCard").scrollIntoView({ behavior: "smooth" });
+}
+</script>
 
 </body>
 </html>

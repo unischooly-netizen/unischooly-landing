@@ -6,8 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
-    body { background: #020617; color: #f9fafb; min-height: 100vh; display: flex; justify-content: center; padding: 24px 12px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    }
+    body {
+      background: #020617;
+      color: #f9fafb;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 12px;
+    }
 
     .page {
       width: 100%;
@@ -35,11 +47,28 @@
       font-size: 12px;
       margin-bottom: 16px;
     }
-    .hero-title { font-size: 32px; font-weight: 800; line-height: 1.15; margin-bottom: 10px; }
-    .hero-title span { color: #a5b4fc; }
-    .hero-sub { font-size: 15px; color: #9ca3af; margin-bottom: 18px; max-width: 500px; }
+    .hero-title {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .hero-title span {
+      color: #a5b4fc;
+    }
+    .hero-sub {
+      font-size: 15px;
+      color: #9ca3af;
+      margin-bottom: 18px;
+      max-width: 520px;
+    }
 
-    .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
     .meta-pill {
       padding: 6px 10px;
       border-radius: 999px;
@@ -58,7 +87,11 @@
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.6);
     }
 
-    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
     .tab {
       flex: 1;
       padding: 8px;
@@ -75,9 +108,17 @@
       color: #fff;
     }
 
-    .form-group { margin-bottom: 14px; }
-    .form-label { display: block; font-size: 12px; margin-bottom: 5px; color: #cbd5e1; }
-    .form-input, .form-select {
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 5px;
+      color: #cbd5e1;
+    }
+    .form-input,
+    .form-select {
       width: 100%;
       padding: 10px;
       border-radius: 10px;
@@ -101,26 +142,143 @@
       cursor: pointer;
       box-shadow: 0 12px 25px rgba(79, 70, 229, 0.6);
     }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-    .error { color: #fca5a5; margin-top: 6px; font-size: 13px; }
-    .success { color: #bbf7d0; margin-top: 6px; font-size: 13px; }
+    .error {
+      color: #fca5a5;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+    .success {
+      color: #bbf7d0;
+      margin-top: 6px;
+      font-size: 13px;
+    }
 
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
+
+    /* STEP 2 DATE + SLOT UI */
+    .date-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .date-pill {
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 12px;
+      cursor: pointer;
+      min-width: 90px;
+      text-align: center;
+    }
+    .date-pill span {
+      display: block;
+    }
+    .date-pill .date-weekday {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .date-pill .date-day {
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .date-pill.active {
+      background: linear-gradient(135deg,#4f46e5,#7c3aed);
+      border-color: #6366f1;
+      color: #fff;
+    }
+    .date-pill.disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .slot-btn {
+      position: relative;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.3;
+    }
+    .slot-time {
+      display: block;
+      font-weight: 500;
+    }
+    .slot-meta {
+      display: block;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .slot-btn.active {
+      border-color: #6366f1;
+      background: radial-gradient(circle at top left, #4f46e5, #020617 55%);
+      box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
+    }
+    .slot-btn.disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .slot-badge {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.12);
+      color: #bbf7d0;
+      border: 1px solid rgba(34,197,94,0.7);
+    }
+    .slot-badge.full {
+      background: rgba(239,68,68,0.08);
+      color: #fecaca;
+      border-color: rgba(239,68,68,0.7);
+    }
+
+    .slot-legend {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-
 </head>
 
 <body>
   <div class="page">
-
     <!-- LEFT HERO -->
     <div>
       <div class="hero-pill">✨ Free trial class • Limited slots today</div>
 
-      <h1 class="hero-title">Book a <span>Free Live Coding Class</span> for your child.</h1>
+      <h1 class="hero-title">
+        Book a <span id="courseTitleSpan">Free Live Coding Class</span> for your child.
+      </h1>
 
-      <p class="hero-sub">
+      <p class="hero-sub" id="heroSub">
         A personalised 45–60 minute class to introduce your child to coding, logic skills & futuristic learning.
       </p>
 
@@ -133,7 +291,6 @@
 
     <!-- RIGHT FORM -->
     <div class="card">
-
       <div class="tabs">
         <div id="tab-step1" class="tab active">1. Child & Parent Details</div>
         <div id="tab-step2" class="tab">2. Date & Time</div>
@@ -141,7 +298,6 @@
 
       <!-- STEP 1 -->
       <div id="step1">
-
         <div class="form-group">
           <label class="form-label">Country</label>
           <select id="country" class="form-select">
@@ -192,21 +348,17 @@
 
       <!-- STEP 2 -->
       <div id="step2" class="hidden">
-
         <div class="form-group">
-          <label class="form-label">Preferred date</label>
-          <input id="preferredDate" class="form-input" type="date" />
+          <label class="form-label">Choose your date</label>
+          <div id="dateList" class="date-row"></div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Preferred time</label>
-          <select id="preferredTime" class="form-select">
-            <option>10:00 AM – 11:00 AM</option>
-            <option>11:00 AM – 12:00 PM</option>
-            <option>04:00 PM – 05:00 PM</option>
-            <option>05:00 PM – 06:00 PM</option>
-            <option>07:00 PM – 08:00 PM</option>
-          </select>
+          <label class="form-label">Choose your time slot</label>
+          <div id="slotList" class="slot-grid"></div>
+          <div id="slotLegend" class="slot-legend">
+            ⭐ Star Teacher slots are limited. Greyed-out slots are fully booked.
+          </div>
         </div>
 
         <button id="btnStep2" class="btn">Submit booking →</button>
@@ -214,27 +366,77 @@
         <div id="msgStep2" class="error hidden"></div>
         <div id="msgSuccess" class="success hidden"></div>
       </div>
-
     </div>
   </div>
 
-  <!-- ========================= -->
-  <!--  SUPABASE (CDN + UMD)     -->
-  <!-- ========================= -->
+  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // 1) CREATE CLIENT (UMD STYLE)
+    // ====== BASIC CONFIG ======
     const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
-    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+    const supabaseAnonKey =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
     const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-    console.log("✅ Supabase client ready", supabase);
 
-    // 2) BASIC STEP HANDLING
+    // Course mapping (for hero text)
+    const COURSE_MAP = {
+      1: { name: "Coding", label: "Free Live Coding Class" },
+      2: { name: "Python", label: "Free Live Python Class" },
+      3: { name: "Website Development", label: "Free Live Website Development Class" },
+      4: { name: "Generative AI", label: "Free Live Generative AI Class" },
+      5: { name: "Roblox", label: "Free Live Roblox Game Creation Class" },
+      6: { name: "Chess", label: "Free Live Online Chess Class" },
+      7: { name: "Mathematics", label: "Free Live Math Mastery Class" }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const courseId = parseInt(params.get("courseId") || "1", 10);
+    const courseInfo = COURSE_MAP[courseId] || COURSE_MAP[1];
+
+    document.getElementById("courseTitleSpan").textContent = courseInfo.label;
+
+    // Country → code + timezone
+    const COUNTRY_CONFIG = {
+      "India": { code: "IN", timeZone: "Asia/Kolkata" },
+      "United Arab Emirates": { code: "AE", timeZone: "Asia/Dubai" },
+      "Saudi Arabia": { code: "SA", timeZone: "Asia/Riyadh" },
+      "Qatar": { code: "QA", timeZone: "Asia/Qatar" },
+      "Kuwait": { code: "KW", timeZone: "Asia/Kuwait" },
+      "Bahrain": { code: "BH", timeZone: "Asia/Bahrain" },
+      "United States": { code: "US", timeZone: "America/New_York" },
+      "Canada": { code: "CA", timeZone: "America/Toronto" },
+      "United Kingdom": { code: "GB", timeZone: "Europe/London" }
+    };
+
+    // Star teacher rules by region
+    const STAR_RULES = {
+      middle_east: { cutoffHour: 20, cutoffMinute: 30 },
+      india: { cutoffHour: 20, cutoffMinute: 30 },
+      europe_uk: { cutoffHour: 21, cutoffMinute: 0 },
+      us_canada: { cutoffHour: 1, cutoffMinute: 30 },
+      default: { cutoffHour: 23, cutoffMinute: 59 }
+    };
+
+    // ====== STATE ======
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
     const tab1  = document.getElementById("tab-step1");
     const tab2  = document.getElementById("tab-step2");
+
+    let leadId = null;
+    let leadContext = {
+      courseId,
+      countryName: "India",
+      countryCode: "IN",
+      timeZone: "Asia/Kolkata",
+      regionKey: null
+    };
+
+    let slotsByDate = new Map(); // dateKey => [slotObj]
+    let selectedDateKey = null;
+    let selectedSlot = null;
+    let slotsLoaded = false;
 
     function showStep(n) {
       if (n === 1) {
@@ -250,17 +452,317 @@
       }
     }
 
-    let leadId = null;
+    // ====== HELPERS ======
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
 
-    // 3) STEP 1 SUBMIT → INSERT ROW
+    function getStarRule(regionKey) {
+      return STAR_RULES[regionKey] || STAR_RULES.default;
+    }
+
+    function groupSlotsAndMarkStars(allSlots, regionKey) {
+      slotsByDate.clear();
+      const all = [];
+
+      allSlots.forEach(slot => {
+        const localStart = new Date(slot.startInstant.toLocaleString("en-US", {
+          timeZone: leadContext.timeZone
+        }));
+        const localEnd = new Date(slot.endInstant.toLocaleString("en-US", {
+          timeZone: leadContext.timeZone
+        }));
+
+        const y = localStart.getFullYear();
+        const m = String(localStart.getMonth() + 1).padStart(2, "0");
+        const d = String(localStart.getDate()).padStart(2, "0");
+        const dateKey = `${y}-${m}-${d}`;
+
+        const dayLabel = localStart.toLocaleDateString("en-US", {
+          weekday: "short",
+          day: "numeric",
+          month: "short"
+        });
+
+        const timeLabel = `${localStart.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit"
+        })} – ${localEnd.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit"
+        })}`;
+
+        const slotObj = {
+          id: slot.id,
+          startInstant: slot.startInstant,
+          endInstant: slot.endInstant,
+          localStart,
+          localEnd,
+          dateKey,
+          dayLabel,
+          timeLabel,
+          capacityLeft: Math.max(0, slot.capacity_total - slot.capacity_booked),
+          isStarTeacher: !!slot.is_star_teacher
+        };
+
+        if (!slotsByDate.has(dateKey)) {
+          slotsByDate.set(dateKey, []);
+        }
+        slotsByDate.get(dateKey).push(slotObj);
+        all.push(slotObj);
+      });
+
+      // Mark random star teacher slots if none from DB
+      const rule = getStarRule(regionKey);
+      const candidates = all.filter(s => {
+        if (s.isStarTeacher) return false; // already star from DB
+        const h = s.localStart.getHours();
+        const m = s.localStart.getMinutes();
+        if (h < rule.cutoffHour) return true;
+        if (h === rule.cutoffHour && m <= rule.cutoffMinute) return true;
+        return false;
+      });
+
+      shuffle(candidates);
+      const numToMark = Math.min(3, candidates.length);
+      for (let i = 0; i < numToMark; i++) {
+        candidates[i].isStarTeacher = true;
+      }
+    }
+
+    function renderDates() {
+      const dateList = document.getElementById("dateList");
+      dateList.innerHTML = "";
+      selectedDateKey = null;
+
+      const keys = Array.from(slotsByDate.keys()).sort();
+      if (keys.length === 0) {
+        dateList.innerHTML = "<div style='font-size:12px;color:#9ca3af;'>No slots available right now. Please check again later.</div>";
+        document.getElementById("slotList").innerHTML = "";
+        return;
+      }
+
+      keys.forEach((key, index) => {
+        const slots = slotsByDate.get(key) || [];
+        const hasAvailable = slots.some(s => s.capacityLeft > 0);
+        const display = slots[0]?.dayLabel || key;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "date-pill";
+        if (!hasAvailable) {
+          btn.classList.add("disabled");
+        }
+        if (index === 0) {
+          selectedDateKey = key;
+          btn.classList.add("active");
+        }
+
+        const [weekday, rest] = display.split(" ");
+        btn.innerHTML = `
+          <span class="date-weekday">${weekday || ""}</span>
+          <span class="date-day">${rest || display}</span>
+        `;
+
+        if (hasAvailable) {
+          btn.addEventListener("click", () => {
+            selectedDateKey = key;
+            document.querySelectorAll(".date-pill").forEach(p => p.classList.remove("active"));
+            btn.classList.add("active");
+            selectedSlot = null;
+            renderSlots();
+          });
+        }
+
+        dateList.appendChild(btn);
+      });
+
+      renderSlots();
+    }
+
+    function renderSlots() {
+      const slotList = document.getElementById("slotList");
+      slotList.innerHTML = "";
+      if (!selectedDateKey || !slotsByDate.has(selectedDateKey)) {
+        slotList.innerHTML = "<div style='font-size:12px;color:#9ca3af;'>Select a date to see available time slots.</div>";
+        return;
+      }
+
+      const slots = slotsByDate.get(selectedDateKey).sort(
+        (a, b) => a.localStart - b.localStart
+      );
+
+      if (slots.length === 0) {
+        slotList.innerHTML = "<div style='font-size:12px;color:#9ca3af;'>No slots available for this date.</div>";
+        return;
+      }
+
+      slots.forEach(slot => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "slot-btn";
+
+        if (slot.capacityLeft <= 0) {
+          btn.classList.add("disabled");
+        }
+
+        btn.innerHTML = `
+          <span class="slot-time">${slot.timeLabel}</span>
+          <span class="slot-meta">
+            ${slot.capacityLeft > 0 ? `${slot.capacityLeft} seats left` : "Fully booked"}
+          </span>
+        `;
+
+        if (slot.isStarTeacher) {
+          const badge = document.createElement("span");
+          badge.className = "slot-badge";
+          badge.textContent = "⭐ Star Teacher";
+          btn.appendChild(badge);
+        } else if (slot.capacityLeft <= 0) {
+          const badge = document.createElement("span");
+          badge.className = "slot-badge full";
+          badge.textContent = "Full";
+          btn.appendChild(badge);
+        }
+
+        if (slot.capacityLeft > 0) {
+          btn.addEventListener("click", () => {
+            selectedSlot = slot;
+            document.querySelectorAll(".slot-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+          });
+        }
+
+        slotList.appendChild(btn);
+      });
+    }
+
+    // ====== LOAD REGION RULE + SLOTS ======
+    async function loadSlotsForLead() {
+      if (slotsLoaded) return;
+      slotsLoaded = true;
+
+      const msg2 = document.getElementById("msgStep2");
+      msg2.classList.add("hidden");
+      msg2.textContent = "";
+
+      try {
+        // 1) Load region rules
+        const { data: rules, error: ruleError } = await supabase
+          .from("region_time_rules")
+          .select("*")
+          .eq("is_active", true);
+
+        if (ruleError) {
+          console.error("region_time_rules error:", ruleError);
+          msg2.textContent = "Unable to load slots right now. Please try again.";
+          msg2.classList.remove("hidden");
+          return;
+        }
+
+        const countryConf = COUNTRY_CONFIG[leadContext.countryName] || COUNTRY_CONFIG["India"];
+        leadContext.countryCode = countryConf.code;
+        leadContext.timeZone = countryConf.timeZone;
+
+        // Find region rule whose countries list contains our code
+        let regionRule = null;
+        if (rules && rules.length > 0) {
+          for (const r of rules) {
+            if (!r.countries) continue;
+            const list = String(r.countries)
+              .split(",")
+              .map(x => x.trim().toUpperCase())
+              .filter(Boolean);
+            if (list.includes(leadContext.countryCode)) {
+              regionRule = r;
+              break;
+            }
+          }
+        }
+
+        if (!regionRule) {
+          console.warn("No region rule matched; using default.");
+          regionRule = {
+            region_key: "default",
+            max_days_ahead: 6
+          };
+        }
+
+        leadContext.regionKey = regionRule.region_key || "default";
+
+        // 2) Load slots
+        const { data: slots, error: slotError } = await supabase
+          .from("demo_slots")
+          .select("*")
+          .eq("is_active", true)
+          .eq("course_id", leadContext.courseId)
+          .eq("region_key", leadContext.regionKey)
+          .order("slot_start_ist", { ascending: true });
+
+        if (slotError) {
+          console.error("demo_slots error:", slotError);
+          msg2.textContent = "Unable to load slots right now. Please try again.";
+          msg2.classList.remove("hidden");
+          return;
+        }
+
+        if (!slots || slots.length === 0) {
+          msg2.textContent = "Slots are not configured yet for this course / region.";
+          msg2.classList.remove("hidden");
+          return;
+        }
+
+        const now = new Date();
+        const minStart = new Date(now.getTime() + 60 * 60 * 1000); // +1 hour
+        const maxDays = regionRule.max_days_ahead || 6;
+        const maxStart = new Date(now.getTime() + maxDays * 24 * 60 * 60 * 1000);
+
+        const filtered = slots.filter(s => {
+          const startInstant = new Date(s.slot_start_ist);
+          const endInstant = new Date(s.slot_end_ist);
+
+          if (startInstant < minStart) return false;
+          if (startInstant > maxStart) return false;
+
+          const capacityLeft = (s.capacity_total || 0) - (s.capacity_booked || 0);
+          if (capacityLeft <= 0) return false;
+
+          return true;
+        }).map(s => ({
+          ...s,
+          startInstant: new Date(s.slot_start_ist),
+          endInstant: new Date(s.slot_end_ist)
+        }));
+
+        if (filtered.length === 0) {
+          msg2.textContent = "No upcoming slots available. Please try again tomorrow.";
+          msg2.classList.remove("hidden");
+          return;
+        }
+
+        groupSlotsAndMarkStars(filtered, leadContext.regionKey);
+        renderDates();
+      } catch (err) {
+        console.error("loadSlotsForLead exception:", err);
+        msg2.textContent = "Something went wrong while loading slots.";
+        msg2.classList.remove("hidden");
+      }
+    }
+
+    // ====== STEP 1: INSERT LEAD ======
     document.getElementById("btnStep1").onclick = async () => {
       const childName   = document.getElementById("childName").value.trim();
       const parentName  = document.getElementById("parentName").value.trim();
       const parentEmail = document.getElementById("parentEmail").value.trim();
       const phone       = document.getElementById("phoneNumber").value.trim();
       const grade       = document.getElementById("childGrade").value;
-      const msg         = document.getElementById("msgStep1");
-      const btn         = document.getElementById("btnStep1");
+      const countryName = document.getElementById("country").value;
+
+      const msg = document.getElementById("msgStep1");
+      const btn = document.getElementById("btnStep1");
 
       msg.classList.add("hidden");
       msg.textContent = "";
@@ -270,6 +772,12 @@
         msg.classList.remove("hidden");
         return;
       }
+
+      // Update context
+      const conf = COUNTRY_CONFIG[countryName] || COUNTRY_CONFIG["India"];
+      leadContext.countryName = countryName;
+      leadContext.countryCode = conf.code;
+      leadContext.timeZone = conf.timeZone;
 
       btn.disabled = true;
 
@@ -282,6 +790,8 @@
             parent_name:  parentName,
             parent_email: parentEmail,
             phone_number: phone
+            // We are NOT inserting country / course_id columns here
+            // to avoid errors if those columns are not yet created.
           }
         ])
         .select("id")
@@ -291,20 +801,18 @@
 
       if (error) {
         console.error("Insert error:", error);
-        msg.textContent = "Error saving details.";
+        msg.textContent = "Error saving details. Please try again.";
         msg.classList.remove("hidden");
         return;
       }
 
-      console.log("Row inserted:", data);
       leadId = data.id;
       showStep(2);
+      await loadSlotsForLead();
     };
 
-    // 4) STEP 2 SUBMIT → UPDATE SAME ROW
+    // ====== STEP 2: UPDATE LEAD + INCREMENT SLOT ======
     document.getElementById("btnStep2").onclick = async () => {
-      const date    = document.getElementById("preferredDate").value;
-      const time    = document.getElementById("preferredTime").value;
       const msg     = document.getElementById("msgStep2");
       const success = document.getElementById("msgSuccess");
       const btn     = document.getElementById("btnStep2");
@@ -314,41 +822,78 @@
       msg.textContent = "";
       success.textContent = "";
 
-      if (!date || !time) {
-        msg.textContent = "Please select a date and time.";
+      if (!leadId) {
+        msg.textContent = "Something went wrong. Please submit Step 1 again.";
         msg.classList.remove("hidden");
+        showStep(1);
         return;
       }
 
-      if (!leadId) {
-        msg.textContent = "Something went wrong. Please submit Step 1 again.";
+      if (!selectedSlot) {
+        msg.textContent = "Please choose a date and time slot.";
         msg.classList.remove("hidden");
         return;
       }
 
       btn.disabled = true;
 
-      const { error } = await supabase
-        .from("demo_leads")
-        .update({
-          preferred_date: date,
-          preferred_time: time   // ⚠ uses preferred_time column from your table
-        })
-        .eq("id", leadId);
+      try {
+        const dateKey = selectedSlot.dateKey;
+        const timeLabel = selectedSlot.timeLabel + ` (${leadContext.countryName} time)`;
 
-      btn.disabled = false;
+        // 1) Update lead row
+        const { error: updateError } = await supabase
+          .from("demo_leads")
+          .update({
+            preferred_date: dateKey,
+            preferred_time: timeLabel
+          })
+          .eq("id", leadId);
 
-      if (error) {
-        console.error("Update error:", error);
-        msg.textContent = "Error submitting booking.";
+        if (updateError) {
+          console.error("Update lead error:", updateError);
+          msg.textContent = "Error submitting booking. Please try again.";
+          msg.classList.remove("hidden");
+          btn.disabled = false;
+          return;
+        }
+
+        // 2) Increment capacity_booked for selected slot (best effort)
+        const newBooked = (selectedSlot.capacityLeft != null)
+          ? (selectedSlot.capacity_total - selectedSlot.capacityLeft + 1)
+          : undefined;
+
+        if (newBooked != null) {
+          await supabase
+            .from("demo_slots")
+            .update({
+              capacity_booked: (selectedSlot.capacity_total - selectedSlot.capacityLeft + 1)
+            })
+            .eq("id", selectedSlot.id);
+        }
+
+        success.textContent = "Booking submitted successfully! Redirecting…";
+        success.classList.remove("hidden");
+
+        // 3) Redirect to dashboard-style URL
+        const redirectUrl =
+          "https://learn.brightchamps.com/demo-dashboard/?" +
+          `bookingUUID=${encodeURIComponent(leadId)}` +
+          "&medium=unischooly-landing" +
+          "&lang=english" +
+          "&post_booking=true";
+
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 1200);
+      } catch (err) {
+        console.error("Finalize booking error:", err);
+        msg.textContent = "Something went wrong while finalising your booking.";
         msg.classList.remove("hidden");
-        return;
+      } finally {
+        btn.disabled = false;
       }
-
-      success.textContent = "Booking submitted successfully!";
-      success.classList.remove("hidden");
     };
   </script>
-
 </body>
 </html>

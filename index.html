@@ -284,12 +284,12 @@
 
   <!-- SUPABASE + LOGIC -->
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     // TODO: put your real Supabase values here
     const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = supabasejs.createClient(supabaseUrl, supabaseAnonKey);
 
     const step1El = document.getElementById("step1");
     const step2El = document.getElementById("step2");

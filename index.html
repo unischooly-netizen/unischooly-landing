@@ -219,20 +219,22 @@
   </div>
 
   <!-- ========================= -->
-  <!-- 🚀 WORKING SUPABASE LOGIC -->
+  <!--  SUPABASE (CDN + UMD)     -->
   <!-- ========================= -->
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    // 1) CREATE CLIENT (UMD STYLE)
+    const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
+    const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
-    const supabase = createClient(
-      "https://binklfyiypbhuzsvnlzg.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw"
-    );
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    console.log("✅ Supabase client ready", supabase);
 
+    // 2) BASIC STEP HANDLING
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
-    const tab1 = document.getElementById("tab-step1");
-    const tab2 = document.getElementById("tab-step2");
+    const tab1  = document.getElementById("tab-step1");
+    const tab2  = document.getElementById("tab-step2");
 
     function showStep(n) {
       if (n === 1) {
@@ -250,15 +252,18 @@
 
     let leadId = null;
 
-    // STEP 1 SUBMIT
+    // 3) STEP 1 SUBMIT → INSERT ROW
     document.getElementById("btnStep1").onclick = async () => {
-      const childName = document.getElementById("childName").value.trim();
-      const parentName = document.getElementById("parentName").value.trim();
+      const childName   = document.getElementById("childName").value.trim();
+      const parentName  = document.getElementById("parentName").value.trim();
       const parentEmail = document.getElementById("parentEmail").value.trim();
-      const phone = document.getElementById("phoneNumber").value.trim();
-      const grade = document.getElementById("childGrade").value;
+      const phone       = document.getElementById("phoneNumber").value.trim();
+      const grade       = document.getElementById("childGrade").value;
+      const msg         = document.getElementById("msgStep1");
+      const btn         = document.getElementById("btnStep1");
 
-      const msg = document.getElementById("msgStep1");
+      msg.classList.add("hidden");
+      msg.textContent = "";
 
       if (!childName || !parentName || !parentEmail || !phone) {
         msg.textContent = "Please fill all fields.";
@@ -266,28 +271,48 @@
         return;
       }
 
+      btn.disabled = true;
+
       const { data, error } = await supabase
         .from("demo_leads")
-        .insert([{ child_name: childName, child_grade: grade, parent_name: parentName, parent_email: parentEmail, phone_number: phone }])
+        .insert([
+          {
+            child_name:   childName,
+            child_grade:  grade,
+            parent_name:  parentName,
+            parent_email: parentEmail,
+            phone_number: phone
+          }
+        ])
         .select("id")
         .single();
 
+      btn.disabled = false;
+
       if (error) {
+        console.error("Insert error:", error);
         msg.textContent = "Error saving details.";
         msg.classList.remove("hidden");
         return;
       }
 
+      console.log("Row inserted:", data);
       leadId = data.id;
       showStep(2);
     };
 
-    // STEP 2 SUBMIT
+    // 4) STEP 2 SUBMIT → UPDATE SAME ROW
     document.getElementById("btnStep2").onclick = async () => {
-      const date = document.getElementById("preferredDate").value;
-      const time = document.getElementById("preferredTime").value;
-      const msg = document.getElementById("msgStep2");
+      const date    = document.getElementById("preferredDate").value;
+      const time    = document.getElementById("preferredTime").value;
+      const msg     = document.getElementById("msgStep2");
       const success = document.getElementById("msgSuccess");
+      const btn     = document.getElementById("btnStep2");
+
+      msg.classList.add("hidden");
+      success.classList.add("hidden");
+      msg.textContent = "";
+      success.textContent = "";
 
       if (!date || !time) {
         msg.textContent = "Please select a date and time.";
@@ -295,12 +320,26 @@
         return;
       }
 
+      if (!leadId) {
+        msg.textContent = "Something went wrong. Please submit Step 1 again.";
+        msg.classList.remove("hidden");
+        return;
+      }
+
+      btn.disabled = true;
+
       const { error } = await supabase
         .from("demo_leads")
-        .update({ preferred_date: date, preferred_time_slot: time })
+        .update({
+          preferred_date: date,
+          preferred_time: time   // ⚠ uses preferred_time column from your table
+        })
         .eq("id", leadId);
 
+      btn.disabled = false;
+
       if (error) {
+        console.error("Update error:", error);
         msg.textContent = "Error submitting booking.";
         msg.classList.remove("hidden");
         return;

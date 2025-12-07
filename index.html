@@ -30,6 +30,8 @@
     .step-chip { display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border-radius:999px; border:1px solid #374151; }
     .step-num { width:16px; height:16px; border-radius:999px; background:#111827; display:flex; align-items:center; justify-content:center; font-size:10px; color:#e5e7eb; }
 
+    .small-note { font-size:11px; color:#9ca3af; }
+
     .card { background:#020617; border-radius:18px; border:1px solid #374151; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.9); }
     .card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
     .card-title { font-size:17px; font-weight:700; }
@@ -62,7 +64,9 @@
 
     .btn { width:100%; margin-top:10px; padding:9px 10px; border-radius:999px; border:none; background:linear-gradient(120deg,#4f46e5,#8b5cf6); color:#fff; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; box-shadow:0 12px 25px rgba(79,70,229,0.7); }
     .btn:disabled { opacity:0.6; box-shadow:none; cursor:not-allowed; }
+    .btn span.arrow { font-size:14px; }
 
+    .hint { font-size:10px; color:#9ca3af; margin-top:3px; }
     .error { font-size:11px; color:#fecaca; margin-top:4px; }
     .success { font-size:11px; color:#bbf7d0; margin-top:4px; }
 
@@ -71,8 +75,7 @@
 </head>
 <body>
   <div class="page">
-
-    <!-- LEFT SIDE -->
+    <!-- LEFT: simple hero text -->
     <div class="hero">
       <div class="logo-row">
         <div class="logo">
@@ -87,25 +90,96 @@
 
       <div class="hero-pill">✨ Free trial class • Limited slots today</div>
 
-      <h1 class="hero-title">Book a <span>Free Live Coding Class</span> for your child.</h1>
+      <h1 class="hero-title">
+        Book a <span>Free Live Coding Class</span> for your child.
+      </h1>
       <p class="hero-sub">
-        A personalised 45–60 minute class that makes coding & future skills fun and easy for kids from Grade 1–12.
+        A personalised 45–60 minute class to experience how Unischooly makes coding, math and future-skills exciting and easy for kids from Grade 1–12.
+      </p>
+
+      <div class="meta-row">
+        <div class="meta-pill">⏱ 45–60 min live on Zoom</div>
+        <div class="meta-pill">👨‍🏫 Top 1% vetted teachers</div>
+        <div class="meta-pill">🌍 Kids across India, Middle East, Europe & North America</div>
+      </div>
+
+      <div class="steps">
+        <div class="step-chip"><div class="step-num">1</div><span>Fill child & parent details</span></div>
+        <div class="step-chip"><div class="step-num">2</div><span>Choose your date & time</span></div>
+        <div class="step-chip"><div class="step-num">3</div><span>Get WhatsApp confirmation instantly</span></div>
+      </div>
+
+      <p class="small-note">
+        You will get a call / WhatsApp message from Unischooly counsellor to confirm the final schedule and share the meeting link.
       </p>
     </div>
 
-    <!-- RIGHT SIDE FORM -->
+    <!-- RIGHT: 2-step form -->
     <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Book your free trial</div>
+          <div class="card-sub">Takes less than 60 seconds.</div>
+        </div>
+        <div class="card-badge">
+          <span class="card-badge-dot"></span>
+          <span>Live today – limited slots</span>
+        </div>
+      </div>
 
       <div class="tabs">
-        <div id="tab1" class="tab active">1. Details</div>
-        <div id="tab2" class="tab">2. Schedule</div>
+        <div id="tab-step1" class="tab active">1. Child & parent details</div>
+        <div id="tab-step2" class="tab">2. Choose date & time</div>
       </div>
 
       <!-- STEP 1 -->
       <div id="step1">
         <div class="form-group">
+          <label class="form-label">Country</label>
+          <select id="country" class="form-select">
+            <option value="India">India</option>
+            <option value="United Arab Emirates">United Arab Emirates</option>
+            <option value="Saudi Arabia">Saudi Arabia</option>
+            <option value="Qatar">Qatar</option>
+            <option value="Kuwait">Kuwait</option>
+            <option value="Oman">Oman</option>
+            <option value="Bahrain">Bahrain</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+            <option value="Italy">Italy</option>
+            <option value="Spain">Spain</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Parent mobile number</label>
+          <div class="phone-row">
+            <select id="phoneCode" class="form-select">
+              <option value="+91">+91</option>
+              <option value="+971">+971</option>
+              <option value="+974">+974</option>
+              <option value="+966">+966</option>
+              <option value="+965">+965</option>
+              <option value="+968">+968</option>
+              <option value="+973">+973</option>
+              <option value="+44">+44</option>
+              <option value="+49">+49</option>
+              <option value="+33">+33</option>
+              <option value="+39">+39</option>
+              <option value="+34">+34</option>
+              <option value="+1">+1</option>
+            </select>
+            <input id="phoneNumber" class="form-input" type="tel" placeholder="Enter parent WhatsApp number" />
+          </div>
+          <div class="hint">We will share confirmation & joining link on this number.</div>
+        </div>
+
+        <div class="form-group">
           <label class="form-label">Child’s name</label>
-          <input id="childName" class="form-input" type="text" placeholder="Enter child’s name" />
+          <input id="childName" class="form-input" type="text" placeholder="Enter child’s full name" />
         </div>
 
         <div class="row">
@@ -113,10 +187,9 @@
             <label class="form-label">Child’s grade</label>
             <select id="childGrade" class="form-select">
               <option value="">Select grade</option>
-              <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
-              <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
-              <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
-              <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+              <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+              <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+              <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
             </select>
           </div>
           <div class="form-group">
@@ -126,88 +199,158 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Parent email</label>
-          <input id="parentEmail" class="form-input" type="email" placeholder="Enter email" />
+          <label class="form-label">Parent email ID</label>
+          <input id="parentEmail" class="form-input" type="email" placeholder="Enter email for class details" />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Mobile Number</label>
-          <div class="phone-row">
-            <select id="phoneCode" class="form-select">
-              <option value="+91">+91</option><option value="+971">+971</option>
-              <option value="+974">+974</option><option value="+966">+966</option>
-              <option value="+965">+965</option><option value="+968">+968</option>
-              <option value="+44">+44</option><option value="+1">+1</option>
-            </select>
-            <input id="phoneNumber" class="form-input" type="tel" placeholder="WhatsApp number" />
+          <label class="form-label">Do you have a laptop / desktop for the class?</label>
+          <div class="radio-row">
+            <label><input type="radio" name="hasLaptop" value="yes" checked /> Yes</label>
+            <label><input type="radio" name="hasLaptop" value="no" /> No</label>
           </div>
         </div>
 
-        <button id="btnStep1" class="btn">Confirm & Continue →</button>
+        <button id="btnStep1" class="btn">
+          <span>Confirm class booking details</span>
+          <span class="arrow">→</span>
+        </button>
+
         <div id="msgStep1" class="error hidden"></div>
       </div>
 
       <!-- STEP 2 -->
       <div id="step2" class="hidden">
         <div class="form-group">
-          <label class="form-label">Preferred Demo Date</label>
+          <label class="form-label">Select preferred date</label>
           <input id="preferredDate" class="form-input" type="date" />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Preferred Time Slot</label>
+          <label class="form-label">Select a convenient time slot</label>
           <select id="preferredTime" class="form-select">
             <option value="">Select time</option>
             <option>10:00 AM – 11:00 AM</option>
             <option>11:00 AM – 12:00 PM</option>
             <option>04:00 PM – 05:00 PM</option>
             <option>05:00 PM – 06:00 PM</option>
+            <option>07:00 PM – 08:00 PM</option>
+          </select>
+          <div class="hint">In the next step of development we will auto-show slots based on region rules.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Who are you?</label>
+          <select id="whoAreYou" class="form-select">
+            <option value="">Select</option>
+            <option>Mother</option>
+            <option>Father</option>
+            <option>Guardian</option>
+            <option>Relative</option>
+            <option>Other</option>
           </select>
         </div>
 
-        <button id="btnStep2" class="btn">Submit Booking</button>
+        <div class="form-group">
+          <label class="form-label">Why are you booking this demo class?</label>
+          <textarea id="bookingReason" class="form-textarea" placeholder="Eg: want my child to start coding, improve logical thinking, explore AI, etc."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">When are you planning to buy the course (if you like it)?</label>
+          <select id="purchaseTimeline" class="form-select">
+            <option value="">Select</option>
+            <option>Immediately after the trial</option>
+            <option>Within 1 week</option>
+            <option>Within 1 month</option>
+            <option>Just exploring for now</option>
+          </select>
+        </div>
+
+        <div class="consent">
+          <input id="consent" type="checkbox" checked />
+          <span>I agree to receive calls / WhatsApp messages from Unischooly regarding this demo class and relevant offers.</span>
+        </div>
+
+        <button id="btnStep2" class="btn">
+          <span>Submit & confirm my free trial</span>
+        </button>
+
         <div id="msgStep2" class="error hidden"></div>
         <div id="msgSuccess" class="success hidden"></div>
       </div>
-
     </div>
   </div>
 
-  <!-- SUPABASE LOGIC -->
+  <!-- SUPABASE + LOGIC -->
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
     const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // UI elements
-    const step1 = document.getElementById("step1");
-    const step2 = document.getElementById("step2");
-    const tab1 = document.getElementById("tab1");
-    const tab2 = document.getElementById("tab2");
-
+    const step1El = document.getElementById("step1");
+    const step2El = document.getElementById("step2");
+    const tab1El = document.getElementById("tab-step1");
+    const tab2El = document.getElementById("tab-step2");
     const btnStep1 = document.getElementById("btnStep1");
     const btnStep2 = document.getElementById("btnStep2");
+    const msgStep1 = document.getElementById("msgStep1");
+    const msgStep2 = document.getElementById("msgStep2");
+    const msgSuccess = document.getElementById("msgSuccess");
 
-    let leadId = null;
+    let currentLeadId = null;
 
-    // Step 1 submit
+    function showStep(step) {
+      if (step === 1) {
+        step1El.classList.remove("hidden");
+        step2El.classList.add("hidden");
+        tab1El.classList.add("active");
+        tab2El.classList.remove("active");
+      } else {
+        step1El.classList.add("hidden");
+        step2El.classList.remove("hidden");
+        tab1El.classList.remove("active");
+        tab2El.classList.add("active");
+      }
+    }
+
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        utm_source: params.get("utm_source"),
+        utm_medium: params.get("utm_medium"),
+        utm_campaign: params.get("utm_campaign"),
+        utm_term: params.get("utm_term"),
+        utm_content: params.get("utm_content"),
+        course_id: params.get("courseId"),
+        fmt: params.get("ffmt"),
+        lang: params.get("lang")
+      };
+    }
+
     btnStep1.addEventListener("click", async () => {
+      msgStep1.classList.add("hidden");
+      msgStep1.textContent = "";
+
+      const phoneCode = document.getElementById("phoneCode").value;
+      const phoneNumber = document.getElementById("phoneNumber").value.trim();
       const childName = document.getElementById("childName").value.trim();
       const childGrade = document.getElementById("childGrade").value;
       const parentName = document.getElementById("parentName").value.trim();
       const parentEmail = document.getElementById("parentEmail").value.trim();
-      const phoneCode = document.getElementById("phoneCode").value;
-      const phoneNumber = document.getElementById("phoneNumber").value.trim();
+      const hasLaptop = document.querySelector("input[name='hasLaptop']:checked")?.value || null;
 
-      if (!childName || !childGrade || !parentName || !parentEmail || !phoneNumber) {
-        document.getElementById("msgStep1").textContent = "Please fill all fields.";
-        document.getElementById("msgStep1").classList.remove("hidden");
+      if (!phoneNumber || !childName || !childGrade || !parentName || !parentEmail) {
+        msgStep1.textContent = "Please fill all the required fields.";
+        msgStep1.classList.remove("hidden");
         return;
       }
 
+      btnStep1.disabled = true;
+
+      const urlInfo = getUrlParams();
       const { data, error } = await supabase
         .from("demo_leads")
         .insert([{
@@ -217,50 +360,92 @@
           parent_email: parentEmail,
           phone_country_code: phoneCode,
           phone_number: phoneNumber,
+          has_laptop: hasLaptop,
           landing_page_path: window.location.pathname,
-          full_url: window.location.href
+          full_url: window.location.href,
+          utm_source: urlInfo.utm_source,
+          utm_medium: urlInfo.utm_medium,
+          utm_campaign: urlInfo.utm_campaign,
+          utm_term: urlInfo.utm_term,
+          utm_content: urlInfo.utm_content,
+          course_id: urlInfo.course_id,
+          fmt: urlInfo.fmt,
+          lang: urlInfo.lang
         }])
         .select("id")
         .single();
 
+      btnStep1.disabled = false;
+
       if (error) {
-        alert("Error saving details.");
-        console.log(error);
+        console.error(error);
+        msgStep1.textContent = "Something went wrong while saving details. Please try again.";
+        msgStep1.classList.remove("hidden");
         return;
       }
 
-      leadId = data.id;
-
-      step1.classList.add("hidden");
-      step2.classList.remove("hidden");
-      tab1.classList.remove("active");
-      tab2.classList.add("active");
+      currentLeadId = data.id;
+      showStep(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    // Step 2 submit
     btnStep2.addEventListener("click", async () => {
+      msgStep2.classList.add("hidden");
+      msgSuccess.classList.add("hidden");
+      msgStep2.textContent = "";
+      msgSuccess.textContent = "";
+
       const preferredDate = document.getElementById("preferredDate").value;
       const preferredTime = document.getElementById("preferredTime").value;
+      const whoAreYou = document.getElementById("whoAreYou").value;
+      const bookingReason = document.getElementById("bookingReason").value.trim();
+      const purchaseTimeline = document.getElementById("purchaseTimeline").value;
+      const consent = document.getElementById("consent").checked;
 
       if (!preferredDate || !preferredTime) {
-        document.getElementById("msgStep2").textContent = "Select a date & time.";
-        document.getElementById("msgStep2").classList.remove("hidden");
+        msgStep2.textContent = "Please select a preferred date and time slot.";
+        msgStep2.classList.remove("hidden");
+        return;
+      }
+      if (!consent) {
+        msgStep2.textContent = "Please allow us to contact you so we can confirm your class.";
+        msgStep2.classList.remove("hidden");
         return;
       }
 
-      await supabase
+      btnStep2.disabled = true;
+
+      if (!currentLeadId) {
+        msgStep2.textContent = "We could not find your first step details. Please submit again from Step 1.";
+        msgStep2.classList.remove("hidden");
+        btnStep2.disabled = false;
+        return;
+      }
+
+      const { error } = await supabase
         .from("demo_leads")
         .update({
           preferred_date: preferredDate,
-          preferred_time_slot: preferredTime
+          preferred_time_slot: preferredTime,
+          who_are_you: whoAreYou,
+          booking_reason: bookingReason,
+          purchase_timeline: purchaseTimeline
         })
-        .eq("id", leadId);
+        .eq("id", currentLeadId);
 
-      document.getElementById("msgSuccess").textContent =
-        "Thank you! Your demo request has been submitted.";
-      document.getElementById("msgSuccess").classList.remove("hidden");
+      btnStep2.disabled = false;
+
+      if (error) {
+        console.error(error);
+        msgStep2.textContent = "Something went wrong while submitting your booking. Please try again.";
+        msgStep2.classList.remove("hidden");
+        return;
+      }
+
+      msgSuccess.textContent = "Thank you! Your demo request has been submitted. Our counsellor will contact you shortly to confirm the exact slot.";
+      msgSuccess.classList.remove("hidden");
+      btnStep2.disabled = true;
     });
-
   </script>
 </body>
 </html>

@@ -555,6 +555,26 @@ select:focus {
     justify-content: flex-start;
     gap: 72px;
   }
+
+  /* Limit visible countries on small screens, with scroll */
+  .iti__country-list {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+}
+
+/* Additional mobile override to avoid full-screen dropdown behaviour */
+@media (max-width: 640px) {
+  /* Ensure plugin's mobile full-screen styles don't take over */
+  .iti-mobile .iti--container {
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+    max-height: none !important;
+  }
+}
 }
 
 /* Responsive */
@@ -723,6 +743,17 @@ document.addEventListener("DOMContentLoaded", function () {
       utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
     });
   }
+
+  // Force desktop-style dropdown on mobile by removing iti-mobile class
+  const selectedFlag = document.querySelector(".iti__selected-flag");
+  if (selectedFlag) {
+    selectedFlag.addEventListener("click", function () {
+      setTimeout(function () {
+        document.body.classList.remove("iti-mobile");
+      }, 0);
+    });
+  }
+
 
   /* SUPABASE SETUP */
   const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";

@@ -496,145 +496,6 @@ select:focus {
   color: #bbf7d0;
 }
 
-
-/* STEP 2: DATE & TIME SLOT LIST (Option B style) */
-
-.step2-intro {
-  margin: 4px 0 14px;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.slot-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 240px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.slot-list-empty {
-  font-size: 13px;
-  color: var(--muted);
-  margin: 4px 0;
-}
-
-.slot-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(15,23,42,0.9);
-  border: 1px solid rgba(55,65,81,0.8);
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.15s ease;
-}
-
-.slot-main {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.slot-time {
-  font-weight: 600;
-  color: #e5e7eb;
-}
-
-.slot-meta {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.slot-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.slot-tag {
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(148,163,184,0.6);
-  color: rgba(209,213,219,0.95);
-}
-
-.slot-tag.star {
-  border-color: transparent;
-  background-image: var(--primary-gradient);
-  color: #020617;
-  box-shadow: 0 0 12px rgba(255,107,203,0.4);
-}
-
-.slot-row.full {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.slot-row.full .slot-time,
-.slot-row.full .slot-meta {
-  text-decoration: line-through;
-}
-
-.slot-row.selected {
-  border-color: rgba(129,140,248,0.95);
-  box-shadow: 0 0 0 1px rgba(129,140,248,0.8), 0 16px 30px rgba(15,23,42,0.9);
-  transform: translateY(-1px);
-}
-
-.slot-row:hover:not(.full):not(.selected) {
-  border-color: rgba(129,140,248,0.8);
-  background: #020617;
-}
-
-.step2-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-/* Secondary button for "Back" */
-.secondary-btn {
-  flex: 0 0 auto;
-  padding: 11px 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(148,163,184,0.7);
-  background: #020617;
-  color: #e5e7eb;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-}
-
-.secondary-btn:hover,
-.secondary-btn:active {
-  border-color: rgba(209,213,219,0.9);
-  background: #020617;
-  box-shadow: 0 10px 26px rgba(15,23,42,0.9);
-  transform: translateY(-1px);
-}
-
-/* On very small screens, keep list compact */
-@media (max-width: 640px) {
-  .slot-row {
-    padding: 9px 10px;
-  }
-  .slot-meta {
-    font-size: 11px;
-  }
-}
-
 /* Floating CTA for mobile */
 .floating-cta {
   position: fixed;
@@ -763,7 +624,6 @@ select:focus {
           <div class="step-bar"></div>
         </div>
 
-        <div id="step1Fields">
         <!-- PHONE (country code + number in one field) -->
         <div class="field-wrapper phone-field">
           <label for="parentPhone">Parent WhatsApp Number</label>
@@ -819,34 +679,6 @@ select:focus {
           <span class="icon">✨</span>
         </button>
 
-        </div>
-
-        <div id="step2Fields" style="display:none;">
-          <p class="step2-intro">Great! Now pick a convenient date & time for your child's live class.</p>
-
-          <div class="field-wrapper">
-            <label for="preferredDateSelect">Preferred Date</label>
-            <select id="preferredDateSelect" name="preferredDateSelect">
-              <option value="">Loading available dates...</option>
-            </select>
-          </div>
-
-          <div class="field-wrapper">
-            <label>Available Time Slots</label>
-            <div id="slotList" class="slot-list">
-              <p class="slot-list-empty">Select a date to see available slots.</p>
-            </div>
-          </div>
-
-          <div class="step2-actions">
-            <button type="button" class="secondary-btn" id="backToStep1">← Back</button>
-            <button type="button" class="submit-btn" id="confirmSlotBtn" disabled>
-              <span>Confirm &amp; Continue</span>
-              <span class="icon">➡️</span>
-            </button>
-          </div>
-        </div>
-
         <div id="formMessage" class="form-message"></div>
       </div>
     </div>
@@ -892,324 +724,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  /* URL PARAMS (for future course_id filter etc.) */
-  const urlParams = new URLSearchParams(window.location.search);
-  const courseIdParam = urlParams.get("courseId");
-  const courseIdFilter = courseIdParam && !isNaN(parseInt(courseIdParam, 10))
-    ? parseInt(courseIdParam, 10)
-    : null;
-
   /* SUPABASE SETUP */
   const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....CI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+
   const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-  /* MULTI-STEP STATE */
-  let currentLeadId = null;
-  let currentRegionRule = null;
-  let slotsByDate = {};
-  let selectedSlot = null; // full slot object
-
+  /* FORM SUBMIT HANDLER */
   const submitBtn = document.getElementById("submitLead");
   const messageEl = document.getElementById("formMessage");
-  const preferredDateSelect = document.getElementById("preferredDateSelect");
-  const slotListEl = document.getElementById("slotList");
-  const backToStep1Btn = document.getElementById("backToStep1");
-  const confirmSlotBtn = document.getElementById("confirmSlotBtn");
 
-  const step1Fields = document.getElementById("step1Fields");
-  const step2Fields = document.getElementById("step2Fields");
-  const stepBars = document.querySelectorAll(".step-bar");
-  const subtitleEl = document.querySelector(".form-subtitle");
-
-  function setStep(step) {
-    if (!step1Fields || !step2Fields) return;
-
-    if (step === 1) {
-      step1Fields.style.display = "block";
-      step2Fields.style.display = "none";
-
-      if (stepBars[0]) stepBars[0].classList.add("active");
-      if (stepBars[1]) stepBars[1].classList.remove("active");
-
-      if (subtitleEl) {
-        subtitleEl.textContent =
-          "Step 1 of 2 · Share your child & parent details to unlock a personalised trial class.";
-      }
-    } else {
-      step1Fields.style.display = "none";
-      step2Fields.style.display = "block";
-
-      if (stepBars[0]) stepBars[0].classList.add("active");
-      if (stepBars[1]) stepBars[1].classList.add("active");
-
-      if (subtitleEl) {
-        subtitleEl.textContent =
-          "Step 2 of 2 · Choose a convenient date & time for your child’s trial class.";
-      }
-    }
-  }
-
-  function formatDateLabel(dateObj) {
-    const weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const dayName = weekdays[dateObj.getDay()];
-    const monthName = months[dateObj.getMonth()];
-    const day = String(dateObj.getDate()).padStart(2, "0");
-    return `${dayName}, ${day} ${monthName}`;
-  }
-
-  function formatTimeLabel(dateObj) {
-    let hours = dateObj.getHours();
-    const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    if (hours === 0) hours = 12;
-    return `${hours}:${minutes} ${ampm}`;
-  }
-
-  function addMinutes(dateObj, minutes) {
-    return new Date(dateObj.getTime() + minutes * 60000);
-  }
-
-  async function fetchRegionRuleForCountry(countryIso2) {
-    if (!countryIso2) return null;
-    const upperIso = countryIso2.toUpperCase();
-
-    try {
-      const { data, error } = await supabaseClient
-        .from("region_time_rules")
-        .select("*")
-        .eq("is_active", true)
-        .ilike("countries", `%${upperIso}%`);
-
-      if (error) {
-        console.error("Error fetching region_time_rules:", error);
-        return null;
-      }
-      if (!data || !data.length) {
-        console.warn("No region_time_rules match for country:", upperIso);
-        return null;
-      }
-      return data[0];
-    } catch (err) {
-      console.error("Unexpected error while fetching region rule:", err);
-      return null;
-    }
-  }
-
-  async function loadSlotsForRegion(regionRule) {
-    slotsByDate = {};
-    selectedSlot = null;
-
-    if (slotListEl) {
-      slotListEl.innerHTML = '<p class="slot-list-empty">Loading slots...</p>';
-    }
-    if (confirmSlotBtn) {
-      confirmSlotBtn.disabled = true;
-    }
-
-    const now = new Date();
-    const maxDaysAhead = regionRule && typeof regionRule.max_days_ahead === "number"
-      ? regionRule.max_days_ahead
-      : 6;
-
-    const future = new Date(now.getTime() + maxDaysAhead * 24 * 60 * 60 * 1000);
-
-    let query = supabaseClient
-      .from("demo_slots")
-      .select("*")
-      .eq("is_active", true)
-      .gt("slot_start_ist", now.toISOString())
-      .lt("slot_start_ist", future.toISOString())
-      .order("slot_start_ist", { ascending: true });
-
-    if (regionRule && regionRule.region_key) {
-      query = query.eq("region_key", regionRule.region_key);
-    }
-
-    if (courseIdFilter !== null) {
-      query = query.eq("course_id", courseIdFilter);
-    }
-
-    let slotsData;
-    try {
-      const { data, error } = await query;
-      if (error) {
-        console.error("Error fetching demo_slots:", error);
-        if (slotListEl) {
-          slotListEl.innerHTML = '<p class="slot-list-empty">Unable to load slots. Please try again.</p>';
-        }
-        return;
-      }
-      slotsData = data || [];
-    } catch (err) {
-      console.error("Unexpected error while fetching slots:", err);
-      if (slotListEl) {
-        slotListEl.innerHTML = '<p class="slot-list-empty">Unable to load slots. Please try again.</p>';
-      }
-      return;
-    }
-
-    if (!slotsData.length) {
-      if (slotListEl) {
-        slotListEl.innerHTML = '<p class="slot-list-empty">No slots available right now. Our team will contact you on WhatsApp.</p>';
-      }
-      if (preferredDateSelect) {
-        preferredDateSelect.innerHTML = '<option value="">No dates available</option>';
-      }
-      return;
-    }
-
-    const offsetMinutes = regionRule && typeof regionRule.timezone_offset_min === "number"
-      ? regionRule.timezone_offset_min
-      : 0;
-
-    const allSlotsById = {};
-
-    slotsData.forEach((slot) => {
-      const istStart = new Date(slot.slot_start_ist);
-      const localStart = addMinutes(istStart, offsetMinutes);
-
-      const y = localStart.getFullYear();
-      const m = String(localStart.getMonth() + 1).padStart(2, "0");
-      const d = String(localStart.getDate()).padStart(2, "0");
-      const dateKey = `${y}-${m}-${d}`;
-
-      if (!slotsByDate[dateKey]) {
-        slotsByDate[dateKey] = {
-          dateObj: new Date(localStart.getTime()),
-          slots: []
-        };
-      }
-      slotsByDate[dateKey].slots.push(slot);
-      allSlotsById[slot.id] = { slot, localStart };
-    });
-
-    // Attach for later reference
-    window.__unischoolySlotsById = allSlotsById;
-
-    if (preferredDateSelect) {
-      preferredDateSelect.innerHTML = '<option value="">Select a date</option>';
-
-      const sortedDateKeys = Object.keys(slotsByDate).sort();
-      sortedDateKeys.forEach((dateKey) => {
-        const info = slotsByDate[dateKey];
-        const option = document.createElement("option");
-        option.value = dateKey;
-        option.textContent = formatDateLabel(info.dateObj);
-        preferredDateSelect.appendChild(option);
-      });
-    }
-
-    if (slotListEl) {
-      slotListEl.innerHTML = '<p class="slot-list-empty">Select a date to see available slots.</p>';
-    }
-  }
-
-  function renderSlotsForDate(dateKey) {
-    if (!slotListEl) return;
-
-    const info = slotsByDate[dateKey];
-    if (!info || !info.slots || !info.slots.length) {
-      slotListEl.innerHTML = '<p class="slot-list-empty">No slots available for this date.</p>';
-      selectedSlot = null;
-      if (confirmSlotBtn) confirmSlotBtn.disabled = true;
-      return;
-    }
-
-    slotListEl.innerHTML = "";
-
-    const offsetMinutes = currentRegionRule && typeof currentRegionRule.timezone_offset_min === "number"
-      ? currentRegionRule.timezone_offset_min
-      : 0;
-
-    info.slots.forEach((slot) => {
-      const istStart = new Date(slot.slot_start_ist);
-      const localStart = addMinutes(istStart, offsetMinutes);
-
-      const remaining = (slot.capacity_total || 0) - (slot.capacity_booked || 0);
-      const isFull = remaining <= 0;
-
-      const row = document.createElement("div");
-      row.className = "slot-row";
-      if (isFull) row.classList.add("full");
-      if (selectedSlot && selectedSlot.id === slot.id) {
-        row.classList.add("selected");
-      }
-
-      const main = document.createElement("div");
-      main.className = "slot-main";
-
-      const timeEl = document.createElement("div");
-      timeEl.className = "slot-time";
-      timeEl.textContent = formatTimeLabel(localStart);
-
-      const metaEl = document.createElement("div");
-      metaEl.className = "slot-meta";
-      if (isFull) {
-        metaEl.textContent = "Fully booked";
-      } else {
-        metaEl.textContent = remaining === 1 ? "1 seat left" : `${remaining} seats left`;
-      }
-
-      main.appendChild(timeEl);
-      main.appendChild(metaEl);
-
-      const tagsEl = document.createElement("div");
-      tagsEl.className = "slot-tags";
-
-      if (slot.is_star_teacher) {
-        const starTag = document.createElement("span");
-        starTag.className = "slot-tag star";
-        starTag.textContent = "⭐ Star teacher slot";
-        tagsEl.appendChild(starTag);
-      }
-
-      if (!isFull) {
-        const avTag = document.createElement("span");
-        avTag.className = "slot-tag";
-        avTag.textContent = "Available";
-        tagsEl.appendChild(avTag);
-      } else {
-        const fullTag = document.createElement("span");
-        fullTag.className = "slot-tag";
-        fullTag.textContent = "Full";
-        tagsEl.appendChild(fullTag);
-      }
-
-      row.appendChild(main);
-      row.appendChild(tagsEl);
-
-      if (!isFull) {
-        row.addEventListener("click", () => {
-          const allRows = slotListEl.querySelectorAll(".slot-row");
-          allRows.forEach((r) => r.classList.remove("selected"));
-          row.classList.add("selected");
-
-          selectedSlot = {
-            id: slot.id,
-            dateKey,
-            localStart: new Date(localStart.getTime()),
-            remaining,
-            capacity_total: slot.capacity_total,
-            capacity_booked: slot.capacity_booked || 0,
-            is_star_teacher: !!slot.is_star_teacher
-          };
-
-          if (confirmSlotBtn) confirmSlotBtn.disabled = false;
-        });
-      }
-
-      slotListEl.appendChild(row);
-    });
-
-    if (!selectedSlot && confirmSlotBtn) {
-      confirmSlotBtn.disabled = true;
-    }
-  }
-
-  async function handleSubmitStep1() {
+  async function handleSubmit() {
     if (!submitBtn) return;
 
     const childName   = document.getElementById("childName").value.trim();
@@ -1219,28 +744,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const hasComputer = (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
     const localNumber = phoneInput ? phoneInput.value.trim() : "";
 
-    if (messageEl) {
-      messageEl.textContent = "";
-      messageEl.classList.remove("error", "success");
-    }
+    messageEl.textContent = "";
+    messageEl.classList.remove("error", "success");
 
+    // Because child_grade is NOT NULL in your schema, force it to be selected
     if (!childName || !childGrade || !parentName || !parentEmail || !localNumber) {
-      if (messageEl) {
-        messageEl.textContent = "Please fill all required fields, including grade.";
-        messageEl.classList.add("error");
-      }
+      messageEl.textContent = "Please fill all required fields, including grade.";
+      messageEl.classList.add("error");
       return;
     }
 
     let fullNumber = localNumber;
     let phoneCountryCode = "";
-    let countryIso2 = "";
 
     if (iti) {
       const data = iti.getSelectedCountryData();
       fullNumber = iti.getNumber() || localNumber;
+      // store like +91, +1, etc in phone_country_code column
       phoneCountryCode = data && data.dialCode ? "+" + data.dialCode : "";
-      countryIso2 = data && data.iso2 ? data.iso2 : "";
     }
 
     submitBtn.disabled = true;
@@ -1259,135 +780,28 @@ document.addEventListener("DOMContentLoaded", function () {
             is_whatsapp: true,
             has_laptop: hasComputer === "yes" ? "yes" : "no"
           }
-        ])
-        .select("id")
-        .limit(1);
+        ]);
 
       if (error) {
         console.error("Supabase insert error:", error);
-        if (messageEl) {
-          messageEl.textContent = "Something went wrong while saving your details. Please try again.";
-          messageEl.classList.add("error");
-        }
-      } else if (data && data.length) {
-        currentLeadId = data[0].id;
-        setStep(2);
-
-        const formCard = document.getElementById("formCard");
-        if (formCard) {
-          formCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-
-        const regionRule = await fetchRegionRuleForCountry(countryIso2);
-        currentRegionRule = regionRule;
-        await loadSlotsForRegion(regionRule || null);
-
-        if (messageEl) {
-          messageEl.textContent = "";
-          messageEl.className = "form-message";
-        }
+        messageEl.textContent = "Something went wrong while saving your details. Please try again.";
+        messageEl.classList.add("error");
+      } else {
+        messageEl.textContent = "Your trial class request has been submitted successfully!";
+        messageEl.classList.add("success");
       }
     } catch (err) {
       console.error("Unexpected error:", err);
-      if (messageEl) {
-        messageEl.textContent = "Unexpected error. Please try again.";
-        messageEl.classList.add("error");
-      }
+      messageEl.textContent = "Unexpected error. Please try again.";
+      messageEl.classList.add("error");
     } finally {
       submitBtn.disabled = false;
     }
   }
 
-  async function handleConfirmSlot() {
-    if (!currentLeadId || !selectedSlot) {
-      if (messageEl) {
-        messageEl.textContent = "Please select a slot before continuing.";
-        messageEl.classList.add("error");
-      }
-      return;
-    }
-
-    if (confirmSlotBtn) confirmSlotBtn.disabled = true;
-    if (messageEl) {
-      messageEl.textContent = "";
-      messageEl.classList.remove("error", "success");
-    }
-
-    try {
-      const { data, error } = await supabaseClient
-        .from("demo_slots")
-        .update({
-          capacity_booked: selectedSlot.capacity_booked + 1
-        })
-        .eq("id", selectedSlot.id)
-        .lt("capacity_booked", selectedSlot.capacity_total);
-
-      if (error) {
-        console.error("Error updating demo_slots capacity:", error);
-        if (messageEl) {
-          messageEl.textContent = "That slot just got full. Please pick another slot.";
-          messageEl.classList.add("error");
-        }
-        await loadSlotsForRegion(currentRegionRule || null);
-        return;
-      }
-
-      if (!data || !data.length) {
-        if (messageEl) {
-          messageEl.textContent = "That slot just got full. Please pick another slot.";
-          messageEl.classList.add("error");
-        }
-        await loadSlotsForRegion(currentRegionRule || null);
-        return;
-      }
-
-      if (messageEl) {
-        messageEl.textContent = "Your slot is selected! Our team will confirm the booking on WhatsApp shortly.";
-        messageEl.classList.add("success");
-      }
-    } catch (err) {
-      console.error("Unexpected error while confirming slot:", err);
-      if (messageEl) {
-        messageEl.textContent = "Something went wrong while confirming your slot. Please try again.";
-        messageEl.classList.add("error");
-      }
-    } finally {
-      if (confirmSlotBtn) confirmSlotBtn.disabled = false;
-    }
-  }
-
   if (submitBtn) {
-    submitBtn.addEventListener("click", handleSubmitStep1);
+    submitBtn.addEventListener("click", handleSubmit);
   }
-
-  if (preferredDateSelect) {
-    preferredDateSelect.addEventListener("change", function () {
-      const dateKey = this.value;
-      if (dateKey) {
-        renderSlotsForDate(dateKey);
-      } else if (slotListEl) {
-        slotListEl.innerHTML = '<p class="slot-list-empty">Select a date to see available slots.</p>';
-        selectedSlot = null;
-        if (confirmSlotBtn) confirmSlotBtn.disabled = true;
-      }
-    });
-  }
-
-  if (backToStep1Btn) {
-    backToStep1Btn.addEventListener("click", function () {
-      setStep(1);
-      if (messageEl) {
-        messageEl.textContent = "";
-        messageEl.className = "form-message";
-      }
-    });
-  }
-
-  if (confirmSlotBtn) {
-    confirmSlotBtn.addEventListener("click", handleConfirmSlot);
-  }
-
-  setStep(1);
 });
 </script>
 

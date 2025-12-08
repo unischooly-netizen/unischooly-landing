@@ -524,8 +524,8 @@ select:focus {
 @media (max-width: 640px) {
   /* Keep intl-tel-input country dropdown as a smaller scrollable sheet instead of full-screen */
   .iti-mobile .iti--container {
-    top: auto !important;
-    bottom: 90px !important; /* sit above floating CTA */
+    top: 150px !important;          /* roughly under hero/form area */
+    bottom: auto !important;
     left: 50% !important;
     transform: translateX(-50%);
     width: 92% !important;
@@ -576,29 +576,6 @@ select:focus {
     grid-template-columns: minmax(0, 1fr);
   }
 }
-
-/* === FIX: Mobile Country Dropdown Correct Position === */
-@media (max-width: 640px) {
-  .iti-mobile .iti--container {
-    position: absolute !important;
-    top: calc(100% + 6px) !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: auto !important;
-    width: 100% !important;
-    max-height: 300px !important;
-    transform: none !important;
-    margin: 0 !important;
-    border-radius: 12px !important;
-    z-index: 99999 !important;
-  }
-  .iti-mobile .iti__country-list {
-    max-height: 260px !important;
-    overflow-y: auto !important;
-    border-radius: 12px !important;
-  }
-}
-
 </style>
 </head>
 

@@ -1,9 +1,7 @@
-===============================
-UNISCHOOLY - UPDATED FIXES FILE
-Only 2 changes applied:
-1. Mobile radio layout fixed
-2. Hero background image slightly more visible
-===============================
+<!-- ===============================
+   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
+   Version: 1.5 (Mobile radio layout + slightly brighter hero image)
+================================ -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +10,7 @@ Only 2 changes applied:
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Unischooly - Book a Free Trial Class</title>
 
+<!-- International telephone input (for country code + flags + search) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.css"/>
 
 <style>
@@ -25,25 +24,35 @@ Only 2 changes applied:
   --muted: rgba(255,255,255,0.7);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: #020617;
   color: #f9fafb;
   overflow-x: hidden;
 }
 
 .container {
+  width: 100%;
   max-width: 1180px;
   margin: 0 auto;
   padding: 0 16px;
 }
 
-/* HEADER */
+/* ===================================
+   HEADER
+=================================== */
+
 header {
   width: 100%;
   padding: 18px 0;
-  background: rgba(2,6,23,0.85);
+  background: rgba(2, 6, 23, 0.85);
   backdrop-filter: blur(14px);
   position: fixed;
   top: 0;
@@ -54,27 +63,133 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 18px;
 }
 
-/* HERO */
+/* Gradient logo using provided SVG as mask */
+.logo {
+  width: 170px;
+  height: 40px;
+  background-image: var(--primary-gradient);
+  -webkit-mask: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center;
+          mask: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+  filter: drop-shadow(0 0 10px rgba(255,107,203,0.18));
+}
+
+.logo:hover,
+.logo:active {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 10px rgba(255,107,203,0.9))
+          drop-shadow(0 0 18px rgba(54,209,220,0.9));
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.nav-link {
+  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(226,232,240,0.9);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background-image: var(--primary-gradient);
+  transition: width 0.25s ease;
+}
+
+.nav-link:hover,
+.nav-link:active {
+  color: #e5e7eb;
+  text-shadow: 0 0 10px rgba(255,107,203,0.9), 0 0 18px rgba(54,209,220,0.9);
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::after,
+.nav-link:active::after {
+  width: 100%;
+}
+
+/* CTA button in header */
+.book-btn {
+  background-image: var(--primary-gradient);
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  border: none;
+  outline: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  white-space: nowrap;
+  color: #f9fafb;
+}
+
+/* Mobile: make CTA appear black (as requested) */
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+
+  .book-btn {
+    background: #020617;
+    border: 1px solid rgba(148,163,184,0.85);
+    box-shadow: 0 6px 16px rgba(15,23,42,0.9);
+  }
+}
+
+.book-btn:hover,
+.book-btn:active {
+  opacity: 0.9;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  transform: translateY(-1px);
+}
+
+/* ===================================
+   HERO SECTION + BACKGROUND OVERLAY
+=================================== */
+
 .hero-section {
   position: relative;
-  padding-top: 140px;
+  padding-top: 140px; /* clears fixed header */
   padding-bottom: 80px;
+  overflow: hidden;
+  background-color: #020617;
   background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
 
-/* ⭐ CHANGE #2 — Make background slightly more visible */
+/* Dark + neon gradient overlay to keep content readable
+   while underlying hero image stays slightly more visible */
 .hero-section::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(132,89,255,0.18), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(54,209,220,0.18), transparent 55%),
-    linear-gradient(135deg, rgba(2,6,23,0.78), rgba(8,1,22,0.80)); /* reduced from 0.88–0.90 */
+    radial-gradient(circle at top left, rgba(132,89,255,0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(54,209,220,0.16), transparent 55%),
+    linear-gradient(135deg, rgba(2,6,23,0.78), rgba(8,1,22,0.82));
   z-index: 0;
 }
 
@@ -82,59 +197,359 @@ header {
   position: relative;
   z-index: 1;
   display: flex;
+  justify-content: space-between;
   gap: 40px;
   flex-wrap: wrap;
 }
 
-/* FORM CARD */
+/* LEFT SIDE */
+
+.hero-left {
+  width: 48%;
+  min-width: 320px;
+}
+
+.hero-left h1 {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  cursor: default;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.hero-left h1 span {
+  background-image: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glow on hover / click for main heading */
+.hero-left h1:hover,
+.hero-left h1:active {
+  text-shadow: 0 0 18px rgba(255,107,203,0.9), 0 0 32px rgba(54,209,220,0.9);
+  transform: translateY(-1px);
+}
+
+.hero-left p {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* Badges */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 420px;
+  margin-top: 16px;
+}
+
+.badge {
+  background: rgba(15,23,42,0.9);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  border: 1px solid rgba(148,163,184,0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* ===================================
+   FORM CARD
+=================================== */
+
 .form-card {
   width: 420px;
   max-width: 100%;
   background: var(--card-bg);
-  padding: 26px 24px;
+  padding: 26px 24px 24px;
   border-radius: 20px;
-  box-shadow: 0 0 40px rgba(0,0,0,0.55);
+  box-shadow: 0px 0px 40px rgba(0,0,0,0.55);
+  position: relative;
+  overflow: hidden;
 }
 
-.radio-group {
-  margin: 10px 0;
+.form-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background-image: var(--primary-gradient-soft);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
 }
 
-.radio-label {
-  margin-bottom: 6px;
+/* Keep inner content above gradient border mask */
+.form-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Form header + subtle glow on hover */
+.form-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: default;
+  background-image: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.form-title:hover,
+.form-title:active {
+  text-shadow: 0 0 12px rgba(255,107,203,0.9), 0 0 26px rgba(54,209,220,0.85);
+  transform: translateY(-0.5px);
+}
+
+.form-subtitle {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Two-step indicator line */
+.step-indicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.step-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(30,64,175,0.5);
+}
+
+.step-bar.active {
+  background-image: var(--primary-gradient);
+}
+
+/* Labels + inputs */
+
+label {
+  font-size: 14px;
+  color: rgba(226,232,240,0.95);
   display: block;
 }
 
-/* ⭐ CHANGE #1 — FIX MOBILE LAYOUT FOR YES/NO */
+.field-wrapper {
+  margin-bottom: 14px;
+}
+
+/* Extra sub-label row for phone field (Country code / Mobile number) */
+.phone-field .phone-sub-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(148,163,184,0.9);
+  margin-top: 4px;
+}
+
+.phone-field input#parentPhone {
+  margin-top: 4px;
+}
+
+/* Telephone input plugin wraps input in .iti */
+.iti {
+  width: 100%;
+}
+
+/* Underlying input styling */
+input,
+select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(30,64,175,0.3);
+  outline: none;
+  background: var(--input-bg);
+  color: #f9fafb;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(129,140,248,0.9);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
+  background: #020617;
+}
+
+/* Style intl-tel-input dropdown + search for dark theme */
+.iti__country-list {
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  box-shadow: 0 18px 40px rgba(15,23,42,0.9);
+}
+
+.iti__country {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.iti__country.iti__highlight {
+  background: #111827;
+}
+
+.iti__search-input {
+  background: #020617;
+  color: #e5e7eb;
+  border-radius: 8px;
+  border: 1px solid #374151;
+}
+
+.iti__search-input::placeholder {
+  color: #6b7280;
+}
+
+/* Laptop / Desktop question */
+.radio-group {
+  margin: 4px 0 10px;
+}
+
+.radio-label {
+  font-size: 14px;
+  margin: 0 0 6px;
+  color: rgba(226,232,240,0.95);
+}
+
 .radio-options {
   display: flex;
-  justify-content: space-between;   /* evenly spread */
   align-items: center;
-  width: 100%;
+  gap: 18px;
 }
 
 .radio-option {
-  display: flex;
+  font-size: 14px;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 15px;
+  cursor: pointer;
 }
 
-input[type="radio"] {
+.radio-option input[type="radio"] {
   accent-color: #ff6bcb;
 }
 
-/* CTA */
+/* CTA button inside card */
+
 .submit-btn {
   width: 100%;
-  margin-top: 14px;
   padding: 15px 0;
-  border-radius: 999px;
+  margin-top: 14px;
   background-image: var(--primary-gradient);
-  border: none;
+  border-radius: 999px; /* fully round */
   font-size: 16px;
   font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  outline: none;
+  transition: 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 12px 30px rgba(15,23,42,0.9);
+  color: #020617; /* black text on gradient */
+}
+
+.submit-btn span.icon {
+  font-size: 18px;
+}
+
+.submit-btn:hover,
+.submit-btn:active {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(15,23,42,1);
+}
+
+/* Form message */
+.form-message {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.form-message.error {
+  color: #fca5a5;
+}
+
+.form-message.success {
+  color: #bbf7d0;
+}
+
+/* Floating CTA for mobile */
+.floating-cta {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  background-image: var(--primary-gradient);
+  box-shadow: 0 18px 40px rgba(15,23,42,1);
   color: #020617;
+  font-size: 15px;
+  font-weight: 600;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 998;
+  white-space: nowrap; /* keep one line */
+}
+
+/* Only show floating CTA on small screens */
+@media (max-width: 640px) {
+  .floating-cta {
+    display: inline-flex;
+  }
+
+  /* mobile tweak for Laptop / Desktop radios: keep Yes / No on one line with better spacing */
+  .radio-options {
+    justify-content: flex-start;
+    gap: 32px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+  .hero-left,
+  .form-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-left h1 {
+    font-size: 34px;
+  }
+  .badge-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>
 </head>
@@ -143,52 +558,227 @@ input[type="radio"] {
 
 <header>
   <div class="container navbar">
-    <div class="logo"></div>
-    <button class="book-btn" type="button">Book Trial Class</button>
+    <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Unischooly logo"></div>
+
+    <nav class="nav-links">
+      <a href="#programs" class="nav-link">Programs</a>
+      <a href="#experts" class="nav-link">Meet our Experts</a>
+      <a href="#curriculum" class="nav-link">Curriculum</a>
+      <a href="#faqs" class="nav-link">FAQs</a>
+    </nav>
+
+    <button class="book-btn" type="button" onclick="scrollToForm()">Book Trial Class</button>
   </div>
 </header>
 
 <section class="hero-section">
   <div class="container hero">
 
+    <!-- LEFT TEXT -->
     <div class="hero-left">
       <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
-      <p>A personalised 60-minute class to introduce your child to coding.</p>
+      <p>A personalised 60-minute class to introduce your child to coding, logic skills &amp; futuristic learning.</p>
+
+      <div class="badge-grid">
+        <div class="badge">⏱ <span>60-min Live Class</span></div>
+        <div class="badge">👩‍🏫 <span>Top 1% Certified Teachers</span></div>
+        <div class="badge">🌎 <span>Kids in 30+ Countries</span></div>
+        <div class="badge">🚀 <span>Hands-On Projects</span></div>
+      </div>
     </div>
 
-    <div class="form-card">
+    <!-- RIGHT FORM -->
+    <div class="form-card" id="formCard">
       <div class="form-inner">
+        <h2 class="form-title">Book Now &amp; Get Certified</h2>
+        <p class="form-subtitle">Step 1 of 2 · Share your child &amp; parent details to unlock a personalised trial class.</p>
 
-        <h2 class="form-title">Book Now & Get Certified</h2>
-        <p class="form-subtitle">Step 1 of 2</p>
+        <!-- Gradient 2-step indicator line -->
+        <div class="step-indicator">
+          <div class="step-bar active"></div>
+          <div class="step-bar"></div>
+        </div>
 
-        <!-- FORM FIELDS (unchanged) -->
+        <!-- PHONE (country code + number in one field) -->
+        <div class="field-wrapper phone-field">
+          <label for="parentPhone">Parent WhatsApp Number</label>
+          <div class="phone-sub-label-row">
+            <span>Country code</span>
+            <span>Mobile number</span>
+          </div>
+          <input type="tel" id="parentPhone" name="parentPhone" placeholder="Enter mobile number" />
+        </div>
 
+        <div class="field-wrapper">
+          <label for="childName">Child Name</label>
+          <input type="text" id="childName" name="childName" placeholder="Enter child's name" />
+        </div>
+
+        <div class="field-wrapper">
+          <label for="childGrade">Child Grade</label>
+          <select id="childGrade" name="childGrade">
+            <option value="">Select Grade</option>
+            <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+            <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+            <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+          </select>
+        </div>
+
+        <div class="field-wrapper">
+          <label for="parentName">Parent Name</label>
+          <input type="text" id="parentName" name="parentName" placeholder="Enter parent name" />
+        </div>
+
+        <div class="field-wrapper">
+          <label for="parentEmail">Parent Email</label>
+          <input type="email" id="parentEmail" name="parentEmail" placeholder="Enter email" />
+        </div>
+
+        <!-- Laptop / Desktop question -->
         <div class="radio-group">
           <p class="radio-label">Do you have a Laptop or Desktop?</p>
-
           <div class="radio-options">
             <label class="radio-option">
-              <input type="radio" name="hasComputer" value="yes" checked>
+              <input type="radio" name="hasComputer" value="yes" checked />
               <span>Yes</span>
             </label>
-
             <label class="radio-option">
-              <input type="radio" name="hasComputer" value="no">
+              <input type="radio" name="hasComputer" value="no" />
               <span>No</span>
             </label>
           </div>
         </div>
 
-        <button class="submit-btn" type="button">
-          Book a Free Trial Class ✨
+        <button class="submit-btn" type="button" id="submitLead">
+          <span>Book a Free Trial Class</span>
+          <span class="icon">✨</span>
         </button>
+
+        <div id="formMessage" class="form-message"></div>
       </div>
     </div>
 
   </div>
 </section>
 
+<!-- Floating CTA (mobile) -->
+<button class="floating-cta" type="button" onclick="scrollToForm()">
+  <span>Book a Free Trial Class</span>
+  <span>✨</span>
+</button>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+function scrollToForm() {
+  const form = document.getElementById("formCard");
+  if (form) {
+    form.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  /* PHONE INPUT INITIALISATION */
+  const phoneInput = document.querySelector("#parentPhone");
+  let iti;
+
+  if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
+      initialCountry: "us", // Default to USA
+      separateDialCode: true,
+      autoPlaceholder: "polite",
+      preferredCountries: [
+        "us","ca","gb","ae","sa","kw","qa","bh","om",
+        "id","ph","th",
+        "sg","vn","au","nz",
+        "in","bd","jp","my",
+        "za","ng"
+      ],
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+    });
+  }
+
+  /* SUPABASE SETUP */
+  const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
+  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+
+  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  /* FORM SUBMIT HANDLER */
+  const submitBtn = document.getElementById("submitLead");
+  const messageEl = document.getElementById("formMessage");
+
+  async function handleSubmit() {
+    if (!submitBtn) return;
+
+    const childName   = document.getElementById("childName").value.trim();
+    const childGrade  = document.getElementById("childGrade").value;
+    const parentName  = document.getElementById("parentName").value.trim();
+    const parentEmail = document.getElementById("parentEmail").value.trim();
+    const hasComputer = (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
+    const localNumber = phoneInput ? phoneInput.value.trim() : "";
+
+    messageEl.textContent = "";
+    messageEl.classList.remove("error", "success");
+
+    // Because child_grade is NOT NULL in your schema, force it to be selected
+    if (!childName || !childGrade || !parentName || !parentEmail || !localNumber) {
+      messageEl.textContent = "Please fill all required fields, including grade.";
+      messageEl.classList.add("error");
+      return;
+    }
+
+    let fullNumber = localNumber;
+    let phoneCountryCode = "";
+
+    if (iti) {
+      const data = iti.getSelectedCountryData();
+      fullNumber = iti.getNumber() || localNumber;
+      // store like +91, +1, etc in phone_country_code column
+      phoneCountryCode = data && data.dialCode ? "+" + data.dialCode : "";
+    }
+
+    submitBtn.disabled = true;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("demo_leads")
+        .insert([
+          {
+            child_name:   childName,
+            child_grade:  childGrade,
+            parent_name:  parentName,
+            parent_email: parentEmail,
+            phone_country_code: phoneCountryCode,
+            phone_number: fullNumber,
+            is_whatsapp: true,
+            has_laptop: hasComputer === "yes" ? "yes" : "no"
+          }
+        ]);
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        messageEl.textContent = "Something went wrong while saving your details. Please try again.";
+        messageEl.classList.add("error");
+      } else {
+        messageEl.textContent = "Your trial class request has been submitted successfully!";
+        messageEl.classList.add("success");
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      messageEl.textContent = "Unexpected error. Please try again.";
+      messageEl.classList.add("error");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener("click", handleSubmit);
+  }
+});
+</script>
+
 </body>
 </html>
-

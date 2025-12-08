@@ -1,6 +1,6 @@
 <!-- ===============================
    UNISCHOOLY - HEADER + HERO + STEP 1 FORM
-   Version: 1.5 (Mobile radio layout + slightly brighter hero image)
+   Version: 1.4 (Supabase column fix + validation)
 ================================ -->
 
 <!DOCTYPE html>
@@ -181,17 +181,18 @@ header {
 }
 
 /* Dark + neon gradient overlay to keep content readable
-   while underlying hero image stays slightly more visible */
+   while underlying hero image stays visible & light */
 .hero-section::before {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top left, rgba(132,89,255,0.16), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(54,209,220,0.16), transparent 55%),
-    linear-gradient(135deg, rgba(2,6,23,0.78), rgba(8,1,22,0.82));
+    radial-gradient(circle at top left, rgba(132,89,255,0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(54,209,220,0.18), transparent 55%),
+    linear-gradient(135deg, rgba(2,6,23,0.78), rgba(8,1,22,0.80));
   z-index: 0;
 }
+
 
 .hero {
   position: relative;
@@ -432,8 +433,10 @@ select:focus {
 
 .radio-options {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 18px;
+  width: 100%;
 }
 
 .radio-option {
@@ -523,12 +526,6 @@ select:focus {
 @media (max-width: 640px) {
   .floating-cta {
     display: inline-flex;
-  }
-
-  /* mobile tweak for Laptop / Desktop radios: keep Yes / No on one line with better spacing */
-  .radio-options {
-    justify-content: flex-start;
-    gap: 32px;
   }
 }
 

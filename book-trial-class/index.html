@@ -347,6 +347,101 @@ header {
   display: block;
 }
 
+.date-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 4px 0;
+}
+
+.date-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(15,23,42,0.9);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.date-chip .date-chip-main {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.date-chip .date-chip-sub {
+  opacity: 0.85;
+}
+
+.date-chip.active {
+  border-color: transparent;
+  background-image: var(--primary-gradient);
+  color: #0b1120;
+  box-shadow: 0 0 0 1px rgba(15,23,42,0.6);
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.slot-card {
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(15,23,42,0.85);
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: all 0.18s ease;
+}
+
+.slot-card .slot-time {
+  font-weight: 600;
+}
+
+.slot-card .slot-capacity {
+  font-size: 11px;
+  color: rgba(148,163,184,0.9);
+}
+
+.slot-card .star-badge {
+  margin-top: 2px;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.1);
+  color: #facc15;
+}
+
+.slot-card:hover:not(.slot-full):not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.6), 0 8px 20px rgba(15,23,42,0.8);
+}
+
+.slot-card.selected {
+  border-color: transparent;
+  background-image: var(--primary-gradient);
+  color: #020617;
+}
+
+.slot-card.selected .slot-capacity {
+  color: rgba(15,23,42,0.9);
+}
+
+.slot-card.slot-full {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* Labels + inputs */
 
 label {
@@ -633,7 +728,6 @@ select:focus {
           <div class="step-bar" data-step="3"></div>
         </div>
 
-        <!-- PHONE (country code + number in one field) -->
         <!-- STEP 1 PANE -->
         <div id="step1Pane" class="step-pane active">
           <!-- PHONE (country code + number in one field) -->
@@ -691,9 +785,13 @@ select:focus {
         <div id="step2Pane" class="step-pane">
           <div class="field-wrapper">
             <label for="preferredDate">Select Date</label>
-            <input type="date" id="preferredDate" name="preferredDate" />
+            <!-- Hidden native date input just to store the YYYY-MM-DD value -->
+            <input type="date" id="preferredDate" name="preferredDate" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;" />
+            <div id="dateChipsContainer" class="date-chips-row">
+              <!-- Date chips will be injected here -->
+            </div>
             <small id="dateHint" style="display:block;margin-top:4px;font-size:12px;color:rgba(148,163,184,0.9);">
-              You can choose a date within the next few days based on your region.
+              Choose a date within the next few days. "Today" shows only slots at least 1 hour from now.
             </small>
           </div>
 
@@ -790,8 +888,6 @@ select:focus {
         </button>
 
         <div id="formMessage" class="form-message"></div>
-
-        <div id="formMessage" class="form-message"></div>
       </div>
     </div>
 
@@ -816,480 +912,235 @@ function scrollToForm() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Supabase client
-  const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Elements
   const phoneInput = document.querySelector("#parentPhone");
-  const childNameInput = document.querySelector("#childName");
-  const childGradeSelect = document.querySelector("#childGrade");
-  const parentNameInput = document.querySelector("#parentName");
-  const parentEmailInput = document.querySelector("#parentEmail");
-  const formMessage = document.querySelector("#formMessage");
-  const submitBtn = document.querySelector("#submitLead");
-  const submitBtnText = document.querySelector("#submitLeadText");
-  const stepSubtitle = document.querySelector(".form-subtitle");
+  let iti;
+
+  if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
+      initialCountry: "auto",
+      separateDialCode: true,
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js",
+      geoIpLookup: function (callback) {
+        fetch("https://ipapi.co/json/")
+          .then((res) => res.json())
+          .then((data) => {
+            callback(data.country_code || "IN");
+          })
+          .catch(() => {
+            callback("IN");
+          });
+      }
+    });
+  }
+
+  const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
+  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  const urlParams = new URLSearchParams(window.location.search || "");
+  const courseIdFromUrl = parseInt(urlParams.get("courseId") || "1", 10) || 1;
+  const regionFromUrl = urlParams.get("region") || "";
+  const langFromUrl = (urlParams.get("lang") || "english").toLowerCase();
+  const utm_source = urlParams.get("utm_source") || null;
+  const utm_medium = urlParams.get("utm_medium") || null;
+  const utm_campaign = urlParams.get("utm_campaign") || null;
+  const utm_term = urlParams.get("utm_term") || null;
+  const utm_content = urlParams.get("utm_content") || null;
+
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
+
+  const step1Pane = document.getElementById("step1Pane");
+  const step2Pane = document.getElementById("step2Pane");
+  const step3Pane = document.getElementById("step3Pane");
+  const submitBtn = document.getElementById("submitLead");
+  const submitBtnText = document.getElementById("submitLeadText");
+  const messageEl = document.getElementById("formMessage");
+  const preferredDateInput = document.getElementById("preferredDate");
+  const slotsContainer = document.getElementById("slotsContainer");
+  const consentCheckbox = document.getElementById("consentCheckbox");
   const stepBars = document.querySelectorAll(".step-bar");
-  const step1Pane = document.querySelector("#step1Pane");
-  const step2Pane = document.querySelector("#step2Pane");
-  const step3Pane = document.querySelector("#step3Pane");
-  const preferredDateInput = document.querySelector("#preferredDate");
-  const slotsContainer = document.querySelector("#slotsContainer");
-  const consentCheckbox = document.querySelector("#consentCheckbox");
 
   let currentStep = 1;
-  let iti = null;
+  let currentLeadId = null;
   let activeSlotId = null;
   let activeSlotLabel = null;
   let activeSlotIsStar = false;
-  let currentLeadId = null; // uuid from demo_leads.id
+  let cachedSlotsByDate = null;
   let regionKeyFromUrl = null;
-  let courseIdFromUrl = null;
-  let langFromUrl = null;
-  let fmtFromUrl = null;
-  let utmFromUrl = {};
-  let browserTimezone = (Intl && Intl.DateTimeFormat().resolvedOptions().timeZone) || null;
-
-  // Country-to-region mapping (from your list)
-  const COUNTRY_TO_REGION = {
-    "Saudi Arabia": "MEA",
-    "United Kingdom": "EUROPE",
-    "Bahrain": "MEA",
-    "Egypt": "ROW",
-    "India": "INDIA",
-    "United States of America": "USA",
-    "Indonesia": "SEA",
-    "Jordan": "ROW",
-    "Qatar": "MEA",
-    "South Africa": "ROW",
-    "Oman": "MEA",
-    "New Zealand": "ANZ",
-    "Australia": "ANZ",
-    "Ghana": "ROW",
-    "Vietnam": "SEA",
-    "Kuwait": "MEA",
-    "Norway": "EUROPE",
-    "Canada": "USA",
-    "Albania": "EUROPE",
-    "Ireland": "EUROPE",
-    "Singapore": "SEA",
-    "Nigeria": "ROW",
-    "Bangladesh": "ROW",
-    "Germany": "EUROPE",
-    "Pakistan": "ROW",
-    "Ukraine": "EUROPE",
-    "Algeria": "ROW",
-    "Sri Lanka": "ROW",
-    "Malaysia": "SEA",
-    "Philippines": "SEA",
-    "Israel": "ROW",
-    "Myanmar": "SEA",
-    "Switzerland": "EUROPE",
-    "Denmark": "EUROPE",
-    "Iraq": "ROW",
-    "Lebanon": "ROW",
-    "Kenya": "ROW",
-    "Tanzania": "ROW",
-    "Chat": "ROW",
-    "Greece": "EUROPE",
-    "Hong Kong": "SEA",
-    "United Arab Emirates": "MEA",
-    "Morocco": "ROW",
-    "Andorra": "EUROPE",
-    "Mexico": "EUROPE",
-    "Turkey": "ROW",
-    "Sweden": "EUROPE",
-    "France": "EUROPE",
-    "Italy": "EUROPE",
-    "Spain": "EUROPE",
-    "South Korea": "SEA",
-    "Thailand": "SEA",
-    "Netherlands": "EUROPE",
-    "Hungary": "EUROPE",
-    "Estonia": "EUROPE",
-    "Azerbaijan": "EUROPE",
-    "Belgium": "EUROPE",
-    "Lithuania": "EUROPE",
-    "Romania": "EUROPE",
-    "Vatican": "EUROPE",
-    "Cyprus": "EUROPE",
-    "Nepal": "ROW",
-    "Georgia": "EUROPE",
-    "Uganda": "ROW",
-    "Poland": "EUROPE",
-    "Bulgaria": "EUROPE",
-    "Russia": "EUROPE",
-    "Fiji": "EUROPE",
-    "Uzbekistan": "EUROPE",
-    "Finland": "EUROPE",
-    "Ethiopia": "EUROPE",
-    "Trinidad and Tobago": "EUROPE",
-    "Jersey": "EUROPE",
-    "Puerto Rico": "EUROPE",
-    "Malawi": "EUROPE",
-    "Japan": "SEA",
-    "New York City": "USA",
-    "Boston": "USA",
-    "Stockton": "USA",
-    "Brazil": "EUROPE",
-    "Cameroon": "EUROPE",
-    "Taiwan": "SEA",
-    "Monaco": "EUROPE",
-    "Isle of Man": "EUROPE",
-    "Christmas Island": "EUROPE",
-    "Luxembourg": "EUROPE",
-    "Guatemala": "EUROPE",
-    "Madagascar": "EUROPE",
-    "Peru": "EUROPE",
-    "China": "SEA",
-    "Mongolia": "EUROPE",
-    "Czech Republic": "EUROPE",
-    "Cambodia": "SEA",
-    "Zambia": "ROW",
-    "Afghanistan": "ROW",
-    "El Salvador": "ROW",
-    "Chile": "ROW",
-    "Colombia": "ROW",
-    "Ecuador": "ROW",
-    "Lao People's Democratic Republic": "SEA",
-    "Botswana": "ROW",
-    "Yemen": "ROW",
-    "Cocos (Keeling) Islands": "ANZ",
-    "Jamaica": "ROW",
-    "Tunisia": "ROW",
-    "Ivory Coast": "ROW",
-    "Dominican Republic": "ROW",
-    "Mauritius": "ROW",
-    "Iran": "ROW",
-    "Anguilla": "ROW",
-    "Lesotho": "ROW",
-    "Congo": "ROW",
-    "Macedonia": "EUROPE",
-    "Bosnia and Herzegovina": "EUROPE",
-    "Cuba": "ROW",
-    "Swaziland": "ROW",
-    "Latvia": "EUROPE",
-    "Zimbawbae": "ROW",
-    "Portugal": "EUROPE",
-    "Bolivia": "ROW",
-    "Kazakhstan": "ROW",
-    "Venezuela": "ROW"
-  };
-
-  function getRegionForCountry(countryName) {
-    return COUNTRY_TO_REGION[countryName] || "ROW";
-  }
-
-  // Parse URL params
-  function parseUrlParams() {
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
-
-    courseIdFromUrl = params.get("courseId") ? parseInt(params.get("courseId"), 10) : null;
-    regionKeyFromUrl = params.get("region") || null;
-    langFromUrl = params.get("lang") || null;
-    fmtFromUrl = params.get("fmt") || null;
-
-    utmFromUrl = {
-      utm_source: params.get("utm_source") || null,
-      utm_medium: params.get("utm_medium") || null,
-      utm_campaign: params.get("utm_campaign") || null,
-      utm_term: params.get("utm_term") || null,
-      utm_content: params.get("utm_content") || null
-    };
-
-    // Set hero text based on courseId (simple example)
-    const heroTitle = document.querySelector(".hero-left h1");
-    const heroSubtitle = document.querySelector(".hero-left p");
-    if (heroTitle && courseIdFromUrl) {
-      const courseNames = {
-        1: "Free Live Coding Class",
-        2: "Free Live Python Class",
-        3: "Free Website Development Class",
-        4: "Free Generative AI Class",
-        5: "Free Roblox Coding Class",
-        6: "Free Chess Masterclass",
-        7: "Free Mathematics Masterclass"
-      };
-      const label = courseNames[courseIdFromUrl] || "Free Live Coding Class";
-      heroTitle.innerHTML = `Book a <span>${label}</span><br>for your child.`;
-      if (heroSubtitle && courseIdFromUrl === 6) {
-        heroSubtitle.textContent = "A strategic 60-minute class to sharpen thinking and problem-solving through chess.";
-      }
-    }
-  }
-
-  parseUrlParams();
-
-  // PHONE INPUT INITIALISATION
-  if (phoneInput && window.intlTelInput) {
-    iti = window.intlTelInput(phoneInput, {
-      initialCountry: "us",
-      separateDialCode: true,
-      autoPlaceholder: "polite",
-      preferredCountries: [
-        "us","ca","gb","ae","sa","kw","qa","bh","om",
-        "id","ph","th",
-        "sg","vn","au","nz",
-        "in","bd","jp","my"
-      ],
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
-    });
-  }
 
   function setStep(step) {
     currentStep = step;
 
-    if (stepSubtitle) {
-      stepSubtitle.textContent =
-        step === 1
-          ? "Step 1 of 3 · Share your child & parent details to unlock a personalised trial class."
-          : step === 2
-          ? "Step 2 of 3 · Pick a convenient date & time for your child's trial class."
-          : "Step 3 of 3 · Help us understand your goals so we can personalise the session.";
-    }
+    if (step1Pane) step1Pane.classList.toggle("active", step === 1);
+    if (step2Pane) step2Pane.classList.toggle("active", step === 2);
+    if (step3Pane) step3Pane.classList.toggle("active", step === 3);
 
-    stepBars.forEach((bar, index) => {
-      const stepIndex = index + 1;
-      if (stepIndex <= step) {
+    stepBars.forEach((bar) => {
+      const s = parseInt(bar.getAttribute("data-step") || "1", 10);
+      if (s <= step) {
         bar.classList.add("active");
       } else {
         bar.classList.remove("active");
       }
     });
 
-    if (step1Pane) step1Pane.classList.toggle("active", step === 1);
-    if (step2Pane) step2Pane.classList.toggle("active", step === 2);
-    if (step3Pane) step3Pane.classList.toggle("active", step === 3);
-
     if (submitBtnText) {
-      submitBtnText.textContent =
-        step === 1 ? "Continue" : step === 2 ? "Confirm Date & Time" : "Complete Booking";
+      if (step === 1) submitBtnText.textContent = "Continue";
+      else if (step === 2) submitBtnText.textContent = "Confirm Slot";
+      else submitBtnText.textContent = "Confirm Booking";
     }
-
-    if (formMessage) {
-      formMessage.textContent = "";
-      formMessage.classList.remove("error", "success");
-    }
-  }
-
-  setStep(1);
-
-  function getDeviceType() {
-    const width = window.innerWidth;
-    if (width < 640) return "mobile";
-    if (width < 1024) return "tablet";
-    return "desktop";
-  }
-
-  function getBrowserName() {
-    const ua = navigator.userAgent;
-    if (ua.indexOf("Chrome") > -1 && ua.indexOf("Edg") === -1) return "Chrome";
-    if (ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") === -1) return "Safari";
-    if (ua.indexOf("Firefox") > -1) return "Firefox";
-    if (ua.indexOf("Edg") > -1) return "Edge";
-    return "Other";
-  }
-
-  async function estimateConnectionSpeed() {
-    const nav = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (nav && typeof nav.downlink === "number") {
-      return nav.downlink; // in Mbps
-    }
-    return null;
-  }
-
-  function getSelectedRadioValue(name) {
-    const radios = document.querySelectorAll(`input[name="${name}"]`);
-    for (const r of radios) {
-      if (r.checked) return r.value;
-    }
-    return null;
-  }
-
-  function validateStep1() {
-    if (!phoneInput || !iti) return { ok: false, message: "Phone number input is not ready yet." };
-
-    const phoneNumber = phoneInput.value.trim();
-    if (!phoneNumber) return { ok: false, message: "Please enter your WhatsApp number." };
-    if (!iti.isValidNumber()) return { ok: false, message: "Please enter a valid mobile number." };
-
-    if (!childNameInput.value.trim()) {
-      return { ok: false, message: "Please enter your child's name." };
-    }
-    if (!childGradeSelect.value) {
-      return { ok: false, message: "Please select your child's grade." };
-    }
-    if (!parentNameInput.value.trim()) {
-      return { ok: false, message: "Please enter the parent name." };
-    }
-    if (!parentEmailInput.value.trim()) {
-      return { ok: false, message: "Please enter the parent email." };
-    }
-
-    return { ok: true };
-  }
-
-  function validateStep2() {
-    if (!preferredDateInput.value) {
-      return { ok: false, message: "Please select a date for the trial class." };
-    }
-    if (!activeSlotId) {
-      return { ok: false, message: "Please select a time slot for the trial class." };
-    }
-    if (!consentCheckbox.checked) {
-      return { ok: false, message: "Please agree to be contacted to proceed." };
-    }
-    return { ok: true };
-  }
-
-  function validateStep3() {
-    const who = getSelectedRadioValue("whoAreYou");
-    const reason = getSelectedRadioValue("bookingReason");
-    const timeline = getSelectedRadioValue("purchaseTimeline");
-    if (!who || !reason || !timeline) {
-      return { ok: false, message: "Please answer all the questions to complete your booking." };
-    }
-    return { ok: true };
   }
 
   function showMessage(type, text) {
-    if (!formMessage) return;
-    formMessage.textContent = text;
-    formMessage.classList.remove("error", "success");
-    formMessage.classList.add(type);
+    if (!messageEl) return;
+    messageEl.textContent = text || "";
+    messageEl.classList.remove("error", "success");
+    if (!text) return;
+    if (type === "error") messageEl.classList.add("error");
+    if (type === "success") messageEl.classList.add("success");
+  }
+
+  function mapRegionKey(rawRegion) {
+    if (!rawRegion) return "ROW";
+    const r = rawRegion.toUpperCase();
+    if (["MEA", "EUROPE", "USA", "SEA", "ANZ", "INDIA", "ROW"].includes(r)) {
+      return r;
+    }
+    return "ROW";
+  }
+
+  regionKeyFromUrl = mapRegionKey(regionFromUrl);
+
+  function getPhoneDetails() {
+    let localNumber = phoneInput ? phoneInput.value.trim() : "";
+    let phoneCountryCode = "";
+    let countryName = "";
+    let regionKey = regionKeyFromUrl || "ROW";
+
+    if (iti) {
+      localNumber = iti.getNumber(intlTelInputUtils.numberFormat.NATIONAL).replace(/\s+/g, "");
+      phoneCountryCode = iti.getSelectedCountryData().dialCode || "";
+      countryName = iti.getSelectedCountryData().name || "";
+    }
+
+    return { localNumber, phoneCountryCode, countryName, regionKey };
   }
 
   async function handleStep1Submit() {
-    const validation = validateStep1();
-    if (!validation.ok) {
-      showMessage("error", validation.message);
+    if (!submitBtn) return;
+    submitBtn.disabled = true;
+    showMessage(null, "");
+
+    const { localNumber, phoneCountryCode, countryName, regionKey } = getPhoneDetails();
+
+    const childName   = document.getElementById("childName").value.trim();
+    const childGrade  = document.getElementById("childGrade").value;
+    const parentName  = document.getElementById("parentName").value.trim();
+    const parentEmail = document.getElementById("parentEmail").value.trim();
+    const hasComputer = (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
+
+    if (!childName || !childGrade || !parentName || !parentEmail || !localNumber) {
+      showMessage("error", "Please fill all required fields, including grade and phone.");
+      submitBtn.disabled = false;
       return;
     }
 
-    submitBtn.disabled = true;
-    showMessage("success", "Saving your details...");
-
-    const itiData = iti.getSelectedCountryData();
-    const phoneCountryCode = itiData.dialCode ? `+${itiData.dialCode}` : null;
-    const phoneNumber = phoneInput.value.trim();
-    const fullUrl = window.location.href;
-    const landingPath = window.location.pathname;
-    const deviceType = getDeviceType();
-    const browserName = getBrowserName();
-    const internetSpeed = await estimateConnectionSpeed();
-
-    let regionKey = regionKeyFromUrl || null;
-    let countryName = itiData.name || null;
-    if (!regionKey && countryName) {
-      regionKey = getRegionForCountry(countryName);
+    let fullNumber = localNumber;
+    if (phoneCountryCode && !localNumber.startsWith("+")) {
+      fullNumber = "+" + phoneCountryCode + localNumber;
     }
-    if (!regionKey) regionKey = "ROW";
+
+    const isWhatsapp = true;
 
     try {
+      const ipResponse = await fetch("https://ipapi.co/json/");
+      const ipData = await ipResponse.json().catch(() => ({}));
+      const ip_address = ipData.ip || null;
+      const city = ipData.city || null;
+      const country = ipData.country_name || countryName || null;
+      const timezone = ipData.timezone || browserTimezone;
+      const device_type = /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
+      const browser = navigator.userAgent || null;
+
+      const leadPayload = {
+        child_name: childName,
+        child_grade: childGrade,
+        parent_name: parentName,
+        parent_email: parentEmail,
+        phone_country_code: phoneCountryCode || null,
+        phone_number: localNumber,
+        is_whatsapp: isWhatsapp,
+        has_laptop: hasComputer,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content,
+        course_id: courseIdFromUrl,
+        lang: langFromUrl,
+        landing_page_path: window.location.pathname,
+        full_url: window.location.href,
+        ip_address,
+        city,
+        country,
+        region_key: regionKey,
+        device_type,
+        browser,
+        timezone,
+        page_completed: 1
+      };
+
       const { data, error } = await supabaseClient
         .from("demo_leads")
-        .insert([
-          {
-            child_name: childNameInput.value.trim(),
-            child_grade: childGradeSelect.value,
-            parent_name: parentNameInput.value.trim(),
-            parent_email: parentEmailInput.value.trim(),
-            phone_country_code: phoneCountryCode,
-            phone_number: phoneNumber,
-            is_whatsapp: true,
-            has_laptop: getSelectedRadioValue("hasComputer"),
-            course_id: courseIdFromUrl || null,
-            fmt: fmtFromUrl,
-            lang: langFromUrl,
-            landing_page_path: landingPath,
-            full_url: fullUrl,
-            utm_source: utmFromUrl.utm_source,
-            utm_medium: utmFromUrl.utm_medium,
-            utm_campaign: utmFromUrl.utm_campaign,
-            utm_term: utmFromUrl.utm_term,
-            utm_content: utmFromUrl.utm_content,
-            region_key: regionKey,
-            device_type: deviceType,
-            browser: browserName,
-            internet_speed_mbps: internetSpeed,
-            timezone: browserTimezone,
-            page_completed: 1
-          }
-        ])
-        .select("id")
+        .insert([leadPayload])
+        .select("*")
         .single();
 
       if (error) {
-        console.error("Supabase insert error (step1):", error);
-        showMessage("error", "Something went wrong while saving your details. Please try again.");
-      } else {
-        currentLeadId = data.id;
-        setStep(2);
-        showMessage("success", "Great! Now choose a date and time for your trial class.");
-        await loadAvailableDatesAndSlots(regionKey);
+        console.error("Error inserting demo_leads:", error);
+        showMessage("error", "Unable to save your details right now. Please try again.");
+        submitBtn.disabled = false;
+        return;
       }
+
+      currentLeadId = data.id;
+      setStep(2);
+      showMessage("success", "Great! Now choose a date and time for your trial class.");
+      await loadSlotsAndDates(regionKey);
     } catch (err) {
-      console.error("Unexpected error (step1):", err);
+      console.error("Unexpected error in Step 1:", err);
       showMessage("error", "Unexpected error. Please try again.");
     } finally {
       submitBtn.disabled = false;
     }
   }
 
-  async function loadAvailableDatesAndSlots(regionKey) {
+  async function loadSlotsAndDates(regionKey) {
+    if (!slotsContainer || !preferredDateInput) return;
     if (!regionKey) regionKey = regionKeyFromUrl || "ROW";
+
+    const dateChipsContainer = document.querySelector("#dateChipsContainer");
+    if (!dateChipsContainer) return;
+
+    slotsContainer.innerHTML = "Loading slots...";
+    dateChipsContainer.innerHTML = "";
+    cachedSlotsByDate = null;
+    activeSlotId = null;
+    activeSlotLabel = null;
+    activeSlotIsStar = false;
 
     try {
       const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const maxDaysAhead = 5;
+      const endRange = new Date(now.getTime() + maxDaysAhead * 24 * 60 * 60 * 1000);
 
-      const minDateStr = today.toISOString().split("T")[0];
-      preferredDateInput.min = minDateStr;
-
-      const maxDate = new Date(today);
-      maxDate.setDate(today.getDate() + maxDaysAhead);
-      const maxDateStr = maxDate.toISOString().split("T")[0];
-      preferredDateInput.max = maxDateStr;
-
-      preferredDateInput.value = minDateStr;
-
-      await loadSlotsForSelectedDate(regionKey);
-      preferredDateInput.addEventListener("change", () => {
-        loadSlotsForSelectedDate(regionKey);
-      });
-    } catch (err) {
-      console.error("Error setting up date and slots:", err);
-      showMessage("error", "Unable to load available dates and slots. Please refresh the page.");
-    }
-  }
-
-  async function loadSlotsForSelectedDate(regionKey) {
-    if (!slotsContainer) return;
-    slotsContainer.innerHTML = "Loading slots...";
-
-    const selectedDateStr = preferredDateInput.value;
-    if (!selectedDateStr) {
-      slotsContainer.innerHTML = "<p>Please choose a date first.</p>";
-      return;
-    }
-
-    const startOfDayIst = new Date(selectedDateStr + "T00:00:00+05:30");
-    const endOfDayIst = new Date(selectedDateStr + "T23:59:59+05:30");
-    const now = new Date();
-
-    try {
       const { data, error } = await supabaseClient
         .from("demo_slots")
         .select("*")
         .eq("region_key", regionKey)
         .eq("course_id", courseIdFromUrl || 1)
-        .gte("slot_start_ist", startOfDayIst.toISOString())
-        .lte("slot_start_ist", endOfDayIst.toISOString())
         .eq("is_active", true)
+        .order("slot_start_ist", { ascending: true })
         .order("slot_start_ist", { ascending: true });
 
       if (error) {
@@ -1299,189 +1150,302 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (!data || data.length === 0) {
-        slotsContainer.innerHTML = "<p>No slots available for this date.</p>";
+        slotsContainer.innerHTML = "<p>No slots available for the next few days.</p>";
         return;
       }
 
-      slotsContainer.innerHTML = "";
-      activeSlotId = null;
-      activeSlotLabel = null;
-      activeSlotIsStar = false;
-
       const userTz = browserTimezone || "Asia/Kolkata";
+      const grouped = new Map();
 
       data.forEach((slotRow) => {
         const slotStartIst = new Date(slotRow.slot_start_ist);
         const slotEndIst = new Date(slotRow.slot_end_ist);
 
-        const slotStartLocal = new Date(slotStartIst.toLocaleString("en-US", { timeZone: userTz }));
-        const slotEndLocal = new Date(slotEndIst.toLocaleString("en-US", { timeZone: userTz }));
+        const slotStartLocal = new Date(
+          slotStartIst.toLocaleString("en-US", { timeZone: userTz })
+        );
+        const slotEndLocal = new Date(
+          slotEndIst.toLocaleString("en-US", { timeZone: userTz })
+        );
 
-        const isToday =
-          slotStartIst.getFullYear() === now.getFullYear() &&
-          slotStartIst.getMonth() === now.getMonth() &&
-          slotStartIst.getDate() === now.getDate();
-
-        if (isToday) {
-          const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-          if (slotStartIst <= oneHourLater) {
-            return;
-          }
+        const dateKey = slotStartLocal.toISOString().split("T")[0];
+        if (!grouped.has(dateKey)) {
+          grouped.set(dateKey, []);
         }
-
-        const capacityLeft = (slotRow.capacity_total || 0) - (slotRow.capacity_booked || 0);
-        const isFull = capacityLeft <= 0;
-
-        const card = document.createElement("button");
-        card.type = "button";
-        card.className = "slot-card";
-        card.disabled = isFull;
-
-        const timeLabel = `${slotStartLocal.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit"
-        })} - ${slotEndLocal.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit"
-        })}`;
-
-        const starBadge = slotRow.is_star_teacher ? '<span class="star-badge">⭐ Star Teacher</span>' : "";
-
-        card.innerHTML = `
-          <span class="slot-time">${timeLabel}</span>
-          <span class="slot-capacity">${isFull ? "Full" : capacityLeft + " spots left"}</span>
-          ${starBadge}
-        `;
-
-        if (isFull) {
-          card.classList.add("slot-full");
-        }
-
-        card.addEventListener("click", () => {
-          const allCards = slotsContainer.querySelectorAll(".slot-card");
-          allCards.forEach((c) => c.classList.remove("selected"));
-          card.classList.add("selected");
-          activeSlotId = slotRow.id;
-          activeSlotLabel = timeLabel;
-          activeSlotIsStar = !!slotRow.is_star_teacher;
+        grouped.get(dateKey).push({
+          row: slotRow,
+          startLocal: slotStartLocal,
+          endLocal: slotEndLocal
         });
-
-        slotsContainer.appendChild(card);
       });
 
-      if (!slotsContainer.innerHTML) {
-        slotsContainer.innerHTML = "<p>No valid slots available for this date.</p>";
+      if (grouped.size === 0) {
+        slotsContainer.innerHTML = "<p>No slots available for your timezone.</p>";
+        return;
+      }
+
+      cachedSlotsByDate = grouped;
+
+      const sortedDateKeys = Array.from(grouped.keys()).sort();
+      const todayLocal = new Date(
+        new Date().toLocaleString("en-US", { timeZone: userTz })
+      );
+      const todayKey = todayLocal.toISOString().split("T")[0];
+
+      const tomorrowLocal = new Date(todayLocal);
+      tomorrowLocal.setDate(todayLocal.getDate() + 1);
+      const tomorrowKey = tomorrowLocal.toISOString().split("T")[0];
+
+      let firstDateKey = null;
+
+      sortedDateKeys.forEach((dateKey) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "date-chip";
+
+        const chipDate = new Date(dateKey + "T00:00:00");
+        const dayName = chipDate.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = chipDate.getDate().toString().padStart(2, "0");
+        const monthShort = chipDate.toLocaleDateString("en-US", { month: "short" });
+
+        let mainLabel;
+        if (dateKey === todayKey) {
+          mainLabel = "Today";
+        } else if (dateKey === tomorrowKey) {
+          mainLabel = "Tomorrow";
+        } else {
+          mainLabel = dayName;
+        }
+
+        chip.innerHTML = `
+          <span class="date-chip-main">${mainLabel}</span>
+          <span class="date-chip-sub">${dayNum} ${monthShort}</span>
+        `;
+
+        chip.addEventListener("click", () => {
+          const allChips = dateChipsContainer.querySelectorAll(".date-chip");
+          allChips.forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          preferredDateInput.value = dateKey;
+          renderSlotsForDate(dateKey, grouped, userTz);
+        });
+
+        dateChipsContainer.appendChild(chip);
+        if (!firstDateKey) firstDateKey = dateKey;
+      });
+
+      if (firstDateKey) {
+        const firstChip = dateChipsContainer.querySelector(".date-chip");
+        if (firstChip) firstChip.classList.add("active");
+        preferredDateInput.value = firstDateKey;
+        renderSlotsForDate(firstDateKey, grouped, userTz);
+      } else {
+        slotsContainer.innerHTML = "<p>No valid dates available.</p>";
       }
     } catch (err) {
-      console.error("Unexpected error fetching slots:", err);
-      slotsContainer.innerHTML = "<p>Unable to load slots. Please try again later.</p>";
+      console.error("Error setting up date and slots:", err);
+      slotsContainer.innerHTML = "<p>Unable to load available dates and slots. Please refresh the page.</p>";
+    }
+  }
+
+  function renderSlotsForDate(dateKey, grouped, userTz) {
+    if (!slotsContainer) return;
+    slotsContainer.innerHTML = "";
+    activeSlotId = null;
+    activeSlotLabel = null;
+    activeSlotIsStar = false;
+
+    const entries = grouped.get(dateKey) || [];
+    if (!entries.length) {
+      slotsContainer.innerHTML = "<p>No slots available for this date.</p>";
+      return;
+    }
+
+    const nowLocal = new Date(
+      new Date().toLocaleString("en-US", { timeZone: userTz })
+    );
+    const oneHourLaterLocal = new Date(nowLocal.getTime() + 60 * 60 * 1000);
+
+    entries.forEach(({ row, startLocal, endLocal }) => {
+      const isSameDay =
+        startLocal.getFullYear() === nowLocal.getFullYear() &&
+        startLocal.getMonth() === nowLocal.getMonth() &&
+        startLocal.getDate() === nowLocal.getDate();
+
+      if (isSameDay && startLocal <= oneHourLaterLocal) {
+        return;
+      }
+
+      const capacityLeft = (row.capacity_total || 0) - (row.capacity_booked || 0);
+      const isFull = capacityLeft <= 0;
+
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "slot-card";
+      card.disabled = isFull;
+
+      const timeLabel = `${startLocal.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      })} - ${endLocal.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      })}`;
+
+      const starBadge = row.is_star_teacher
+        ? '<span class="star-badge">⭐ Star Teacher</span>'
+        : "";
+
+      card.innerHTML = `
+        <span class="slot-time">${timeLabel}</span>
+        <span class="slot-capacity">${
+          isFull ? "Full" : capacityLeft + " spots left"
+        }</span>
+        ${starBadge}
+      `;
+
+      if (isFull) {
+        card.classList.add("slot-full");
+      }
+
+      card.addEventListener("click", () => {
+        const allCards = slotsContainer.querySelectorAll(".slot-card");
+        allCards.forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+        activeSlotId = row.id;
+        activeSlotLabel = timeLabel;
+        activeSlotIsStar = !!row.is_star_teacher;
+      });
+
+      slotsContainer.appendChild(card);
+    });
+
+    if (!slotsContainer.innerHTML) {
+      slotsContainer.innerHTML = "<p>No valid slots available for this date.</p>";
     }
   }
 
   async function handleStep2Submit() {
-    const validation = validateStep2();
-    if (!validation.ok) {
-      showMessage("error", validation.message);
-      return;
-    }
-
     if (!currentLeadId) {
-      showMessage("error", "Your details could not be found. Please refresh and try again.");
+      showMessage("error", "Please complete Step 1 first.");
       return;
     }
-
-    submitBtn.disabled = true;
-    showMessage("success", "Locking your slot...");
+    if (!activeSlotId || !preferredDateInput.value) {
+      showMessage("error", "Please select a date and a time slot.");
+      return;
+    }
+    if (!consentCheckbox || !consentCheckbox.checked) {
+      showMessage("error", "Please tick the consent checkbox to continue.");
+      return;
+    }
 
     try {
-      const { error } = await supabaseClient
+      const { data: slotRow, error: slotError } = await supabaseClient
+        .from("demo_slots")
+        .select("*")
+        .eq("id", activeSlotId)
+        .single();
+
+      if (slotError) {
+        console.error("Error fetching chosen slot:", slotError);
+        showMessage("error", "Unable to confirm slot. Please try again or choose another slot.");
+        return;
+      }
+
+      const dateForDb = preferredDateInput.value;
+
+      const { error: updateLeadError } = await supabaseClient
         .from("demo_leads")
         .update({
-          preferred_date: preferredDateInput.value,
+          preferred_date: dateForDb,
           preferred_time_slot: activeSlotLabel,
-          slot_id: activeSlotId,
+          page_completed: 2,
           star_teacher_selected: activeSlotIsStar,
-          page_completed: 2
+          slot_id: activeSlotId
         })
         .eq("id", currentLeadId);
 
-      if (error) {
-        console.error("Supabase update error (step2):", error);
-        showMessage("error", "Unable to lock your slot. Please try another time.");
-      } else {
-        setStep(3);
-        showMessage("success", "Slot locked! One last step to personalise your session.");
+      if (updateLeadError) {
+        console.error("Error updating lead with slot:", updateLeadError);
+        showMessage("error", "Unable to save your selected slot. Please try again.");
+        return;
       }
+
+      const { error: slotCapError } = await supabaseClient.rpc("increment_slot_booking", {
+        p_slot_id: activeSlotId
+      });
+
+      if (slotCapError) {
+        console.error("Error incrementing slot capacity:", slotCapError);
+      }
+
+      setStep(3);
+      showMessage("success", "Slot locked! Now answer 3 quick questions to finish.");
     } catch (err) {
-      console.error("Unexpected error (step2):", err);
-      showMessage("error", "Unexpected error. Please try again.");
-    } finally {
-      submitBtn.disabled = false;
+      console.error("Unexpected error in Step 2:", err);
+      showMessage("error", "Unexpected error while confirming your slot. Please try again.");
     }
   }
 
   async function handleStep3Submit() {
-    const validation = validateStep3();
-    if (!validation.ok) {
-      showMessage("error", validation.message);
-      return;
-    }
-
     if (!currentLeadId) {
-      showMessage("error", "Your details could not be found. Please refresh and try again.");
+      showMessage("error", "Please complete previous steps first.");
       return;
     }
 
-    submitBtn.disabled = true;
-    showMessage("success", "Finalising your booking...");
+    const whoAreYou = (document.querySelector('input[name="whoAreYou"]:checked') || {}).value || null;
+    const bookingReason = (document.querySelector('input[name="bookingReason"]:checked') || {}).value || null;
+    const purchaseTimeline = (document.querySelector('input[name="purchaseTimeline"]:checked') || {}).value || null;
 
-    const who = getSelectedRadioValue("whoAreYou");
-    const reason = getSelectedRadioValue("bookingReason");
-    const timeline = getSelectedRadioValue("purchaseTimeline");
+    if (!whoAreYou || !bookingReason || !purchaseTimeline) {
+      showMessage("error", "Please select all the options to complete your booking.");
+      return;
+    }
 
     try {
       const { error } = await supabaseClient
         .from("demo_leads")
         .update({
-          who_are_you: who,
-          booking_reason: reason,
-          purchase_timeline: timeline,
+          who_are_you: whoAreYou,
+          booking_reason: bookingReason,
+          purchase_timeline: purchaseTimeline,
           page_completed: 3
         })
         .eq("id", currentLeadId);
 
       if (error) {
-        console.error("Supabase update error (step3):", error);
-        showMessage("error", "Unable to complete your booking. Please try again.");
-      } else {
-        showMessage("success", "Your demo booking is confirmed! Our team will reach out shortly.");
-        if (submitBtnText) submitBtnText.textContent = "Booked ✔";
-        submitBtn.disabled = true;
+        console.error("Error updating lead in Step 3:", error);
+        showMessage("error", "Unable to save your responses. Please try again.");
+        return;
       }
+
+      showMessage("success", "All set! Your trial class is booked. Our team will reach out soon.");
+      const cta = document.querySelector(".floating-cta");
+      if (cta) cta.style.display = "none";
     } catch (err) {
-      console.error("Unexpected error (step3):", err);
-      showMessage("error", "Unexpected error. Please try again.");
-      submitBtn.disabled = false;
+      console.error("Unexpected error in Step 3:", err);
+      showMessage("error", "Unexpected error while completing your booking. Please try again.");
     }
   }
 
   async function handleSubmitClick() {
-    if (currentStep === 1) {
+    showMessage(null, "");
+    if (!currentLeadId) {
       await handleStep1Submit();
     } else if (currentStep === 2) {
       await handleStep2Submit();
-    } else if (currentStep === 3) {
+    } else {
       await handleStep3Submit();
     }
   }
 
   if (submitBtn) {
-    submitBtn.addEventListener("click", function () {
-      handleSubmitClick();
-    });
+    submitBtn.addEventListener("click", handleSubmitClick);
   }
+
+  setStep(1);
 });
-</script>
+</script></script>
 
 </body>
 </html>

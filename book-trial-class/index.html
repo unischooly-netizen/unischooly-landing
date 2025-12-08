@@ -1,249 +1,1485 @@
-
-<!--
-Unischooly – Booking Flow
-Header + Hero + Page 1 (New Workflow)
-File: Header_Hero_Page1_v1.txt
--->
+<!-- ===============================
+   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
+   Version: 1.5 (Mobile radio layout + slightly brighter hero image)
+================================ -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Book Free Trial Class | Unischooly</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unischooly - Book a Free Trial Class</title>
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- International telephone input (for country code + flags + search) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.css"/>
 
-  <!-- Intl Tel Input -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.0/build/css/intlTelInput.css" />
+<style>
+/* GLOBAL */
+:root {
+  --primary-gradient: linear-gradient(135deg, #ff6bcb, #8459ff, #36d1dc);
+  --primary-gradient-soft: linear-gradient(135deg, rgba(255,107,203,0.85), rgba(132,89,255,0.9), rgba(54,209,220,0.85));
+  --card-bg: #161922;
+  --page-bg: #050716;
+  --input-bg: #0f111a;
+  --muted: rgba(255,255,255,0.7);
+}
 
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #0b0b0b;
-      color: #ffffff;
-    }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-    header {
-      padding: 16px 24px;
-      border-bottom: 1px solid #1f1f1f;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #020617;
+  color: #f9fafb;
+  overflow-x: hidden;
+}
 
-    header img {
-      height: 28px;
-    }
+.container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
 
-    .hero {
-      padding: 40px 20px 24px;
-      text-align: center;
-    }
+/* ===================================
+   HEADER
+=================================== */
 
-    .hero h1 {
-      font-size: 28px;
-      margin-bottom: 12px;
-      font-weight: 700;
-    }
+header {
+  width: 100%;
+  padding: 18px 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(14px);
+  position: fixed;
+  top: 0;
+  z-index: 999;
+}
 
-    .hero p {
-      font-size: 16px;
-      color: #cfcfcf;
-    }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
 
-    .form-card {
-      background: #121212;
-      margin: 24px auto 80px;
-      max-width: 420px;
-      padding: 24px;
-      border-radius: 16px;
-      border: 1px solid #1f1f1f;
-    }
+/* Gradient logo using provided SVG as mask */
+.logo {
+  width: 170px;
+  height: 40px;
+  background-image: var(--primary-gradient);
+  -webkit-mask: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center;
+          mask: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, filter 0.25s ease;
+  filter: drop-shadow(0 0 10px rgba(255,107,203,0.18));
+}
 
-    .form-group {
-      margin-bottom: 16px;
-    }
+.logo:hover,
+.logo:active {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 10px rgba(255,107,203,0.9))
+          drop-shadow(0 0 18px rgba(54,209,220,0.9));
+}
 
-    label {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 6px;
-      color: #bdbdbd;
-    }
+/* Nav links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+}
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #2a2a2a;
-      background: #0b0b0b;
-      color: #fff;
-      font-size: 14px;
-    }
+.nav-link {
+  position: relative;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(226,232,240,0.9);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #7c3aed;
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background-image: var(--primary-gradient);
+  transition: width 0.25s ease;
+}
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+.nav-link:hover,
+.nav-link:active {
+  color: #e5e7eb;
+  text-shadow: 0 0 10px rgba(255,107,203,0.9), 0 0 18px rgba(54,209,220,0.9);
+  transform: translateY(-1px);
+}
 
-    .note {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 12px;
-      text-align: center;
-    }
-  </style>
+.nav-link:hover::after,
+.nav-link:active::after {
+  width: 100%;
+}
+
+/* CTA button in header */
+.book-btn {
+  background-image: var(--primary-gradient);
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  border: none;
+  outline: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  white-space: nowrap;
+  color: #f9fafb;
+}
+
+/* Mobile: make CTA appear black (as requested) */
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+
+  .book-btn {
+    background: #020617;
+    border: 1px solid rgba(148,163,184,0.85);
+    box-shadow: 0 6px 16px rgba(15,23,42,0.9);
+  }
+}
+
+.book-btn:hover,
+.book-btn:active {
+  opacity: 0.9;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  transform: translateY(-1px);
+}
+
+/* ===================================
+   HERO SECTION + BACKGROUND OVERLAY
+=================================== */
+
+.hero-section {
+  position: relative;
+  padding-top: 140px; /* clears fixed header */
+  padding-bottom: 80px;
+  overflow: hidden;
+  background-color: #020617;
+  background-image: url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Dark + neon gradient overlay to keep content readable
+   while underlying hero image stays slightly more visible */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(132,89,255,0.16), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(54,209,220,0.16), transparent 55%),
+    linear-gradient(135deg, rgba(2,6,23,0.78), rgba(8,1,22,0.82));
+  z-index: 0;
+}
+
+.hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* LEFT SIDE */
+
+.hero-left {
+  width: 48%;
+  min-width: 320px;
+}
+
+.hero-left h1 {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  cursor: default;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.hero-left h1 span {
+  background-image: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Glow on hover / click for main heading */
+.hero-left h1:hover,
+.hero-left h1:active {
+  text-shadow: 0 0 18px rgba(255,107,203,0.9), 0 0 32px rgba(54,209,220,0.9);
+  transform: translateY(-1px);
+}
+
+.hero-left p {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* Badges */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 420px;
+  margin-top: 16px;
+}
+
+.badge {
+  background: rgba(15,23,42,0.9);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  border: 1px solid rgba(148,163,184,0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* ===================================
+   FORM CARD
+=================================== */
+
+.form-card {
+  width: 420px;
+  max-width: 100%;
+  background: var(--card-bg);
+  padding: 26px 24px 24px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 40px rgba(0,0,0,0.55);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background-image: var(--primary-gradient-soft);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+}
+
+/* Keep inner content above gradient border mask */
+.form-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Form header + subtle glow on hover */
+.form-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: default;
+  background-image: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.form-title:hover,
+.form-title:active {
+  text-shadow: 0 0 12px rgba(255,107,203,0.9), 0 0 26px rgba(54,209,220,0.85);
+  transform: translateY(-0.5px);
+}
+
+.form-subtitle {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Two-step indicator line */
+.step-indicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.step-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(30,64,175,0.5);
+}
+
+.step-bar.active {
+  background-image: var(--primary-gradient);
+}
+
+.step-pane {
+  display: none;
+}
+
+.step-pane.active {
+  display: block;
+}
+
+/* Labels + inputs */
+
+label {
+  font-size: 14px;
+  color: rgba(226,232,240,0.95);
+  display: block;
+}
+
+.field-wrapper {
+  margin-bottom: 14px;
+}
+
+/* Extra sub-label row for phone field (Country code / Mobile number) */
+.phone-field .phone-sub-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(148,163,184,0.9);
+  margin-top: 4px;
+}
+
+.phone-field input#parentPhone {
+  margin-top: 4px;
+}
+
+/* Telephone input plugin wraps input in .iti */
+.iti {
+  width: 100%;
+}
+
+/* Underlying input styling */
+input,
+select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(30,64,175,0.3);
+  outline: none;
+  background: var(--input-bg);
+  color: #f9fafb;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(129,140,248,0.9);
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
+  background: #020617;
+}
+
+/* Style intl-tel-input dropdown + search for dark theme */
+.iti__country-list {
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  box-shadow: 0 18px 40px rgba(15,23,42,0.9);
+}
+
+.iti__country {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.iti__country.iti__highlight {
+  background: #111827;
+}
+
+.iti__search-input {
+  background: #020617;
+  color: #e5e7eb;
+  border-radius: 8px;
+  border: 1px solid #374151;
+}
+
+.iti__search-input::placeholder {
+  color: #6b7280;
+}
+
+/* Laptop / Desktop question */
+.radio-group {
+  margin: 4px 0 10px;
+}
+
+.radio-label {
+  font-size: 14px;
+  margin: 0 0 6px;
+  color: rgba(226,232,240,0.95);
+}
+
+.radio-options {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.radio-option {
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  accent-color: #ff6bcb;
+}
+
+/* CTA button inside card */
+
+.submit-btn {
+  width: 100%;
+  padding: 15px 0;
+  margin-top: 14px;
+  background-image: var(--primary-gradient);
+  border-radius: 999px; /* fully round */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  outline: none;
+  transition: 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 12px 30px rgba(15,23,42,0.9);
+  color: #020617; /* black text on gradient */
+}
+
+.submit-btn span.icon {
+  font-size: 18px;
+}
+
+.submit-btn:hover,
+.submit-btn:active {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px rgba(15,23,42,1);
+}
+
+/* Form message */
+.form-message {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.form-message.error {
+  color: #fca5a5;
+}
+
+.form-message.success {
+  color: #bbf7d0;
+}
+
+/* Floating CTA for mobile */
+.floating-cta {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  background-image: var(--primary-gradient);
+  box-shadow: 0 18px 40px rgba(15,23,42,1);
+  color: #020617;
+  font-size: 15px;
+  font-weight: 600;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 998;
+  white-space: nowrap; /* keep one line */
+}
+
+
+/* Mobile-only tweaks for phone country dropdown and Child Grade height */
+@media (max-width: 640px) {
+  /* Keep intl-tel-input country dropdown as a smaller scrollable sheet instead of full-screen */
+  .iti-mobile .iti--container {
+    top: 150px !important;          /* roughly under hero/form area */
+    bottom: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    width: 92% !important;
+    max-height: 320px;
+  }
+
+  .iti-mobile .iti__country-list {
+    max-height: 260px !important;
+    overflow-y: auto !important;
+  }
+
+  /* Make Child Grade select the same visual height as other inputs on mobile */
+  #childGrade {
+    height: 48px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+/* Only show floating CTA on small screens */
+@media (max-width: 640px) {
+  .floating-cta {
+    display: inline-flex;
+  }
+
+  /* mobile tweak for Laptop / Desktop radios: keep Yes / No on one line with better spacing */
+  .radio-options {
+    justify-content: flex-start;
+    gap: 72px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+  .hero-left,
+  .form-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-left h1 {
+    font-size: 34px;
+  }
+  .badge-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <img src="https://unischooly.com/logo.svg" alt="Unischooly" />
+  <div class="container navbar">
+    <div class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Unischooly logo"></div>
+
+    <nav class="nav-links">
+      <a href="#programs" class="nav-link">Programs</a>
+      <a href="#experts" class="nav-link">Meet our Experts</a>
+      <a href="#curriculum" class="nav-link">Curriculum</a>
+      <a href="#faqs" class="nav-link">FAQs</a>
+    </nav>
+
+    <button class="book-btn" type="button" onclick="scrollToForm()">Book Trial Class</button>
+  </div>
 </header>
 
-<section class="hero">
-  <h1 id="heroTitle">Book a Free Trial Class</h1>
-  <p id="heroSubtitle">1:1 live session with expert teachers</p>
+<section class="hero-section">
+  <div class="container hero">
+
+    <!-- LEFT TEXT -->
+    <div class="hero-left">
+      <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
+      <p>A personalised 60-minute class to introduce your child to coding, logic skills &amp; futuristic learning.</p>
+
+      <div class="badge-grid">
+        <div class="badge">⏱ <span>60-min Live Class</span></div>
+        <div class="badge">👩‍🏫 <span>Top 1% Certified Teachers</span></div>
+        <div class="badge">🌎 <span>Kids in 30+ Countries</span></div>
+        <div class="badge">🚀 <span>Hands-On Projects</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT FORM -->
+    <div class="form-card" id="formCard">
+      <div class="form-inner">
+        <h2 class="form-title">Book Now &amp; Get Certified</h2>
+        <p class="form-subtitle">Step 1 of 3 · Share your child &amp; parent details to unlock a personalised trial class.</p>
+
+        <!-- Gradient 2-step indicator line -->
+        <div class="step-indicator">
+          <div class="step-bar" data-step="1"></div>
+          <div class="step-bar" data-step="2"></div>
+          <div class="step-bar" data-step="3"></div>
+        </div>
+
+        <!-- PHONE (country code + number in one field) -->
+        <!-- STEP 1 PANE -->
+        <div id="step1Pane" class="step-pane active">
+          <!-- PHONE (country code + number in one field) -->
+          <div class="field-wrapper phone-field">
+            <label for="parentPhone">Parent WhatsApp Number</label>
+            <div class="phone-sub-label-row">
+              <span>Country code</span>
+              <span>Mobile number</span>
+            </div>
+            <input type="tel" id="parentPhone" name="parentPhone" placeholder="Enter mobile number" />
+          </div>
+
+          <div class="field-wrapper">
+            <label for="childName">Child Name</label>
+            <input type="text" id="childName" name="childName" placeholder="Enter child's name" />
+          </div>
+
+          <div class="field-wrapper">
+            <label for="childGrade">Child Grade</label>
+            <select id="childGrade" name="childGrade">
+              <option value="">Select Grade</option>
+              <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+              <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+              <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+            </select>
+          </div>
+
+          <div class="field-wrapper">
+            <label for="parentName">Parent Name</label>
+            <input type="text" id="parentName" name="parentName" placeholder="Enter parent name" />
+          </div>
+
+          <div class="field-wrapper">
+            <label for="parentEmail">Parent Email</label>
+            <input type="email" id="parentEmail" name="parentEmail" placeholder="Enter email" />
+          </div>
+
+          <!-- Laptop / Desktop question -->
+          <div class="radio-group">
+            <p class="radio-label">Do you have a Laptop or Desktop?</p>
+            <div class="radio-options">
+              <label class="radio-option">
+                <input type="radio" name="hasComputer" value="yes" checked />
+                <span>Yes</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="hasComputer" value="no" />
+                <span>No</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 PANE -->
+        <div id="step2Pane" class="step-pane">
+          <div class="field-wrapper">
+            <label for="preferredDate">Select Date</label>
+            <input type="date" id="preferredDate" name="preferredDate" />
+            <small id="dateHint" style="display:block;margin-top:4px;font-size:12px;color:rgba(148,163,184,0.9);">
+              You can choose a date within the next few days based on your region.
+            </small>
+          </div>
+
+          <div class="field-wrapper">
+            <label>Available Time Slots</label>
+            <div id="slotsContainer" class="slots-grid">
+              <!-- Time slots will be injected here -->
+            </div>
+            <small id="slotHint" style="display:block;margin-top:4px;font-size:12px;color:rgba(148,163,184,0.9);">
+              Times are shown in your local time zone.
+            </small>
+          </div>
+
+          <div class="consent-wrapper">
+            <label class="checkbox-label">
+              <input type="checkbox" id="consentCheckbox" />
+              <span>I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 3 PANE -->
+        <div id="step3Pane" class="step-pane">
+          <div class="field-wrapper">
+            <label>Who are you?</label>
+            <div class="radio-options vertical">
+              <label class="radio-option">
+                <input type="radio" name="whoAreYou" value="parent" checked />
+                <span>Parent</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="whoAreYou" value="student" />
+                <span>Student</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="whoAreYou" value="guardian" />
+                <span>Relative / Guardian</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field-wrapper">
+            <label>Why did you book this demo?</label>
+            <div class="radio-options vertical">
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="explore_coding" checked />
+                <span>To explore coding / skills for my child</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="compare_platforms" />
+                <span>To compare with other platforms</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="strengthen_school" />
+                <span>To strengthen school concepts</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="just_exploring" />
+                <span>Just exploring / not sure yet</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field-wrapper">
+            <label>When are you planning to purchase?</label>
+            <div class="radio-options vertical">
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="immediately" checked />
+                <span>Immediately after trial if it goes well</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="within_1_week" />
+                <span>Within 1 week</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="within_1_to_4_weeks" />
+                <span>Within 1–4 weeks</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="more_than_1_month" />
+                <span>More than 1 month</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="not_sure" />
+                <span>Not sure</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="button" id="submitLead">
+          <span id="submitLeadText">Continue</span>
+          <span class="icon">✨</span>
+        </button>
+
+        <div id="formMessage" class="form-message"></div>
+
+        <div id="formMessage" class="form-message"></div>
+      </div>
+    </div>
+
+  </div>
 </section>
 
-<section class="form-card">
-  <form id="page1Form">
+<!-- Floating CTA (mobile) -->
+<button class="floating-cta" type="button" onclick="scrollToForm()">
+  <span>Book a Free Trial Class</span>
+  <span>✨</span>
+</button>
 
-    <div class="form-group">
-      <label>Mobile Number</label>
-      <input type="tel" id="phone" required />
-    </div>
-
-    <div class="form-group">
-      <label>Child Name</label>
-      <input type="text" id="childName" required />
-    </div>
-
-    <div class="form-group">
-      <label>Child Grade</label>
-      <select id="childGrade" required>
-        <option value="">Select Grade</option>
-        <option>Grade 1–3</option>
-        <option>Grade 4–6</option>
-        <option>Grade 7–9</option>
-        <option>Grade 10–12</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Parent Name</label>
-      <input type="text" id="parentName" required />
-    </div>
-
-    <div class="form-group">
-      <label>Parent Email</label>
-      <input type="email" id="parentEmail" required />
-    </div>
-
-    <div class="form-group">
-      <label>Do you have a Laptop / Desktop?</label>
-      <select id="hasLaptop" required>
-        <option value="">Select</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-      </select>
-    </div>
-
-    <button type="submit">Continue</button>
-
-    <div class="note">
-      You will select date & time in the next step
-    </div>
-
-  </form>
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.0/build/js/intlTelInput.min.js"></script>
-
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-/* ================================
-   Country → Region Mapping
-==================================*/
-const COUNTRY_REGION_MAP = {
-  "India": "INDIA",
-  "United States": "USA",
-  "United Kingdom": "EUROPE",
-  "Australia": "ANZ",
-  "New Zealand": "ANZ",
-  "Saudi Arabia": "MEA",
-  "United Arab Emirates": "MEA",
-  "Singapore": "SEA"
-  // all others → ROW
-};
+function scrollToForm() {
+  const form = document.getElementById("formCard");
+  if (form) {
+    form.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
 
-/* ================================
-   URL Parser
-==================================*/
-const urlParams = new URLSearchParams(window.location.search);
-const courseId = urlParams.get("courseId") || "0";
-const regionFromUrl = urlParams.get("region");
-const lang = urlParams.get("lang") || "en";
+document.addEventListener("DOMContentLoaded", function () {
+  // Supabase client
+  const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-document.getElementById("heroTitle").innerText =
-  courseId === "1" ? "Free Coding Trial Class" :
-  courseId === "2" ? "Free Python Trial Class" :
-  "Book a Free Trial Class";
+  // Elements
+  const phoneInput = document.querySelector("#parentPhone");
+  const childNameInput = document.querySelector("#childName");
+  const childGradeSelect = document.querySelector("#childGrade");
+  const parentNameInput = document.querySelector("#parentName");
+  const parentEmailInput = document.querySelector("#parentEmail");
+  const formMessage = document.querySelector("#formMessage");
+  const submitBtn = document.querySelector("#submitLead");
+  const submitBtnText = document.querySelector("#submitLeadText");
+  const stepSubtitle = document.querySelector(".form-subtitle");
+  const stepBars = document.querySelectorAll(".step-bar");
+  const step1Pane = document.querySelector("#step1Pane");
+  const step2Pane = document.querySelector("#step2Pane");
+  const step3Pane = document.querySelector("#step3Pane");
+  const preferredDateInput = document.querySelector("#preferredDate");
+  const slotsContainer = document.querySelector("#slotsContainer");
+  const consentCheckbox = document.querySelector("#consentCheckbox");
 
-/* ================================
-   Phone Input
-==================================*/
-const phoneInput = document.querySelector("#phone");
-const iti = window.intlTelInput(phoneInput, {
-  initialCountry: regionFromUrl === "INDIA" ? "in" :
-                  regionFromUrl === "USA" ? "us" :
-                  regionFromUrl === "EUROPE" ? "gb" :
-                  "auto",
-  utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.0/build/js/utils.js"
-});
+  let currentStep = 1;
+  let iti = null;
+  let activeSlotId = null;
+  let activeSlotLabel = null;
+  let activeSlotIsStar = false;
+  let currentLeadId = null; // uuid from demo_leads.id
+  let regionKeyFromUrl = null;
+  let courseIdFromUrl = null;
+  let langFromUrl = null;
+  let fmtFromUrl = null;
+  let utmFromUrl = {};
+  let browserTimezone = (Intl && Intl.DateTimeFormat().resolvedOptions().timeZone) || null;
 
-/* ================================
-   Page 1 Submit
-==================================*/
-document.getElementById("page1Form").addEventListener("submit", async function(e) {
-  e.preventDefault();
-
-  const payload = {
-    child_name: document.getElementById("childName").value,
-    child_grade: document.getElementById("childGrade").value,
-    parent_name: document.getElementById("parentName").value,
-    parent_email: document.getElementById("parentEmail").value,
-    phone_country_code: "+" + iti.getSelectedCountryData().dialCode,
-    phone_number: phoneInput.value.replace(/\D/g, ""),
-    has_laptop: document.getElementById("hasLaptop").value,
-    course_id: Number(courseId),
-    lang: lang,
-    region_key: regionFromUrl || "ROW",
-    full_url: window.location.href,
-    landing_page_path: window.location.pathname,
-    page_completed: 1
+  // Country-to-region mapping (from your list)
+  const COUNTRY_TO_REGION = {
+    "Saudi Arabia": "MEA",
+    "United Kingdom": "EUROPE",
+    "Bahrain": "MEA",
+    "Egypt": "ROW",
+    "India": "INDIA",
+    "United States of America": "USA",
+    "Indonesia": "SEA",
+    "Jordan": "ROW",
+    "Qatar": "MEA",
+    "South Africa": "ROW",
+    "Oman": "MEA",
+    "New Zealand": "ANZ",
+    "Australia": "ANZ",
+    "Ghana": "ROW",
+    "Vietnam": "SEA",
+    "Kuwait": "MEA",
+    "Norway": "EUROPE",
+    "Canada": "USA",
+    "Albania": "EUROPE",
+    "Ireland": "EUROPE",
+    "Singapore": "SEA",
+    "Nigeria": "ROW",
+    "Bangladesh": "ROW",
+    "Germany": "EUROPE",
+    "Pakistan": "ROW",
+    "Ukraine": "EUROPE",
+    "Algeria": "ROW",
+    "Sri Lanka": "ROW",
+    "Malaysia": "SEA",
+    "Philippines": "SEA",
+    "Israel": "ROW",
+    "Myanmar": "SEA",
+    "Switzerland": "EUROPE",
+    "Denmark": "EUROPE",
+    "Iraq": "ROW",
+    "Lebanon": "ROW",
+    "Kenya": "ROW",
+    "Tanzania": "ROW",
+    "Chat": "ROW",
+    "Greece": "EUROPE",
+    "Hong Kong": "SEA",
+    "United Arab Emirates": "MEA",
+    "Morocco": "ROW",
+    "Andorra": "EUROPE",
+    "Mexico": "EUROPE",
+    "Turkey": "ROW",
+    "Sweden": "EUROPE",
+    "France": "EUROPE",
+    "Italy": "EUROPE",
+    "Spain": "EUROPE",
+    "South Korea": "SEA",
+    "Thailand": "SEA",
+    "Netherlands": "EUROPE",
+    "Hungary": "EUROPE",
+    "Estonia": "EUROPE",
+    "Azerbaijan": "EUROPE",
+    "Belgium": "EUROPE",
+    "Lithuania": "EUROPE",
+    "Romania": "EUROPE",
+    "Vatican": "EUROPE",
+    "Cyprus": "EUROPE",
+    "Nepal": "ROW",
+    "Georgia": "EUROPE",
+    "Uganda": "ROW",
+    "Poland": "EUROPE",
+    "Bulgaria": "EUROPE",
+    "Russia": "EUROPE",
+    "Fiji": "EUROPE",
+    "Uzbekistan": "EUROPE",
+    "Finland": "EUROPE",
+    "Ethiopia": "EUROPE",
+    "Trinidad and Tobago": "EUROPE",
+    "Jersey": "EUROPE",
+    "Puerto Rico": "EUROPE",
+    "Malawi": "EUROPE",
+    "Japan": "SEA",
+    "New York City": "USA",
+    "Boston": "USA",
+    "Stockton": "USA",
+    "Brazil": "EUROPE",
+    "Cameroon": "EUROPE",
+    "Taiwan": "SEA",
+    "Monaco": "EUROPE",
+    "Isle of Man": "EUROPE",
+    "Christmas Island": "EUROPE",
+    "Luxembourg": "EUROPE",
+    "Guatemala": "EUROPE",
+    "Madagascar": "EUROPE",
+    "Peru": "EUROPE",
+    "China": "SEA",
+    "Mongolia": "EUROPE",
+    "Czech Republic": "EUROPE",
+    "Cambodia": "SEA",
+    "Zambia": "ROW",
+    "Afghanistan": "ROW",
+    "El Salvador": "ROW",
+    "Chile": "ROW",
+    "Colombia": "ROW",
+    "Ecuador": "ROW",
+    "Lao People's Democratic Republic": "SEA",
+    "Botswana": "ROW",
+    "Yemen": "ROW",
+    "Cocos (Keeling) Islands": "ANZ",
+    "Jamaica": "ROW",
+    "Tunisia": "ROW",
+    "Ivory Coast": "ROW",
+    "Dominican Republic": "ROW",
+    "Mauritius": "ROW",
+    "Iran": "ROW",
+    "Anguilla": "ROW",
+    "Lesotho": "ROW",
+    "Congo": "ROW",
+    "Macedonia": "EUROPE",
+    "Bosnia and Herzegovina": "EUROPE",
+    "Cuba": "ROW",
+    "Swaziland": "ROW",
+    "Latvia": "EUROPE",
+    "Zimbawbae": "ROW",
+    "Portugal": "EUROPE",
+    "Bolivia": "ROW",
+    "Kazakhstan": "ROW",
+    "Venezuela": "ROW"
   };
 
-  console.log("PAGE 1 PAYLOAD", payload);
+  function getRegionForCountry(countryName) {
+    return COUNTRY_TO_REGION[countryName] || "ROW";
+  }
 
-  // TODO: Send this payload to Supabase Edge Function
-  // fetch("/api/create-lead", { method: "POST", body: JSON.stringify(payload) })
+  // Parse URL params
+  function parseUrlParams() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
 
-  alert("Page 1 data captured. Move to Page 2.");
+    courseIdFromUrl = params.get("courseId") ? parseInt(params.get("courseId"), 10) : null;
+    regionKeyFromUrl = params.get("region") || null;
+    langFromUrl = params.get("lang") || null;
+    fmtFromUrl = params.get("fmt") || null;
+
+    utmFromUrl = {
+      utm_source: params.get("utm_source") || null,
+      utm_medium: params.get("utm_medium") || null,
+      utm_campaign: params.get("utm_campaign") || null,
+      utm_term: params.get("utm_term") || null,
+      utm_content: params.get("utm_content") || null
+    };
+
+    // Set hero text based on courseId (simple example)
+    const heroTitle = document.querySelector(".hero-left h1");
+    const heroSubtitle = document.querySelector(".hero-left p");
+    if (heroTitle && courseIdFromUrl) {
+      const courseNames = {
+        1: "Free Live Coding Class",
+        2: "Free Live Python Class",
+        3: "Free Website Development Class",
+        4: "Free Generative AI Class",
+        5: "Free Roblox Coding Class",
+        6: "Free Chess Masterclass",
+        7: "Free Mathematics Masterclass"
+      };
+      const label = courseNames[courseIdFromUrl] || "Free Live Coding Class";
+      heroTitle.innerHTML = `Book a <span>${label}</span><br>for your child.`;
+      if (heroSubtitle && courseIdFromUrl === 6) {
+        heroSubtitle.textContent = "A strategic 60-minute class to sharpen thinking and problem-solving through chess.";
+      }
+    }
+  }
+
+  parseUrlParams();
+
+  // PHONE INPUT INITIALISATION
+  if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
+      initialCountry: "us",
+      separateDialCode: true,
+      autoPlaceholder: "polite",
+      preferredCountries: [
+        "us","ca","gb","ae","sa","kw","qa","bh","om",
+        "id","ph","th",
+        "sg","vn","au","nz",
+        "in","bd","jp","my"
+      ],
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+    });
+  }
+
+  function setStep(step) {
+    currentStep = step;
+
+    if (stepSubtitle) {
+      stepSubtitle.textContent =
+        step === 1
+          ? "Step 1 of 3 · Share your child & parent details to unlock a personalised trial class."
+          : step === 2
+          ? "Step 2 of 3 · Pick a convenient date & time for your child's trial class."
+          : "Step 3 of 3 · Help us understand your goals so we can personalise the session.";
+    }
+
+    stepBars.forEach((bar, index) => {
+      const stepIndex = index + 1;
+      if (stepIndex <= step) {
+        bar.classList.add("active");
+      } else {
+        bar.classList.remove("active");
+      }
+    });
+
+    if (step1Pane) step1Pane.classList.toggle("active", step === 1);
+    if (step2Pane) step2Pane.classList.toggle("active", step === 2);
+    if (step3Pane) step3Pane.classList.toggle("active", step === 3);
+
+    if (submitBtnText) {
+      submitBtnText.textContent =
+        step === 1 ? "Continue" : step === 2 ? "Confirm Date & Time" : "Complete Booking";
+    }
+
+    if (formMessage) {
+      formMessage.textContent = "";
+      formMessage.classList.remove("error", "success");
+    }
+  }
+
+  setStep(1);
+
+  function getDeviceType() {
+    const width = window.innerWidth;
+    if (width < 640) return "mobile";
+    if (width < 1024) return "tablet";
+    return "desktop";
+  }
+
+  function getBrowserName() {
+    const ua = navigator.userAgent;
+    if (ua.indexOf("Chrome") > -1 && ua.indexOf("Edg") === -1) return "Chrome";
+    if (ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") === -1) return "Safari";
+    if (ua.indexOf("Firefox") > -1) return "Firefox";
+    if (ua.indexOf("Edg") > -1) return "Edge";
+    return "Other";
+  }
+
+  async function estimateConnectionSpeed() {
+    const nav = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (nav && typeof nav.downlink === "number") {
+      return nav.downlink; // in Mbps
+    }
+    return null;
+  }
+
+  function getSelectedRadioValue(name) {
+    const radios = document.querySelectorAll(`input[name="${name}"]`);
+    for (const r of radios) {
+      if (r.checked) return r.value;
+    }
+    return null;
+  }
+
+  function validateStep1() {
+    if (!phoneInput || !iti) return { ok: false, message: "Phone number input is not ready yet." };
+
+    const phoneNumber = phoneInput.value.trim();
+    if (!phoneNumber) return { ok: false, message: "Please enter your WhatsApp number." };
+    if (!iti.isValidNumber()) return { ok: false, message: "Please enter a valid mobile number." };
+
+    if (!childNameInput.value.trim()) {
+      return { ok: false, message: "Please enter your child's name." };
+    }
+    if (!childGradeSelect.value) {
+      return { ok: false, message: "Please select your child's grade." };
+    }
+    if (!parentNameInput.value.trim()) {
+      return { ok: false, message: "Please enter the parent name." };
+    }
+    if (!parentEmailInput.value.trim()) {
+      return { ok: false, message: "Please enter the parent email." };
+    }
+
+    return { ok: true };
+  }
+
+  function validateStep2() {
+    if (!preferredDateInput.value) {
+      return { ok: false, message: "Please select a date for the trial class." };
+    }
+    if (!activeSlotId) {
+      return { ok: false, message: "Please select a time slot for the trial class." };
+    }
+    if (!consentCheckbox.checked) {
+      return { ok: false, message: "Please agree to be contacted to proceed." };
+    }
+    return { ok: true };
+  }
+
+  function validateStep3() {
+    const who = getSelectedRadioValue("whoAreYou");
+    const reason = getSelectedRadioValue("bookingReason");
+    const timeline = getSelectedRadioValue("purchaseTimeline");
+    if (!who || !reason || !timeline) {
+      return { ok: false, message: "Please answer all the questions to complete your booking." };
+    }
+    return { ok: true };
+  }
+
+  function showMessage(type, text) {
+    if (!formMessage) return;
+    formMessage.textContent = text;
+    formMessage.classList.remove("error", "success");
+    formMessage.classList.add(type);
+  }
+
+  async function handleStep1Submit() {
+    const validation = validateStep1();
+    if (!validation.ok) {
+      showMessage("error", validation.message);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    showMessage("success", "Saving your details...");
+
+    const itiData = iti.getSelectedCountryData();
+    const phoneCountryCode = itiData.dialCode ? `+${itiData.dialCode}` : null;
+    const phoneNumber = phoneInput.value.trim();
+    const fullUrl = window.location.href;
+    const landingPath = window.location.pathname;
+    const deviceType = getDeviceType();
+    const browserName = getBrowserName();
+    const internetSpeed = await estimateConnectionSpeed();
+
+    let regionKey = regionKeyFromUrl || null;
+    let countryName = itiData.name || null;
+    if (!regionKey && countryName) {
+      regionKey = getRegionForCountry(countryName);
+    }
+    if (!regionKey) regionKey = "ROW";
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("demo_leads")
+        .insert([
+          {
+            child_name: childNameInput.value.trim(),
+            child_grade: childGradeSelect.value,
+            parent_name: parentNameInput.value.trim(),
+            parent_email: parentEmailInput.value.trim(),
+            phone_country_code: phoneCountryCode,
+            phone_number: phoneNumber,
+            is_whatsapp: true,
+            has_laptop: getSelectedRadioValue("hasComputer"),
+            course_id: courseIdFromUrl || null,
+            fmt: fmtFromUrl,
+            lang: langFromUrl,
+            landing_page_path: landingPath,
+            full_url: fullUrl,
+            utm_source: utmFromUrl.utm_source,
+            utm_medium: utmFromUrl.utm_medium,
+            utm_campaign: utmFromUrl.utm_campaign,
+            utm_term: utmFromUrl.utm_term,
+            utm_content: utmFromUrl.utm_content,
+            region_key: regionKey,
+            device_type: deviceType,
+            browser: browserName,
+            internet_speed_mbps: internetSpeed,
+            timezone: browserTimezone,
+            page_completed: 1
+          }
+        ])
+        .select("id")
+        .single();
+
+      if (error) {
+        console.error("Supabase insert error (step1):", error);
+        showMessage("error", "Something went wrong while saving your details. Please try again.");
+      } else {
+        currentLeadId = data.id;
+        setStep(2);
+        showMessage("success", "Great! Now choose a date and time for your trial class.");
+        await loadAvailableDatesAndSlots(regionKey);
+      }
+    } catch (err) {
+      console.error("Unexpected error (step1):", err);
+      showMessage("error", "Unexpected error. Please try again.");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  async function loadAvailableDatesAndSlots(regionKey) {
+    if (!regionKey) regionKey = regionKeyFromUrl || "ROW";
+
+    try {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const maxDaysAhead = 5;
+
+      const minDateStr = today.toISOString().split("T")[0];
+      preferredDateInput.min = minDateStr;
+
+      const maxDate = new Date(today);
+      maxDate.setDate(today.getDate() + maxDaysAhead);
+      const maxDateStr = maxDate.toISOString().split("T")[0];
+      preferredDateInput.max = maxDateStr;
+
+      preferredDateInput.value = minDateStr;
+
+      await loadSlotsForSelectedDate(regionKey);
+      preferredDateInput.addEventListener("change", () => {
+        loadSlotsForSelectedDate(regionKey);
+      });
+    } catch (err) {
+      console.error("Error setting up date and slots:", err);
+      showMessage("error", "Unable to load available dates and slots. Please refresh the page.");
+    }
+  }
+
+  async function loadSlotsForSelectedDate(regionKey) {
+    if (!slotsContainer) return;
+    slotsContainer.innerHTML = "Loading slots...";
+
+    const selectedDateStr = preferredDateInput.value;
+    if (!selectedDateStr) {
+      slotsContainer.innerHTML = "<p>Please choose a date first.</p>";
+      return;
+    }
+
+    const startOfDayIst = new Date(selectedDateStr + "T00:00:00+05:30");
+    const endOfDayIst = new Date(selectedDateStr + "T23:59:59+05:30");
+    const now = new Date();
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("demo_slots")
+        .select("*")
+        .eq("region_key", regionKey)
+        .eq("course_id", courseIdFromUrl || 1)
+        .gte("slot_start_ist", startOfDayIst.toISOString())
+        .lte("slot_start_ist", endOfDayIst.toISOString())
+        .eq("is_active", true)
+        .order("slot_start_ist", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching demo_slots:", error);
+        slotsContainer.innerHTML = "<p>Unable to load slots. Please try again later.</p>";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        slotsContainer.innerHTML = "<p>No slots available for this date.</p>";
+        return;
+      }
+
+      slotsContainer.innerHTML = "";
+      activeSlotId = null;
+      activeSlotLabel = null;
+      activeSlotIsStar = false;
+
+      const userTz = browserTimezone || "Asia/Kolkata";
+
+      data.forEach((slotRow) => {
+        const slotStartIst = new Date(slotRow.slot_start_ist);
+        const slotEndIst = new Date(slotRow.slot_end_ist);
+
+        const slotStartLocal = new Date(slotStartIst.toLocaleString("en-US", { timeZone: userTz }));
+        const slotEndLocal = new Date(slotEndIst.toLocaleString("en-US", { timeZone: userTz }));
+
+        const isToday =
+          slotStartIst.getFullYear() === now.getFullYear() &&
+          slotStartIst.getMonth() === now.getMonth() &&
+          slotStartIst.getDate() === now.getDate();
+
+        if (isToday) {
+          const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+          if (slotStartIst <= oneHourLater) {
+            return;
+          }
+        }
+
+        const capacityLeft = (slotRow.capacity_total || 0) - (slotRow.capacity_booked || 0);
+        const isFull = capacityLeft <= 0;
+
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "slot-card";
+        card.disabled = isFull;
+
+        const timeLabel = `${slotStartLocal.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        })} - ${slotEndLocal.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        })}`;
+
+        const starBadge = slotRow.is_star_teacher ? '<span class="star-badge">⭐ Star Teacher</span>' : "";
+
+        card.innerHTML = `
+          <span class="slot-time">${timeLabel}</span>
+          <span class="slot-capacity">${isFull ? "Full" : capacityLeft + " spots left"}</span>
+          ${starBadge}
+        `;
+
+        if (isFull) {
+          card.classList.add("slot-full");
+        }
+
+        card.addEventListener("click", () => {
+          const allCards = slotsContainer.querySelectorAll(".slot-card");
+          allCards.forEach((c) => c.classList.remove("selected"));
+          card.classList.add("selected");
+          activeSlotId = slotRow.id;
+          activeSlotLabel = timeLabel;
+          activeSlotIsStar = !!slotRow.is_star_teacher;
+        });
+
+        slotsContainer.appendChild(card);
+      });
+
+      if (!slotsContainer.innerHTML) {
+        slotsContainer.innerHTML = "<p>No valid slots available for this date.</p>";
+      }
+    } catch (err) {
+      console.error("Unexpected error fetching slots:", err);
+      slotsContainer.innerHTML = "<p>Unable to load slots. Please try again later.</p>";
+    }
+  }
+
+  async function handleStep2Submit() {
+    const validation = validateStep2();
+    if (!validation.ok) {
+      showMessage("error", validation.message);
+      return;
+    }
+
+    if (!currentLeadId) {
+      showMessage("error", "Your details could not be found. Please refresh and try again.");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    showMessage("success", "Locking your slot...");
+
+    try {
+      const { error } = await supabaseClient
+        .from("demo_leads")
+        .update({
+          preferred_date: preferredDateInput.value,
+          preferred_time_slot: activeSlotLabel,
+          slot_id: activeSlotId,
+          star_teacher_selected: activeSlotIsStar,
+          page_completed: 2
+        })
+        .eq("id", currentLeadId);
+
+      if (error) {
+        console.error("Supabase update error (step2):", error);
+        showMessage("error", "Unable to lock your slot. Please try another time.");
+      } else {
+        setStep(3);
+        showMessage("success", "Slot locked! One last step to personalise your session.");
+      }
+    } catch (err) {
+      console.error("Unexpected error (step2):", err);
+      showMessage("error", "Unexpected error. Please try again.");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  }
+
+  async function handleStep3Submit() {
+    const validation = validateStep3();
+    if (!validation.ok) {
+      showMessage("error", validation.message);
+      return;
+    }
+
+    if (!currentLeadId) {
+      showMessage("error", "Your details could not be found. Please refresh and try again.");
+      return;
+    }
+
+    submitBtn.disabled = true;
+    showMessage("success", "Finalising your booking...");
+
+    const who = getSelectedRadioValue("whoAreYou");
+    const reason = getSelectedRadioValue("bookingReason");
+    const timeline = getSelectedRadioValue("purchaseTimeline");
+
+    try {
+      const { error } = await supabaseClient
+        .from("demo_leads")
+        .update({
+          who_are_you: who,
+          booking_reason: reason,
+          purchase_timeline: timeline,
+          page_completed: 3
+        })
+        .eq("id", currentLeadId);
+
+      if (error) {
+        console.error("Supabase update error (step3):", error);
+        showMessage("error", "Unable to complete your booking. Please try again.");
+      } else {
+        showMessage("success", "Your demo booking is confirmed! Our team will reach out shortly.");
+        if (submitBtnText) submitBtnText.textContent = "Booked ✔";
+        submitBtn.disabled = true;
+      }
+    } catch (err) {
+      console.error("Unexpected error (step3):", err);
+      showMessage("error", "Unexpected error. Please try again.");
+      submitBtn.disabled = false;
+    }
+  }
+
+  async function handleSubmitClick() {
+    if (currentStep === 1) {
+      await handleStep1Submit();
+    } else if (currentStep === 2) {
+      await handleStep2Submit();
+    } else if (currentStep === 3) {
+      await handleStep3Submit();
+    }
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener("click", function () {
+      handleSubmitClick();
+    });
+  }
 });
 </script>
 

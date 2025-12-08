@@ -519,6 +519,31 @@ select:focus {
   white-space: nowrap; /* keep one line */
 }
 
+
+/* Mobile-only tweaks for phone country dropdown and Child Grade height */
+@media (max-width: 640px) {
+  /* Keep intl-tel-input country dropdown as a smaller scrollable sheet instead of full-screen */
+  .iti-mobile .iti--container {
+    top: auto !important;
+    bottom: 90px !important; /* sit above floating CTA */
+    left: 50% !important;
+    transform: translateX(-50%);
+    width: 92% !important;
+    max-height: 320px;
+  }
+
+  .iti-mobile .iti__country-list {
+    max-height: 260px !important;
+    overflow-y: auto !important;
+  }
+
+  /* Make Child Grade select the same visual height as other inputs on mobile */
+  #childGrade {
+    height: 48px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
 /* Only show floating CTA on small screens */
 @media (max-width: 640px) {
   .floating-cta {

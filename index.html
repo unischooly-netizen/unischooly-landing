@@ -520,24 +520,8 @@ select:focus {
 }
 
 
-/* Mobile-only tweaks for phone country dropdown and Child Grade height */
+/* Mobile-only tweak for Child Grade height (keep visual size consistent) */
 @media (max-width: 640px) {
-  /* Keep intl-tel-input country dropdown as a smaller scrollable sheet instead of full-screen */
-  .iti-mobile .iti--container {
-    top: auto !important;
-    bottom: 90px !important; /* sit above floating CTA */
-    left: 50% !important;
-    transform: translateX(-50%);
-    width: 92% !important;
-    max-height: 320px;
-  }
-
-  .iti-mobile .iti__country-list {
-    max-height: 260px !important;
-    overflow-y: auto !important;
-  }
-
-  /* Make Child Grade select the same visual height as other inputs on mobile */
   #childGrade {
     height: 48px;
     padding-top: 12px;
@@ -721,6 +705,36 @@ document.addEventListener("DOMContentLoaded", function () {
         "za","ng"
       ],
       utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+    });
+  }
+
+
+  // On mobile, keep the country dropdown just below the input (desktop-style)
+  function repositionCountryDropdownForMobile() {
+    if (window.innerWidth > 640) return; // desktop/tablet keep default behaviour
+    var itiWrapper = document.querySelector(".iti");
+    var dropdownContainer = document.querySelector(".iti__country-list");
+    if (!itiWrapper || !dropdownContainer) return;
+
+    // parent of the list is the container we want to position
+    var container = dropdownContainer.parentElement;
+    var rect = itiWrapper.getBoundingClientRect();
+
+    container.style.position = "fixed";
+    container.style.top = (rect.bottom + 6) + "px";
+    container.style.left = rect.left + "px";
+    container.style.right = "auto";
+    container.style.bottom = "auto";
+    container.style.width = rect.width + "px";
+    container.style.maxHeight = "260px";
+    container.style.overflowY = "auto";
+  }
+
+  // When user taps the flag on mobile, wait for dropdown to open then reposition it
+  var flagEl = document.querySelector(".iti__selected-flag");
+  if (flagEl) {
+    flagEl.addEventListener("click", function () {
+      setTimeout(repositionCountryDropdownForMobile, 0);
     });
   }
 

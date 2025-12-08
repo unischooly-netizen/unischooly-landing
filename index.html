@@ -1,139 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Unischooly – Book Free Trial</title>
+<meta charset='UTF-8'/>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'/>
+<title>Unischooly – Free Trial</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.css"/>
 
 <style>
 :root{
- --grad:linear-gradient(135deg,#ff6bcb,#8459ff,#36d1dc);
- --bg:#050716;
- --card:#111827;
+ --grad:linear-gradient(135deg,#ff6bcb,#8b5cf6,#38bdf8);
+ --dark:#020617;
+ --card:#0b1220;
  --input:#0f172a;
- --muted:#94a3b8;
 }
-*{box-sizing:border-box}
-body{
- margin:0;
- font-family:Inter,system-ui;
- background:#020617;
- color:#e5e7eb;
-}
-header{
- position:fixed;top:0;left:0;right:0;
- background:rgba(2,6,23,.85);
- backdrop-filter:blur(14px);
- z-index:50;
-}
+body{margin:0;font-family:Inter,sans-serif;background:#020617;color:#fff}
+.hidden{display:none}
 .container{max-width:1180px;margin:auto;padding:16px}
-.nav{
- display:flex;align-items:center;gap:16px;
-}
+
+/* HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(2,6,23,.85);backdrop-filter:blur(10px)}
+.nav{display:flex;align-items:center;gap:20px}
 .logo{
  width:160px;height:36px;
  background:var(--grad);
- -webkit-mask:url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center/contain;
- mask:url("https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg") no-repeat center/contain;
+ -webkit-mask:url(https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg) center/contain no-repeat;
+ mask:url(https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg) center/contain no-repeat;
 }
-.nav-links{margin-left:auto;display:flex;gap:20px}
-.nav-links a{
- color:#cbd5f5;text-decoration:none;font-size:14px;
-}
-.nav-links a:hover{color:#fff;text-shadow:0 0 12px #ff6bcb}
-.cta{
- margin-left:16px;
- padding:10px 20px;
- border-radius:999px;
- background:var(--grad);
- border:none;
- cursor:pointer;
- font-weight:600;
- color:#020617;
-}
+.nav a{color:#c7d2fe;text-decoration:none}
+.nav a:hover{text-shadow:0 0 12px #ff6bcb;color:#fff}
+.cta{margin-left:auto;padding:10px 18px;border-radius:999px;background:var(--grad);border:none;font-weight:700}
 
+/* HERO */
 .hero{
- margin-top:90px;
- padding:60px 0;
- background:url("https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg") center/cover no-repeat;
- position:relative;
+ margin-top:80px;
+ background:url(https://res.cloudinary.com/dpapyknn4/image/upload/v1765120532/kid-coding-infographic-icon-neon-boy-programming-on-laptop-in-computer-language-children-learning-kids-coding-school-teach-to-create-computer-and-mobile-phone-apps-vector_kswxdi.jpg) center/cover;
+ position:relative;padding:60px 0
 }
-.hero::before{
- content:"";position:absolute;inset:0;
- background:linear-gradient(135deg,rgba(2,6,23,.7),rgba(2,6,23,.6));
-}
-.hero-inner{
- position:relative;
- display:flex;gap:40px;flex-wrap:wrap;
-}
-.left{flex:1;min-width:300px}
-.left h1{font-size:42px}
-.left span{background:var(--grad);-webkit-background-clip:text;color:transparent}
-.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
-.badge{border:1px solid #334155;padding:10px 14px;border-radius:999px;font-size:14px}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(2,6,23,.55),rgba(2,6,23,.7))}
+.hero-inner{position:relative;display:flex;gap:40px;flex-wrap:wrap}
+.left{flex:1}
+.left h1{font-size:44px;line-height:1.2}
+.left span{background:var(--grad);-webkit-background-clip:text;color:transparent;text-shadow:0 0 18px #ff6bcb}
 
-.card{
- width:420px;max-width:100%;
- background:var(--card);
- border-radius:20px;
- padding:24px;
- position:relative;
-}
-h2{margin:0 0 6px}
-.stepbar{height:4px;border-radius:999px;background:#1e293b;margin:14px 0}
-.stepbar>div{height:100%;width:50%;background:var(--grad);border-radius:999px}
-
-label{font-size:13px;color:#e2e8f0}
+/* CARD */
+.card{width:420px;background:var(--card);border-radius:20px;padding:24px}
+.stepbar{height:4px;background:#1e293b;border-radius:999px;margin:12px 0}
+.stepbar div{height:100%;background:var(--grad)}
 input,select{
- width:100%;
- background:var(--input);
- border:1px solid #334155;
- border-radius:10px;
- padding:12px;
- margin-top:6px;
- color:#fff;
+ width:100%;background:var(--input);border:1px solid #334155;
+ padding:12px;border-radius:10px;color:#fff
 }
 .field{margin-bottom:14px}
-
-.radio-row{display:flex;gap:24px;margin-top:8px}
 .btn{
- width:100%;
- padding:14px;
- border-radius:999px;
- background:var(--grad);
- border:none;
- font-weight:700;
- color:#020617;
- cursor:pointer;
- margin-top:12px;
+ width:100%;padding:14px;margin-top:14px;
+ border:none;border-radius:999px;background:var(--grad);
+ font-weight:700;color:#020617
 }
+.radio{display:flex;gap:20px}
 
-.hidden{display:none}
-
-/* step 2 */
-.slot-grid,.date-grid{
- display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
- gap:10px;margin:10px 0
-}
-.slot, .date{
- border:1px solid #334155;
- padding:10px;
- border-radius:12px;
- text-align:center;
- font-size:13px;
- cursor:pointer;
-}
-.slot.active,.date.active{background:var(--grad);color:#020617}
-.star{display:block;font-size:10px;color:#fde68a}
-
-.consent{font-size:11px;color:#cbd5f5;margin-top:10px}
+/* STEP GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.box{border:1px solid #334155;padding:10px;border-radius:12px;text-align:center;cursor:pointer}
+.box.active{background:var(--grad);color:#020617}
+.consent{font-size:12px;margin-top:10px;display:flex;gap:8px;align-items:flex-start}
 
 @media(max-width:768px){
- .nav-links{display:none}
  .hero-inner{flex-direction:column}
- .radio-row{justify-content:space-between}
+ .radio{justify-content:space-between}
 }
 </style>
 </head>
@@ -143,192 +77,158 @@ input,select{
 <header>
  <div class="container nav">
   <div class="logo"></div>
-  <nav class="nav-links">
-   <a>Programs</a><a>Meet our Experts</a><a>Curriculum</a><a>FAQs</a>
+  <nav>
+   <a>Programs</a> <a>Experts</a> <a>Curriculum</a> <a>FAQs</a>
   </nav>
-  <button class="cta" onclick="scrollToForm()">Book Trial Class</button>
+  <button class="cta" onclick="scrollToForm()">Book Trial</button>
  </div>
 </header>
 
 <section class="hero">
- <div class="container hero-inner">
-  <div class="left">
-   <h1>Book a <span>Free Live Coding Class</span><br/>for your child</h1>
-   <div class="badges">
-    <div class="badge">⏱ 60‑min Live</div>
-    <div class="badge">👩‍🏫 Top 1% Teachers</div>
-    <div class="badge">🌎 Kids in 30+ Countries</div>
-    <div class="badge">🚀 Hands‑On Projects</div>
-   </div>
-  </div>
+<div class="container hero-inner">
+<div class="left">
+<h1>Book a <span>Free Live Coding Class</span><br/>for Your Child</h1>
+</div>
 
-  <!-- FORM -->
-  <div class="card" id="form">
-   <!-- STEP 1 -->
-   <div id="step1">
-    <h2>Book Now & Get Certified</h2>
-    <div class="stepbar"><div></div></div>
+<div class="card" id="form">
 
-    <div class="field">
-     <label>Parent WhatsApp Number</label>
-     <input type="tel" id="phone"/>
-    </div>
-    <div class="field">
-     <label>Child Name</label>
-     <input id="childName"/>
-    </div>
-    <div class="field">
-     <label>Child Grade</label>
-     <select id="childGrade">
-      <option value="">Select Grade</option>
-      <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
-      <option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
-      <option>Grade 7</option><option>Grade 8</option><option>Grade 9</option>
-      <option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
-     </select>
-    </div>
-    <div class="field">
-     <label>Parent Name</label>
-     <input id="parentName"/>
-    </div>
-    <div class="field">
-     <label>Parent Email</label>
-     <input id="parentEmail"/>
-    </div>
+<!-- STEP 1 -->
+<div id="s1">
+<h2>Step 1: Parent & Child Details</h2>
+<div class="stepbar"><div style="width:33%"></div></div>
 
-    <label>Do you have a Laptop or Desktop?</label>
-    <div class="radio-row">
-     <label><input type="radio" name="device" value="yes" checked/> Yes</label>
-     <label><input type="radio" name="device" value="no"/> No</label>
-    </div>
+<div class="field"><input id="phone" placeholder="WhatsApp Number"></div>
+<div class="field"><input id="childName" placeholder="Child Name"></div>
+<div class="field">
+<select id="childGrade">
+<option value="">Select Grade</option>
+<option>Grade 1</option><option>Grade 2</option><option>Grade 3</option>
+<option>Grade 4</option><option>Grade 5</option><option>Grade 6</option>
+</select>
+</div>
+<div class="field"><input id="parentName" placeholder="Parent Name"></div>
+<div class="field"><input id="parentEmail" placeholder="Parent Email"></div>
 
-    <button class="btn" onclick="submitStep1()">Book a Free Trial Class ✨</button>
-   </div>
+<div class="radio">
+<label><input type="radio" name="lap" value="yes" checked> Yes</label>
+<label><input type="radio" name="lap" value="no"> No</label>
+</div>
 
-   <!-- STEP 2 -->
-   <div id="step2" class="hidden">
-    <h2>Select Date & Time</h2>
-    <div class="stepbar"><div style="width:100%"></div></div>
+<button class="btn" onclick="submit1()">Continue</button>
+</div>
 
-    <label>Select Date</label>
-    <div class="date-grid" id="dates"></div>
+<!-- STEP 2 -->
+<div id="s2" class="hidden">
+<h2>Select Date & Start Time</h2>
+<div class="stepbar"><div style="width:66%"></div></div>
+<div class="grid" id="dates"></div>
+<div class="grid" id="times"></div>
 
-    <label>Select Time Slot</label>
-    <div class="slot-grid" id="slots"></div>
+<div class="consent">
+<input type="checkbox" checked>
+<span>I allow Unischooly to contact me via WhatsApp, call or email.</span>
+</div>
 
-    <label>Who are you?</label>
-    <div class="slot-grid">
-     <div class="slot" onclick="pick(this,'who','Parent')">Parent</div>
-     <div class="slot" onclick="pick(this,'who','Student')">Student</div>
-     <div class="slot" onclick="pick(this,'who','Guardian')">Guardian</div>
-    </div>
+<button class="btn" onclick="submit2()">Continue</button>
+</div>
 
-    <label>Why are you booking?</label>
-    <div class="slot-grid">
-     <div class="slot" onclick="pick(this,'reason','Want to buy course')">Want to buy course</div>
-     <div class="slot" onclick="pick(this,'reason','Free demo')">Free demo class</div>
-    </div>
+<!-- STEP 3 -->
+<div id="s3" class="hidden">
+<h2>Final Details</h2>
+<div class="stepbar"><div style="width:100%"></div></div>
+<div class="grid">
+<div class="box" onclick="pick(this,'who','Parent')">Parent</div>
+<div class="box" onclick="pick(this,'who','Student')">Student</div>
+<div class="box" onclick="pick(this,'who','Guardian')">Guardian</div>
+</div>
+<div class="grid">
+<div class="box" onclick="pick(this,'reason','Exploring Free Demo')">Exploring Free Demo</div>
+<div class="box" onclick="pick(this,'reason','Want to buy course')">Want to buy course</div>
+</div>
+<div class="grid">
+<div class="box" onclick="pick(this,'time','After demo')">After demo</div>
+<div class="box" onclick="pick(this,'time','This week')">This week</div>
+<div class="box" onclick="pick(this,'time','This month')">This month</div>
+<div class="box" onclick="pick(this,'time','Exploring')">Just exploring</div>
+</div>
 
-    <label>Purchase timeline</label>
-    <div class="slot-grid">
-     <div class="slot" onclick="pick(this,'timeline','After demo')">After demo</div>
-     <div class="slot" onclick="pick(this,'timeline','This week')">This week</div>
-     <div class="slot" onclick="pick(this,'timeline','This month')">This month</div>
-     <div class="slot" onclick="pick(this,'timeline','Exploring')">Just exploring</div>
-    </div>
+<button class="btn" onclick="submit3()">Confirm Trial</button>
+</div>
 
-    <div class="consent">
-     <input type="checkbox" checked/> I consent to Unischooly contacting me regarding this trial.
-    </div>
-
-    <button class="btn" onclick="submitStep2()">Confirm Free Trial Slot ✨</button>
-   </div>
-  </div>
- </div>
+</div>
+</div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17/build/js/intlTelInput.min.js"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
-let iti,leadId=null;
-const supa=window.supabase.createClient(
- "https://binklfyiypbhuzsvnlzg.supabase.co",
- "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw"
+let iti,leadId,selected={};
+const supa=supabase.createClient(
+ 'https://binklfyiypbhuzsvnlzg.supabase.co',
+ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw'
 );
 
-iti=window.intlTelInput(document.getElementById("phone"),{
- initialCountry:"us",
- separateDialCode:true,
- utilsScript:"https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
-});
+iti=intlTelInput(document.getElementById('phone'),{initialCountry:'us',separateDialCode:true});
 
-function scrollToForm(){
- document.getElementById("form").scrollIntoView({behavior:"smooth"})
-}
+function scrollToForm(){document.getElementById('form').scrollIntoView({behavior:'smooth'})}
 
-async function submitStep1(){
+async function submit1(){
  const d=iti.getSelectedCountryData();
- const {data,error}=await supa.from("demo_leads").insert([{
+ const {data}=await supa.from('demo_leads').insert([{
   child_name:childName.value,
   child_grade:childGrade.value,
   parent_name:parentName.value,
   parent_email:parentEmail.value,
-  phone_country_code:"+"+d.dialCode,
+  phone_country_code:'+'+d.dialCode,
   phone_number:iti.getNumber(),
-  is_whatsapp:true,
-  has_laptop:document.querySelector("input[name=device]:checked").value
- }]).select("id").single();
-
- if(!error){
-  leadId=data.id;
-  document.getElementById("step1").classList.add("hidden");
-  document.getElementById("step2").classList.remove("hidden");
-  loadDates();
-  loadSlots();
- }
-}
-
-let selected={};
-
-function pick(el,key,val){
- el.parentElement.querySelectorAll(".slot").forEach(s=>s.classList.remove("active"));
- el.classList.add("active");
- selected[key]=val;
+  has_laptop:document.querySelector('[name=lap]:checked').value
+ }]).select('id').single();
+ leadId=data.id;
+ s1.classList.add('hidden');s2.classList.remove('hidden');
+ loadDates();loadTimes();
 }
 
 function loadDates(){
- const dEl=document.getElementById("dates");
- for(let i=0;i<7;i++){
+ for(let i=0;i<6;i++){
   const d=new Date();d.setDate(d.getDate()+i);
-  const div=document.createElement("div");
-  div.className="date";
-  div.innerHTML=d.toDateString().slice(0,10);
-  div.onclick=()=>{document.querySelectorAll(".date").forEach(x=>x.classList.remove("active"));div.classList.add("active");selected.date=d.toISOString().split("T")[0]};
-  dEl.appendChild(div);
+  const el=document.createElement('div');
+  el.className='box';
+  el.textContent=d.toDateString().slice(0,10);
+  el.onclick=()=>{pick(el,'date',d.toISOString().split('T')[0])};
+  dates.appendChild(el);
  }
 }
 
-function loadSlots(){
- const sEl=document.getElementById("slots");
- const base=["08:30","09:30","10:30","11:30","12:30","13:30","14:30","15:30","16:30","17:30","18:30","19:30","20:30"];
- base.forEach((t,i)=>{
-  const d=document.createElement("div");
-  d.className="slot";
-  d.innerHTML=t+(i<3?"<span class='star'>⭐ Star Teacher</span>":"");
-  d.onclick=()=>{document.querySelectorAll(".slot").forEach(x=>x.classList.remove("active"));d.classList.add("active");selected.time=t};
-  sEl.appendChild(d);
+function loadTimes(){
+ ['07:30 PM','08:30 PM','09:30 PM','10:30 PM','11:30 PM','12:30 AM']
+ .forEach(t=>{
+  const el=document.createElement('div');
+  el.className='box';el.textContent=t;
+  el.onclick=()=>pick(el,'slot',t);
+  times.appendChild(el);
  });
 }
 
-async function submitStep2(){
- await supa.from("demo_leads").update({
+async function submit2(){
+ await supa.from('demo_leads').update({
   preferred_date:selected.date,
-  preferred_time_slot:selected.time,
+  preferred_time_slot:selected.slot
+ }).eq('id',leadId);
+ s2.classList.add('hidden');s3.classList.remove('hidden');
+}
+
+function pick(el,key,val){
+ el.parentElement.querySelectorAll('.box').forEach(b=>b.classList.remove('active'));
+ el.classList.add('active');selected[key]=val;
+}
+
+async function submit3(){
+ await supa.from('demo_leads').update({
   who_are_you:selected.who,
   booking_reason:selected.reason,
-  purchase_timeline:selected.timeline
- }).eq("id",leadId);
- alert("Your trial class is booked!");
+  purchase_timeline:selected.time
+ }).eq('id',leadId);
+ alert('Trial booked successfully');
 }
 </script>
 </body>

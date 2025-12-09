@@ -832,145 +832,122 @@
       });
     }
 
-    // ---------- LOAD SLOTS + DATES ----------
-    async function loadSlotsAndDates() {
-      const datesRow = document.getElementById("datesRow");
-      const slotsGrid = document.getElementById("slotsGrid");
-      const slotStatus = document.getElementById("slotStatus");
+// ---------- LOAD SLOTS + DATES ----------
+async function loadSlotsAndDates() {
+  const datesRow = document.getElementById("datesRow");
+  const slotsGrid = document.getElementById("slotsGrid");
+  const slotStatus = document.getElementById("slotStatus");
 
-      datesRow.innerHTML = "";
-      slotsGrid.innerHTML = "";
-      slotStatus.textContent = "Loading slots...";
+  datesRow.innerHTML = "";
+  slotsGrid.innerHTML = "";
+  slotStatus.textContent = "Loading slots...";
 
-      const today = new Date();
-      const firstDayKey = formatDateKey(today);
-      const lastDay = new Date(today);
-      lastDay.setDate(today.getDate() + 5);
-      const lastDayKey = formatDateKey(lastDay);
+  // 1) Get ALL active slots for this course & region from Supabase
+  //    (no date range filter here to avoid timezone issues)
+  let { data, error } = await supabaseClient
+    .from("demo_slots")
+    .select("*")
+    .eq("course_id", courseId)
+    .eq("is_active", true)
+    .eq("region_key", regionKey)
+    .order("slot_start_ist", { ascending: true })
+    .limit(500);
 
-      const fromIso = `${firstDayKey}T00:00:00+05:30`;
-      const toIso = `${lastDayKey}T23:59:59+05:30`;
+  if (error) {
+    console.error(error);
+    slotStatus.textContent = "Could not load slots. Please try again.";
+    slotStatus.className = "status error";
+    return;
+  }
 
-      const { data, error } = await supabaseClient
-        .from("demo_slots")
-        .select("*")
-        .eq("course_id", courseId)
-        .eq("is_active", true)
-        .eq("region_key", regionKey)
-        .gte("slot_start_ist", fromIso)
-        .lte("slot_start_ist", toIso)
-        .order("slot_start_ist", { ascending: true });
+  // If somehow nothing is returned, just show the message
+  if (!data || data.length === 0) {
+    slotStatus.textContent =
+      "No slots available for the next few days. Our team will contact you on WhatsApp.";
+    slotStatus.className = "status";
+    return;
+  }
 
-      if (error) {
-        console.error(error);
-        slotStatus.textContent = "Could not load slots. Please try again.";
-        slotStatus.className = "status error";
-        return;
-      }
+  // 2) Build a date → slots map in the browser
+  slotsByDate = {};
+  selectedDateKey = null;
+  selectedSlotId = null;
 
-      slotsByDate = {};
-      const now = new Date();
-      const nowPlus1h = new Date(now.getTime() + 60 * 60 * 1000);
+  const now = new Date();
+  const nowPlus1h = new Date(now.getTime() + 60 * 60 * 1000);
 
-      (data || []).forEach((slot) => {
-        if (slot.capacity_booked >= slot.capacity_total) return;
-        const localSlotTime = new Date(slot.slot_start_ist);
-        if (localSlotTime <= nowPlus1h) {
-          return; // too close
-        }
-        const key =
-          typeof slot.slot_start_ist === "string"
-            ? slot.slot_start_ist.slice(0, 10)
-            : formatDateKey(localSlotTime);
-        if (!slotsByDate[key]) slotsByDate[key] = [];
-        slotsByDate[key].push(slot);
-      });
+  const today = new Date();
+  const lastDay = new Date(today);
+  lastDay.setDate(today.getDate() + 5);
+  const lastDayEnd = new Date(lastDay);
+  lastDayEnd.setHours(23, 59, 59, 999);
 
-      const dateButtons = [];
-      for (let i = 0; i < 6; i++) {
-        const d = new Date();
-        d.setDate(today.getDate() + i);
-        const key = formatDateKey(d);
-        const btn = document.createElement("div");
-        btn.className = "date-pill";
-        btn.dataset.key = key;
+  data.forEach((slot) => {
+    // Respect capacity
+    if (slot.capacity_booked >= slot.capacity_total) return;
 
-        const label = labelForDateIndex(i, d);
-        const hasSlots = (slotsByDate[key] || []).length > 0;
+    const slotLocal = new Date(slot.slot_start_ist);
 
-        btn.innerHTML = hasSlots
-          ? `<strong>${label}</strong>`
-          : `<strong>${label}</strong><span style="font-size:10px;display:block;color:#a3b0d9;">No slots</span>`;
+    // Only consider next 6 days
+    if (slotLocal > lastDayEnd) return;
 
-        if (!hasSlots) {
-          btn.classList.add("disabled");
-        } else if (!selectedDateKey && hasSlots) {
-          selectedDateKey = key;
-          btn.classList.add("active");
-        }
+    // For today: enforce 1-hour rule
+    if (slotLocal <= nowPlus1h) return;
 
-        btn.addEventListener("click", () => {
-          if (!slotsByDate[key] || slotsByDate[key].length === 0) return;
-          selectedDateKey = key;
-          selectedSlotId = null;
-          dateButtons.forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-          renderSlotsForDate(key);
-        });
+    const key = formatDateKey(slotLocal);
+    if (!slotsByDate[key]) slotsByDate[key] = [];
+    slotsByDate[key].push(slot);
+  });
 
-        datesRow.appendChild(btn);
-        dateButtons.push(btn);
-      }
+  // 3) Build the 6 date buttons (Today + next 5 days)
+  const dateButtons = [];
+  for (let i = 0; i < 6; i++) {
+    const d = new Date();
+    d.setDate(today.getDate() + i);
+    const key = formatDateKey(d);
 
-      if (selectedDateKey && slotsByDate[selectedDateKey]) {
-        renderSlotsForDate(selectedDateKey);
-        slotStatus.textContent = "";
-      } else {
-        slotStatus.textContent =
-          "No slots available for the next few days. Our team will contact you on WhatsApp.";
-        slotStatus.className = "status";
-      }
+    const btn = document.createElement("div");
+    btn.className = "date-pill";
+    btn.dataset.key = key;
+
+    const label = labelForDateIndex(i, d);
+    const hasSlots = (slotsByDate[key] || []).length > 0;
+
+    btn.innerHTML = hasSlots
+      ? `<strong>${label}</strong>`
+      : `<strong>${label}</strong><span style="font-size:10px;display:block;color:#a3b0d9;">No slots</span>`;
+
+    if (!hasSlots) {
+      btn.classList.add("disabled");
+    } else if (!selectedDateKey && hasSlots) {
+      selectedDateKey = key;
+      btn.classList.add("active");
     }
 
-    function renderSlotsForDate(dateKey) {
-      const slotsGrid = document.getElementById("slotsGrid");
-      slotsGrid.innerHTML = "";
-      const list = slotsByDate[dateKey] || [];
+    btn.addEventListener("click", () => {
+      if (!slotsByDate[key] || slotsByDate[key].length === 0) return;
+      selectedDateKey = key;
+      selectedSlotId = null;
+      dateButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderSlotsForDate(key);
+    });
 
-      list.forEach((slot) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "slot-btn";
+    datesRow.appendChild(btn);
+    dateButtons.push(btn);
+  }
 
-        const localTime = new Date(slot.slot_start_ist).toLocaleTimeString(
-          [],
-          { hour: "2-digit", minute: "2-digit" }
-        );
-
-        btn.innerHTML = slot.is_star_teacher
-          ? `${localTime}<span class="star">⭐ Star Teacher</span>`
-          : localTime;
-
-        btn.addEventListener("click", () => {
-          selectedSlotId = slot.id;
-          document
-            .querySelectorAll(".slot-btn")
-            .forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-        });
-
-        slotsGrid.appendChild(btn);
-      });
-
-      if (list.length === 0) {
-        const slotStatus = document.getElementById("slotStatus");
-        slotStatus.textContent = "No slots for this date.";
-        slotStatus.className = "status";
-      } else {
-        const slotStatus = document.getElementById("slotStatus");
-        slotStatus.textContent = "";
-      }
-    }
+  // 4) Render slots for default selected date (if any)
+  if (selectedDateKey && slotsByDate[selectedDateKey]) {
+    renderSlotsForDate(selectedDateKey);
+    slotStatus.textContent = "";
+    slotStatus.className = "status";
+  } else {
+    slotStatus.textContent =
+      "No slots available for the next few days. Our team will contact you on WhatsApp.";
+    slotStatus.className = "status";
+  }
+}
 
     // ---------- STEP 2 ----------
     function setupStep2() {

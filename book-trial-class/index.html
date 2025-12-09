@@ -915,31 +915,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const phoneInput = document.querySelector("#parentPhone");
   let iti;
 
-  if (phoneInput && window.intlTelInput) {
-    iti = window.intlTelInput(phoneInput, {
-      initialCountry: "auto",
-      separateDialCode: true,
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js",
-      geoIpLookup: function (callback) {
-        fetch("https://ipapi.co/json/")
-          .then((res) => res.json())
-          .then((data) => {
-            callback(data.country_code || "IN");
-          })
-          .catch(() => {
-            callback("IN");
-          });
-      }
-    });
-  }
-
-  const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-
+  // Parse URL params
   const urlParams = new URLSearchParams(window.location.search || "");
   const courseIdFromUrl = parseInt(urlParams.get("courseId") || "1", 10) || 1;
-  const regionFromUrl = urlParams.get("region") || "";
+  const regionFromUrlRaw = urlParams.get("region") || "";
   const langFromUrl = (urlParams.get("lang") || "english").toLowerCase();
   const utm_source = urlParams.get("utm_source") || null;
   const utm_medium = urlParams.get("utm_medium") || null;
@@ -949,6 +928,87 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
 
+  // Map URL region to internal region key
+  function mapRegionKey(rawRegion) {
+    if (!rawRegion) return null;
+    const r = String(rawRegion).toUpperCase().trim();
+    if (["MEA", "EUROPE", "USA", "SEA", "ANZ", "INDIA", "ROW"].includes(r)) {
+      return r;
+    }
+    return null;
+  }
+
+  const regionKeyFromUrl = mapRegionKey(regionFromUrlRaw);
+
+  // Map region to a default phone country ISO2 (for initial country code in phone input)
+  const regionToIso2 = {
+    USA: "us",
+    INDIA: "in",
+    MEA: "ae",    // default to UAE
+    EUROPE: "gb", // default to UK
+    SEA: "sg",    // default to Singapore
+    ANZ: "au",    // default to Australia
+    ROW: "za"     // default to South Africa (can be changed later)
+  };
+
+  const initialCountryIso2 = regionKeyFromUrl ? (regionToIso2[regionKeyFromUrl] || null) : null;
+
+  // Infer region from dial code (used only when URL has NO region)
+  function inferRegionFromDialCode(dial) {
+    if (!dial) return null;
+    const d = String(dial);
+    // India
+    if (d === "91") return "INDIA";
+    // USA & Canada
+    if (d === "1") return "USA";
+    // Middle East examples
+    if (["971", "966", "974", "973", "968", "965", "962", "970", "967"].includes(d)) return "MEA";
+    // Europe examples
+    if (["44", "33", "49", "39", "34", "31", "41", "46", "47", "48", "420", "43", "32", "36", "371", "370", "372", "40", "351"].includes(d)) {
+      return "EUROPE";
+    }
+    // SEA examples
+    if (["65", "60", "62", "84", "63", "66", "81", "82", "852", "886", "855", "856"].includes(d)) {
+      return "SEA";
+    }
+    // ANZ
+    if (["61", "64"].includes(d)) return "ANZ";
+    // Fallback
+    return "ROW";
+  }
+
+  // Initialize phone input with intl-tel-input
+  if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
+      initialCountry: initialCountryIso2 || "auto",
+      separateDialCode: true,
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js",
+      geoIpLookup: function (callback) {
+        // If we already know region from URL, prefer that for initial phone country
+        if (initialCountryIso2) {
+          callback(initialCountryIso2.toUpperCase());
+          return;
+        }
+        // Fallback to IP-based detection
+        fetch("https://ipapi.co/json/")
+          .then((res) => res.json())
+          .then((data) => {
+            callback((data && data.country_code) || "IN");
+          })
+          .catch(() => {
+            callback("IN");
+          });
+      }
+    });
+  }
+
+  // Supabase client
+  const supabaseUrl = "https://binklfyiypbhuzsvnlzg.supabase.co";
+  const supabaseAnonKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+  const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  // Step and form elements
   const step1Pane = document.getElementById("step1Pane");
   const step2Pane = document.getElementById("step2Pane");
   const step3Pane = document.getElementById("step3Pane");
@@ -966,7 +1026,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let activeSlotLabel = null;
   let activeSlotIsStar = false;
   let cachedSlotsByDate = null;
-  let regionKeyFromUrl = null;
 
   function setStep(step) {
     currentStep = step;
@@ -1000,30 +1059,36 @@ document.addEventListener("DOMContentLoaded", function () {
     if (type === "success") messageEl.classList.add("success");
   }
 
-  function mapRegionKey(rawRegion) {
-    if (!rawRegion) return "ROW";
-    const r = rawRegion.toUpperCase();
-    if (["MEA", "EUROPE", "USA", "SEA", "ANZ", "INDIA", "ROW"].includes(r)) {
-      return r;
-    }
-    return "ROW";
-  }
-
-  regionKeyFromUrl = mapRegionKey(regionFromUrl);
-
   function getPhoneDetails() {
     let localNumber = phoneInput ? phoneInput.value.trim() : "";
     let phoneCountryCode = "";
     let countryName = "";
-    let regionKey = regionKeyFromUrl || "ROW";
 
-    if (iti) {
-      localNumber = iti.getNumber(intlTelInputUtils.numberFormat.NATIONAL).replace(/\s+/g, "");
-      phoneCountryCode = iti.getSelectedCountryData().dialCode || "";
-      countryName = iti.getSelectedCountryData().name || "";
+    if (iti && window.intlTelInputUtils) {
+      // Get national significant number (no country code, minimal spaces)
+      try {
+        localNumber = iti
+          .getNumber(intlTelInputUtils.numberFormat.NATIONAL)
+          .replace(/\s+/g, "");
+      } catch (e) {
+        // Fallback to raw input
+        localNumber = phoneInput ? phoneInput.value.trim() : "";
+      }
+      const data = iti.getSelectedCountryData() || {};
+      phoneCountryCode = data.dialCode || "";
+      countryName = data.name || "";
     }
 
-    return { localNumber, phoneCountryCode, countryName, regionKey };
+    // Decide final region
+    let finalRegionKey = regionKeyFromUrl || null; // URL always wins if present
+    if (!finalRegionKey && phoneCountryCode) {
+      finalRegionKey = inferRegionFromDialCode(phoneCountryCode);
+    }
+    if (!finalRegionKey) {
+      finalRegionKey = "ROW";
+    }
+
+    return { localNumber, phoneCountryCode, countryName, regionKey: finalRegionKey };
   }
 
   async function handleStep1Submit() {
@@ -1033,14 +1098,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const { localNumber, phoneCountryCode, countryName, regionKey } = getPhoneDetails();
 
-    const childName   = document.getElementById("childName").value.trim();
-    const childGrade  = document.getElementById("childGrade").value;
-    const parentName  = document.getElementById("parentName").value.trim();
-    const parentEmail = document.getElementById("parentEmail").value.trim();
-    const hasComputer = (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
+    const childName = (document.getElementById("childName").value || "").trim();
+    const childGrade = (document.getElementById("childGrade").value || "").trim();
+    const parentName = (document.getElementById("parentName").value || "").trim();
+    const parentEmail = (document.getElementById("parentEmail").value || "").trim();
+    const hasComputer =
+      (document.querySelector('input[name="hasComputer"]:checked') || {}).value || null;
 
     if (!childName || !childGrade || !parentName || !parentEmail || !localNumber) {
-      showMessage("error", "Please fill all required fields, including grade and phone.");
+      showMessage("error", "Please fill all required fields, including phone number.");
       submitBtn.disabled = false;
       return;
     }
@@ -1053,14 +1119,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const isWhatsapp = true;
 
     try {
-      const ipResponse = await fetch("https://ipapi.co/json/");
-      const ipData = await ipResponse.json().catch(() => ({}));
-      const ip_address = ipData.ip || null;
-      const city = ipData.city || null;
-      const country = ipData.country_name || countryName || null;
-      const timezone = ipData.timezone || browserTimezone;
-      const device_type = /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
-      const browser = navigator.userAgent || null;
+      // IP / device info
+      let ip_address = null;
+      let city = null;
+      let country = countryName || null;
+      let timezone = browserTimezone;
+      let device_type = /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : "desktop";
+      let browser = navigator.userAgent || null;
+
+      try {
+        const ipResponse = await fetch("https://ipapi.co/json/");
+        const ipData = await ipResponse.json().catch(() => ({}));
+        ip_address = ipData.ip || null;
+        city = ipData.city || null;
+        country = country || ipData.country_name || null;
+        timezone = ipData.timezone || browserTimezone;
+      } catch (e) {
+        // Ignore IP failures gracefully
+      }
 
       const leadPayload = {
         child_name: childName,
@@ -1077,6 +1153,7 @@ document.addEventListener("DOMContentLoaded", function () {
         utm_term,
         utm_content,
         course_id: courseIdFromUrl,
+        fmt: null,
         lang: langFromUrl,
         landing_page_path: window.location.pathname,
         full_url: window.location.href,
@@ -1115,12 +1192,42 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Helper: filter valid slots for a given date key
+  function filterSlotsForDate(dateKey, entries, userTz) {
+    const filtered = [];
+    if (!entries || !entries.length) return filtered;
+
+    const nowLocal = new Date(
+      new Date().toLocaleString("en-US", { timeZone: userTz })
+    );
+    const todayKey = nowLocal.toISOString().split("T")[0];
+    const oneHourLaterLocal = new Date(nowLocal.getTime() + 60 * 60 * 1000);
+
+    entries.forEach(({ row, startLocal, endLocal }) => {
+      const capacityLeft =
+        (row.capacity_total || 0) - (row.capacity_booked || 0);
+      if (capacityLeft <= 0) {
+        return; // full slot
+      }
+
+      // For "today", skip slots that start within the last 1 hour window
+      if (dateKey === todayKey && startLocal <= oneHourLaterLocal) {
+        return;
+      }
+
+      filtered.push({ row, startLocal, endLocal, capacityLeft });
+    });
+
+    return filtered;
+  }
+
   async function loadSlotsAndDates(regionKey) {
     if (!slotsContainer || !preferredDateInput) return;
-    if (!regionKey) regionKey = regionKeyFromUrl || "ROW";
 
     const dateChipsContainer = document.querySelector("#dateChipsContainer");
     if (!dateChipsContainer) return;
+
+    if (!regionKey) regionKey = regionKeyFromUrl || "ROW";
 
     slotsContainer.innerHTML = "Loading slots...";
     dateChipsContainer.innerHTML = "";
@@ -1130,17 +1237,25 @@ document.addEventListener("DOMContentLoaded", function () {
     activeSlotIsStar = false;
 
     try {
-      const now = new Date();
-      const maxDaysAhead = 5;
-      const endRange = new Date(now.getTime() + maxDaysAhead * 24 * 60 * 60 * 1000);
+      // Define 6-day window in IST (today + 5 days)
+      const nowIst = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+      );
+      const startOfTodayIst = new Date(
+        nowIst.getFullYear(),
+        nowIst.getMonth(),
+        nowIst.getDate()
+      );
+      const endIst = new Date(startOfTodayIst.getTime() + 6 * 24 * 60 * 60 * 1000);
 
       const { data, error } = await supabaseClient
         .from("demo_slots")
         .select("*")
         .eq("region_key", regionKey)
-        .eq("course_id", courseIdFromUrl || 1)
+        .eq("course_id", courseIdFromUrl)
         .eq("is_active", true)
-        .order("slot_start_ist", { ascending: true })
+        .gte("slot_start_ist", startOfTodayIst.toISOString())
+        .lte("slot_start_ist", endIst.toISOString())
         .order("slot_start_ist", { ascending: true });
 
       if (error) {
@@ -1150,7 +1265,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (!data || data.length === 0) {
-        slotsContainer.innerHTML = "<p>No slots available for the next few days.</p>";
+        slotsContainer.innerHTML =
+          "<p>No slots available for the next few days. Please try a different region or contact support.</p>";
         return;
       }
 
@@ -1180,7 +1296,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (grouped.size === 0) {
-        slotsContainer.innerHTML = "<p>No slots available for your timezone.</p>";
+        slotsContainer.innerHTML =
+          "<p>No slots available for your timezone in the next few days.</p>";
         return;
       }
 
@@ -1190,28 +1307,46 @@ document.addEventListener("DOMContentLoaded", function () {
       const todayLocal = new Date(
         new Date().toLocaleString("en-US", { timeZone: userTz })
       );
-      const todayKey = todayLocal.toISOString().split("T")[0];
+      const startOfTodayLocal = new Date(
+        todayLocal.getFullYear(),
+        todayLocal.getMonth(),
+        todayLocal.getDate()
+      );
+      const lastAllowedLocal = new Date(
+        startOfTodayLocal.getTime() + 5 * 24 * 60 * 60 * 1000
+      );
 
-      const tomorrowLocal = new Date(todayLocal);
-      tomorrowLocal.setDate(todayLocal.getDate() + 1);
-      const tomorrowKey = tomorrowLocal.toISOString().split("T")[0];
+      let firstValidDateKey = null;
 
-      let firstDateKey = null;
-
+      // Build date chips only for [today .. today+5] and find first date with valid slots
       sortedDateKeys.forEach((dateKey) => {
+        const chipDateLocal = new Date(dateKey + "T00:00:00");
+        if (chipDateLocal < startOfTodayLocal || chipDateLocal > lastAllowedLocal) {
+          return; // outside 6-day window
+        }
+
+        const entries = grouped.get(dateKey) || [];
+        const filtered = filterSlotsForDate(dateKey, entries, userTz);
+        if (!firstValidDateKey && filtered.length > 0) {
+          firstValidDateKey = dateKey;
+        }
+
         const chip = document.createElement("button");
         chip.type = "button";
         chip.className = "date-chip";
 
-        const chipDate = new Date(dateKey + "T00:00:00");
-        const dayName = chipDate.toLocaleDateString("en-US", { weekday: "short" });
-        const dayNum = chipDate.getDate().toString().padStart(2, "0");
-        const monthShort = chipDate.toLocaleDateString("en-US", { month: "short" });
+        const dayName = chipDateLocal.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = chipDateLocal.getDate().toString().padStart(2, "0");
+        const monthShort = chipDateLocal.toLocaleDateString("en-US", { month: "short" });
+
+        const todayKeyLocal = startOfTodayLocal.toISOString().split("T")[0];
+        const tomorrowLocal = new Date(startOfTodayLocal.getTime() + 24 * 60 * 60 * 1000);
+        const tomorrowKeyLocal = tomorrowLocal.toISOString().split("T")[0];
 
         let mainLabel;
-        if (dateKey === todayKey) {
+        if (dateKey === todayKeyLocal) {
           mainLabel = "Today";
-        } else if (dateKey === tomorrowKey) {
+        } else if (dateKey === tomorrowKeyLocal) {
           mainLabel = "Tomorrow";
         } else {
           mainLabel = dayName;
@@ -1231,20 +1366,53 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         dateChipsContainer.appendChild(chip);
-        if (!firstDateKey) firstDateKey = dateKey;
       });
 
-      if (firstDateKey) {
-        const firstChip = dateChipsContainer.querySelector(".date-chip");
-        if (firstChip) firstChip.classList.add("active");
-        preferredDateInput.value = firstDateKey;
-        renderSlotsForDate(firstDateKey, grouped, userTz);
+      const allChips = dateChipsContainer.querySelectorAll(".date-chip");
+      if (!allChips.length) {
+        slotsContainer.innerHTML =
+          "<p>No valid dates available in the next few days for this region.</p>";
+        return;
+      }
+
+      // If we found a date with valid slots, select it. Otherwise, select the first chip.
+      let initialDateKey = firstValidDateKey;
+      if (!initialDateKey) {
+        const candidateKeys = sortedDateKeys.filter((dateKey) => {
+          const chipDateLocal = new Date(dateKey + "T00:00:00");
+          return (
+            chipDateLocal >= startOfTodayLocal &&
+            chipDateLocal <= lastAllowedLocal
+          );
+        });
+        initialDateKey = candidateKeys[0] || null;
+      }
+
+      if (initialDateKey) {
+        preferredDateInput.value = initialDateKey;
+
+        // Mark the corresponding chip as active
+        const candidateKeys = sortedDateKeys.filter((dateKey) => {
+          const chipDateLocal = new Date(dateKey + "T00:00:00");
+          return chipDateLocal >= startOfTodayLocal && chipDateLocal <= lastAllowedLocal;
+        });
+
+        candidateKeys.forEach((dateKey, idx) => {
+          if (dateKey === initialDateKey && allChips[idx]) {
+            allChips[idx].classList.add("active");
+          }
+        });
+
+        renderSlotsForDate(initialDateKey, grouped, userTz);
       } else {
-        slotsContainer.innerHTML = "<p>No valid dates available.</p>";
+        // No valid slots at all, though we had rows
+        slotsContainer.innerHTML =
+          "<p>No valid slots available (they might be fully booked or in the past).</p>";
       }
     } catch (err) {
       console.error("Error setting up date and slots:", err);
-      slotsContainer.innerHTML = "<p>Unable to load available dates and slots. Please refresh the page.</p>";
+      slotsContainer.innerHTML =
+        "<p>Unable to load available dates and slots. Please refresh the page.</p>";
     }
   }
 
@@ -1256,27 +1424,14 @@ document.addEventListener("DOMContentLoaded", function () {
     activeSlotIsStar = false;
 
     const entries = grouped.get(dateKey) || [];
-    if (!entries.length) {
-      slotsContainer.innerHTML = "<p>No slots available for this date.</p>";
+    const filtered = filterSlotsForDate(dateKey, entries, userTz);
+
+    if (!filtered.length) {
+      slotsContainer.innerHTML = "<p>No valid slots available for this date.</p>";
       return;
     }
 
-    const nowLocal = new Date(
-      new Date().toLocaleString("en-US", { timeZone: userTz })
-    );
-    const oneHourLaterLocal = new Date(nowLocal.getTime() + 60 * 60 * 1000);
-
-    entries.forEach(({ row, startLocal, endLocal }) => {
-      const isSameDay =
-        startLocal.getFullYear() === nowLocal.getFullYear() &&
-        startLocal.getMonth() === nowLocal.getMonth() &&
-        startLocal.getDate() === nowLocal.getDate();
-
-      if (isSameDay && startLocal <= oneHourLaterLocal) {
-        return;
-      }
-
-      const capacityLeft = (row.capacity_total || 0) - (row.capacity_booked || 0);
+    filtered.forEach(({ row, startLocal, endLocal, capacityLeft }) => {
       const isFull = capacityLeft <= 0;
 
       const card = document.createElement("button");
@@ -1319,10 +1474,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       slotsContainer.appendChild(card);
     });
-
-    if (!slotsContainer.innerHTML) {
-      slotsContainer.innerHTML = "<p>No valid slots available for this date.</p>";
-    }
   }
 
   async function handleStep2Submit() {
@@ -1346,9 +1497,12 @@ document.addEventListener("DOMContentLoaded", function () {
         .eq("id", activeSlotId)
         .single();
 
-      if (slotError) {
+      if (slotError || !slotRow) {
         console.error("Error fetching chosen slot:", slotError);
-        showMessage("error", "Unable to confirm slot. Please try again or choose another slot.");
+        showMessage(
+          "error",
+          "Unable to confirm slot. Please try again or choose another slot."
+        );
         return;
       }
 
@@ -1371,19 +1525,29 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      const { error: slotCapError } = await supabaseClient.rpc("increment_slot_booking", {
-        p_slot_id: activeSlotId
-      });
-
-      if (slotCapError) {
-        console.error("Error incrementing slot capacity:", slotCapError);
+      // Increment slot capacity via RPC or direct update (RPC name must exist in DB)
+      try {
+        const { error: slotCapError } = await supabaseClient.rpc(
+          "increment_slot_booking",
+          {
+            p_slot_id: activeSlotId
+          }
+        );
+        if (slotCapError) {
+          console.error("Error incrementing slot capacity:", slotCapError);
+        }
+      } catch (e) {
+        console.error("RPC increment_slot_booking failed or not defined:", e);
       }
 
       setStep(3);
       showMessage("success", "Slot locked! Now answer 3 quick questions to finish.");
     } catch (err) {
       console.error("Unexpected error in Step 2:", err);
-      showMessage("error", "Unexpected error while confirming your slot. Please try again.");
+      showMessage(
+        "error",
+        "Unexpected error while confirming your slot. Please try again."
+      );
     }
   }
 
@@ -1393,9 +1557,15 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    const whoAreYou = (document.querySelector('input[name="whoAreYou"]:checked') || {}).value || null;
-    const bookingReason = (document.querySelector('input[name="bookingReason"]:checked') || {}).value || null;
-    const purchaseTimeline = (document.querySelector('input[name="purchaseTimeline"]:checked') || {}).value || null;
+    const whoAreYou =
+      (document.querySelector('input[name="whoAreYou"]:checked') || {}).value ||
+      null;
+    const bookingReason =
+      (document.querySelector('input[name="bookingReason"]:checked') || {})
+        .value || null;
+    const purchaseTimeline =
+      (document.querySelector('input[name="purchaseTimeline"]:checked') || {})
+        .value || null;
 
     if (!whoAreYou || !bookingReason || !purchaseTimeline) {
       showMessage("error", "Please select all the options to complete your booking.");
@@ -1419,12 +1589,18 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      showMessage("success", "All set! Your trial class is booked. Our team will reach out soon.");
+      showMessage(
+        "success",
+        "All set! Your trial class is booked. Our team will reach out soon."
+      );
       const cta = document.querySelector(".floating-cta");
       if (cta) cta.style.display = "none";
     } catch (err) {
       console.error("Unexpected error in Step 3:", err);
-      showMessage("error", "Unexpected error while completing your booking. Please try again.");
+      showMessage(
+        "error",
+        "Unexpected error while completing your booking. Please try again."
+      );
     }
   }
 
@@ -1443,9 +1619,10 @@ document.addEventListener("DOMContentLoaded", function () {
     submitBtn.addEventListener("click", handleSubmitClick);
   }
 
+  // Initialize on Step 1
   setStep(1);
 });
-</script></script>
+</script>
 
 </body>
 </html>

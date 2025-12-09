@@ -706,6 +706,70 @@ select:focus {
   accent-color: #ff6bcb;
 }
 
+
+/* Updated radio chip styles for step 3 */
+.radio-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.radio-option {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio-option span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.96);
+  font-size: 14px;
+  color: #e5e7eb;
+  white-space: normal;
+  text-align: center;
+}
+
+.radio-options.vertical {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.radio-option input[type="radio"]:checked + span {
+  border-color: transparent;
+  background-image: var(--primary-gradient);
+  color: #020617;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #e5e7eb;
+  line-height: 1.5;
+  flex-wrap: wrap;
+}
+
+.checkbox-label input {
+  accent-color: #ec4899;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+}
 </style>
 </head>
 
@@ -1341,31 +1405,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
       cachedSlotsByDate = grouped;
 
+      
       const sortedDateKeys = Array.from(grouped.keys()).sort();
-      const todayLocal = new Date(
+
+      // Determine which dates we will actually show chips for (today + next 5 days)
+      const nowLocal = new Date(
         new Date().toLocaleString("en-US", { timeZone: userTz })
       );
       const startOfTodayLocal = new Date(
-        todayLocal.getFullYear(),
-        todayLocal.getMonth(),
-        todayLocal.getDate()
+        nowLocal.getFullYear(),
+        nowLocal.getMonth(),
+        nowLocal.getDate()
       );
       const lastAllowedLocal = new Date(
         startOfTodayLocal.getTime() + 5 * 24 * 60 * 60 * 1000
       );
 
+      const candidateKeys = sortedDateKeys.filter((dateKey) => {
+        const chipDateLocal = new Date(dateKey + "T00:00:00");
+        return (
+          chipDateLocal >= startOfTodayLocal && chipDateLocal <= lastAllowedLocal
+        );
+      });
+
+      const todayKeyLocal = candidateKeys[0] || null;
+      const tomorrowKeyLocal = candidateKeys[1] || null;
+
+      dateChipsContainer.innerHTML = "";
+      availableSlotsContainer.innerHTML = "";
+
       let firstValidDateKey = null;
 
-      // Build date chips only for [today .. today+5] and find first date with valid slots
-      sortedDateKeys.forEach((dateKey) => {
+      candidateKeys.forEach((dateKey) => {
         const chipDateLocal = new Date(dateKey + "T00:00:00");
-        if (chipDateLocal < startOfTodayLocal || chipDateLocal > lastAllowedLocal) {
-          return; // outside 6-day window
-        }
+        const slotsForThatDay = grouped.get(dateKey) || [];
 
-        const entries = grouped.get(dateKey) || [];
-        const filtered = filterSlotsForDate(dateKey, entries, userTz);
-        if (!firstValidDateKey && filtered.length > 0) {
+        const filteredForValidity = filterSlotsForDate(
+          dateKey,
+          slotsForThatDay,
+          userTz,
+          earliestSlotIst,
+          latestSlotIst,
+          nowLocal
+        );
+
+        if (!firstValidDateKey && filteredForValidity.length > 0) {
           firstValidDateKey = dateKey;
         }
 
@@ -1373,13 +1457,13 @@ document.addEventListener("DOMContentLoaded", function () {
         chip.type = "button";
         chip.className = "date-chip";
 
-        const dayName = chipDateLocal.toLocaleDateString("en-US", { weekday: "short" });
-        const dayNum = chipDateLocal.getDate().toString().padStart(2, "0");
-        const monthShort = chipDateLocal.toLocaleDateString("en-US", { month: "short" });
-
-        const todayKeyLocal = startOfTodayLocal.toISOString().split("T")[0];
-        const tomorrowLocal = new Date(startOfTodayLocal.getTime() + 24 * 60 * 60 * 1000);
-        const tomorrowKeyLocal = tomorrowLocal.toISOString().split("T")[0];
+        const dayName = chipDateLocal.toLocaleDateString("en-US", {
+          weekday: "short",
+        });
+        const dayNumber = chipDateLocal.getDate();
+        const monthName = chipDateLocal.toLocaleDateString("en-US", {
+          month: "short",
+        });
 
         let mainLabel;
         if (dateKey === todayKeyLocal) {
@@ -1391,15 +1475,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         chip.innerHTML = `
-          <span class="date-chip-main">${mainLabel}</span>
-          <span class="date-chip-sub">${dayNum} ${monthShort}</span>
+          <span class="chip-main">${mainLabel}</span>
+          <span class="chip-sub">${String(dayNumber).padStart(2, "0")} ${monthName}</span>
         `;
 
         chip.addEventListener("click", () => {
-          const allChips = dateChipsContainer.querySelectorAll(".date-chip");
           allChips.forEach((c) => c.classList.remove("active"));
           chip.classList.add("active");
-          preferredDateInput.value = dateKey;
           renderSlotsForDate(dateKey, grouped, userTz);
         });
 
@@ -1407,42 +1489,23 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const allChips = dateChipsContainer.querySelectorAll(".date-chip");
+
       if (!allChips.length) {
-        slotsContainer.innerHTML =
-          "<p>No valid dates available in the next few days for this region.</p>";
-        return;
-      }
-
-      // If we found a date with valid slots, select it. Otherwise, select the first chip.
-      let initialDateKey = firstValidDateKey;
-      if (!initialDateKey) {
-        const candidateKeys = sortedDateKeys.filter((dateKey) => {
-          const chipDateLocal = new Date(dateKey + "T00:00:00");
-          return (
-            chipDateLocal >= startOfTodayLocal &&
-            chipDateLocal <= lastAllowedLocal
-          );
-        });
-        initialDateKey = candidateKeys[0] || null;
-      }
-
-      if (initialDateKey) {
-        preferredDateInput.value = initialDateKey;
-
-        // Mark the corresponding chip as active
-        const candidateKeys = sortedDateKeys.filter((dateKey) => {
-          const chipDateLocal = new Date(dateKey + "T00:00:00");
-          return chipDateLocal >= startOfTodayLocal && chipDateLocal <= lastAllowedLocal;
-        });
-
-        candidateKeys.forEach((dateKey, idx) => {
-          if (dateKey === initialDateKey && allChips[idx]) {
-            allChips[idx].classList.add("active");
-          }
-        });
-
-        renderSlotsForDate(initialDateKey, grouped, userTz);
+        dateChipsContainer.innerHTML =
+          '<div class="no-slots-message">No slots available for the next few days. Please try a different region or contact support.</div>';
+        availableSlotsContainer.innerHTML =
+          '<div class="no-slots-message">No slots available right now. Our team will contact you on WhatsApp.</div>';
       } else {
+        const initialDateKey = firstValidDateKey || todayKeyLocal || candidateKeys[0];
+        if (initialDateKey) {
+          const index = candidateKeys.indexOf(initialDateKey);
+          if (index >= 0 && allChips[index]) {
+            allChips[index].classList.add("active");
+          }
+          renderSlotsForDate(initialDateKey, grouped, userTz);
+        }
+      }
+} else {
         // No valid slots at all, though we had rows
         slotsContainer.innerHTML =
           "<p>No valid slots available (they might be fully booked or in the past).</p>";

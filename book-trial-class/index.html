@@ -363,7 +363,7 @@ header {
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.18s ease;
-  color: #e5e7eb;
+  color: #f9fafb; /* brighter text on dark background */
 }
 
 .date-chip .date-chip-main {
@@ -401,13 +401,11 @@ header {
   flex-direction: column;
   gap: 2px;
   transition: all 0.18s ease;
-  color: #e5e7eb;
 }
 
 .slot-card .slot-time {
   font-weight: 600;
-  letter-spacing: 0.01em;
-  color: #e5e7eb;
+  color: #f9fafb; /* ensure slot time text is bright on dark background */
 }
 
 .slot-card .slot-capacity {
@@ -435,7 +433,7 @@ header {
 .slot-card.selected {
   border-color: transparent;
   background-image: var(--primary-gradient);
-  color: #0b1020;
+  color: #f9fafb;
 }
 
 .slot-card.selected .slot-capacity {
@@ -1120,20 +1118,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Decide final region
-    let finalRegionKey = null;
-
-    // Prefer region inferred from the phone's country code.
+    // Option B: URL region only sets the DEFAULT.
+    // The final region is decided by the dial code if we can map it.
+    let regionFromDial = null;
     if (phoneCountryCode) {
-      finalRegionKey = inferRegionFromDialCode(phoneCountryCode);
+      regionFromDial = inferRegionFromDialCode(phoneCountryCode);
     }
-    // Fallback to region from URL if phone mapping is not available.
-    if (!finalRegionKey && regionKeyFromUrl) {
-      finalRegionKey = regionKeyFromUrl;
-    }
-    // Last fallback: ROW.
-    if (!finalRegionKey) {
-      finalRegionKey = "ROW";
-    }
+    let finalRegionKey = regionFromDial || regionKeyFromUrl || "ROW";
 
     return { localNumber, phoneCountryCode, countryName, regionKey: finalRegionKey };
   }

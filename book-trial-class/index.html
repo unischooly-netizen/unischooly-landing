@@ -706,6 +706,44 @@ select:focus {
   accent-color: #ff6bcb;
 }
 
+
+/* Improve consent and step-3 layout */
+.consent-wrapper {
+  margin-top: 16px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #e5e7eb;
+  line-height: 1.5;
+}
+
+.checkbox-label input {
+  margin-top: 3px;
+}
+
+.radio-options.vertical {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.radio-option span {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.6);
+  background: rgba(15,23,42,0.9);
+}
+
+.radio-option input[type="radio"]:checked + span {
+  border-color: transparent;
+  background-image: var(--primary-gradient);
+  color: #020617;
+}
 </style>
 </head>
 
@@ -855,7 +893,7 @@ select:focus {
               </label>
               <label class="radio-option">
                 <input type="radio" name="whoAreYou" value="guardian" />
-                <span>Relative / Guardian</span>
+                <span>Guardian</span>
               </label>
             </div>
           </div>
@@ -864,20 +902,20 @@ select:focus {
             <label>Why did you book this demo?</label>
             <div class="radio-options vertical">
               <label class="radio-option">
-                <input type="radio" name="bookingReason" value="explore_coding" checked />
-                <span>To explore coding / skills for my child</span>
+                <input type="radio" name="bookingReason" value="want_to_buy" checked />
+                <span>Want to Buy Course</span>
               </label>
               <label class="radio-option">
-                <input type="radio" name="bookingReason" value="compare_platforms" />
-                <span>To compare with other platforms</span>
+                <input type="radio" name="bookingReason" value="compare_platform" />
+                <span>To Compare Platform</span>
               </label>
               <label class="radio-option">
-                <input type="radio" name="bookingReason" value="strengthen_school" />
-                <span>To strengthen school concepts</span>
+                <input type="radio" name="bookingReason" value="strengthen_concept" />
+                <span>To strengthen Concept</span>
               </label>
               <label class="radio-option">
                 <input type="radio" name="bookingReason" value="just_exploring" />
-                <span>Just exploring / not sure yet</span>
+                <span>Just Exploring</span>
               </label>
             </div>
           </div>
@@ -886,27 +924,31 @@ select:focus {
             <label>When are you planning to purchase?</label>
             <div class="radio-options vertical">
               <label class="radio-option">
-                <input type="radio" name="purchaseTimeline" value="immediately" checked />
-                <span>Immediately after trial if it goes well</span>
+                <input type="radio" name="purchaseTimeline" value="after_demo" checked />
+                <span>After the Demo</span>
               </label>
               <label class="radio-option">
-                <input type="radio" name="purchaseTimeline" value="within_1_week" />
-                <span>Within 1 week</span>
+                <input type="radio" name="purchaseTimeline" value="within_week" />
+                <span>Within a Week</span>
               </label>
               <label class="radio-option">
-                <input type="radio" name="purchaseTimeline" value="within_1_to_4_weeks" />
-                <span>Within 1–4 weeks</span>
+                <input type="radio" name="purchaseTimeline" value="within_month" />
+                <span>Within a Month</span>
               </label>
               <label class="radio-option">
-                <input type="radio" name="purchaseTimeline" value="more_than_1_month" />
-                <span>More than 1 month</span>
-              </label>
-              <label class="radio-option">
-                <input type="radio" name="purchaseTimeline" value="not_sure" />
-                <span>Not sure</span>
+                <input type="radio" name="purchaseTimeline" value="just_exploring" />
+                <span>Just Exploring</span>
               </label>
             </div>
           </div>
+
+          <div class="consent-wrapper">
+            <label class="checkbox-label">
+              <input type="checkbox" id="consentCheckbox" checked />
+              <span>I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.</span>
+            </label>
+          </div>
+
         </div>
 
         <button class="submit-btn" type="button" id="submitLead">
@@ -1377,9 +1419,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const dayNum = chipDateLocal.getDate().toString().padStart(2, "0");
         const monthShort = chipDateLocal.toLocaleDateString("en-US", { month: "short" });
 
-        const todayKeyLocal = startOfTodayLocal.toISOString().split("T")[0];
-        const tomorrowLocal = new Date(startOfTodayLocal.getTime() + 24 * 60 * 60 * 1000);
-        const tomorrowKeyLocal = tomorrowLocal.toISOString().split("T")[0];
+        const todayKeyLocal = sortedDateKeys[0] || null;
+        const tomorrowKeyLocal = sortedDateKeys[1] || null;
 
         let mainLabel;
         if (dateKey === todayKeyLocal) {

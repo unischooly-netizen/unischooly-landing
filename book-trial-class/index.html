@@ -2,1636 +2,1945 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Unischooly – Book Free Trial Class</title>
+  <title>Unischooly · Book Free Coding Trial Class</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css" />
   <style>
-    :root {
-      --bg-dark: #050816;
-      --card-bg: #0b1020;
-      --card-border: #1e2744;
-      --accent-gradient: linear-gradient(90deg, #ff8bd5, #8e6bff, #5ee7ff);
-      --accent-solid: #ff8bd5;
-      --accent-solid-2: #ffb347;
-      --text-main: #f5f7ff;
-      --text-muted: #8f9bbf;
-      --text-soft: #5f6a8f;
-      --danger: #ff5f7a;
-      --success: #5fe3a1;
-      --input-bg: #050816;
-      --input-border: #2c3559;
-      --input-border-focus: #8e6bff;
-      --pill-bg: #10172f;
-      --pill-bg-soft: #141b33;
-      --pill-border: #222b4a;
-      --pill-selected-border: #8e6bff;
-      --star-bg: #ffeaa7;
-      --star-text: #8b4b00;
-      --shadow-soft: 0 24px 80px rgba(0,0,0,0.65);
+    :root {{
+      --bg: #050816;
+      --bg-elevated: #080b1e;
+      --bg-card: #0c1024;
+      --border-subtle: #1d2240;
+      --accent-start: #ff7ac7;
+      --accent-mid: #a855f7;
+      --accent-end: #22d3ee;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --error: #f97373;
+      --success: #22c55e;
+      --shadow-soft: 0 18px 45px rgba(0,0,0,0.75);
+      --radius-xl: 24px;
       --radius-lg: 18px;
       --radius-pill: 999px;
-      --transition-fast: 0.18s ease-out;
-      --transition-med: 0.25s ease;
-      --error-bg: rgba(255,95,122,0.08);
-      --error-border: rgba(255,95,122,0.6);
-    }
+      --transition-fast: 180ms ease-out;
+      --transition-med: 240ms ease;
+      --input-bg: #050816;
+    }}
 
     *,
     *::before,
-    *::after {
+    *::after {{
       box-sizing: border-box;
-    }
+    }}
 
-    body {
+    body {{
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+        "Inter", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 48%, #000 100%);
       color: var(--text-main);
+    }}
+
+    .page {{
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }}
+
+    .gradient-border {{
+      position: relative;
+      border-radius: var(--radius-xl);
+      padding: 1px;
+      background: linear-gradient(120deg, rgba(255,122,199,0.6), rgba(168,85,247,0.5), rgba(34,211,238,0.6));
+    }}
+
+    .gradient-border-inner {{
+      border-radius: inherit;
+      background: radial-gradient(circle at top left, #18181b 0, #020617 52%, #020617 100%);
+      padding: 24px 28px;
+    }}
+
+    header {{
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        rgba(3,7,18,0.95),
+        rgba(3,7,18,0.9),
+        transparent
+      );
+      border-bottom: 1px solid rgba(31,41,55,0.7);
+    }}
+
+    .nav {{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 20px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }}
+
+    .nav-left {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }}
+
+    .logo-badge {{
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 20% 0, #f97316, #ec4899 35%, #6366f1 80%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-    }
+      box-shadow: 0 0 18px rgba(248,113,113,0.45);
+      color: #0b1020;
+      font-weight: 800;
+      font-size: 18px;
+    }}
 
-    .booking-shell {
-      width: 100%;
-      max-width: 1120px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    .brand-text-main {{
+      font-weight: 650;
+      letter-spacing: 0.03em;
+      font-size: 17px;
+    }}
 
-    .booking-header {
+    .brand-text-sub {{
+      font-size: 11px;
+      color: var(--text-soft);
+    }}
+
+    .nav-links {{
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }}
+
+    .nav-link {{
+      position: relative;
+      cursor: pointer;
+      padding: 4px 0;
+      transition: color var(--transition-fast);
+    }}
+
+    .nav-link::after {{
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to right, var(--accent-start), var(--accent-end));
+      opacity: 0;
+      transform: scaleX(0.5);
+      transform-origin: center;
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+    }}
+
+    .nav-link:hover {{
+      color: #e5e7eb;
+    }}
+
+    .nav-link:hover::after {{
+      opacity: 1;
+      transform: scaleX(1);
+    }}
+
+    .nav-cta {{
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
+      color: #0b1020;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(59,130,246,0.35);
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
-    }
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }}
 
-    .booking-eyebrow {
+    .nav-cta:hover {{
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(37,99,235,0.48);
+    }}
+
+    .nav-cta span.icon {{
+      font-size: 14px;
+    }}
+
+    main {{
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 14px 16px 40px;
+    }}
+
+    .hero-layout {{
+      max-width: 1180px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.05fr);
+      gap: 26px;
+      align-items: flex-start;
+    }}
+
+    .hero-left-badge-row {{
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(15,23,42,0.85);
-      border: 1px solid rgba(148,163,207,0.25);
+      background: rgba(24,24,27,0.9);
+      border: 1px solid rgba(55,65,81,0.7);
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #c7d2fe;
-      width: fit-content;
-    }
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }}
 
-    .booking-eyebrow-dot {
-      width: 6px;
-      height: 6px;
+    .dot-live {{
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
-      background: radial-gradient(circle, #22c55e, #15803d);
-      box-shadow: 0 0 8px rgba(34,197,94,0.9);
-    }
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34,197,94,0.7);
+    }}
 
-    .booking-title {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-    }
+    .hero-title {{
+      font-size: clamp(32px, 3.1vw, 38px);
+      line-height: 1.1;
+      margin: 4px 0 12px;
+    }}
 
-    .booking-title span.highlight {
-      background: var(--accent-gradient);
+    .hero-title span.highlight-main {{
+      background: linear-gradient(120deg, #f97316, #fb7185, #a855f7);
       -webkit-background-clip: text;
       color: transparent;
-    }
+    }}
 
-    .booking-subtitle {
+    .hero-title span.highlight-sub {{
+      background: linear-gradient(120deg, #38bdf8, #22c55e);
+      -webkit-background-clip: text;
+      color: transparent;
+    }}
+
+    .hero-subtitle {{
       font-size: 14px;
       color: var(--text-muted);
-      max-width: 640px;
-    }
+      max-width: 540px;
+      margin-bottom: 18px;
+    }}
 
-    .booking-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-      gap: 22px;
-    }
-
-    @media (max-width: 960px) {
-      .booking-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .booking-copy-card {
-      background: radial-gradient(circle at top left, rgba(56,189,248,0.08), transparent 48%),
-                  radial-gradient(circle at bottom right, rgba(244,114,182,0.08), transparent 52%),
-                  #020617;
-      border-radius: 26px;
-      padding: 24px 22px;
-      border: 1px solid rgba(30,64,175,0.55);
-      box-shadow: 0 30px 90px rgba(15,23,42,0.8);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .booking-copy-card::before {
-      content: "";
-      position: absolute;
-      inset: -120px;
-      opacity: 0.16;
-      background:
-        radial-gradient(circle at 0 0, rgba(251,191,36,0.45), transparent 55%),
-        radial-gradient(circle at 100% 0, rgba(96,165,250,0.4), transparent 55%),
-        radial-gradient(circle at 0 100%, rgba(244,114,182,0.45), transparent 55%);
-      pointer-events: none;
-    }
-
-    .booking-copy-inner {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .booking-badges {
+    .hero-badges-row {{
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 2px;
-    }
+      gap: 10px;
+      margin-bottom: 12px;
+    }}
 
-    .badge {
+    .pill-badge {{
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 10px;
+      padding: 4px 10px;
       border-radius: 999px;
+      border: 1px solid rgba(75,85,99,0.85);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.95));
       font-size: 11px;
-      background: rgba(15,23,42,0.82);
-      border: 1px solid rgba(148,163,207,0.3);
       color: #e5e7eb;
-      backdrop-filter: blur(10px);
-    }
+    }}
 
-    .badge-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 0, #facc15, #f97316);
-      color: #111827;
-      font-size: 11px;
-      box-shadow: 0 0 10px rgba(251,191,36,0.8);
-    }
+    .pill-badge span.icon {{
+      font-size: 13px;
+    }}
 
-    .booking-copy-title {
-      font-size: 20px;
-      font-weight: 600;
-    }
+    .hero-card {{
+      margin-top: 10px;
+    }}
 
-    .booking-copy-title span {
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
+    .hero-card-title {{
+      font-size: 18px;
+      font-weight: 650;
+      margin-bottom: 10px;
+    }}
 
-    .booking-copy-points {
+    .hero-card-title span.child {{
+      color: #f97316;
+    }}
+
+    .hero-card-list {{
+      list-style: none;
+      padding: 0;
+      margin: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-top: 4px;
-    }
+      gap: 6px;
+      font-size: 13px;
+      color: #e5e7eb;
+    }}
 
-    .copy-point {
+    .hero-card-list li {{
       display: flex;
       align-items: flex-start;
       gap: 8px;
-      font-size: 13px;
-      color: #e5e7eb;
-    }
+    }}
 
-    .copy-bullet {
-      margin-top: 2px;
-      font-size: 13px;
-    }
+    .hero-card-list span.check-icon {{
+      color: #22c55e;
+      margin-top: 1px;
+    }}
 
-    .booking-metrics {
+    .hero-stats-row {{
       display: flex;
       flex-wrap: wrap;
-      gap: 14px;
-      margin-top: 8px;
-    }
-
-    .metric-pill {
-      padding: 8px 11px;
-      border-radius: 999px;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid rgba(55,65,81,0.9);
+      gap: 10px;
+      margin-top: 14px;
       font-size: 11px;
-      color: #cbd5f5;
+      color: var(--text-muted);
+    }}
+
+    .hero-stat-chip {{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.95);
       display: inline-flex;
       align-items: center;
       gap: 6px;
-    }
+    }}
 
-    .metric-primary-number {
-      font-weight: 600;
+    .hero-stat-chip span.value {{
       color: #e5e7eb;
-    }
+      font-weight: 600;
+    }}
 
-    .metric-label {
-      color: #9ca3af;
-    }
-
-    .booking-form-card {
-      background: var(--card-bg);
-      border-radius: 28px;
-      border: 1px solid var(--card-border);
+    .hero-form-card-wrapper {{
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow-soft);
-      padding: 20px 20px 24px;
-      position: relative;
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+      border: 1px solid rgba(75,85,99,0.8);
       overflow: hidden;
-    }
+    }}
 
-    .form-glow {
-      position: absolute;
-      inset: -160px;
-      opacity: 0.1;
-      background: radial-gradient(circle at 10% 0, #8b5cf6, transparent 55%),
-                  radial-gradient(circle at 90% 100%, #0ea5e9, transparent 55%);
-      pointer-events: none;
-    }
+    .hero-form-card {{
+      padding: 22px 22px 24px;
+    }}
 
-    .form-inner {
-      position: relative;
-      z-index: 1;
-    }
+    .alert-banner {{
+      display: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      font-size: 11px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(248,113,113,0.7);
+      color: #fecaca;
+      display: none;
+    }}
 
-    .form-header-line {
+    .alert-banner.show {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+
+    .alert-banner span.icon {{
+      font-size: 13px;
+    }}
+
+    .form-header-row {{
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      gap: 12px;
-    }
+      margin-bottom: 14px;
+    }}
 
-    .form-header-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
+    .form-title-block h2 {{
+      font-size: 15px;
+      margin: 0 0 4px;
+    }}
 
-    .form-header-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .step-indicator {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      min-width: 190px;
-    }
-
-    .progress-track {
-      flex: 1;
-      height: 6px;
-      border-radius: 999px;
-      background: #020617;
-      border: 1px solid #111827;
-      display: flex;
-      overflow: hidden;
-    }
-
-    .progress-segment {
-      flex: 1;
-      margin-right: 3px;
-      border-radius: 999px;
-      background: #020617;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .progress-segment:last-child {
-      margin-right: 0;
-    }
-
-    .progress-segment.active::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: var(--accent-gradient);
-      box-shadow: 0 0 12px rgba(129,140,248,0.8);
-    }
-
-    .progress-segment.completed::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(circle at 0 0, #22c55e, #16a34a);
-    }
-
-    .step-label {
+    .form-title-block p {{
+      margin: 0;
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
       color: var(--text-soft);
-    }
+    }}
 
-    .step-label span {
-      color: #e5e7eb;
-      font-weight: 600;
-    }
-
-    .step {
-      display: none;
-      animation: fadeIn 0.2s ease-out;
-    }
-
-    .step.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(6px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: minmax(0,1fr);
-      gap: 14px;
-      margin-top: 6px;
-    }
-
-    .form-row-two {
-      display: grid;
-      grid-template-columns: minmax(0,1.1fr) minmax(0,0.9fr);
-      gap: 12px;
-    }
-
-    .form-field {
+    .step-meta {{
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-soft);
       display: flex;
       flex-direction: column;
-      gap: 5px;
-    }
+      align-items: flex-end;
+      gap: 6px;
+    }}
 
-    .form-label-row {
+    .step-indicator {{
       display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-    }
+      gap: 6px;
+      width: 120px;
+    }}
 
-    label {
-      font-size: 12px;
-      color: #e5e7eb;
-    }
+    .step-bar {{
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: #020617;
+      border: 1px solid rgba(31,41,55,0.85);
+      overflow: hidden;
+    }}
 
-    .label-hint {
+    .step-bar-inner {{
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
+      box-shadow: 0 0 18px rgba(59,130,246,0.85);
+      transition: width var(--transition-med);
+    }}
+
+    .step-bar-inner.active {{
+      width: 100%;
+    }}
+
+    .form-section-title {{
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }}
+
+    .form-section-subtitle {{
       font-size: 11px;
       color: var(--text-soft);
-    }
+      margin-bottom: 12px;
+    }}
+
+    .form-grid-2 {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+    }}
+
+    .field-group {{
+      margin-bottom: 10px;
+    }}
+
+    .field-row-inline {{
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      gap: 8px;
+    }}
+
+    label.field-label {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+    }}
+
+    label.field-label span.right-hint {{
+      font-size: 10px;
+      color: var(--text-soft);
+    }}
+
+    .helper-text {{
+      font-size: 10px;
+      color: var(--text-soft);
+      margin-top: 4px;
+    }}
 
     input[type="text"],
     input[type="email"],
-    input[type="tel"],
-    select {
+    select,
+    .fake-input {{
       width: 100%;
+      padding: 9px 11px;
       border-radius: 999px;
-      padding: 9px 13px;
-      border: 1px solid var(--input-border);
-      background: rgba(15,23,42,0.94);
-      color: var(--text-main);
-      font-size: 13px;
+      border: 1px solid rgba(55,65,81,0.95);
+      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
+      color: #e5e7eb;
+      font-size: 12px;
       outline: none;
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
-                  background var(--transition-fast), transform 0.08s ease-out;
-    }
-
-    input::placeholder {
-      color: #64748b;
-    }
+        background var(--transition-fast), transform var(--transition-fast);
+    }}
 
     input:focus,
-    select:focus {
-      border-color: var(--input-border-focus);
-      box-shadow: 0 0 0 1px rgba(129,140,248,0.6);
+    select:focus {{
+      border-color: rgba(129,140,248,0.95);
+      box-shadow: 0 0 0 1px rgba(129,140,248,0.7);
+      transform: translateY(-0.5px);
+      background: radial-gradient(circle at top left,#020617 0,#020617 70%);
+    }}
+
+    .intl-tel-input {{
+      width: 100%;
+    }}
+
+    .intl-tel-input .selected-flag {{
+      border-radius: 999px 0 0 999px;
       background: #020617;
-      transform: translateY(-1px);
-    }
+    }}
 
-    .phone-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
-      gap: 10px;
-    }
+    .intl-tel-input .iti__selected-flag {{
+      padding-left: 10px;
+    }}
 
-    .pill-toggle-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .pill-toggle {
-      padding: 7px 13px;
+    .intl-tel-input input[type="tel"] {{
+      width: 100%;
       border-radius: 999px;
-      border: 1px solid var(--pill-border);
-      background: var(--pill-bg-soft);
+      border: 1px solid rgba(55,65,81,0.95);
+      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
+      color: #e5e7eb;
       font-size: 12px;
-      color: #d1d5db;
+      padding: 9px 11px 9px 96px;
+    }}
+
+    .toggle-pill-group {{
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(55,65,81,0.9);
+      gap: 3px;
+    }}
+
+    .toggle-pill {{
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 6px 16px;
       cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        box-shadow var(--transition-fast), transform var(--transition-fast);
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background var(--transition-fast), border-color var(--transition-fast),
-                  transform 0.08s ease-out, box-shadow 0.12s ease-out;
-    }
+    }}
 
-    .pill-toggle span.emoji {
-      font-size: 14px;
-    }
+    .toggle-pill span.icon {{
+      font-size: 12px;
+    }}
 
-    .pill-toggle.selected {
-      background: radial-gradient(circle at 0 0, rgba(251,191,36,0.4), rgba(129,140,248,0.95));
-      border-color: #c4b5fd;
+    .toggle-pill.active {{
+      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
       color: #020617;
-      box-shadow: 0 0 18px rgba(129,140,248,0.55);
-      transform: translateY(-1px);
-    }
+      box-shadow: 0 10px 28px rgba(59,130,246,0.65);
+      transform: translateY(-0.5px);
+    }}
 
-    .pill-toggle.selected span.emoji {
-      filter: drop-shadow(0 0 10px rgba(251,191,36,0.8));
-    }
-
-    .helper-text {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .cta-row {
-      margin-top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .btn-primary {
-      border: none;
+    .primary-cta {{
+      width: 100%;
       border-radius: 999px;
-      padding: 11px 16px;
-      background-image: var(--accent-gradient);
-      color: #020617;
+      border: none;
+      margin-top: 10px;
+      padding: 11px 14px;
+      font-size: 13px;
       font-weight: 600;
-      font-size: 14px;
       cursor: pointer;
+      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
+      color: #020617;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 14px 40px rgba(96,165,250,0.5);
-      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
-    }
+      box-shadow: 0 18px 45px rgba(59,130,246,0.65);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+    }}
 
-    .btn-primary:hover {
-      transform: translateY(-1.5px);
-      filter: brightness(1.05);
-      box-shadow: 0 22px 60px rgba(79,70,229,0.65);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-      box-shadow: 0 10px 28px rgba(30,64,175,0.85);
-    }
-
-    .btn-primary span.icon {
+    .primary-cta span.icon {{
       font-size: 16px;
-    }
+    }}
 
-    .btn-secondary-link {
-      border: none;
-      background: none;
+    .primary-cta:hover {{
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 20px 50px rgba(37,99,235,0.85);
+    }}
+
+    .primary-cta:disabled {{
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }}
+
+    .cta-footnote {{
+      font-size: 10px;
       color: var(--text-soft);
-      font-size: 12px;
+      margin-top: 5px;
+      text-align: center;
+    }}
+
+    .back-link {{
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
       cursor: pointer;
-      padding: 0;
-    }
-
-    .btn-secondary-link span.icon {
-      font-size: 14px;
-    }
-
-    .small-note {
-      font-size: 10px;
-      color: var(--text-soft);
-      line-height: 1.4;
-    }
-
-    .error-banner {
       margin-bottom: 10px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: var(--error-bg);
-      border: 1px solid var(--error-border);
-      color: #fecaca;
-      font-size: 11px;
-      display: none;
-    }
+      transition: color var(--transition-fast), transform var(--transition-fast);
+    }}
 
-    .error-banner.visible {
-      display: block;
-    }
+    .back-link span.icon {{
+      font-size: 13px;
+    }}
 
-    .success-banner {
-      margin-bottom: 10px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: rgba(22,163,74,0.09);
-      border: 1px solid rgba(52,211,153,0.6);
-      color: #bbf7d0;
-      font-size: 11px;
-      display: none;
-    }
+    .back-link:hover {{
+      color: #e5e7eb;
+      transform: translateX(-2px);
+    }}
 
-    .success-banner.visible {
-      display: block;
-    }
-
-    .slots-grid {
+    .date-grid,
+    .time-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      margin-bottom: 14px;
+    }}
 
-    .slot-day-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    @media (max-width: 640px) {
-      .slot-day-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    .slot-day-card {
+    .date-chip,
+    .time-chip {{
       border-radius: 16px;
       padding: 10px 10px 9px;
-      background: #020617;
-      border: 1px solid var(--pill-border);
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(55,65,81,0.8);
       cursor: pointer;
-      transition: border-color var(--transition-fast), background var(--transition-fast),
-                  box-shadow 0.15s ease-out, transform 0.08s ease-out;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       gap: 2px;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+        transform var(--transition-fast), background var(--transition-fast);
       font-size: 11px;
       color: #e5e7eb;
-    }
+      min-height: 54px;
+    }}
 
-    .slot-day-card span.day-label {
+    .date-chip span.day-label {{
       font-size: 11px;
-      color: var(--text-soft);
-    }
+      color: var(--text-muted);
+    }}
 
-    .slot-day-card span.date-label {
+    .date-chip span.date-label {{
       font-size: 13px;
       font-weight: 600;
-    }
+    }}
 
-    .slot-day-card.selected {
-      border-color: #22c55e;
-      background: linear-gradient(145deg, rgba(34,197,94,0.18), rgba(15,23,42,0.95));
-      box-shadow: 0 0 0 1px rgba(34,197,94,0.5);
+    .date-chip.active,
+    .time-chip.active {{
+      border-color: rgba(129,140,248,0.95);
+      box-shadow: 0 0 0 1px rgba(129,140,248,0.8);
+      background: radial-gradient(circle at top left,#020617 0,#020617 70%);
       transform: translateY(-1px);
-    }
+    }}
 
-    .slot-day-card.today-tag {
-      position: relative;
-    }
+    .time-chip-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }}
 
-    .slot-day-card.today-tag::after {
-      content: "Today";
-      position: absolute;
-      top: 6px;
-      right: 8px;
+    .time-main-label {{
+      font-size: 13px;
+      font-weight: 600;
+    }}
+
+    .star-tag {{
       font-size: 9px;
       padding: 2px 6px;
       border-radius: 999px;
-      background: rgba(248,250,252,0.06);
-      border: 1px solid rgba(148,163,197,0.4);
-      color: #e5e7eb;
-    }
-
-    .time-pill {
-      border-radius: 999px;
-      padding: 7px 10px;
-      background: var(--pill-bg);
-      border: 1px solid var(--pill-border);
-      font-size: 12px;
-      color: #e5e7eb;
-      cursor: pointer;
+      background: rgba(251,191,36,0.12);
+      border: 1px solid rgba(251,191,36,0.7);
+      color: #fde68a;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background var(--transition-fast), border-color var(--transition-fast),
-                  box-shadow 0.12s ease-out, transform 0.08s ease-out;
+      gap: 4px;
       white-space: nowrap;
-    }
+    }}
 
-    .time-pill .star-tag {
+    .star-tag span.icon {{
+      font-size: 11px;
+    }}
+
+    .slot-subtext {{
       font-size: 10px;
-      padding: 3px 6px;
-      border-radius: 999px;
-      background: var(--star-bg);
-      color: var(--star-text);
-      font-weight: 600;
-    }
+      color: var(--text-soft);
+    }}
 
-    .time-pill.selected {
-      background: radial-gradient(circle at 0 0, rgba(251,191,36,0.4), rgba(96,165,250,0.9));
-      border-color: rgba(191,219,254,0.95);
-      color: #020617;
-      box-shadow: 0 0 18px rgba(59,130,246,0.7);
-      transform: translateY(-1px);
-    }
-
-    .time-pill.disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .time-pill.disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    .time-pills-wrap {
+    .language-pills {{
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 8px;
-    }
+      margin-bottom: 10px;
+      margin-top: 4px;
+    }}
 
-    .language-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .language-pill {
-      padding: 7px 11px;
+    .language-pill {{
       border-radius: 999px;
-      border: 1px solid var(--pill-border);
-      background: var(--pill-bg-soft);
-      font-size: 12px;
-      color: #e5e7eb;
-      cursor: pointer;
-      transition: background var(--transition-fast), border-color var(--transition-fast),
-                  transform 0.08s ease-out, box-shadow 0.12s ease-out;
-    }
-
-    .language-pill.selected {
-      background: radial-gradient(circle at 0 0, rgba(56,189,248,0.6), rgba(129,140,248,0.95));
-      border-color: #7dd3fc;
-      color: #020617;
-      box-shadow: 0 0 18px rgba(56,189,248,0.7);
-      transform: translateY(-1px);
-    }
-
-    .chips-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .chip {
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--pill-border);
-      background: var(--pill-bg-soft);
-      font-size: 12px;
-      color: #d1d5db;
-      cursor: pointer;
-      transition: background var(--transition-fast), border-color var(--transition-fast),
-                  transform 0.08s ease-out, box-shadow 0.12s ease-out;
-    }
-
-    .chip.selected {
-      background: radial-gradient(circle at 0 0, rgba(251,191,36,0.5), rgba(129,140,248,0.9));
-      border-color: #eab308;
-      color: #020617;
-      box-shadow: 0 0 18px rgba(251,191,36,0.7);
-      transform: translateY(-1px);
-    }
-
-    .step-heading {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .step-subheading {
-      font-size: 13px;
+      padding: 5px 12px;
+      font-size: 11px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.95);
       color: var(--text-muted);
-      margin-bottom: 14px;
-    }
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        box-shadow var(--transition-fast), transform var(--transition-fast);
+    }}
 
-    .mini-muted {
+    .language-pill.active {{
+      background: linear-gradient(120deg,var(--accent-start),var(--accent-mid),var(--accent-end));
+      color: #020617;
+      box-shadow: 0 10px 25px rgba(37,99,235,0.7);
+      transform: translateY(-1px);
+    }}
+
+    .legal-note {{
+      font-size: 10px;
+      color: var(--text-soft);
+      margin-top: 5px;
+      text-align: center;
+      line-height: 1.4;
+    }}
+
+    .chip-group {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+      margin-top: 4px;
+    }}
+
+    .choice-chip {{
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 11px;
+      border: 1px solid rgba(55,65,81,0.85);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        box-shadow var(--transition-fast), transform var(--transition-fast);
+    }}
+
+    .choice-chip.active {{
+      background: linear-gradient(120deg,var(--accent-start),var(--accent-mid),var(--accent-end));
+      color: #020617;
+      box-shadow: 0 12px 30px rgba(37,99,235,0.75);
+      transform: translateY(-1px);
+    }}
+
+    .step-caption {{
       font-size: 11px;
       color: var(--text-soft);
-      margin-top: 10px;
-    }
+      margin-bottom: 6px;
+    }}
 
+    .centered-message {{
+      font-size: 11px;
+      color: var(--text-soft);
+      padding: 10px 0;
+    }}
+
+    .success-message {{
+      font-size: 12px;
+      color: #bbf7d0;
+      background: rgba(22,163,74,0.12);
+      border-radius: 16px;
+      padding: 10px 12px;
+      border: 1px solid rgba(34,197,94,0.6);
+      margin-top: 10px;
+    }}
+
+    .error-text-inline {{
+      font-size: 10px;
+      color: #fecaca;
+      margin-top: 4px;
+    }}
+
+    @media (max-width: 991px) {{
+      .hero-layout {{
+        grid-template-columns: minmax(0, 1fr);
+      }}
+      .hero-form-card-wrapper {{
+        order: -1;
+      }}
+    }}
+
+    @media (max-width: 640px) {{
+      .nav {{
+        padding-inline: 12px;
+      }}
+      main {{
+        padding: 10px 10px 32px;
+      }}
+      .hero-form-card {{
+        padding-inline: 16px;
+      }}
+      .gradient-border-inner {{
+        padding-inline: 18px;
+      }}
+      .hero-title {{
+        font-size: 26px;
+      }}
+      .form-header-row {{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }}
+      .step-meta {{
+        align-items: flex-start;
+      }}
+      .field-row-inline {{
+        grid-template-columns: minmax(0,1.25fr) minmax(0,1.5fr);
+      }}
+    }}
   </style>
 </head>
 <body>
-  <div class="booking-shell">
-    <div class="booking-header">
-      <div class="booking-eyebrow">
-        <span class="booking-eyebrow-dot"></span>
-        LIVE 1:1 Free Trial • Limited Daily Slots
-      </div>
-      <div class="booking-title">
-        Book Now &amp; <span class="highlight">Get Certified</span>
-      </div>
-      <div class="booking-subtitle">
-        Share your details, pick a slot in your child’s local time, and we’ll match you with a certified Unischooly teacher for a personalised 1:1 coding trial class.
-      </div>
-    </div>
-
-    <div class="booking-layout">
-      <aside class="booking-copy-card">
-        <div class="booking-copy-inner">
-          <div class="booking-badges">
-            <div class="badge">
-              <span class="badge-icon">⚡</span>
-              Kids in 30+ countries
-            </div>
-            <div class="badge">
-              <span class="badge-icon">💻</span>
-              Live 1:1 project class
-            </div>
-            <div class="badge">
-              <span class="badge-icon">🎓</span>
-              Certificate after demo
-            </div>
-          </div>
-
-          <div class="booking-copy-title">
-            Free Live Coding Class <span>for Your Child</span>
-          </div>
-          <div class="booking-copy-points">
-            <div class="copy-point">
-              <span class="copy-bullet">✅</span>
-              <span>Personalised 45-minute 1:1 session aligned to your child’s grade &amp; interest.</span>
-            </div>
-            <div class="copy-point">
-              <span class="copy-bullet">✅</span>
-              <span>Hands-on live project inside the class – no boring slides.</span>
-            </div>
-            <div class="copy-point">
-              <span class="copy-bullet">✅</span>
-              <span>Detailed class report &amp; digital certificate shared on WhatsApp &amp; email.</span>
-            </div>
-          </div>
-
-          <div class="booking-metrics">
-            <div class="metric-pill">
-              <span class="metric-primary-number">25,000+</span>
-              <span class="metric-label">kids taught</span>
-            </div>
-            <div class="metric-pill">
-              <span class="metric-primary-number">45 mins</span>
-              <span class="metric-label">live class</span>
-            </div>
-            <div class="metric-pill">
-              <span class="metric-primary-number">4.8★</span>
-              <span class="metric-label">avg parent rating</span>
-            </div>
+  <div class="page">
+    <header>
+      <div class="nav">
+        <div class="nav-left">
+          <div class="logo-badge">U</div>
+          <div>
+            <div class="brand-text-main">Unischooly</div>
+            <div class="brand-text-sub">Future‑ready skills for kids</div>
           </div>
         </div>
-      </aside>
+        <div class="nav-links">
+          <div class="nav-link">Programs</div>
+          <div class="nav-link">How it works</div>
+          <div class="nav-link">Parent reviews</div>
+          <button class="nav-cta" type="button" onclick="scrollToForm()">
+            <span class="icon">⚡</span>
+            <span>Book Free Trial</span>
+          </button>
+        </div>
+      </div>
+    </header>
 
-      <section class="booking-form-card">
-        <div class="form-glow"></div>
-        <div class="form-inner">
-          <div id="errorBanner" class="error-banner"></div>
-          <div id="successBanner" class="success-banner"></div>
+    <main>
+      <div class="hero-layout">
+        <!-- LEFT: Hero copy -->
+        <section>
+          <div class="hero-left-badge-row">
+            <div class="dot-live"></div>
+            <span>LIVE 1:1 Free Trial</span>
+            <span>·</span>
+            <span>Limited daily slots</span>
+          </div>
+          <h1 class="hero-title">
+            <span class="highlight-main">Book Now</span>
+            &nbsp;&amp;&nbsp;
+            <span class="highlight-sub">Get Certified</span>
+          </h1>
+          <p class="hero-subtitle">
+            Share your details, pick a slot in your child’s local time, and we’ll match
+            you with a certified Unischooly teacher for a personalised 1:1 coding trial class.
+          </p>
 
-          <div class="form-header-line">
-            <div>
-              <div class="form-header-title">Free Trial Booking Form</div>
-              <div class="form-header-subtitle">
-                Three quick steps to lock your perfect time slot.
-              </div>
+          <div class="hero-badges-row">
+            <div class="pill-badge">
+              <span class="icon">🌎</span>
+              <span>Kids in 30+ countries</span>
             </div>
-            <div class="step-indicator">
-              <div class="progress-track">
-                <div class="progress-segment" data-step-progress="1"></div>
-                <div class="progress-segment" data-step-progress="2"></div>
-                <div class="progress-segment" data-step-progress="3"></div>
-              </div>
-              <div class="step-label">
-                Step <span id="stepLabel">1</span> of 3
-              </div>
+            <div class="pill-badge">
+              <span class="icon">💻</span>
+              <span>Live 1:1 project class</span>
+            </div>
+            <div class="pill-badge">
+              <span class="icon">🏅</span>
+              <span>Certificate after demo</span>
             </div>
           </div>
 
-          <!-- STEP 1 -->
-          <div id="step1" class="step active">
-            <div class="step-heading">Child &amp; Parent Details</div>
-            <div class="step-subheading">
-              Share quick details so we can personalise the trial in your child’s local time.
-            </div>
-
-            <div class="form-grid">
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label for="countryInput">WhatsApp Number</label>
-                  <span class="label-hint">We’ll send class link &amp; updates here</span>
-                </div>
-                <div class="phone-row">
-                  <input
-                    type="text"
-                    id="countryInput"
-                    list="countryOptions"
-                    placeholder="Search country (e.g. United Arab Emirates)"
-                    autocomplete="off"
-                  />
-                  <datalist id="countryOptions"></datalist>
-
-                  <input
-                    type="tel"
-                    id="phoneInput"
-                    placeholder="10–12 digit WhatsApp number"
-                    autocomplete="tel"
-                  />
-                </div>
-                <div class="helper-text">
-                  Please share the number that you use for WhatsApp.
-                </div>
+          <div class="hero-card gradient-border hero-card">
+            <div class="gradient-border-inner">
+              <div class="hero-card-title">
+                Free Live Coding Class for <span class="child">Your Child</span>
               </div>
-
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label for="childName">Child’s Name</label>
+              <ul class="hero-card-list">
+                <li>
+                  <span class="check-icon">✅</span>
+                  <span>Personalised 45‑minute 1:1 session aligned to your child’s grade &amp; interest.</span>
+                </li>
+                <li>
+                  <span class="check-icon">✅</span>
+                  <span>Hands‑on live project inside the class — no boring slides.</span>
+                </li>
+                <li>
+                  <span class="check-icon">✅</span>
+                  <span>Detailed class report &amp; digital certificate shared on WhatsApp &amp; email.</span>
+                </li>
+              </ul>
+              <div class="hero-stats-row">
+                <div class="hero-stat-chip">
+                  <span class="value">25,000+</span>
+                  <span>kids taught</span>
                 </div>
-                <input type="text" id="childName" placeholder="E.g. Aarav, Emma" />
-              </div>
-
-              <div class="form-row-two">
-                <div class="form-field">
-                  <div class="form-label-row">
-                    <label for="childGrade">Child’s Grade</label>
-                  </div>
-                  <select id="childGrade">
-                    <option value="">Select grade</option>
-                    <option>Grade 1</option>
-                    <option>Grade 2</option>
-                    <option>Grade 3</option>
-                    <option>Grade 4</option>
-                    <option>Grade 5</option>
-                    <option>Grade 6</option>
-                    <option>Grade 7</option>
-                    <option>Grade 8</option>
-                    <option>Grade 9</option>
-                    <option>Grade 10</option>
-                    <option>Grade 11</option>
-                    <option>Grade 12</option>
-                  </select>
+                <div class="hero-stat-chip">
+                  <span class="value">45 mins</span>
+                  <span>live class</span>
                 </div>
-                <div class="form-field">
-                  <div class="form-label-row">
-                    <label for="parentName">Parent / Guardian Name</label>
-                  </div>
-                  <input type="text" id="parentName" placeholder="Full name" />
+                <div class="hero-stat-chip">
+                  <span class="value">4.8★</span>
+                  <span>avg parent rating</span>
                 </div>
-              </div>
-
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label for="parentEmail">Parent’s Email</label>
-                </div>
-                <input type="email" id="parentEmail" placeholder="We’ll send confirmation here" />
-              </div>
-
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>Does your child have a Laptop / Desktop?</label>
-                </div>
-                <div class="pill-toggle-group" id="deviceToggleGroup">
-                  <button class="pill-toggle" type="button" data-value="yes">
-                    <span class="emoji">💻</span> Yes
-                  </button>
-                  <button class="pill-toggle" type="button" data-value="no">
-                    <span class="emoji">📱</span> No (Tablet / Mobile only)
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="cta-row">
-              <button id="step1Next" class="btn-primary" type="button">
-                <span class="icon">🚀</span>
-                <span>Book a Free Trial Class</span>
-              </button>
-              <div class="small-note">
-                We will share the class link &amp; certificate on Email &amp; WhatsApp.
               </div>
             </div>
           </div>
+        </section>
 
-          <!-- STEP 2 -->
-          <div id="step2" class="step">
-            <div class="step-heading">Select Date &amp; Time</div>
-            <div class="step-subheading">
-              Pick a 1-hour slot that works best in your child’s local time zone.
+        <!-- RIGHT: 3‑step booking form -->
+        <section id="booking-form-card" class="hero-form-card-wrapper">
+          <div class="hero-form-card" id="form-top">
+            <div id="alert-banner" class="alert-banner">
+              <span class="icon">⚠️</span>
+              <span id="alert-text">Unable to save your details. Please try again in a moment.</span>
             </div>
 
-            <div class="form-grid">
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>Select Date</label>
-                  <span class="label-hint">Your class will be for 1 hour</span>
-                </div>
-                <div id="dateGrid" class="slot-day-row"></div>
+            <div class="form-header-row">
+              <div class="form-title-block">
+                <h2>Free Live Coding Class for Your Child</h2>
+                <p>Three quick steps to unlock a personalised free trial class.</p>
               </div>
-
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>Select Start Time</label>
-                  <span class="label-hint">Class slots are limited. Times are shown in your local time zone.</span>
-                </div>
-                <div id="timeGrid" class="time-pills-wrap"></div>
-              </div>
-
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>Select Language</label>
-                </div>
-                <div id="languageGrid" class="language-grid">
-                  <button class="language-pill" type="button" data-lang="English">English</button>
-                  <button class="language-pill" type="button" data-lang="Arabic">Arabic</button>
-                  <button class="language-pill" type="button" data-lang="Bahasa">Bahasa</button>
-                  <button class="language-pill" type="button" data-lang="Vietnamese">Vietnamese</button>
-                  <button class="language-pill" type="button" data-lang="Filipino">Filipino</button>
-                  <button class="language-pill" type="button" data-lang="Thai">Thai</button>
+              <div class="step-meta">
+                <span id="step-label">STEP 1 OF 3</span>
+                <div class="step-indicator">
+                  <div class="step-bar"><div id="step-bar-1" class="step-bar-inner active"></div></div>
+                  <div class="step-bar"><div id="step-bar-2" class="step-bar-inner"></div></div>
+                  <div class="step-bar"><div id="step-bar-3" class="step-bar-inner"></div></div>
                 </div>
               </div>
             </div>
 
-            <div class="cta-row">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
-                <button id="backToStep1" class="btn-secondary-link" type="button">
-                  <span class="icon">←</span>
-                  <span>Go back to details</span>
+            <!-- STEP 1 -->
+            <div id="step-1">
+              <div class="form-section-title">Book Now &amp; Get Certified</div>
+              <div class="form-section-subtitle">
+                Share your details to unlock a personalised free trial class.
+              </div>
+
+              <form id="step-1-form">
+                <div class="field-group">
+                  <label class="field-label" for="phone-input">
+                    <span>WhatsApp Number</span>
+                    <span class="right-hint">We’ll send class link &amp; updates here</span>
+                  </label>
+                  <div class="field-row-inline">
+                    <input id="phone-input" type="tel" placeholder="Enter WhatsApp number" />
+                  </div>
+                  <div class="helper-text">
+                    Please share the number that you use for WhatsApp.
+                  </div>
+                  <div id="phone-error" class="error-text-inline" style="display:none;"></div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field-group">
+                    <label class="field-label" for="child-name">Child’s Name</label>
+                    <input id="child-name" type="text" placeholder="E.g. Aarav, Emma" autocomplete="off" />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="child-grade">Select Child’s Grade</label>
+                    <select id="child-grade">
+                      <option value="">Select grade</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field-group">
+                    <label class="field-label" for="parent-name">Parent’s / Guardian Name</label>
+                    <input id="parent-name" type="text" placeholder="Parent / Guardian full name" autocomplete="off" />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="parent-email">Parent’s Email</label>
+                    <input id="parent-email" type="email" placeholder="We will send confirmation here" autocomplete="off" />
+                  </div>
+                </div>
+
+                <div class="field-group">
+                  <label class="field-label">Do you have a Laptop / Desktop?</label>
+                  <div class="toggle-pill-group" id="laptop-toggle">
+                    <button type="button" class="toggle-pill active" data-value="Yes">
+                      <span class="icon">💻</span><span>Yes</span>
+                    </button>
+                    <button type="button" class="toggle-pill" data-value="No">
+                      <span class="icon">📱</span><span>No (Tablet / Mobile only)</span>
+                    </button>
+                  </div>
+                </div>
+
+                <button id="step-1-submit" type="submit" class="primary-cta">
+                  <span class="icon">🚀</span>
+                  <span>Book a Free Trial Class</span>
                 </button>
+                <div class="cta-footnote">
+                  Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
+                </div>
+              </form>
+            </div>
+
+            <!-- STEP 2 -->
+            <div id="step-2" style="display:none;">
+              <div class="back-link" onclick="goToStep(1)">
+                <span class="icon">←</span>
+                <span>Back to details</span>
               </div>
-              <button id="step2Next" class="btn-primary" type="button">
+
+              <div class="form-section-title">Select Date &amp; Time</div>
+              <div class="form-section-subtitle">
+                Choose a slot that works in your child’s local time. Your class will be for 1 hour.
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">
+                  <span>Select Date</span>
+                  <span class="right-hint" id="date-range-label"></span>
+                </div>
+                <div class="form-section-subtitle" style="margin-bottom:8px;">
+                  Your class will be for 1 hour.
+                </div>
+                <div id="date-grid" class="date-grid"></div>
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">
+                  <span>Select Start Time</span>
+                </div>
+                <div class="form-section-subtitle" style="margin-bottom:8px;">
+                  Class slots are limited. Times are shown in your local time zone.
+                </div>
+                <div id="time-grid" class="time-grid"></div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">
+                  <span>Select Language</span>
+                </label>
+                <div class="language-pills" id="language-pills">
+                  <!-- JS will fill pills -->
+                </div>
+              </div>
+
+              <button id="step-2-submit" type="button" class="primary-cta">
                 <span class="icon">✨</span>
                 <span>Confirm Class Time</span>
               </button>
-              <div class="small-note">
-                Free class will be conducted by reputed teachers.
+              <div class="cta-footnote">
+                Note: Free class will be conducted by reputed teachers.
+              </div>
+              <div class="legal-note">
                 By continuing I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.
               </div>
-            </div>
-          </div>
-
-          <!-- STEP 3 -->
-          <div id="step3" class="step">
-            <div class="step-heading">Help us personalise your experience</div>
-            <div class="step-subheading">
-              A few quick questions so we can match you with the right mentor &amp; learning path.
+              <div id="step-2-error" class="error-text-inline" style="text-align:center; display:none;"></div>
             </div>
 
-            <div class="form-grid">
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>Who are you?</label>
+            <!-- STEP 3 -->
+            <div id="step-3" style="display:none;">
+              <div class="back-link" onclick="goToStep(2)">
+                <span class="icon">←</span>
+                <span>Back to time selection</span>
+              </div>
+
+              <div class="form-section-title">Help us personalise your experience</div>
+              <div class="form-section-subtitle">
+                Answer a few quick questions so we can match the right mentor &amp; course plan.
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">
+                  <span>Who are you?</span>
                 </div>
-                <div id="whoYouAreChips" class="chips-row">
-                  <button class="chip" type="button" data-value="Parent">Parent</button>
-                  <button class="chip" type="button" data-value="Student">Student</button>
-                  <button class="chip" type="button" data-value="Guardian">Guardian</button>
+                <div class="chip-group" id="chip-who">
+                  <button type="button" class="choice-chip" data-value="Parent">Parent</button>
+                  <button type="button" class="choice-chip" data-value="Student">Student</button>
+                  <button type="button" class="choice-chip" data-value="Guardian">Guardian</button>
                 </div>
               </div>
 
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>Why are you booking this trial class?</label>
+              <div class="field-group">
+                <div class="field-label">
+                  <span>Why are you booking this trial class?</span>
                 </div>
-                <div id="bookingReasonChips" class="chips-row">
-                  <button class="chip" type="button" data-value="Want to buy course">Want to buy course</button>
-                  <button class="chip" type="button" data-value="To Compare Platform">To Compare Platform</button>
-                  <button class="chip" type="button" data-value="To strengthen concept">To strengthen Concept</button>
-                  <button class="chip" type="button" data-value="Just for free demo">Just for free demo</button>
+                <div class="chip-group" id="chip-why">
+                  <button type="button" class="choice-chip" data-value="Want to buy course">Want to buy course</button>
+                  <button type="button" class="choice-chip" data-value="To compare platform">To compare platform</button>
+                  <button type="button" class="choice-chip" data-value="To strengthen concepts">To strengthen concepts</button>
+                  <button type="button" class="choice-chip" data-value="Just for free demo">Just for free demo</button>
                 </div>
               </div>
 
-              <div class="form-field">
-                <div class="form-label-row">
-                  <label>When are you planning to purchase?</label>
+              <div class="field-group">
+                <div class="field-label">
+                  <span>When are you planning to purchase?</span>
                 </div>
-                <div id="purchaseIntentChips" class="chips-row">
-                  <button class="chip" type="button" data-value="After the Demo">After the Demo</button>
-                  <button class="chip" type="button" data-value="This Week">This Week</button>
-                  <button class="chip" type="button" data-value="This Month">This Month</button>
-                  <button class="chip" type="button" data-value="Just Exploring">Just Exploring</button>
+                <div class="chip-group" id="chip-when">
+                  <button type="button" class="choice-chip" data-value="After the demo">After the demo</button>
+                  <button type="button" class="choice-chip" data-value="This week">This week</button>
+                  <button type="button" class="choice-chip" data-value="This month">This month</button>
+                  <button type="button" class="choice-chip" data-value="Just exploring">Just exploring</button>
                 </div>
               </div>
-            </div>
 
-            <div class="cta-row">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
-                <button id="backToStep2" class="btn-secondary-link" type="button">
-                  <span class="icon">←</span>
-                  <span>Back to time selection</span>
-                </button>
-              </div>
-              <button id="step3Submit" class="btn-primary" type="button">
+              <button id="step-3-submit" type="button" class="primary-cta">
                 <span class="icon">✅</span>
                 <span>Submit</span>
               </button>
-              <div class="small-note">
-                After submitting, we’ll show your booking confirmation and send all details on WhatsApp &amp; email.
+              <div id="step-3-success" class="success-message" style="display:none;">
+                Thank you! Your free trial class has been booked. Our team will share the class link,
+                project brief &amp; certificate details on WhatsApp and email.
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </main>
   </div>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script>
   <script>
-    /*********************************************************
-     * CONFIG
-     *********************************************************/
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
+    // ISO2 -> Region mapping injected from your spreadsheet
+    const ISO2_TO_REGION = {
+  "AW": "ROW",
+  "AF": "ROW",
+  "AO": "ROW",
+  "AI": "ROW",
+  "AX": "ROW",
+  "AL": "ROW",
+  "AD": "ROW",
+  "AE": "MEA",
+  "AR": "ROW",
+  "AM": "ROW",
+  "AS": "ROW",
+  "AQ": "ROW",
+  "TF": "ROW",
+  "AG": "ROW",
+  "AU": "ANZ",
+  "AT": "ROW",
+  "AZ": "ROW",
+  "BI": "ROW",
+  "BE": "ROW",
+  "BJ": "ROW",
+  "BQ": "ROW",
+  "BF": "ROW",
+  "BD": "ASIA",
+  "BG": "ROW",
+  "BH": "MEA",
+  "BS": "ROW",
+  "BA": "ROW",
+  "BL": "ROW",
+  "BY": "ROW",
+  "BZ": "ROW",
+  "BM": "ROW",
+  "BO": "ROW",
+  "BR": "ROW",
+  "BB": "ROW",
+  "BN": "ROW",
+  "BT": "ASIA",
+  "BV": "ROW",
+  "BW": "ROW",
+  "CF": "ROW",
+  "CA": "USA",
+  "CC": "ROW",
+  "CH": "ROW",
+  "CL": "ROW",
+  "CN": "ASIA",
+  "CI": "ROW",
+  "CM": "ROW",
+  "CD": "ROW",
+  "CG": "ROW",
+  "CK": "ROW",
+  "CO": "ROW",
+  "KM": "ROW",
+  "CV": "ROW",
+  "CR": "ROW",
+  "CU": "ROW",
+  "CW": "ROW",
+  "CX": "ROW",
+  "KY": "ROW",
+  "CY": "ROW",
+  "CZ": "ROW",
+  "DE": "ROW",
+  "DJ": "ROW",
+  "DM": "ROW",
+  "DK": "ROW",
+  "DO": "ROW",
+  "DZ": "ROW",
+  "EC": "ROW",
+  "EG": "MEA",
+  "ER": "ROW",
+  "EH": "ROW",
+  "ES": "ROW",
+  "EE": "ROW",
+  "ET": "ROW",
+  "FI": "ROW",
+  "FJ": "ROW",
+  "FK": "ROW",
+  "FR": "ROW",
+  "FO": "ROW",
+  "FM": "ROW",
+  "GA": "ROW",
+  "GB": "ROW",
+  "GE": "ROW",
+  "GG": "ROW",
+  "GH": "ROW",
+  "GI": "ROW",
+  "GN": "ROW",
+  "GP": "ROW",
+  "GM": "ROW",
+  "GW": "ROW",
+  "GQ": "ROW",
+  "GR": "ROW",
+  "GD": "ROW",
+  "GL": "ROW",
+  "GT": "ROW",
+  "GF": "ROW",
+  "GU": "ROW",
+  "GY": "ROW",
+  "HK": "ROW",
+  "HM": "ROW",
+  "HN": "ROW",
+  "HR": "ROW",
+  "HT": "ROW",
+  "HU": "ROW",
+  "ID": "SEA",
+  "IM": "ROW",
+  "IN": "ASIA",
+  "IO": "ROW",
+  "IE": "ROW",
+  "IR": "ROW",
+  "IQ": "MEA",
+  "IS": "ROW",
+  "IL": "ROW",
+  "IT": "ROW",
+  "JM": "ROW",
+  "JE": "ROW",
+  "JO": "MEA",
+  "JP": "ASIA",
+  "KZ": "ROW",
+  "KE": "ROW",
+  "KG": "ROW",
+  "KH": "SEA",
+  "KI": "ROW",
+  "KN": "ROW",
+  "KR": "ROW",
+  "KW": "MEA",
+  "LA": "ROW",
+  "LB": "MEA",
+  "LR": "ROW",
+  "LY": "ROW",
+  "LC": "ROW",
+  "LI": "ROW",
+  "LK": "ASIA",
+  "LS": "ROW",
+  "LT": "ROW",
+  "LU": "ROW",
+  "LV": "ROW",
+  "MO": "ROW",
+  "MF": "ROW",
+  "MA": "ROW",
+  "MC": "ROW",
+  "MD": "ROW",
+  "MG": "ROW",
+  "MV": "ASIA",
+  "MX": "ROW",
+  "MH": "ROW",
+  "MK": "ROW",
+  "ML": "ROW",
+  "MT": "ROW",
+  "MM": "SEA",
+  "ME": "ROW",
+  "MN": "ASIA",
+  "MP": "ROW",
+  "MZ": "ROW",
+  "MR": "ROW",
+  "MS": "ROW",
+  "MQ": "ROW",
+  "MU": "ROW",
+  "MW": "ROW",
+  "MY": "SEA",
+  "YT": "ROW",
+  "NA": "ROW",
+  "NC": "ROW",
+  "NE": "ROW",
+  "NF": "ROW",
+  "NG": "ROW",
+  "NI": "ROW",
+  "NU": "ROW",
+  "NL": "ROW",
+  "NO": "ROW",
+  "NP": "ASIA",
+  "NR": "ROW",
+  "NZ": "ANZ",
+  "OM": "MEA",
+  "PK": "ASIA",
+  "PA": "ROW",
+  "PN": "ROW",
+  "PE": "ROW",
+  "PH": "SEA",
+  "PW": "ROW",
+  "PG": "ROW",
+  "PL": "ROW",
+  "PR": "ROW",
+  "KP": "ROW",
+  "PT": "ROW",
+  "PY": "ROW",
+  "PS": "ROW",
+  "PF": "ROW",
+  "QA": "MEA",
+  "RE": "ROW",
+  "RO": "ROW",
+  "RU": "ROW",
+  "RW": "ROW",
+  "SA": "MEA",
+  "SD": "ROW",
+  "SN": "ROW",
+  "SG": "SEA",
+  "GS": "ROW",
+  "SH": "ROW",
+  "SJ": "ROW",
+  "SB": "ROW",
+  "SL": "ROW",
+  "SV": "ROW",
+  "SM": "ROW",
+  "SO": "ROW",
+  "PM": "ROW",
+  "RS": "ROW",
+  "SS": "ROW",
+  "ST": "ROW",
+  "SR": "ROW",
+  "SK": "ROW",
+  "SI": "ROW",
+  "SE": "ROW",
+  "SZ": "ROW",
+  "SX": "ROW",
+  "SC": "ROW",
+  "SY": "ROW",
+  "TC": "ROW",
+  "TD": "ROW",
+  "TG": "ROW",
+  "TH": "SEA",
+  "TJ": "ROW",
+  "TK": "ROW",
+  "TM": "ROW",
+  "TL": "ROW",
+  "TO": "ROW",
+  "TT": "ROW",
+  "TN": "ROW",
+  "TR": "ROW",
+  "TV": "ROW",
+  "TW": "ROW",
+  "TZ": "ROW",
+  "UG": "ROW",
+  "UA": "ROW",
+  "UM": "ROW",
+  "UY": "ROW",
+  "US": "USA",
+  "UZ": "ROW",
+  "VA": "ROW",
+  "VC": "ROW",
+  "VE": "ROW",
+  "VG": "ROW",
+  "VI": "ROW",
+  "VN": "SEA",
+  "VU": "ROW",
+  "WF": "ROW",
+  "WS": "ROW",
+  "YE": "ROW",
+  "ZA": "ROW",
+  "ZM": "ROW",
+  "ZW": "ROW"
+};
+
+    const LANGUAGES = ["english", "arabic", "bahasa", "vietnamese", "filipino", "thai"];
+
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Simple country-to-region mapping (expand as needed)
-    const COUNTRY_DATA = [
-      { label: "India (+91)", iso2: "IN", dialCode: "+91", region: "ASIA" },
-      { label: "United Arab Emirates (+971)", iso2: "AE", dialCode: "+971", region: "MEA" },
-      { label: "Saudi Arabia (+966)", iso2: "SA", dialCode: "+966", region: "MEA" },
-      { label: "Qatar (+974)", iso2: "QA", dialCode: "+974", region: "MEA" },
-      { label: "Kuwait (+965)", iso2: "KW", dialCode: "+965", region: "MEA" },
-      { label: "Bahrain (+973)", iso2: "BH", dialCode: "+973", region: "MEA" },
-      { label: "Oman (+968)", iso2: "OM", dialCode: "+968", region: "MEA" },
-      { label: "United States (+1)", iso2: "US", dialCode: "+1", region: "USA" },
-      { label: "Canada (+1)", iso2: "CA", dialCode: "+1", region: "USA" },
-      { label: "United Kingdom (+44)", iso2: "GB", dialCode: "+44", region: "EUROPE" },
-      { label: "Germany (+49)", iso2: "DE", dialCode: "+49", region: "EUROPE" },
-      { label: "France (+33)", iso2: "FR", dialCode: "+33", region: "EUROPE" },
-      { label: "Spain (+34)", iso2: "ES", dialCode: "+34", region: "EUROPE" },
-      { label: "Italy (+39)", iso2: "IT", dialCode: "+39", region: "EUROPE" },
-      { label: "Netherlands (+31)", iso2: "NL", dialCode: "+31", region: "EUROPE" },
-      { label: "Sweden (+46)", iso2: "SE", dialCode: "+46", region: "EUROPE" },
-      { label: "Norway (+47)", iso2: "NO", dialCode: "+47", region: "EUROPE" },
-      { label: "Denmark (+45)", iso2: "DK", dialCode: "+45", region: "EUROPE" },
-      { label: "Ireland (+353)", iso2: "IE", dialCode: "+353", region: "EUROPE" },
-      { label: "Singapore (+65)", iso2: "SG", dialCode: "+65", region: "SEA" },
-      { label: "Malaysia (+60)", iso2: "MY", dialCode: "+60", region: "SEA" },
-      { label: "Indonesia (+62)", iso2: "ID", dialCode: "+62", region: "SEA" },
-      { label: "Philippines (+63)", iso2: "PH", dialCode: "+63", region: "SEA" },
-      { label: "Thailand (+66)", iso2: "TH", dialCode: "+66", region: "SEA" },
-      { label: "Vietnam (+84)", iso2: "VN", dialCode: "+84", region: "SEA" },
-      { label: "Australia (+61)", iso2: "AU", dialCode: "+61", region: "ANZ" },
-      { label: "New Zealand (+64)", iso2: "NZ", dialCode: "+64", region: "ANZ" },
-      { label: "South Africa (+27)", iso2: "ZA", dialCode: "+27", region: "ROW" },
-      { label: "Nigeria (+234)", iso2: "NG", dialCode: "+234", region: "ROW" },
-      { label: "Kenya (+254)", iso2: "KE", dialCode: "+254", region: "ROW" },
-      { label: "Brazil (+55)", iso2: "BR", dialCode: "+55", region: "ROW" },
-      { label: "Mexico (+52)", iso2: "MX", dialCode: "+52", region: "ROW" },
-      { label: "Pakistan (+92)", iso2: "PK", dialCode: "+92", region: "ASIA" },
-      { label: "Bangladesh (+880)", iso2: "BD", dialCode: "+880", region: "ASIA" },
-      { label: "Sri Lanka (+94)", iso2: "LK", dialCode: "+94", region: "ASIA" },
-      { label: "Nepal (+977)", iso2: "NP", dialCode: "+977", region: "ASIA" }
-    ];
-
-    const DEFAULT_COUNTRY_ISO2 = "IN";
-
-    /*********************************************************
-     * STATE
-     *********************************************************/
+    let itiInstance = null;
     let currentStep = 1;
     let currentLeadId = null;
-    let selectedCountry = null;
-    let selectedDevice = null;
-
-    let selectedDateKey = null;
+    let currentRegionKey = null;
+    let currentCourseId = null;
+    let landingLang = null;
     let selectedSlot = null;
     let selectedLanguage = null;
 
-    let personaType = null;
-    let bookingReason = null;
-    let purchaseIntent = null;
+    function scrollToForm() {{
+      const el = document.getElementById("form-top");
+      if (el) el.scrollIntoView({{ behavior: "smooth", block: "start" }});
+    }}
 
-    const errorBanner = document.getElementById("errorBanner");
-    const successBanner = document.getElementById("successBanner");
+    function setAlert(message, type = "error") {{
+      const banner = document.getElementById("alert-banner");
+      const text = document.getElementById("alert-text");
+      if (!banner || !text) return;
+      text.textContent = message;
+      if (type === "error") {{
+        banner.style.background = "rgba(239,68,68,0.1)";
+        banner.style.borderColor = "rgba(248,113,113,0.7)";
+      }} else {{
+        banner.style.background = "rgba(22,163,74,0.1)";
+        banner.style.borderColor = "rgba(34,197,94,0.7)";
+      }}
+      banner.classList.add("show");
+    }}
 
-    /*********************************************************
-     * UTILS
-     *********************************************************/
-    function showError(msg) {
-      errorBanner.textContent = msg;
-      errorBanner.classList.add("visible");
-      setTimeout(() => {
-        errorBanner.classList.remove("visible");
-      }, 6000);
-    }
+    function hideAlert() {{
+      const banner = document.getElementById("alert-banner");
+      if (banner) banner.classList.remove("show");
+    }}
 
-    function showSuccess(msg) {
-      successBanner.textContent = msg;
-      successBanner.classList.add("visible");
-      setTimeout(() => {
-        successBanner.classList.remove("visible");
-      }, 5000);
-    }
-
-    function setStep(step) {
+    function updateStepUI(step) {{
       currentStep = step;
-      document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-      document.getElementById("step" + step).classList.add("active");
-      document.getElementById("stepLabel").textContent = step;
+      const stepLabel = document.getElementById("step-label");
+      if (stepLabel) stepLabel.textContent = `STEP ${step} OF 3`;
 
-      const segments = document.querySelectorAll("[data-step-progress]");
-      segments.forEach(seg => {
-        const val = parseInt(seg.getAttribute("data-step-progress"), 10);
-        seg.classList.remove("active", "completed");
-        if (val < step) seg.classList.add("completed");
-        else if (val === step) seg.classList.add("active");
-      });
-    }
+      ["step-1","step-2","step-3"].forEach((id, index) => {{
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.display = (index + 1 === step) ? "block" : "none";
+      }});
 
-    function getCourseIdFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const cid = params.get("courseId");
-      return cid ? parseInt(cid, 10) : null;
-    }
+      [1,2,3].forEach(num => {{
+        const bar = document.getElementById(`step-bar-${{num}}`);
+        if (!bar) return;
+        if (num <= step) bar.classList.add("active");
+        else bar.classList.remove("active");
+      }});
+    }}
 
-    function formatLocalDate(dateStr) {
-      const d = new Date(dateStr);
-      const options = { weekday: "short", day: "2-digit", month: "short" };
-      const parts = d.toLocaleDateString(undefined, options).split(" ");
-      return {
-        weekday: parts[0],
-        dayMonth: parts.slice(1).join(" ")
-      };
-    }
+    function goToStep(step) {{
+      hideAlert();
+      if (step === 1) {{
+        updateStepUI(1);
+        selectedSlot = null;
+      }} else if (step === 2) {{
+        if (!currentLeadId) {{
+          setAlert("Please complete Step 1 first.", "error");
+          return;
+        }}
+        updateStepUI(2);
+      }} else if (step === 3) {{
+        if (!currentLeadId || !selectedSlot) {{
+          setAlert("Please confirm your date & time first.", "error");
+          return;
+        }}
+        updateStepUI(3);
+      }}
+    }}
 
-    function formatLocalTime(isoString) {
-      const d = new Date(isoString);
-      return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-    }
-
-    function todayISO() {
-      const now = new Date();
-      return now.toISOString().slice(0, 10);
-    }
-
-    function addDays(dateStr, days) {
-      const d = new Date(dateStr);
-      d.setDate(d.getDate() + days);
-      return d.toISOString().slice(0, 10);
-    }
-
-    function findCountryByLabel(label) {
-      return COUNTRY_DATA.find(c => c.label === label);
-    }
-
-    function getDefaultCountry() {
-      const navLang = navigator.language || navigator.userLanguage || "";
-      if (navLang.startsWith("en-US")) return COUNTRY_DATA.find(c => c.iso2 === "US");
-      if (navLang.startsWith("en-GB")) return COUNTRY_DATA.find(c => c.iso2 === "GB");
-      if (navLang.startsWith("en-AU")) return COUNTRY_DATA.find(c => c.iso2 === "AU");
-      if (navLang.startsWith("en-CA")) return COUNTRY_DATA.find(c => c.iso2 === "CA");
-      if (navLang.startsWith("en-IN") || navLang.startsWith("hi-") || navLang === "en") {
-        return COUNTRY_DATA.find(c => c.iso2 === "IN");
-      }
-      return COUNTRY_DATA.find(c => c.iso2 === DEFAULT_COUNTRY_ISO2);
-    }
-
-    /*********************************************************
-     * STEP 1 – INIT & HANDLERS
-     *********************************************************/
-    function initCountryInput() {
-      const datalist = document.getElementById("countryOptions");
-      COUNTRY_DATA.forEach(c => {
+    function populateGrades() {{
+      const gradeSelect = document.getElementById("child-grade");
+      if (!gradeSelect) return;
+      const options = [];
+      for (let i = 1; i <= 12; i++) {{
         const opt = document.createElement("option");
-        opt.value = c.label;
-        datalist.appendChild(opt);
-      });
+        opt.value = `Grade ${{
+          i
+        }}`;
+        opt.textContent = `Grade ${{ i }}`;
+        options.push(opt);
+      }}
+      options.forEach(o => gradeSelect.appendChild(o));
+    }}
 
-      const defaultCountry = getDefaultCountry();
-      const countryInput = document.getElementById("countryInput");
-      if (defaultCountry) {
-        countryInput.value = defaultCountry.label;
-        selectedCountry = defaultCountry;
-      } else {
-        countryInput.placeholder = "Search country";
-      }
+    function setupLaptopToggle() {{
+      const group = document.getElementById("laptop-toggle");
+      if (!group) return;
+      const buttons = Array.from(group.querySelectorAll(".toggle-pill"));
+      buttons.forEach(btn => {{
+        btn.addEventListener("click", () => {{
+          buttons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        }});
+      }});
+    }}
 
-      countryInput.addEventListener("change", () => {
-        const val = countryInput.value.trim();
-        const found = findCountryByLabel(val);
-        if (found) {
-          selectedCountry = found;
-        } else {
-          selectedCountry = null;
-          showError("Please select a country from the suggestions list.");
-        }
-      });
-    }
+    function getLaptopValue() {{
+      const group = document.getElementById("laptop-toggle");
+      if (!group) return null;
+      const active = group.querySelector(".toggle-pill.active");
+      return active ? active.getAttribute("data-value") : null;
+    }}
 
-    function initDeviceToggle() {
-      const group = document.getElementById("deviceToggleGroup");
-      group.addEventListener("click", e => {
-        const btn = e.target.closest(".pill-toggle");
-        if (!btn) return;
-        group.querySelectorAll(".pill-toggle").forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedDevice = btn.getAttribute("data-value");
-      });
-    }
+    function initPhoneInput() {{
+      const input = document.getElementById("phone-input");
+      if (!input) return;
 
-    async function handleStep1Next() {
-      const phoneVal = document.getElementById("phoneInput").value.trim();
-      const childName = document.getElementById("childName").value.trim();
-      const grade = document.getElementById("childGrade").value;
-      const parentName = document.getElementById("parentName").value.trim();
-      const parentEmail = document.getElementById("parentEmail").value.trim();
+      itiInstance = window.intlTelInput(input, {{
+        initialCountry: "auto",
+        preferredCountries: ["us","gb","ae","sa","in","ca","au","nz","sg","qa","kw","bh","om"],
+        geoIpLookup: function(callback) {{
+          fetch("https://ipapi.co/json/")
+            .then(function(res) {{ return res.json(); }})
+            .then(function(data) {{ callback((data && data.country_code) ? data.country_code.toLowerCase() : "ae"); }})
+            .catch(function() {{ callback("ae"); }});
+        }},
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+      }});
+    }}
 
-      if (!selectedCountry) {
-        showError("Please select your country from the suggestions list.");
-        return;
-      }
-      if (!phoneVal) {
-        showError("Please enter your WhatsApp number.");
-        return;
-      }
-      if (!childName) {
-        showError("Please enter your child’s name.");
-        return;
-      }
-      if (!grade) {
-        showError("Please select your child’s grade.");
-        return;
-      }
-      if (!parentName) {
-        showError("Please enter the parent / guardian name.");
-        return;
-      }
-      if (!parentEmail) {
-        showError("Please enter a valid email address.");
-        return;
-      }
-      if (!selectedDevice) {
-        showError("Please tell us if you have a laptop or desktop for the class.");
-        return;
-      }
+    function parseUrlParams() {{
+      const params = new URLSearchParams(window.location.search);
+      const courseIdRaw = params.get("courseId");
+      const langParam = params.get("lang");
+      currentCourseId = courseIdRaw ? parseInt(courseIdRaw, 10) || null : null;
+      landingLang = langParam ? String(langParam).toLowerCase() : null;
+    }}
 
-      const courseId = getCourseIdFromUrl();
-      if (!courseId) {
-        showError("courseId is missing in the URL. Please open the correct booking link.");
-        return;
-      }
+    function buildLanguagePills() {{
+      const container = document.getElementById("language-pills");
+      if (!container) return;
+      container.innerHTML = "";
+      LANGUAGES.forEach(lang => {{
+        const label = lang.charAt(0).toUpperCase() + lang.slice(1);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "language-pill";
+        btn.textContent = label;
+        btn.dataset.value = lang;
+        btn.addEventListener("click", () => {{
+          Array.from(container.querySelectorAll(".language-pill")).forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          selectedLanguage = lang;
+        }});
+        container.appendChild(btn);
+      }});
+    }}
 
-      const regionKey = selectedCountry.region || "ROW";
-      const fullPhone = `${selectedCountry.dialCode} ${phoneVal}`;
+    function setupChips(groupId, onChange) {{
+      const container = document.getElementById(groupId);
+      if (!container) return;
+      const chips = Array.from(container.querySelectorAll(".choice-chip"));
+      chips.forEach(chip => {{
+        chip.addEventListener("click", () => {{
+          chips.forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          if (onChange) onChange(chip.getAttribute("data-value"));
+        }});
+      }});
+    }}
 
-      try {
-        const insertPayload = {
-          course_id: courseId,
+    function setupStep1Form() {{
+      const form = document.getElementById("step-1-form");
+      const submitBtn = document.getElementById("step-1-submit");
+      const phoneError = document.getElementById("phone-error");
+      const childNameInput = document.getElementById("child-name");
+      const gradeSelect = document.getElementById("child-grade");
+      const parentNameInput = document.getElementById("parent-name");
+      const parentEmailInput = document.getElementById("parent-email");
+
+      if (!form || !submitBtn) return;
+
+      form.addEventListener("submit", async (e) => {{
+        e.preventDefault();
+        hideAlert();
+        if (phoneError) phoneError.style.display = "none";
+
+        if (!itiInstance) {{
+          setAlert("Phone selector failed to load. Please refresh and try again.");
+          return;
+        }}
+
+        const phoneNumber = (document.getElementById("phone-input").value || "").trim();
+        const numberValid = itiInstance.isValidNumber();
+        const countryData = itiInstance.getSelectedCountryData();
+
+        if (!phoneNumber || !numberValid || !countryData) {{
+          if (phoneError) {{
+            phoneError.textContent = "Please enter a valid WhatsApp number with country code.";
+            phoneError.style.display = "block";
+          }}
+          return;
+        }}
+
+        const childName = (childNameInput.value || "").trim();
+        const childGrade = gradeSelect.value || "";
+        const parentName = (parentNameInput.value || "").trim();
+        const parentEmail = (parentEmailInput.value || "").trim();
+        const hasLaptop = getLaptopValue();
+
+        if (!childName || !childGrade || !parentName || !parentEmail) {{
+          setAlert("Please fill all the fields to continue.", "error");
+          return;
+        }}
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Saving details...";
+
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+        const browser = navigator.userAgent || null;
+        const iso2 = (countryData.iso2 || "").toUpperCase();
+        const regionKey = ISO2_TO_REGION[iso2] || null;
+        currentRegionKey = regionKey;
+
+        const payload = {{
+          child_name: childName,
+          child_grade: childGrade,
           parent_name: parentName,
           parent_email: parentEmail,
-          child_name: childName,
-          child_grade: grade,
-          whatsapp_number: fullPhone,
-          whatsapp_raw_number: phoneVal,
-          country_label: selectedCountry.label,
-          country_iso2: selectedCountry.iso2,
+          phone_country_code: "+" + countryData.dialCode,
+          phone_number: phoneNumber,
+          is_whatsapp: true,
+          has_laptop: hasLaptop,
+          course_id: currentCourseId,
+          lang: landingLang || "english",
+          landing_page_path: window.location.pathname,
+          full_url: window.location.href,
+          timezone,
+          browser,
+          country: countryData.name || null,
           region_key: regionKey,
-          has_laptop: selectedDevice === "yes",
-          source: "unischooly_booking_form_v2"
-        };
+          page_completed: 1
+        }};
 
-        const { data, error } = await supabaseClient
-          .from("demo_leads")
-          .insert(insertPayload)
-          .select("id, region_key")
-          .single();
+        try {{
+          const {{ data, error }} = await supabaseClient
+            .from("demo_leads")
+            .insert([payload])
+            .select()
+            .single();
 
-        if (error) {
-          console.error(error);
-          showError("Unable to save your details. Please try again in a moment.");
-          return;
-        }
-        currentLeadId = data.id;
+          if (error || !data) {{
+            console.error("Insert error", error);
+            setAlert("Unable to save your details. Please try again in a moment.", "error");
+          }} else {{
+            currentLeadId = data.id;
+            goToStep(2);
+            await loadSlotsForRegion();
+          }}
+        }} catch (err) {{
+          console.error(err);
+          setAlert("Something went wrong while saving your details. Please try again.", "error");
+        }} finally {{
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Book a Free Trial Class";
+        }}
+      }});
+    }}
 
-        setStep(2);
-        await loadSlotsForLead();
-      } catch (err) {
-        console.error(err);
-        showError("Something went wrong while saving your details. Please try again.");
-      }
-    }
+    async function loadSlotsForRegion() {{
+      const dateGrid = document.getElementById("date-grid");
+      const timeGrid = document.getElementById("time-grid");
+      const dateRangeLabel = document.getElementById("date-range-label");
+      const step2Error = document.getElementById("step-2-error");
+      if (!dateGrid || !timeGrid) return;
 
-    /*********************************************************
-     * STEP 2 – SLOTS & LANGUAGE
-     *********************************************************/
-    function buildDateButtonsFromSlots(slots) {
-      const dateGrid = document.getElementById("dateGrid");
       dateGrid.innerHTML = "";
-
-      const daysMap = new Map();
-      slots.forEach(slot => {
-        const dayKey = slot.slot_date;
-        if (!daysMap.has(dayKey)) {
-          daysMap.set(dayKey, []);
-        }
-        daysMap.get(dayKey).push(slot);
-      });
-
-      const today = todayISO();
-      const todayPlus5 = addDays(today, 5);
-
-      const allDayKeys = Array.from(daysMap.keys())
-        .filter(d => d >= today && d <= todayPlus5)
-        .sort();
-
-      allDayKeys.forEach(dayKey => {
-        const { weekday, dayMonth } = formatLocalDate(dayKey);
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "slot-day-card";
-        if (dayKey === today) {
-          btn.classList.add("today-tag");
-        }
-        btn.dataset.dateKey = dayKey;
-
-        btn.innerHTML = `
-          <span class="day-label">${weekday}</span>
-          <span class="date-label">${dayMonth}</span>
-        `;
-
-        btn.addEventListener("click", () => {
-          selectedDateKey = dayKey;
-          selectedSlot = null;
-          document.querySelectorAll(".slot-day-card").forEach(b => b.classList.remove("selected"));
-          btn.classList.add("selected");
-          buildTimeButtonsForDate(slots, dayKey);
-        });
-
-        dateGrid.appendChild(btn);
-      });
-
-      if (allDayKeys.length) {
-        const firstDay = allDayKeys[0];
-        const firstBtn = dateGrid.querySelector(`[data-date-key="${firstDay}"]`);
-        if (firstBtn) firstBtn.click();
-      }
-    }
-
-    function buildTimeButtonsForDate(slots, dateKey) {
-      const timeGrid = document.getElementById("timeGrid");
       timeGrid.innerHTML = "";
-      const nowPlus1hISO = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+      if (step2Error) step2Error.style.display = "none";
 
-      const relevantSlots = slots
-        .filter(s => s.slot_date === dateKey)
-        .sort((a, b) => new Date(a.slot_datetime_ist) - new Date(b.slot_datetime_ist));
+      if (!currentRegionKey || !currentCourseId) {{
+        if (step2Error) {{
+          step2Error.textContent = "We couldn’t detect your region. Please refresh and try again.";
+          step2Error.style.display = "block";
+        }}
+        return;
+      }}
 
-      relevantSlots.forEach(slot => {
-        const localTime = formatLocalTime(slot.slot_datetime_ist);
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "time-pill";
+      const now = new Date();
+      const todayStr = now.toISOString().slice(0,10);
+      const maxDate = new Date(now.getTime());
+      maxDate.setDate(maxDate.getDate() + 5);
+      const maxStr = maxDate.toISOString().slice(0,10);
 
-        if (slot.capacity_remaining !== null && slot.capacity_remaining <= 0) {
-          btn.classList.add("disabled");
-        }
+      if (dateRangeLabel) {{
+        const opts = {{ month: "short", day: "numeric" }};
+        dateRangeLabel.textContent = `${{ now.toLocaleDateString(undefined, opts) }} – ${{ maxDate.toLocaleDateString(undefined, opts) }}`;
+      }}
 
-        if (slot.slot_datetime_ist <= nowPlus1hISO && slot.slot_date === todayISO()) {
-          btn.classList.add("disabled");
-        }
+      try {{
+        const {{ data: slots, error }} = await supabaseClient
+          .from("demo_slots_live")
+          .select("*")
+          .eq("region_key", currentRegionKey)
+          .eq("course_id", currentCourseId)
+          .eq("is_active", true)
+          .gt("capacity_remaining", 0)
+          .gte("slot_date", todayStr)
+          .lte("slot_date", maxStr)
+          .order("slot_datetime_ist", {{ ascending: true }});
 
-        btn.dataset.slotId = slot.id;
+        if (error) {{
+          console.error("Slots error", error);
+          if (step2Error) {{
+            step2Error.textContent = "Unable to load live slots. Please refresh and try again.";
+            step2Error.style.display = "block";
+          }}
+          return;
+        }}
 
-        let starMarkup = "";
-        if (slot.is_star_teacher) {
-          starMarkup = `<span class="star-tag">⭐ Star Teacher</span>`;
-        }
+        if (!slots || !slots.length) {{
+          dateGrid.innerHTML = '<div class="centered-message">No live slots are available for the next few days in your region. Please check again later.</div>';
+          return;
+        }}
 
-        btn.innerHTML = `
-          <span>${localTime}</span>
-          ${starMarkup}
+        const byDate = new Map();
+        slots.forEach(slot => {{
+          const dateKey = slot.slot_date;
+          if (!byDate.has(dateKey)) byDate.set(dateKey, []);
+          byDate.get(dateKey).push(slot);
+        }});
+
+        const sortedDates = Array.from(byDate.keys()).sort();
+
+        let firstDateKey = null;
+
+        sortedDates.forEach((dateKey, index) => {{
+          const dateObj = new Date(dateKey);
+          const isToday = dateKey === todayStr;
+          const diffDays = Math.round((dateObj - new Date(todayStr)) / (1000*60*60*24));
+          let dayLabel = dateObj.toLocaleDateString(undefined, {{ weekday: "long" }});
+          if (diffDays === 0) dayLabel = "Today";
+          else if (diffDays === 1) dayLabel = "Tomorrow";
+
+          const dateLabel = dateObj.toLocaleDateString(undefined, {{ day: "2-digit", month: "short" }});
+
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "date-chip";
+          chip.dataset.dateKey = dateKey;
+          chip.innerHTML = `<span class="day-label">${{ dayLabel }}</span><span class="date-label">${{ dateLabel }}</span>`;
+
+          chip.addEventListener("click", () => {{
+            Array.from(dateGrid.querySelectorAll(".date-chip")).forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            renderTimeChips(dateKey, byDate.get(dateKey) || []);
+          }});
+
+          if (index === 0) {{
+            firstDateKey = dateKey;
+          }}
+
+          dateGrid.appendChild(chip);
+        }});
+
+        if (firstDateKey) {{
+          const firstChip = dateGrid.querySelector(`.date-chip[data-date-key="${{firstDateKey}}"]`);
+          if (firstChip) firstChip.classList.add("active");
+          renderTimeChips(firstDateKey, byDate.get(firstDateKey) || []);
+        }}
+
+      }} catch (err) {{
+        console.error(err);
+        if (step2Error) {{
+          step2Error.textContent = "Unable to load live slots. Please refresh and try again.";
+          step2Error.style.display = "block";
+        }}
+      }}
+    }}
+
+    function renderTimeChips(dateKey, slotsForDay) {{
+      const timeGrid = document.getElementById("time-grid");
+      if (!timeGrid) return;
+      timeGrid.innerHTML = "";
+      selectedSlot = null;
+
+      if (!slotsForDay || !slotsForDay.length) {{
+        timeGrid.innerHTML = '<div class="centered-message">No slots are available on this day. Please try another date.</div>';
+        return;
+      }}
+
+      slotsForDay.forEach(slot => {{
+        const istDate = new Date(slot.slot_datetime_ist);
+        const timeLabel = istDate.toLocaleTimeString([], {{ hour: "numeric", minute: "2-digit" }});
+
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "time-chip";
+        chip.dataset.slotId = slot.id;
+
+        const starHtml = slot.is_star_teacher
+          ? '<span class="star-tag"><span class="icon">⭐</span><span>Star teacher</span></span>'
+          : "";
+
+        chip.innerHTML = `
+          <div class="time-chip-header">
+            <span class="time-main-label">${{ timeLabel }}</span>
+            ${{ starHtml }}
+          </div>
+          <div class="slot-subtext">1:1 live class · 60 mins</div>
         `;
 
-        btn.addEventListener("click", () => {
-          if (btn.classList.contains("disabled")) return;
-          selectedSlot = slot;
-          document.querySelectorAll(".time-pill").forEach(b => b.classList.remove("selected"));
-          btn.classList.add("selected");
-        });
+        chip.addEventListener("click", () => {{
+          Array.from(timeGrid.querySelectorAll(".time-chip")).forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          selectedSlot = Object.assign({{ }}, slot, {{ local_time_label: timeLabel }});
+        }});
 
-        timeGrid.appendChild(btn);
-      });
-    }
+        timeGrid.appendChild(chip);
+      }});
+    }}
 
-    async function loadSlotsForLead() {
-      if (!currentLeadId) return;
-      const courseId = getCourseIdFromUrl();
-      if (!courseId) {
-        showError("courseId is missing in the URL.");
-        return;
-      }
+    function setupStep2Submit() {{
+      const btn = document.getElementById("step-2-submit");
+      const errorEl = document.getElementById("step-2-error");
+      if (!btn) return;
 
-      try {
-        const { data: leadData, error: leadErr } = await supabaseClient
-          .from("demo_leads")
-          .select("region_key")
-          .eq("id", currentLeadId)
-          .single();
+      btn.addEventListener("click", async () => {{
+        hideAlert();
+        if (errorEl) errorEl.style.display = "none";
 
-        if (leadErr) {
-          console.error(leadErr);
-          showError("Could not fetch your booking details. Please refresh and try again.");
+        if (!currentLeadId) {{
+          if (errorEl) {{
+            errorEl.textContent = "Please complete Step 1 first.";
+            errorEl.style.display = "block";
+          }}
           return;
-        }
+        }}
 
-        const regionKey = leadData.region_key || "ROW";
-        const today = todayISO();
-        const endDate = addDays(today, 5);
-        const nowPlus1hISO = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-
-        const { data: slots, error } = await supabaseClient
-          .from("demo_slots_live")
-          .select("id, region_key, course_id, slot_date, slot_time_ist, slot_datetime_ist, is_star_teacher, capacity_remaining, is_active")
-          .eq("course_id", courseId)
-          .eq("region_key", regionKey)
-          .eq("is_active", true)
-          .gte("slot_date", today)
-          .lte("slot_date", endDate)
-          .gt("slot_datetime_ist", nowPlus1hISO)
-          .order("slot_datetime_ist", { ascending: true });
-
-        if (error) {
-          console.error(error);
-          showError("Unable to load available slots right now. Please try again shortly.");
+        if (!selectedSlot) {{
+          if (errorEl) {{
+            errorEl.textContent = "Please select a date and time for your class.";
+            errorEl.style.display = "block";
+          }}
           return;
-        }
+        }}
 
-        if (!slots || !slots.length) {
-          showError("No upcoming slots are available for this course in your region. Please contact support.");
+        if (!selectedLanguage) {{
+          if (errorEl) {{
+            errorEl.textContent = "Please select your preferred language.";
+            errorEl.style.display = "block";
+          }}
           return;
-        }
+        }}
 
-        buildDateButtonsFromSlots(slots);
-      } catch (err) {
-        console.error(err);
-        showError("Something went wrong while loading slots. Please refresh and try again.");
-      }
-    }
+        btn.disabled = true;
+        btn.textContent = "Confirming...";
 
-    function initLanguageSelection() {
-      const grid = document.getElementById("languageGrid");
-      grid.addEventListener("click", e => {
-        const btn = e.target.closest(".language-pill");
-        if (!btn) return;
-        grid.querySelectorAll(".language-pill").forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedLanguage = btn.getAttribute("data-lang");
-      });
-    }
+        try {{
+          const updates = {{
+            preferred_date: selectedSlot.slot_date,
+            preferred_time_slot: selectedSlot.local_time_label,
+            slot_id: selectedSlot.id,
+            lang: selectedLanguage,
+            page_completed: 2
+          }};
 
-    async function handleStep2Next() {
-      if (!selectedSlot) {
-        showError("Please select a date and time for your class.");
-        return;
-      }
-      if (!selectedLanguage) {
-        showError("Please select your preferred language for the class.");
-        return;
-      }
-      if (!currentLeadId) {
-        showError("We could not find your booking details. Please go back and fill Step 1 again.");
-        return;
-      }
+          const {{ error }} = await supabaseClient
+            .from("demo_leads")
+            .update(updates)
+            .eq("id", currentLeadId);
 
-      try {
-        const updatePayload = {
-          preferred_date: selectedSlot.slot_date,
-          preferred_time_slot: selectedSlot.slot_time_ist,
-          preferred_slot_datetime_ist: selectedSlot.slot_datetime_ist,
-          preferred_language: selectedLanguage,
-          selected_slot_id: selectedSlot.id
-        };
+          if (error) {{
+            console.error("Update step 2 error", error);
+            if (errorEl) {{
+              errorEl.textContent = "Unable to confirm slot right now. Please try another time or date.";
+              errorEl.style.display = "block";
+            }}
+          }} else {{
+            goToStep(3);
+          }}
+        }} catch (err) {{
+          console.error(err);
+          if (errorEl) {{
+            errorEl.textContent = "Something went wrong. Please try again.";
+            errorEl.style.display = "block";
+          }}
+        }} finally {{
+          btn.disabled = false;
+          btn.textContent = "Confirm Class Time";
+        }}
+      }});
+    }}
 
-        const { error } = await supabaseClient
-          .from("demo_leads")
-          .update(updatePayload)
-          .eq("id", currentLeadId);
+    function setupStep3Submit() {{
+      const btn = document.getElementById("step-3-submit");
+      const successEl = document.getElementById("step-3-success");
+      if (!btn || !successEl) return;
 
-        if (error) {
-          console.error(error);
-          showError("Unable to save your selected time. Please try again.");
+      let whoValue = null;
+      let whyValue = null;
+      let whenValue = null;
+
+      setupChips("chip-who", (val) => {{ whoValue = val; }});
+      setupChips("chip-why", (val) => {{ whyValue = val; }});
+      setupChips("chip-when", (val) => {{ whenValue = val; }});
+
+      btn.addEventListener("click", async () => {{
+        hideAlert();
+        successEl.style.display = "none";
+
+        if (!currentLeadId) {{
+          setAlert("Please start again from Step 1.", "error");
           return;
-        }
+        }}
 
-        showSuccess("Your class time has been locked successfully.");
-        setStep(3);
-      } catch (err) {
-        console.error(err);
-        showError("Something went wrong while saving your slot. Please try again.");
-      }
-    }
-
-    /*********************************************************
-     * STEP 3 – MOTIVATION
-     *********************************************************/
-    function initChipGroup(containerId, onChange) {
-      const container = document.getElementById(containerId);
-      container.addEventListener("click", e => {
-        const chip = e.target.closest(".chip");
-        if (!chip) return;
-        container.querySelectorAll(".chip").forEach(c => c.classList.remove("selected"));
-        chip.classList.add("selected");
-        const val = chip.getAttribute("data-value");
-        onChange(val);
-      });
-    }
-
-    async function handleStep3Submit() {
-      if (!currentLeadId) {
-        showError("We could not find your booking details. Please refresh and start again.");
-        return;
-      }
-      if (!personaType || !bookingReason || !purchaseIntent) {
-        showError("Please answer all three questions so we can personalise your trial.");
-        return;
-      }
-
-      try {
-        const { error } = await supabaseClient
-          .from("demo_leads")
-          .update({
-            persona_type: personaType,
-            booking_reason: bookingReason,
-            purchase_intent: purchaseIntent
-          })
-          .eq("id", currentLeadId);
-
-        if (error) {
-          console.error(error);
-          showError("Unable to save your preferences. Please try again.");
+        if (!whoValue || !whyValue || !whenValue) {{
+          setAlert("Please answer all the questions so we can personalise your experience.", "error");
           return;
-        }
+        }}
 
-        showSuccess("Your responses are saved. Redirecting to confirmation...");
-        setTimeout(() => {
-          window.location.href = "/thank-you"; // replace with actual
-        }, 1800);
-      } catch (err) {
-        console.error(err);
-        showError("Something went wrong while submitting. Please try again.");
-      }
-    }
+        btn.disabled = true;
+        btn.textContent = "Submitting...";
 
-    /*********************************************************
-     * INIT
-     *********************************************************/
-    document.addEventListener("DOMContentLoaded", () => {
-      initCountryInput();
-      initDeviceToggle();
-      initLanguageSelection();
+        try {{
+          const updates = {{
+            who_are_you: whoValue,
+            booking_reason: whyValue,
+            purchase_timeline: whenValue,
+            page_completed: 3
+          }};
 
-      document.getElementById("step1Next").addEventListener("click", handleStep1Next);
-      document.getElementById("backToStep1").addEventListener("click", () => setStep(1));
-      document.getElementById("step2Next").addEventListener("click", handleStep2Next);
-      document.getElementById("backToStep2").addEventListener("click", () => setStep(2));
-      document.getElementById("step3Submit").addEventListener("click", handleStep3Submit);
+          const {{ error }} = await supabaseClient
+            .from("demo_leads")
+            .update(updates)
+            .eq("id", currentLeadId);
 
-      initChipGroup("whoYouAreChips", val => (personaType = val));
-      initChipGroup("bookingReasonChips", val => (bookingReason = val));
-      initChipGroup("purchaseIntentChips", val => (purchaseIntent = val));
-    });
+          if (error) {{
+            console.error("Update step 3 error", error);
+            setAlert("Unable to save your responses right now. Please try again.", "error");
+          }} else {{
+            successEl.style.display = "block";
+          }}
+        }} catch (err) {{
+          console.error(err);
+          setAlert("Something went wrong. Please try again.", "error");
+        }} finally {{
+          btn.disabled = false;
+          btn.textContent = "Submit";
+        }}
+      }});
+    }}
+
+    document.addEventListener("DOMContentLoaded", () => {{
+      parseUrlParams();
+      populateGrades();
+      setupLaptopToggle();
+      initPhoneInput();
+      setupStep1Form();
+      buildLanguagePills();
+      setupStep2Submit();
+      setupStep3Submit();
+      updateStepUI(1);
+    }});
   </script>
 </body>
 </html>

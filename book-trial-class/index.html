@@ -1,3 +1,8 @@
+<!-- ===============================
+   UNISCHOOLY - HEADER + HERO + STEP 1 FORM
+   Version: 1.5 (Mobile radio layout + slightly brighter hero image)
+================================ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Unischooly - Book a Free Trial Class</title>
 
+<!-- International telephone input (for country code + flags + search) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.css"/>
 
 <style>
@@ -164,8 +170,7 @@ header {
 
 .hero-section {
   position: relative;
-  padding-top: 140px;
-  /* clears fixed header */
+  padding-top: 140px; /* clears fixed header */
   padding-bottom: 80px;
   overflow: hidden;
   background-color: #020617;
@@ -358,8 +363,7 @@ header {
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.18s ease;
-  color: #f9fafb;
-  /* brighter text on dark background */
+  color: #f9fafb; /* brighter text on dark background */
 }
 
 .date-chip .date-chip-main {
@@ -401,8 +405,7 @@ header {
 
 .slot-card .slot-time {
   font-weight: 600;
-  color: #f9fafb;
-  /* ensure slot time text is bright on dark background */
+  color: #f9fafb; /* ensure slot time text is bright on dark background */
 }
 
 .slot-card .slot-capacity {
@@ -551,52 +554,6 @@ select:focus {
   accent-color: #ff6bcb;
 }
 
-/* --- STEP 3 BUTTONS (New) --- */
-.step3-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.step3-option-label {
-  position: relative;
-  cursor: pointer;
-}
-
-.step3-option-label input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.step3-btn {
-  display: inline-block;
-  padding: 10px 18px;
-  border-radius: 10px;
-  border: 1px solid rgba(148,163,184,0.5);
-  background: transparent;
-  color: rgba(226,232,240,0.9);
-  font-size: 14px;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.step3-option-label:hover .step3-btn {
-  border-color: rgba(226,232,240,0.8);
-}
-
-/* Selected State: White bg, Black text (similar to screenshot) */
-.step3-option-label input:checked + .step3-btn {
-  background: #ffffff;
-  color: #020617;
-  border-color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
 /* CTA button inside card */
 
 .submit-btn {
@@ -604,8 +561,7 @@ select:focus {
   padding: 15px 0;
   margin-top: 14px;
   background-image: var(--primary-gradient);
-  border-radius: 999px;
-  /* fully round */
+  border-radius: 999px; /* fully round */
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -618,8 +574,7 @@ select:focus {
   justify-content: center;
   gap: 8px;
   box-shadow: 0 12px 30px rgba(15,23,42,0.9);
-  color: #020617;
-  /* black text on gradient */
+  color: #020617; /* black text on gradient */
 }
 
 .submit-btn span.icon {
@@ -667,8 +622,7 @@ select:focus {
   justify-content: center;
   gap: 8px;
   z-index: 998;
-  white-space: nowrap;
-  /* keep one line */
+  white-space: nowrap; /* keep one line */
 }
 
 
@@ -676,8 +630,7 @@ select:focus {
 @media (max-width: 640px) {
   /* Keep intl-tel-input country dropdown as a smaller scrollable sheet instead of full-screen */
   .iti-mobile .iti--container {
-    top: 150px !important;
-    /* roughly under hero/form area */
+    top: 150px !important;          /* roughly under hero/form area */
     bottom: auto !important;
     left: 50% !important;
     transform: translateX(-50%);
@@ -730,7 +683,12 @@ select:focus {
   }
 }
 
-/* Consent Wrapper Fix */
+.radio-options.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
 .consent-wrapper {
   margin-top: 8px;
 }
@@ -744,8 +702,7 @@ select:focus {
 }
 
 .checkbox-label input[type="checkbox"] {
-  margin-top: 3px; /* Align check with first line of text */
-  flex-shrink: 0; /* Prevent squishing */
+  margin-top: 2px;
   accent-color: #ff6bcb;
 }
 
@@ -772,11 +729,10 @@ select:focus {
 <section class="hero-section">
   <div class="container hero">
 
+    <!-- LEFT TEXT -->
     <div class="hero-left">
-      <h1>Book a 
-        <span>Free Live Coding Class</span><br>for your child.</h1>
-      <p>A personalised 60-minute class to introduce your child to coding, logic skills &amp;
-        futuristic learning.</p>
+      <h1>Book a <span>Free Live Coding Class</span><br>for your child.</h1>
+      <p>A personalised 60-minute class to introduce your child to coding, logic skills &amp; futuristic learning.</p>
 
       <div class="badge-grid">
         <div class="badge">⏱ <span>60-min Live Class</span></div>
@@ -786,28 +742,28 @@ select:focus {
       </div>
     </div>
 
+    <!-- RIGHT FORM -->
     <div class="form-card" id="formCard">
       <div class="form-inner">
-        <h2 class="form-title">Book Now &amp;
-          Get Certified</h2>
-        <p class="form-subtitle">Step 1 of 3 · Share your child &amp;
-          parent details to unlock a personalised trial class.</p>
+        <h2 class="form-title">Book Now &amp; Get Certified</h2>
+        <p class="form-subtitle">Step 1 of 3 · Share your child &amp; parent details to unlock a personalised trial class.</p>
 
+        <!-- Gradient 2-step indicator line -->
         <div class="step-indicator">
           <div class="step-bar" data-step="1"></div>
           <div class="step-bar" data-step="2"></div>
           <div class="step-bar" data-step="3"></div>
         </div>
 
+        <!-- STEP 1 PANE -->
         <div id="step1Pane" class="step-pane active">
-    
+          <!-- PHONE (country code + number in one field) -->
           <div class="field-wrapper phone-field">
             <label for="parentPhone">Parent WhatsApp Number</label>
             <div class="phone-sub-label-row">
               <span>Country code</span>
               <span>Mobile number</span>
             </div>
-   
             <input type="tel" id="parentPhone" name="parentPhone" placeholder="Enter mobile number" />
           </div>
 
@@ -817,14 +773,12 @@ select:focus {
           </div>
 
           <div class="field-wrapper">
-         
             <label for="childGrade">Child Grade</label>
             <select id="childGrade" name="childGrade">
               <option value="">Select Grade</option>
               <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
               <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
               <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
-           
             </select>
           </div>
 
@@ -835,44 +789,44 @@ select:focus {
 
           <div class="field-wrapper">
             <label for="parentEmail">Parent Email</label>
-          
             <input type="email" id="parentEmail" name="parentEmail" placeholder="Enter email" />
           </div>
 
+          <!-- Laptop / Desktop question -->
           <div class="radio-group">
             <p class="radio-label">Do you have a Laptop or Desktop?</p>
             <div class="radio-options">
               <label class="radio-option">
-         
                 <input type="radio" name="hasComputer" value="yes" checked />
                 <span>Yes</span>
               </label>
               <label class="radio-option">
                 <input type="radio" name="hasComputer" value="no" />
                 <span>No</span>
-       
               </label>
             </div>
           </div>
         </div>
 
+        <!-- STEP 2 PANE -->
         <div id="step2Pane" class="step-pane">
           <div class="field-wrapper">
             <label for="preferredDate">Select Date</label>
-            <input type="date" id="preferredDate" name="preferredDate" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;"
-              />
+            <!-- Hidden native date input just to store the YYYY-MM-DD value -->
+            <input type="date" id="preferredDate" name="preferredDate" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;" />
             <div id="dateChipsContainer" class="date-chips-row">
-              </div>
+              <!-- Date chips will be injected here -->
+            </div>
             <small id="dateHint" style="display:block;margin-top:4px;font-size:12px;color:rgba(148,163,184,0.9);">
-              Choose a date within the next few days.
-              "Today" shows only slots at least 1 hour from now.
+              Choose a date within the next few days. "Today" shows only slots at least 1 hour from now.
             </small>
           </div>
 
           <div class="field-wrapper">
             <label>Available Time Slots</label>
             <div id="slotsContainer" class="slots-grid">
-              </div>
+              <!-- Time slots will be injected here -->
+            </div>
             <small id="slotHint" style="display:block;margin-top:4px;font-size:12px;color:rgba(148,163,184,0.9);">
               Times are shown in your local time zone.
             </small>
@@ -883,66 +837,76 @@ select:focus {
               <input type="checkbox" id="consentCheckbox" checked />
               <span>I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.</span>
             </label>
-       
-           </div>
+          </div>
         </div>
 
+        <!-- STEP 3 PANE -->
         <div id="step3Pane" class="step-pane">
-          
           <div class="field-wrapper">
             <label>Who are you?</label>
-            <div class="step3-options">
-              <label class="step3-option-label">
+            <div class="radio-options vertical">
+              <label class="radio-option">
                 <input type="radio" name="whoAreYou" value="parent" checked />
-                <span class="step3-btn">Parent</span>
+                <span>Parent</span>
               </label>
-              <label class="step3-option-label">
+              <label class="radio-option">
                 <input type="radio" name="whoAreYou" value="student" />
-                <span class="step3-btn">Student</span>
+                <span>Student</span>
               </label>
-              <label class="step3-option-label">
+              <label class="radio-option">
                 <input type="radio" name="whoAreYou" value="guardian" />
-                <span class="step3-btn">Guardian</span>
+                <span>Relative / Guardian</span>
               </label>
             </div>
           </div>
 
           <div class="field-wrapper">
-            <label>Why are you booking this demo class?</label>
-            <div class="step3-options">
-              <label class="step3-option-label">
-                <input type="radio" name="bookingReason" value="want_to_buy_course" checked />
-                <span class="step3-btn">Want to buy course</span>
+            <label>Why did you book this demo?</label>
+            <div class="radio-options vertical">
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="explore_coding" checked />
+                <span>To explore coding / skills for my child</span>
               </label>
-              <label class="step3-option-label">
-                <input type="radio" name="bookingReason" value="just_demo" />
-                <span class="step3-btn">Just want the free demo class</span>
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="compare_platforms" />
+                <span>To compare with other platforms</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="strengthen_school" />
+                <span>To strengthen school concepts</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="bookingReason" value="just_exploring" />
+                <span>Just exploring / not sure yet</span>
               </label>
             </div>
           </div>
 
           <div class="field-wrapper">
-            <label>When are you planning to buy the course?</label>
-            <div class="step3-options">
-              <label class="step3-option-label">
-                <input type="radio" name="purchaseTimeline" value="after_demo" checked />
-                <span class="step3-btn">After the demo</span>
+            <label>When are you planning to purchase?</label>
+            <div class="radio-options vertical">
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="immediately" checked />
+                <span>Immediately after trial if it goes well</span>
               </label>
-              <label class="step3-option-label">
-                <input type="radio" name="purchaseTimeline" value="this_week" />
-                <span class="step3-btn">This week</span>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="within_1_week" />
+                <span>Within 1 week</span>
               </label>
-              <label class="step3-option-label">
-                <input type="radio" name="purchaseTimeline" value="this_month" />
-                <span class="step3-btn">This month</span>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="within_1_to_4_weeks" />
+                <span>Within 1–4 weeks</span>
               </label>
-              <label class="step3-option-label">
-                <input type="radio" name="purchaseTimeline" value="just_exploring" />
-                <span class="step3-btn">Just exploring</span>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="more_than_1_month" />
+                <span>More than 1 month</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="purchaseTimeline" value="not_sure" />
+                <span>Not sure</span>
               </label>
             </div>
           </div>
-
         </div>
 
         <button class="submit-btn" type="button" id="submitLead">
@@ -951,18 +915,19 @@ select:focus {
         </button>
 
         <div id="formMessage" class="form-message"></div>
- 
       </div>
     </div>
 
   </div>
 </section>
 
+<!-- Floating CTA (mobile) -->
 <button class="floating-cta" type="button" onclick="scrollToForm()">
   <span>Book a Free Trial Class</span>
   <span>✨</span>
 </button>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
@@ -1012,6 +977,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const regionKeyFromUrl = mapRegionKey(regionFromUrlRaw);
+
   // Map region to a default phone country ISO2 (for initial country code in phone input)
   const regionToIso2 = {
     USA: "us",
@@ -1022,8 +988,9 @@ document.addEventListener("DOMContentLoaded", function () {
     ANZ: "au",    // default to Australia
     ROW: "za"     // default to South Africa (can be changed later)
   };
+
   const initialCountryIso2 = regionKeyFromUrl ? (regionToIso2[regionKeyFromUrl] || null) : null;
-  
+
   // Infer region from dial code (used only when URL has NO region)
   function inferRegionFromDialCode(dial) {
     if (!dial) return null;
@@ -1166,6 +1133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!submitBtn) return;
     submitBtn.disabled = true;
     showMessage(null, "");
+
     const { localNumber, phoneCountryCode, countryName, regionKey } = getPhoneDetails();
 
     const childName = (document.getElementById("childName").value || "").trim();
@@ -1291,16 +1259,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return filtered;
   }
 
-  // Helper: Get YYYY-MM-DD string for a specific timezone correctly
-  function getZonedDateString(dateObj, timeZone) {
-    return new Intl.DateTimeFormat("en-CA", {
-      timeZone: timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).format(dateObj);
-  }
-
   async function loadSlotsAndDates(regionKey) {
     if (!slotsContainer || !preferredDateInput) return;
 
@@ -1364,9 +1322,7 @@ document.addEventListener("DOMContentLoaded", function () {
           slotEndIst.toLocaleString("en-US", { timeZone: userTz })
         );
 
-        // Use safe zoned date string for grouping key
-        const dateKey = getZonedDateString(slotStartLocal, userTz);
-        
+        const dateKey = slotStartLocal.toISOString().split("T")[0];
         if (!grouped.has(dateKey)) {
           grouped.set(dateKey, []);
         }
@@ -1384,20 +1340,29 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       cachedSlotsByDate = grouped;
-      const sortedDateKeys = Array.from(grouped.keys()).sort();
 
-      // Determine 'Today' and 'Tomorrow' strings strictly in userTz
-      const nowForTz = new Date();
-      const todayStr = getZonedDateString(nowForTz, userTz);
-      
-      const tomorrowForTz = new Date(nowForTz);
-      tomorrowForTz.setDate(tomorrowForTz.getDate() + 1);
-      const tomorrowStr = getZonedDateString(tomorrowForTz, userTz);
+      const sortedDateKeys = Array.from(grouped.keys()).sort();
+      const todayLocal = new Date(
+        new Date().toLocaleString("en-US", { timeZone: userTz })
+      );
+      const startOfTodayLocal = new Date(
+        todayLocal.getFullYear(),
+        todayLocal.getMonth(),
+        todayLocal.getDate()
+      );
+      const lastAllowedLocal = new Date(
+        startOfTodayLocal.getTime() + 5 * 24 * 60 * 60 * 1000
+      );
 
       let firstValidDateKey = null;
 
-      // Build chips
+      // Build date chips only for [today .. today+5] and find first date with valid slots
       sortedDateKeys.forEach((dateKey) => {
+        const chipDateLocal = new Date(dateKey + "T00:00:00");
+        if (chipDateLocal < startOfTodayLocal || chipDateLocal > lastAllowedLocal) {
+          return; // outside 6-day window
+        }
+
         const entries = grouped.get(dateKey) || [];
         const filtered = filterSlotsForDate(dateKey, entries, userTz);
         if (!firstValidDateKey && filtered.length > 0) {
@@ -1408,17 +1373,18 @@ document.addEventListener("DOMContentLoaded", function () {
         chip.type = "button";
         chip.className = "date-chip";
 
-        // Create a date object for formatting (using noon to avoid midnight rollover issues)
-        const chipDateObj = new Date(dateKey + "T12:00:00"); 
-        
-        const dayName = chipDateObj.toLocaleDateString("en-US", { weekday: "short" });
-        const dayNum = chipDateObj.getDate().toString().padStart(2, "0");
-        const monthShort = chipDateObj.toLocaleDateString("en-US", { month: "short" });
+        const dayName = chipDateLocal.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = chipDateLocal.getDate().toString().padStart(2, "0");
+        const monthShort = chipDateLocal.toLocaleDateString("en-US", { month: "short" });
+
+        const todayKeyLocal = startOfTodayLocal.toISOString().split("T")[0];
+        const tomorrowLocal = new Date(startOfTodayLocal.getTime() + 24 * 60 * 60 * 1000);
+        const tomorrowKeyLocal = tomorrowLocal.toISOString().split("T")[0];
 
         let mainLabel;
-        if (dateKey === todayStr) {
+        if (dateKey === todayKeyLocal) {
           mainLabel = "Today";
-        } else if (dateKey === tomorrowStr) {
+        } else if (dateKey === tomorrowKeyLocal) {
           mainLabel = "Tomorrow";
         } else {
           mainLabel = dayName;
@@ -1428,7 +1394,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <span class="date-chip-main">${mainLabel}</span>
           <span class="date-chip-sub">${dayNum} ${monthShort}</span>
         `;
-        
+
         chip.addEventListener("click", () => {
           const allChips = dateChipsContainer.querySelectorAll(".date-chip");
           allChips.forEach((c) => c.classList.remove("active"));
@@ -1447,19 +1413,37 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Auto-select first valid date
-      let initialDateKey = firstValidDateKey || sortedDateKeys[0];
-      
+      // If we found a date with valid slots, select it. Otherwise, select the first chip.
+      let initialDateKey = firstValidDateKey;
+      if (!initialDateKey) {
+        const candidateKeys = sortedDateKeys.filter((dateKey) => {
+          const chipDateLocal = new Date(dateKey + "T00:00:00");
+          return (
+            chipDateLocal >= startOfTodayLocal &&
+            chipDateLocal <= lastAllowedLocal
+          );
+        });
+        initialDateKey = candidateKeys[0] || null;
+      }
+
       if (initialDateKey) {
         preferredDateInput.value = initialDateKey;
-        // Mark chip active
-        sortedDateKeys.forEach((dateKey, idx) => {
-           if (dateKey === initialDateKey && allChips[idx]) {
-             allChips[idx].classList.add("active");
-           }
+
+        // Mark the corresponding chip as active
+        const candidateKeys = sortedDateKeys.filter((dateKey) => {
+          const chipDateLocal = new Date(dateKey + "T00:00:00");
+          return chipDateLocal >= startOfTodayLocal && chipDateLocal <= lastAllowedLocal;
         });
+
+        candidateKeys.forEach((dateKey, idx) => {
+          if (dateKey === initialDateKey && allChips[idx]) {
+            allChips[idx].classList.add("active");
+          }
+        });
+
         renderSlotsForDate(initialDateKey, grouped, userTz);
       } else {
+        // No valid slots at all, though we had rows
         slotsContainer.innerHTML =
           "<p>No valid slots available (they might be fully booked or in the past).</p>";
       }
@@ -1562,6 +1546,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const dateForDb = preferredDateInput.value;
+
       const { error: updateLeadError } = await supabaseClient
         .from("demo_leads")
         .update({
@@ -1616,12 +1601,10 @@ document.addEventListener("DOMContentLoaded", function () {
       null;
     const bookingReason =
       (document.querySelector('input[name="bookingReason"]:checked') || {})
-        .value ||
-      null;
+        .value || null;
     const purchaseTimeline =
       (document.querySelector('input[name="purchaseTimeline"]:checked') || {})
-        .value ||
-      null;
+        .value || null;
 
     if (!whoAreYou || !bookingReason || !purchaseTimeline) {
       showMessage("error", "Please select all the options to complete your booking.");

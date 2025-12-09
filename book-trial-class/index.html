@@ -401,10 +401,13 @@ header {
   flex-direction: column;
   gap: 2px;
   transition: all 0.18s ease;
+  color: #e5e7eb;
 }
 
 .slot-card .slot-time {
   font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #e5e7eb;
 }
 
 .slot-card .slot-capacity {
@@ -432,7 +435,7 @@ header {
 .slot-card.selected {
   border-color: transparent;
   background-image: var(--primary-gradient);
-  color: #f9fafb;
+  color: #0b1020;
 }
 
 .slot-card.selected .slot-capacity {
@@ -1117,10 +1120,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Decide final region
-    let finalRegionKey = regionKeyFromUrl || null; // URL always wins if present
-    if (!finalRegionKey && phoneCountryCode) {
+    let finalRegionKey = null;
+
+    // Prefer region inferred from the phone's country code.
+    if (phoneCountryCode) {
       finalRegionKey = inferRegionFromDialCode(phoneCountryCode);
     }
+    // Fallback to region from URL if phone mapping is not available.
+    if (!finalRegionKey && regionKeyFromUrl) {
+      finalRegionKey = regionKeyFromUrl;
+    }
+    // Last fallback: ROW.
     if (!finalRegionKey) {
       finalRegionKey = "ROW";
     }

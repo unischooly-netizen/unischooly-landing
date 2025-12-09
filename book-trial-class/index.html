@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css" />
   <style>
-    :root {{
+    :root {
       --bg: #050816;
       --bg-elevated: #080b1e;
       --bg-card: #0c1024;
@@ -26,43 +26,43 @@
       --transition-fast: 180ms ease-out;
       --transition-med: 240ms ease;
       --input-bg: #050816;
-    }}
+    }
 
     *,
     *::before,
-    *::after {{
+    *::after {
       box-sizing: border-box;
-    }}
+    }
 
-    body {{
+    body {
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
         "Inter", sans-serif;
       background: radial-gradient(circle at top, #111827 0, #020617 48%, #000 100%);
       color: var(--text-main);
-    }}
+    }
 
-    .page {{
+    .page {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }}
+    }
 
-    .gradient-border {{
+    .gradient-border {
       position: relative;
       border-radius: var(--radius-xl);
       padding: 1px;
       background: linear-gradient(120deg, rgba(255,122,199,0.6), rgba(168,85,247,0.5), rgba(34,211,238,0.6));
-    }}
+    }
 
-    .gradient-border-inner {{
+    .gradient-border-inner {
       border-radius: inherit;
       background: radial-gradient(circle at top left, #18181b 0, #020617 52%, #020617 100%);
       padding: 24px 28px;
-    }}
+    }
 
-    header {{
+    header {
       position: sticky;
       top: 0;
       z-index: 40;
@@ -74,9 +74,9 @@
         transparent
       );
       border-bottom: 1px solid rgba(31,41,55,0.7);
-    }}
+    }
 
-    .nav {{
+    .nav {
       max-width: 1180px;
       margin: 0 auto;
       padding: 14px 20px 10px;
@@ -84,15 +84,15 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-    }}
+    }
 
-    .nav-left {{
+    .nav-left {
       display: flex;
       align-items: center;
       gap: 12px;
-    }}
+    }
 
-    .logo-badge {{
+    .logo-badge {
       width: 38px;
       height: 38px;
       border-radius: 14px;
@@ -104,35 +104,35 @@
       color: #0b1020;
       font-weight: 800;
       font-size: 18px;
-    }}
+    }
 
-    .brand-text-main {{
+    .brand-text-main {
       font-weight: 650;
       letter-spacing: 0.03em;
       font-size: 17px;
-    }}
+    }
 
-    .brand-text-sub {{
+    .brand-text-sub {
       font-size: 11px;
       color: var(--text-soft);
-    }}
+    }
 
-    .nav-links {{
+    .nav-links {
       display: flex;
       align-items: center;
       gap: 18px;
       font-size: 13px;
       color: var(--text-muted);
-    }}
+    }
 
-    .nav-link {{
+    .nav-link {
       position: relative;
       cursor: pointer;
       padding: 4px 0;
       transition: color var(--transition-fast);
-    }}
+    }
 
-    .nav-link::after {{
+    .nav-link::after {
       content: "";
       position: absolute;
       left: 0;
@@ -145,18 +145,18 @@
       transform: scaleX(0.5);
       transform-origin: center;
       transition: opacity var(--transition-fast), transform var(--transition-fast);
-    }}
+    }
 
-    .nav-link:hover {{
+    .nav-link:hover {
       color: #e5e7eb;
-    }}
+    }
 
-    .nav-link:hover::after {{
+    .nav-link:hover::after {
       opacity: 1;
       transform: scaleX(1);
-    }}
+    }
 
-    .nav-cta {{
+    .nav-cta {
       padding: 8px 18px;
       border-radius: 999px;
       border: none;
@@ -170,34 +170,34 @@
       align-items: center;
       gap: 8px;
       transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-    }}
+    }
 
-    .nav-cta:hover {{
+    .nav-cta:hover {
       transform: translateY(-1px);
       box-shadow: 0 16px 32px rgba(37,99,235,0.48);
-    }}
+    }
 
-    .nav-cta span.icon {{
+    .nav-cta span.icon {
       font-size: 14px;
-    }}
+    }
 
-    main {{
+    main {
       flex: 1;
       display: flex;
       justify-content: center;
       padding: 14px 16px 40px;
-    }}
+    }
 
-    .hero-layout {{
+    .hero-layout {
       max-width: 1180px;
       width: 100%;
       display: grid;
       grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.05fr);
       gap: 26px;
       align-items: flex-start;
-    }}
+    }
 
-    .hero-left-badge-row {{
+    .hero-left-badge-row {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -208,49 +208,49 @@
       font-size: 11px;
       color: var(--text-muted);
       margin-bottom: 10px;
-    }}
+    }
 
-    .dot-live {{
+    .dot-live {
       width: 7px;
       height: 7px;
       border-radius: 999px;
       background: #22c55e;
       box-shadow: 0 0 10px rgba(34,197,94,0.7);
-    }}
+    }
 
-    .hero-title {{
+    .hero-title {
       font-size: clamp(32px, 3.1vw, 38px);
       line-height: 1.1;
       margin: 4px 0 12px;
-    }}
+    }
 
-    .hero-title span.highlight-main {{
+    .hero-title span.highlight-main {
       background: linear-gradient(120deg, #f97316, #fb7185, #a855f7);
       -webkit-background-clip: text;
       color: transparent;
-    }}
+    }
 
-    .hero-title span.highlight-sub {{
+    .hero-title span.highlight-sub {
       background: linear-gradient(120deg, #38bdf8, #22c55e);
       -webkit-background-clip: text;
       color: transparent;
-    }}
+    }
 
-    .hero-subtitle {{
+    .hero-subtitle {
       font-size: 14px;
       color: var(--text-muted);
       max-width: 540px;
       margin-bottom: 18px;
-    }}
+    }
 
-    .hero-badges-row {{
+    .hero-badges-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 12px;
-    }}
+    }
 
-    .pill-badge {{
+    .pill-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -260,27 +260,27 @@
       background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.95));
       font-size: 11px;
       color: #e5e7eb;
-    }}
+    }
 
-    .pill-badge span.icon {{
+    .pill-badge span.icon {
       font-size: 13px;
-    }}
+    }
 
-    .hero-card {{
+    .hero-card {
       margin-top: 10px;
-    }}
+    }
 
-    .hero-card-title {{
+    .hero-card-title {
       font-size: 18px;
       font-weight: 650;
       margin-bottom: 10px;
-    }}
+    }
 
-    .hero-card-title span.child {{
+    .hero-card-title span.child {
       color: #f97316;
-    }}
+    }
 
-    .hero-card-list {{
+    .hero-card-list {
       list-style: none;
       padding: 0;
       margin: 0;
@@ -289,29 +289,29 @@
       gap: 6px;
       font-size: 13px;
       color: #e5e7eb;
-    }}
+    }
 
-    .hero-card-list li {{
+    .hero-card-list li {
       display: flex;
       align-items: flex-start;
       gap: 8px;
-    }}
+    }
 
-    .hero-card-list span.check-icon {{
+    .hero-card-list span.check-icon {
       color: #22c55e;
       margin-top: 1px;
-    }}
+    }
 
-    .hero-stats-row {{
+    .hero-stats-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 14px;
       font-size: 11px;
       color: var(--text-muted);
-    }}
+    }
 
-    .hero-stat-chip {{
+    .hero-stat-chip {
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid rgba(55,65,81,0.9);
@@ -319,26 +319,26 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-    }}
+    }
 
-    .hero-stat-chip span.value {{
+    .hero-stat-chip span.value {
       color: #e5e7eb;
       font-weight: 600;
-    }}
+    }
 
-    .hero-form-card-wrapper {{
+    .hero-form-card-wrapper {
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-soft);
       background: radial-gradient(circle at top left, #111827 0, #020617 55%);
       border: 1px solid rgba(75,85,99,0.8);
       overflow: hidden;
-    }}
+    }
 
-    .hero-form-card {{
+    .hero-form-card {
       padding: 22px 22px 24px;
-    }}
+    }
 
-    .alert-banner {{
+    .alert-banner {
       display: none;
       border-radius: 999px;
       padding: 8px 14px;
@@ -348,37 +348,37 @@
       border: 1px solid rgba(248,113,113,0.7);
       color: #fecaca;
       display: none;
-    }}
+    }
 
-    .alert-banner.show {{
+    .alert-banner.show {
       display: flex;
       align-items: center;
       gap: 8px;
-    }}
+    }
 
-    .alert-banner span.icon {{
+    .alert-banner span.icon {
       font-size: 13px;
-    }}
+    }
 
-    .form-header-row {{
+    .form-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
-    }}
+    }
 
-    .form-title-block h2 {{
+    .form-title-block h2 {
       font-size: 15px;
       margin: 0 0 4px;
-    }}
+    }
 
-    .form-title-block p {{
+    .form-title-block p {
       margin: 0;
       font-size: 11px;
       color: var(--text-soft);
-    }}
+    }
 
-    .step-meta {{
+    .step-meta {
       text-align: right;
       font-size: 11px;
       color: var(--text-soft);
@@ -386,88 +386,88 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 6px;
-    }}
+    }
 
-    .step-indicator {{
+    .step-indicator {
       display: flex;
       gap: 6px;
       width: 120px;
-    }}
+    }
 
-    .step-bar {{
+    .step-bar {
       flex: 1;
       height: 4px;
       border-radius: 999px;
       background: #020617;
       border: 1px solid rgba(31,41,55,0.85);
       overflow: hidden;
-    }}
+    }
 
-    .step-bar-inner {{
+    .step-bar-inner {
       width: 0;
       height: 100%;
       border-radius: inherit;
       background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
       box-shadow: 0 0 18px rgba(59,130,246,0.85);
       transition: width var(--transition-med);
-    }}
+    }
 
-    .step-bar-inner.active {{
+    .step-bar-inner.active {
       width: 100%;
-    }}
+    }
 
-    .form-section-title {{
+    .form-section-title {
       font-size: 13px;
       font-weight: 600;
       margin-bottom: 6px;
-    }}
+    }
 
-    .form-section-subtitle {{
+    .form-section-subtitle {
       font-size: 11px;
       color: var(--text-soft);
       margin-bottom: 12px;
-    }}
+    }
 
-    .form-grid-2 {{
+    .form-grid-2 {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 10px;
-    }}
+    }
 
-    .field-group {{
+    .field-group {
       margin-bottom: 10px;
-    }}
+    }
 
-    .field-row-inline {{
+    .field-row-inline {
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
       gap: 8px;
-    }}
+    }
 
-    label.field-label {{
+    label.field-label {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
       margin-bottom: 4px;
       color: var(--text-muted);
-    }}
+    }
 
-    label.field-label span.right-hint {{
+    label.field-label span.right-hint {
       font-size: 10px;
       color: var(--text-soft);
-    }}
+    }
 
-    .helper-text {{
+    .helper-text {
       font-size: 10px;
       color: var(--text-soft);
       margin-top: 4px;
-    }}
+    }
 
     input[type="text"],
     input[type="email"],
     select,
-    .fake-input {{
+    .fake-input {
       width: 100%;
       padding: 9px 11px;
       border-radius: 999px;
@@ -478,30 +478,30 @@
       outline: none;
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
         background var(--transition-fast), transform var(--transition-fast);
-    }}
+    }
 
     input:focus,
-    select:focus {{
+    select:focus {
       border-color: rgba(129,140,248,0.95);
       box-shadow: 0 0 0 1px rgba(129,140,248,0.7);
       transform: translateY(-0.5px);
       background: radial-gradient(circle at top left,#020617 0,#020617 70%);
-    }}
+    }
 
-    .intl-tel-input {{
+    .intl-tel-input {
       width: 100%;
-    }}
+    }
 
-    .intl-tel-input .selected-flag {{
+    .intl-tel-input .selected-flag {
       border-radius: 999px 0 0 999px;
       background: #020617;
-    }}
+    }
 
-    .intl-tel-input .iti__selected-flag {{
+    .intl-tel-input .iti__selected-flag {
       padding-left: 10px;
-    }}
+    }
 
-    .intl-tel-input input[type="tel"] {{
+    .intl-tel-input input[type="tel"] {
       width: 100%;
       border-radius: 999px;
       border: 1px solid rgba(55,65,81,0.95);
@@ -509,18 +509,18 @@
       color: #e5e7eb;
       font-size: 12px;
       padding: 9px 11px 9px 96px;
-    }}
+    }
 
-    .toggle-pill-group {{
+    .toggle-pill-group {
       display: inline-flex;
       padding: 3px;
       border-radius: 999px;
       background: rgba(15,23,42,0.9);
       border: 1px solid rgba(55,65,81,0.9);
       gap: 3px;
-    }}
+    }
 
-    .toggle-pill {{
+    .toggle-pill {
       border-radius: 999px;
       border: none;
       background: transparent;
@@ -533,20 +533,20 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-    }}
+    }
 
-    .toggle-pill span.icon {{
+    .toggle-pill span.icon {
       font-size: 12px;
-    }}
+    }
 
-    .toggle-pill.active {{
+    .toggle-pill.active {
       background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
       color: #020617;
       box-shadow: 0 10px 28px rgba(59,130,246,0.65);
       transform: translateY(-0.5px);
-    }}
+    }
 
-    .primary-cta {{
+    .primary-cta {
       width: 100%;
       border-radius: 999px;
       border: none;
@@ -563,33 +563,33 @@
       gap: 8px;
       box-shadow: 0 18px 45px rgba(59,130,246,0.65);
       transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
-    }}
+    }
 
-    .primary-cta span.icon {{
+    .primary-cta span.icon {
       font-size: 16px;
-    }}
+    }
 
-    .primary-cta:hover {{
+    .primary-cta:hover {
       transform: translateY(-1px);
       filter: brightness(1.05);
       box-shadow: 0 20px 50px rgba(37,99,235,0.85);
-    }}
+    }
 
-    .primary-cta:disabled {{
+    .primary-cta:disabled {
       opacity: 0.6;
       cursor: default;
       box-shadow: none;
       transform: none;
-    }}
+    }
 
-    .cta-footnote {{
+    .cta-footnote {
       font-size: 10px;
       color: var(--text-soft);
       margin-top: 5px;
       text-align: center;
-    }}
+    }
 
-    .back-link {{
+    .back-link {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -598,27 +598,27 @@
       cursor: pointer;
       margin-bottom: 10px;
       transition: color var(--transition-fast), transform var(--transition-fast);
-    }}
+    }
 
-    .back-link span.icon {{
+    .back-link span.icon {
       font-size: 13px;
-    }}
+    }
 
-    .back-link:hover {{
+    .back-link:hover {
       color: #e5e7eb;
       transform: translateX(-2px);
-    }}
+    }
 
     .date-grid,
-    .time-grid {{
+    .time-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 8px;
       margin-bottom: 14px;
-    }}
+    }
 
     .date-chip,
-    .time-chip {{
+    .time-chip {
       border-radius: 16px;
       padding: 10px 10px 9px;
       background: rgba(15,23,42,0.95);
@@ -633,39 +633,39 @@
       font-size: 11px;
       color: #e5e7eb;
       min-height: 54px;
-    }}
+    }
 
-    .date-chip span.day-label {{
+    .date-chip span.day-label {
       font-size: 11px;
       color: var(--text-muted);
-    }}
+    }
 
-    .date-chip span.date-label {{
+    .date-chip span.date-label {
       font-size: 13px;
       font-weight: 600;
-    }}
+    }
 
     .date-chip.active,
-    .time-chip.active {{
+    .time-chip.active {
       border-color: rgba(129,140,248,0.95);
       box-shadow: 0 0 0 1px rgba(129,140,248,0.8);
       background: radial-gradient(circle at top left,#020617 0,#020617 70%);
       transform: translateY(-1px);
-    }}
+    }
 
-    .time-chip-header {{
+    .time-chip-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 4px;
-    }}
+    }
 
-    .time-main-label {{
+    .time-main-label {
       font-size: 13px;
       font-weight: 600;
-    }}
+    }
 
-    .star-tag {{
+    .star-tag {
       font-size: 9px;
       padding: 2px 6px;
       border-radius: 999px;
@@ -676,26 +676,26 @@
       align-items: center;
       gap: 4px;
       white-space: nowrap;
-    }}
+    }
 
-    .star-tag span.icon {{
+    .star-tag span.icon {
       font-size: 11px;
-    }}
+    }
 
-    .slot-subtext {{
+    .slot-subtext {
       font-size: 10px;
       color: var(--text-soft);
-    }}
+    }
 
-    .language-pills {{
+    .language-pills {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 10px;
       margin-top: 4px;
-    }}
+    }
 
-    .language-pill {{
+    .language-pill {
       border-radius: 999px;
       padding: 5px 12px;
       font-size: 11px;
@@ -705,32 +705,32 @@
       cursor: pointer;
       transition: background var(--transition-fast), color var(--transition-fast),
         box-shadow var(--transition-fast), transform var(--transition-fast);
-    }}
+    }
 
-    .language-pill.active {{
+    .language-pill.active {
       background: linear-gradient(120deg,var(--accent-start),var(--accent-mid),var(--accent-end));
       color: #020617;
       box-shadow: 0 10px 25px rgba(37,99,235,0.7);
       transform: translateY(-1px);
-    }}
+    }
 
-    .legal-note {{
+    .legal-note {
       font-size: 10px;
       color: var(--text-soft);
       margin-top: 5px;
       text-align: center;
       line-height: 1.4;
-    }}
+    }
 
-    .chip-group {{
+    .chip-group {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 12px;
       margin-top: 4px;
-    }}
+    }
 
-    .choice-chip {{
+    .choice-chip {
       border-radius: 999px;
       padding: 6px 13px;
       font-size: 11px;
@@ -740,28 +740,28 @@
       cursor: pointer;
       transition: background var(--transition-fast), color var(--transition-fast),
         box-shadow var(--transition-fast), transform var(--transition-fast);
-    }}
+    }
 
-    .choice-chip.active {{
+    .choice-chip.active {
       background: linear-gradient(120deg,var(--accent-start),var(--accent-mid),var(--accent-end));
       color: #020617;
       box-shadow: 0 12px 30px rgba(37,99,235,0.75);
       transform: translateY(-1px);
-    }}
+    }
 
-    .step-caption {{
+    .step-caption {
       font-size: 11px;
       color: var(--text-soft);
       margin-bottom: 6px;
-    }}
+    }
 
-    .centered-message {{
+    .centered-message {
       font-size: 11px;
       color: var(--text-soft);
       padding: 10px 0;
-    }}
+    }
 
-    .success-message {{
+    .success-message {
       font-size: 12px;
       color: #bbf7d0;
       background: rgba(22,163,74,0.12);
@@ -769,51 +769,51 @@
       padding: 10px 12px;
       border: 1px solid rgba(34,197,94,0.6);
       margin-top: 10px;
-    }}
+    }
 
-    .error-text-inline {{
+    .error-text-inline {
       font-size: 10px;
       color: #fecaca;
       margin-top: 4px;
-    }}
+    }
 
-    @media (max-width: 991px) {{
-      .hero-layout {{
+    @media (max-width: 991px) {
+      .hero-layout {
         grid-template-columns: minmax(0, 1fr);
-      }}
-      .hero-form-card-wrapper {{
+      }
+      .hero-form-card-wrapper {
         order: -1;
-      }}
-    }}
+      }
+    }
 
-    @media (max-width: 640px) {{
-      .nav {{
+    @media (max-width: 640px) {
+      .nav {
         padding-inline: 12px;
-      }}
-      main {{
+      }
+      main {
         padding: 10px 10px 32px;
-      }}
-      .hero-form-card {{
+      }
+      .hero-form-card {
         padding-inline: 16px;
-      }}
-      .gradient-border-inner {{
+      }
+      .gradient-border-inner {
         padding-inline: 18px;
-      }}
-      .hero-title {{
+      }
+      .hero-title {
         font-size: 26px;
-      }}
-      .form-header-row {{
+      }
+      .form-header-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
-      }}
-      .step-meta {{
+      }
+      .step-meta {
         align-items: flex-start;
-      }}
-      .field-row-inline {{
+      }
+      .field-row-inline {
         grid-template-columns: minmax(0,1.25fr) minmax(0,1.5fr);
-      }}
-    }}
+      }
+    }
   </style>
 </head>
 <body>
@@ -1392,163 +1392,163 @@
     let selectedSlot = null;
     let selectedLanguage = null;
 
-    function scrollToForm() {{
+    function scrollToForm() {
       const el = document.getElementById("form-top");
-      if (el) el.scrollIntoView({{ behavior: "smooth", block: "start" }});
-    }}
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 
-    function setAlert(message, type = "error") {{
+    function setAlert(message, type = "error") {
       const banner = document.getElementById("alert-banner");
       const text = document.getElementById("alert-text");
       if (!banner || !text) return;
       text.textContent = message;
-      if (type === "error") {{
+      if (type === "error") {
         banner.style.background = "rgba(239,68,68,0.1)";
         banner.style.borderColor = "rgba(248,113,113,0.7)";
-      }} else {{
+      } else {
         banner.style.background = "rgba(22,163,74,0.1)";
         banner.style.borderColor = "rgba(34,197,94,0.7)";
-      }}
+      }
       banner.classList.add("show");
-    }}
+    }
 
-    function hideAlert() {{
+    function hideAlert() {
       const banner = document.getElementById("alert-banner");
       if (banner) banner.classList.remove("show");
-    }}
+    }
 
-    function updateStepUI(step) {{
+    function updateStepUI(step) {
       currentStep = step;
       const stepLabel = document.getElementById("step-label");
       if (stepLabel) stepLabel.textContent = `STEP ${step} OF 3`;
 
-      ["step-1","step-2","step-3"].forEach((id, index) => {{
+      ["step-1","step-2","step-3"].forEach((id, index) => {
         const el = document.getElementById(id);
         if (!el) return;
         el.style.display = (index + 1 === step) ? "block" : "none";
-      }});
+      });
 
-      [1,2,3].forEach(num => {{
-        const bar = document.getElementById(`step-bar-${{num}}`);
+      [1,2,3].forEach(num => {
+        const bar = document.getElementById(`step-bar-${num}`);
         if (!bar) return;
         if (num <= step) bar.classList.add("active");
         else bar.classList.remove("active");
-      }});
-    }}
+      });
+    }
 
-    function goToStep(step) {{
+    function goToStep(step) {
       hideAlert();
-      if (step === 1) {{
+      if (step === 1) {
         updateStepUI(1);
         selectedSlot = null;
-      }} else if (step === 2) {{
-        if (!currentLeadId) {{
+      } else if (step === 2) {
+        if (!currentLeadId) {
           setAlert("Please complete Step 1 first.", "error");
           return;
-        }}
+        }
         updateStepUI(2);
-      }} else if (step === 3) {{
-        if (!currentLeadId || !selectedSlot) {{
+      } else if (step === 3) {
+        if (!currentLeadId || !selectedSlot) {
           setAlert("Please confirm your date & time first.", "error");
           return;
-        }}
+        }
         updateStepUI(3);
-      }}
-    }}
+      }
+    }
 
-    function populateGrades() {{
+    function populateGrades() {
       const gradeSelect = document.getElementById("child-grade");
       if (!gradeSelect) return;
       const options = [];
-      for (let i = 1; i <= 12; i++) {{
+      for (let i = 1; i <= 12; i++) {
         const opt = document.createElement("option");
-        opt.value = `Grade ${{
+        opt.value = `Grade ${
           i
-        }}`;
-        opt.textContent = `Grade ${{ i }}`;
+        }`;
+        opt.textContent = `Grade ${ i }`;
         options.push(opt);
-      }}
+      }
       options.forEach(o => gradeSelect.appendChild(o));
-    }}
+    }
 
-    function setupLaptopToggle() {{
+    function setupLaptopToggle() {
       const group = document.getElementById("laptop-toggle");
       if (!group) return;
       const buttons = Array.from(group.querySelectorAll(".toggle-pill"));
-      buttons.forEach(btn => {{
-        btn.addEventListener("click", () => {{
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
           buttons.forEach(b => b.classList.remove("active"));
           btn.classList.add("active");
-        }});
-      }});
-    }}
+        });
+      });
+    }
 
-    function getLaptopValue() {{
+    function getLaptopValue() {
       const group = document.getElementById("laptop-toggle");
       if (!group) return null;
       const active = group.querySelector(".toggle-pill.active");
       return active ? active.getAttribute("data-value") : null;
-    }}
+    }
 
-    function initPhoneInput() {{
+    function initPhoneInput() {
       const input = document.getElementById("phone-input");
       if (!input) return;
 
-      itiInstance = window.intlTelInput(input, {{
+      itiInstance = window.intlTelInput(input, {
         initialCountry: "auto",
         preferredCountries: ["us","gb","ae","sa","in","ca","au","nz","sg","qa","kw","bh","om"],
-        geoIpLookup: function(callback) {{
+        geoIpLookup: function(callback) {
           fetch("https://ipapi.co/json/")
-            .then(function(res) {{ return res.json(); }})
-            .then(function(data) {{ callback((data && data.country_code) ? data.country_code.toLowerCase() : "ae"); }})
-            .catch(function() {{ callback("ae"); }});
-        }},
+            .then(function(res) { return res.json(); })
+            .then(function(data) { callback((data && data.country_code) ? data.country_code.toLowerCase() : "ae"); })
+            .catch(function() { callback("ae"); });
+        },
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
-      }});
-    }}
+      });
+    }
 
-    function parseUrlParams() {{
+    function parseUrlParams() {
       const params = new URLSearchParams(window.location.search);
       const courseIdRaw = params.get("courseId");
       const langParam = params.get("lang");
       currentCourseId = courseIdRaw ? parseInt(courseIdRaw, 10) || null : null;
       landingLang = langParam ? String(langParam).toLowerCase() : null;
-    }}
+    }
 
-    function buildLanguagePills() {{
+    function buildLanguagePills() {
       const container = document.getElementById("language-pills");
       if (!container) return;
       container.innerHTML = "";
-      LANGUAGES.forEach(lang => {{
+      LANGUAGES.forEach(lang => {
         const label = lang.charAt(0).toUpperCase() + lang.slice(1);
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "language-pill";
         btn.textContent = label;
         btn.dataset.value = lang;
-        btn.addEventListener("click", () => {{
+        btn.addEventListener("click", () => {
           Array.from(container.querySelectorAll(".language-pill")).forEach(b => b.classList.remove("active"));
           btn.classList.add("active");
           selectedLanguage = lang;
-        }});
+        });
         container.appendChild(btn);
-      }});
-    }}
+      });
+    }
 
-    function setupChips(groupId, onChange) {{
+    function setupChips(groupId, onChange) {
       const container = document.getElementById(groupId);
       if (!container) return;
       const chips = Array.from(container.querySelectorAll(".choice-chip"));
-      chips.forEach(chip => {{
-        chip.addEventListener("click", () => {{
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
           chips.forEach(c => c.classList.remove("active"));
           chip.classList.add("active");
           if (onChange) onChange(chip.getAttribute("data-value"));
-        }});
-      }});
-    }}
+        });
+      });
+    }
 
-    function setupStep1Form() {{
+    function setupStep1Form() {
       const form = document.getElementById("step-1-form");
       const submitBtn = document.getElementById("step-1-submit");
       const phoneError = document.getElementById("phone-error");
@@ -1559,27 +1559,27 @@
 
       if (!form || !submitBtn) return;
 
-      form.addEventListener("submit", async (e) => {{
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
         hideAlert();
         if (phoneError) phoneError.style.display = "none";
 
-        if (!itiInstance) {{
+        if (!itiInstance) {
           setAlert("Phone selector failed to load. Please refresh and try again.");
           return;
-        }}
+        }
 
         const phoneNumber = (document.getElementById("phone-input").value || "").trim();
         const numberValid = itiInstance.isValidNumber();
         const countryData = itiInstance.getSelectedCountryData();
 
-        if (!phoneNumber || !numberValid || !countryData) {{
-          if (phoneError) {{
+        if (!phoneNumber || !numberValid || !countryData) {
+          if (phoneError) {
             phoneError.textContent = "Please enter a valid WhatsApp number with country code.";
             phoneError.style.display = "block";
-          }}
+          }
           return;
-        }}
+        }
 
         const childName = (childNameInput.value || "").trim();
         const childGrade = gradeSelect.value || "";
@@ -1587,10 +1587,10 @@
         const parentEmail = (parentEmailInput.value || "").trim();
         const hasLaptop = getLaptopValue();
 
-        if (!childName || !childGrade || !parentName || !parentEmail) {{
+        if (!childName || !childGrade || !parentName || !parentEmail) {
           setAlert("Please fill all the fields to continue.", "error");
           return;
-        }}
+        }
 
         submitBtn.disabled = true;
         submitBtn.textContent = "Saving details...";
@@ -1601,7 +1601,7 @@
         const regionKey = ISO2_TO_REGION[iso2] || null;
         currentRegionKey = regionKey;
 
-        const payload = {{
+        const payload = {
           child_name: childName,
           child_grade: childGrade,
           parent_name: parentName,
@@ -1619,34 +1619,34 @@
           country: countryData.name || null,
           region_key: regionKey,
           page_completed: 1
-        }};
+        };
 
-        try {{
-          const {{ data, error }} = await supabaseClient
+        try {
+          const { data, error } = await supabaseClient
             .from("demo_leads")
             .insert([payload])
             .select()
             .single();
 
-          if (error || !data) {{
+          if (error || !data) {
             console.error("Insert error", error);
             setAlert("Unable to save your details. Please try again in a moment.", "error");
-          }} else {{
+          } else {
             currentLeadId = data.id;
             goToStep(2);
             await loadSlotsForRegion();
-          }}
-        }} catch (err) {{
+          }
+        } catch (err) {
           console.error(err);
           setAlert("Something went wrong while saving your details. Please try again.", "error");
-        }} finally {{
+        } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = "Book a Free Trial Class";
-        }}
-      }});
-    }}
+        }
+      });
+    }
 
-    async function loadSlotsForRegion() {{
+    async function loadSlotsForRegion() {
       const dateGrid = document.getElementById("date-grid");
       const timeGrid = document.getElementById("time-grid");
       const dateRangeLabel = document.getElementById("date-range-label");
@@ -1657,13 +1657,13 @@
       timeGrid.innerHTML = "";
       if (step2Error) step2Error.style.display = "none";
 
-      if (!currentRegionKey || !currentCourseId) {{
-        if (step2Error) {{
+      if (!currentRegionKey || !currentCourseId) {
+        if (step2Error) {
           step2Error.textContent = "We couldn’t detect your region. Please refresh and try again.";
           step2Error.style.display = "block";
-        }}
+        }
         return;
-      }}
+      }
 
       const now = new Date();
       const todayStr = now.toISOString().slice(0,10);
@@ -1671,13 +1671,13 @@
       maxDate.setDate(maxDate.getDate() + 5);
       const maxStr = maxDate.toISOString().slice(0,10);
 
-      if (dateRangeLabel) {{
-        const opts = {{ month: "short", day: "numeric" }};
-        dateRangeLabel.textContent = `${{ now.toLocaleDateString(undefined, opts) }} – ${{ maxDate.toLocaleDateString(undefined, opts) }}`;
-      }}
+      if (dateRangeLabel) {
+        const opts = { month: "short", day: "numeric" };
+        dateRangeLabel.textContent = `${ now.toLocaleDateString(undefined, opts) } – ${ maxDate.toLocaleDateString(undefined, opts) }`;
+      }
 
-      try {{
-        const {{ data: slots, error }} = await supabaseClient
+      try {
+        const { data: slots, error } = await supabaseClient
           .from("demo_slots_live")
           .select("*")
           .eq("region_key", currentRegionKey)
@@ -1686,91 +1686,91 @@
           .gt("capacity_remaining", 0)
           .gte("slot_date", todayStr)
           .lte("slot_date", maxStr)
-          .order("slot_datetime_ist", {{ ascending: true }});
+          .order("slot_datetime_ist", { ascending: true });
 
-        if (error) {{
+        if (error) {
           console.error("Slots error", error);
-          if (step2Error) {{
+          if (step2Error) {
             step2Error.textContent = "Unable to load live slots. Please refresh and try again.";
             step2Error.style.display = "block";
-          }}
+          }
           return;
-        }}
+        }
 
-        if (!slots || !slots.length) {{
+        if (!slots || !slots.length) {
           dateGrid.innerHTML = '<div class="centered-message">No live slots are available for the next few days in your region. Please check again later.</div>';
           return;
-        }}
+        }
 
         const byDate = new Map();
-        slots.forEach(slot => {{
+        slots.forEach(slot => {
           const dateKey = slot.slot_date;
           if (!byDate.has(dateKey)) byDate.set(dateKey, []);
           byDate.get(dateKey).push(slot);
-        }});
+        });
 
         const sortedDates = Array.from(byDate.keys()).sort();
 
         let firstDateKey = null;
 
-        sortedDates.forEach((dateKey, index) => {{
+        sortedDates.forEach((dateKey, index) => {
           const dateObj = new Date(dateKey);
           const isToday = dateKey === todayStr;
           const diffDays = Math.round((dateObj - new Date(todayStr)) / (1000*60*60*24));
-          let dayLabel = dateObj.toLocaleDateString(undefined, {{ weekday: "long" }});
+          let dayLabel = dateObj.toLocaleDateString(undefined, { weekday: "long" });
           if (diffDays === 0) dayLabel = "Today";
           else if (diffDays === 1) dayLabel = "Tomorrow";
 
-          const dateLabel = dateObj.toLocaleDateString(undefined, {{ day: "2-digit", month: "short" }});
+          const dateLabel = dateObj.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
 
           const chip = document.createElement("button");
           chip.type = "button";
           chip.className = "date-chip";
           chip.dataset.dateKey = dateKey;
-          chip.innerHTML = `<span class="day-label">${{ dayLabel }}</span><span class="date-label">${{ dateLabel }}</span>`;
+          chip.innerHTML = `<span class="day-label">${ dayLabel }</span><span class="date-label">${ dateLabel }</span>`;
 
-          chip.addEventListener("click", () => {{
+          chip.addEventListener("click", () => {
             Array.from(dateGrid.querySelectorAll(".date-chip")).forEach(c => c.classList.remove("active"));
             chip.classList.add("active");
             renderTimeChips(dateKey, byDate.get(dateKey) || []);
-          }});
+          });
 
-          if (index === 0) {{
+          if (index === 0) {
             firstDateKey = dateKey;
-          }}
+          }
 
           dateGrid.appendChild(chip);
-        }});
+        });
 
-        if (firstDateKey) {{
-          const firstChip = dateGrid.querySelector(`.date-chip[data-date-key="${{firstDateKey}}"]`);
+        if (firstDateKey) {
+          const firstChip = dateGrid.querySelector(`.date-chip[data-date-key="${firstDateKey}"]`);
           if (firstChip) firstChip.classList.add("active");
           renderTimeChips(firstDateKey, byDate.get(firstDateKey) || []);
-        }}
+        }
 
-      }} catch (err) {{
+      } catch (err) {
         console.error(err);
-        if (step2Error) {{
+        if (step2Error) {
           step2Error.textContent = "Unable to load live slots. Please refresh and try again.";
           step2Error.style.display = "block";
-        }}
-      }}
-    }}
+        }
+      }
+    }
 
-    function renderTimeChips(dateKey, slotsForDay) {{
+    function renderTimeChips(dateKey, slotsForDay) {
       const timeGrid = document.getElementById("time-grid");
       if (!timeGrid) return;
       timeGrid.innerHTML = "";
       selectedSlot = null;
 
-      if (!slotsForDay || !slotsForDay.length) {{
+      if (!slotsForDay || !slotsForDay.length) {
         timeGrid.innerHTML = '<div class="centered-message">No slots are available on this day. Please try another date.</div>';
         return;
-      }}
+      }
 
-      slotsForDay.forEach(slot => {{
+      slotsForDay.forEach(slot => {
         const istDate = new Date(slot.slot_datetime_ist);
-        const timeLabel = istDate.toLocaleTimeString([], {{ hour: "numeric", minute: "2-digit" }});
+        const timeLabel = istDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
         const chip = document.createElement("button");
         chip.type = "button";
@@ -1783,95 +1783,95 @@
 
         chip.innerHTML = `
           <div class="time-chip-header">
-            <span class="time-main-label">${{ timeLabel }}</span>
-            ${{ starHtml }}
+            <span class="time-main-label">${ timeLabel }</span>
+            ${ starHtml }
           </div>
           <div class="slot-subtext">1:1 live class · 60 mins</div>
         `;
 
-        chip.addEventListener("click", () => {{
+        chip.addEventListener("click", () => {
           Array.from(timeGrid.querySelectorAll(".time-chip")).forEach(c => c.classList.remove("active"));
           chip.classList.add("active");
-          selectedSlot = Object.assign({{ }}, slot, {{ local_time_label: timeLabel }});
-        }});
+          selectedSlot = Object.assign({ }, slot, { local_time_label: timeLabel });
+        });
 
         timeGrid.appendChild(chip);
-      }});
-    }}
+      });
+    }
 
-    function setupStep2Submit() {{
+    function setupStep2Submit() {
       const btn = document.getElementById("step-2-submit");
       const errorEl = document.getElementById("step-2-error");
       if (!btn) return;
 
-      btn.addEventListener("click", async () => {{
+      btn.addEventListener("click", async () => {
         hideAlert();
         if (errorEl) errorEl.style.display = "none";
 
-        if (!currentLeadId) {{
-          if (errorEl) {{
+        if (!currentLeadId) {
+          if (errorEl) {
             errorEl.textContent = "Please complete Step 1 first.";
             errorEl.style.display = "block";
-          }}
+          }
           return;
-        }}
+        }
 
-        if (!selectedSlot) {{
-          if (errorEl) {{
+        if (!selectedSlot) {
+          if (errorEl) {
             errorEl.textContent = "Please select a date and time for your class.";
             errorEl.style.display = "block";
-          }}
+          }
           return;
-        }}
+        }
 
-        if (!selectedLanguage) {{
-          if (errorEl) {{
+        if (!selectedLanguage) {
+          if (errorEl) {
             errorEl.textContent = "Please select your preferred language.";
             errorEl.style.display = "block";
-          }}
+          }
           return;
-        }}
+        }
 
         btn.disabled = true;
         btn.textContent = "Confirming...";
 
-        try {{
-          const updates = {{
+        try {
+          const updates = {
             preferred_date: selectedSlot.slot_date,
             preferred_time_slot: selectedSlot.local_time_label,
             slot_id: selectedSlot.id,
             lang: selectedLanguage,
             page_completed: 2
-          }};
+          };
 
-          const {{ error }} = await supabaseClient
+          const { error } = await supabaseClient
             .from("demo_leads")
             .update(updates)
             .eq("id", currentLeadId);
 
-          if (error) {{
+          if (error) {
             console.error("Update step 2 error", error);
-            if (errorEl) {{
+            if (errorEl) {
               errorEl.textContent = "Unable to confirm slot right now. Please try another time or date.";
               errorEl.style.display = "block";
-            }}
-          }} else {{
+            }
+          } else {
             goToStep(3);
-          }}
-        }} catch (err) {{
+          }
+        } catch (err) {
           console.error(err);
-          if (errorEl) {{
+          if (errorEl) {
             errorEl.textContent = "Something went wrong. Please try again.";
             errorEl.style.display = "block";
-          }}
-        }} finally {{
+          }
+        } finally {
           btn.disabled = false;
           btn.textContent = "Confirm Class Time";
-        }}
-      }});
-    }}
+        }
+      });
+    }
 
-    function setupStep3Submit() {{
+    function setupStep3Submit() {
       const btn = document.getElementById("step-3-submit");
       const successEl = document.getElementById("step-3-success");
       if (!btn || !successEl) return;
@@ -1880,57 +1880,57 @@
       let whyValue = null;
       let whenValue = null;
 
-      setupChips("chip-who", (val) => {{ whoValue = val; }});
-      setupChips("chip-why", (val) => {{ whyValue = val; }});
-      setupChips("chip-when", (val) => {{ whenValue = val; }});
+      setupChips("chip-who", (val) => { whoValue = val; });
+      setupChips("chip-why", (val) => { whyValue = val; });
+      setupChips("chip-when", (val) => { whenValue = val; });
 
-      btn.addEventListener("click", async () => {{
+      btn.addEventListener("click", async () => {
         hideAlert();
         successEl.style.display = "none";
 
-        if (!currentLeadId) {{
+        if (!currentLeadId) {
           setAlert("Please start again from Step 1.", "error");
           return;
-        }}
+        }
 
-        if (!whoValue || !whyValue || !whenValue) {{
+        if (!whoValue || !whyValue || !whenValue) {
           setAlert("Please answer all the questions so we can personalise your experience.", "error");
           return;
-        }}
+        }
 
         btn.disabled = true;
         btn.textContent = "Submitting...";
 
-        try {{
-          const updates = {{
+        try {
+          const updates = {
             who_are_you: whoValue,
             booking_reason: whyValue,
             purchase_timeline: whenValue,
             page_completed: 3
-          }};
+          };
 
-          const {{ error }} = await supabaseClient
+          const { error } = await supabaseClient
             .from("demo_leads")
             .update(updates)
             .eq("id", currentLeadId);
 
-          if (error) {{
+          if (error) {
             console.error("Update step 3 error", error);
             setAlert("Unable to save your responses right now. Please try again.", "error");
-          }} else {{
+          } else {
             successEl.style.display = "block";
-          }}
-        }} catch (err) {{
+          }
+        } catch (err) {
           console.error(err);
           setAlert("Something went wrong. Please try again.", "error");
-        }} finally {{
+        } finally {
           btn.disabled = false;
           btn.textContent = "Submit";
-        }}
-      }});
-    }}
+        }
+      });
+    }
 
-    document.addEventListener("DOMContentLoaded", () => {{
+    document.addEventListener("DOMContentLoaded", () => {
       parseUrlParams();
       populateGrades();
       setupLaptopToggle();
@@ -1940,7 +1940,7 @@
       setupStep2Submit();
       setupStep3Submit();
       updateStepUI(1);
-    }});
+    });
   </script>
 </body>
 </html>

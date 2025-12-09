@@ -363,7 +363,7 @@ header {
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.18s ease;
-  color: #f9fafb; /* brighter text on dark background */
+  color: #e5e7eb;
 }
 
 .date-chip .date-chip-main {
@@ -405,7 +405,6 @@ header {
 
 .slot-card .slot-time {
   font-weight: 600;
-  color: #f9fafb; /* ensure slot time text is bright on dark background */
 }
 
 .slot-card .slot-capacity {
@@ -684,7 +683,8 @@ select:focus {
 }
 
 .radio-options.vertical {
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
 }
@@ -1118,13 +1118,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Decide final region
-    // Option B: URL region only sets the DEFAULT.
-    // The final region is decided by the dial code if we can map it.
-    let regionFromDial = null;
-    if (phoneCountryCode) {
-      regionFromDial = inferRegionFromDialCode(phoneCountryCode);
+    let finalRegionKey = regionKeyFromUrl || null; // URL always wins if present
+    if (!finalRegionKey && phoneCountryCode) {
+      finalRegionKey = inferRegionFromDialCode(phoneCountryCode);
     }
-    let finalRegionKey = regionFromDial || regionKeyFromUrl || "ROW";
+    if (!finalRegionKey) {
+      finalRegionKey = "ROW";
+    }
 
     return { localNumber, phoneCountryCode, countryName, regionKey: finalRegionKey };
   }
@@ -1377,9 +1377,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const dayNum = chipDateLocal.getDate().toString().padStart(2, "0");
         const monthShort = chipDateLocal.toLocaleDateString("en-US", { month: "short" });
 
-        const todayKeyLocal = startOfTodayLocal.toISOString().split("T")[0];
+        const formatLocalDateKey = (d) => {
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          return `${y}-${m}-${day}`;
+        };
+        const todayKeyLocal = formatLocalDateKey(startOfTodayLocal);
         const tomorrowLocal = new Date(startOfTodayLocal.getTime() + 24 * 60 * 60 * 1000);
-        const tomorrowKeyLocal = tomorrowLocal.toISOString().split("T")[0];
+        const tomorrowKeyLocal = formatLocalDateKey(tomorrowLocal);
 
         let mainLabel;
         if (dateKey === todayKeyLocal) {

@@ -363,6 +363,7 @@ header {
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.18s ease;
+  color: #e5e7eb;
 }
 
 .date-chip .date-chip-main {
@@ -377,7 +378,8 @@ header {
 .date-chip.active {
   border-color: transparent;
   background-image: var(--primary-gradient);
-  color: #0b1120;
+  color: #f9fafb;
+  text-shadow: 0 0 8px rgba(15,23,42,0.7);
   box-shadow: 0 0 0 1px rgba(15,23,42,0.6);
 }
 
@@ -430,7 +432,7 @@ header {
 .slot-card.selected {
   border-color: transparent;
   background-image: var(--primary-gradient);
-  color: #020617;
+  color: #f9fafb;
 }
 
 .slot-card.selected .slot-capacity {
@@ -679,6 +681,30 @@ select:focus {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.radio-options.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.consent-wrapper {
+  margin-top: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(148,163,184,0.95);
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: #ff6bcb;
+}
+
 </style>
 </head>
 
@@ -807,7 +833,7 @@ select:focus {
 
           <div class="consent-wrapper">
             <label class="checkbox-label">
-              <input type="checkbox" id="consentCheckbox" />
+              <input type="checkbox" id="consentCheckbox" checked />
               <span>I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.</span>
             </label>
           </div>
@@ -927,6 +953,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const utm_content = urlParams.get("utm_content") || null;
 
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
+
+  // Map region to an IANA timezone (used for slot conversion)
+  const regionToTimezone = {
+    INDIA: "Asia/Kolkata",
+    MEA: "Asia/Dubai",
+    EUROPE: "Europe/London",
+    USA: "America/New_York",
+    SEA: "Asia/Singapore",
+    ANZ: "Australia/Sydney",
+    ROW: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata"
+  };
 
   // Map URL region to internal region key
   function mapRegionKey(rawRegion) {
@@ -1270,7 +1307,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      const userTz = browserTimezone || "Asia/Kolkata";
+      const userTz = regionToTimezone[regionKey] || browserTimezone || "Asia/Kolkata";
       const grouped = new Map();
 
       data.forEach((slotRow) => {
@@ -1441,21 +1478,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const timeLabel = `${startLocal.toLocaleTimeString([], {
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
+        hour12: true
       })} - ${endLocal.toLocaleTimeString([], {
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
+        hour12: true
       })}`;
 
       const starBadge = row.is_star_teacher
         ? '<span class="star-badge">⭐ Star Teacher</span>'
         : "";
 
+      const capacityText = isFull ? "Full" : "";
       card.innerHTML = `
         <span class="slot-time">${timeLabel}</span>
-        <span class="slot-capacity">${
-          isFull ? "Full" : capacityLeft + " spots left"
-        }</span>
+        <span class="slot-capacity">${capacityText}</span>
         ${starBadge}
       `;
 

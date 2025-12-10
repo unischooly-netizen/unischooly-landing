@@ -1,31 +1,39 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Unischooly · Book Free Coding Trial Class</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css" />
+  <title>Unischooly – Book Free Coding Trial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- intl-tel-input -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.5.6/css/intlTelInput.css" />
+
   <style>
     :root {
-      --bg: #050816;
-      --bg-elevated: #080b1e;
-      --bg-card: #0c1024;
-      --border-subtle: #1d2240;
-      --accent-start: #ff7ac7;
-      --accent-mid: #a855f7;
-      --accent-end: #22d3ee;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --text-soft: #6b7280;
-      --error: #f97373;
-      --success: #22c55e;
-      --shadow-soft: 0 18px 45px rgba(0,0,0,0.75);
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-pill: 999px;
-      --transition-fast: 180ms ease-out;
-      --transition-med: 240ms ease;
-      --input-bg: #050816;
+      --bg-main: #050818;
+      --bg-card: #0b1020;
+      --bg-card-soft: #0f172a;
+      --accent-1: #ff6ad5;
+      --accent-2: #4be1ff;
+      --accent-3: #8b5cff;
+      --accent-4: #facc15;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --error-bg: rgba(248, 113, 113, 0.12);
+      --error-border: rgba(248, 113, 113, 0.7);
+      --success-bg: rgba(52, 211, 153, 0.1);
+      --success-border: rgba(52, 211, 153, 0.6);
+      --radius-2xl: 24px;
+      --shadow-soft: 0 30px 80px rgba(15, 23, 42, 0.75);
+      --gradient-cta: linear-gradient(90deg, #ff6ad5, #ff9a62, #4be1ff);
+      --gradient-pill: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.12), transparent 55%);
     }
 
     *,
@@ -34,1913 +42,1360 @@
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Inter", sans-serif;
-      background: radial-gradient(circle at top, #111827 0, #020617 48%, #000 100%);
+      padding: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
       color: var(--text-main);
+      min-height: 100%;
     }
 
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    body {
+      padding: 24px 16px 40px;
     }
 
-    .gradient-border {
-      position: relative;
-      border-radius: var(--radius-xl);
-      padding: 1px;
-      background: linear-gradient(120deg, rgba(255,122,199,0.6), rgba(168,85,247,0.5), rgba(34,211,238,0.6));
-    }
-
-    .gradient-border-inner {
-      border-radius: inherit;
-      background: radial-gradient(circle at top left, #18181b 0, #020617 52%, #020617 100%);
-      padding: 24px 28px;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      backdrop-filter: blur(18px);
-      background: linear-gradient(
-        to bottom,
-        rgba(3,7,18,0.95),
-        rgba(3,7,18,0.9),
-        transparent
-      );
-      border-bottom: 1px solid rgba(31,41,55,0.7);
-    }
-
-    .nav {
-      max-width: 1180px;
+    .page-shell {
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 14px 20px 10px;
+    }
+
+    /* HEADER ------------------------------------------------------------ */
+
+    .site-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      margin-bottom: 24px;
+      gap: 16px;
     }
 
-    .nav-left {
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .logo-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
-      background: radial-gradient(circle at 20% 0, #f97316, #ec4899 35%, #6366f1 80%);
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: conic-gradient(from 210deg, #ff6ad5, #ffb347, #4be1ff, #8b5cff, #ff6ad5);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 18px rgba(248,113,113,0.45);
-      color: #0b1020;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+    }
+
+    .brand-logo span {
+      font-size: 20px;
       font-weight: 800;
-      font-size: 18px;
+      color: #020617;
     }
 
-    .brand-text-main {
-      font-weight: 650;
-      letter-spacing: 0.03em;
-      font-size: 17px;
+    .brand-text-title {
+      font-weight: 700;
+      font-size: 20px;
     }
 
-    .brand-text-sub {
-      font-size: 11px;
+    .brand-text-subtitle {
+      font-size: 12px;
       color: var(--text-soft);
     }
 
-    .nav-links {
+    .nav {
       display: flex;
       align-items: center;
-      gap: 18px;
-      font-size: 13px;
-      color: var(--text-muted);
+      gap: 20px;
+      font-size: 14px;
+      color: var(--text-soft);
     }
 
-    .nav-link {
-      position: relative;
-      cursor: pointer;
+    .nav a {
+      color: inherit;
+      text-decoration: none;
       padding: 4px 0;
-      transition: color var(--transition-fast);
     }
 
-    .nav-link::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -4px;
-      height: 2px;
-      border-radius: 999px;
-      background: linear-gradient(to right, var(--accent-start), var(--accent-end));
-      opacity: 0;
-      transform: scaleX(0.5);
-      transform-origin: center;
-      transition: opacity var(--transition-fast), transform var(--transition-fast);
-    }
-
-    .nav-link:hover {
+    .nav a:hover {
       color: #e5e7eb;
     }
 
-    .nav-link:hover::after {
-      opacity: 1;
-      transform: scaleX(1);
-    }
-
     .nav-cta {
-      padding: 8px 18px;
+      padding: 10px 22px;
       border-radius: 999px;
+      background: var(--gradient-cta);
       border: none;
-      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
       color: #0b1020;
-      font-size: 13px;
       font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(59,130,246,0.35);
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      box-shadow: 0 18px 60px rgba(248, 250, 252, 0.28);
+      cursor: pointer;
     }
 
-    .nav-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 32px rgba(37,99,235,0.48);
+    .nav-cta span {
+      font-size: 18px;
     }
 
-    .nav-cta span.icon {
-      font-size: 14px;
-    }
+    /* MAIN LAYOUT ------------------------------------------------------ */
 
-    main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      padding: 14px 16px 40px;
-    }
-
-    .hero-layout {
-      max-width: 1180px;
-      width: 100%;
+    .hero-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.05fr);
-      gap: 26px;
+      gap: 32px;
       align-items: flex-start;
     }
 
-    .hero-left-badge-row {
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* LEFT: HERO ------------------------------------------------------- */
+
+    .eyebrow-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow-pill {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(24,24,27,0.9);
-      border: 1px solid rgba(55,65,81,0.7);
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: #cbd5f5;
     }
 
-    .dot-live {
+    .eyebrow-dot-live {
       width: 7px;
       height: 7px;
-      border-radius: 999px;
+      border-radius: 50%;
       background: #22c55e;
-      box-shadow: 0 0 10px rgba(34,197,94,0.7);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.36);
     }
 
     .hero-title {
-      font-size: clamp(32px, 3.1vw, 38px);
-      line-height: 1.1;
-      margin: 4px 0 12px;
+      font-size: clamp(40px, 5vw, 52px);
+      line-height: 1.05;
+      margin: 0 0 14px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
     }
 
-    .hero-title span.highlight-main {
-      background: linear-gradient(120deg, #f97316, #fb7185, #a855f7);
+    .hero-title span:nth-child(2) {
+      background: linear-gradient(90deg, #ff6ad5, #ffb347);
       -webkit-background-clip: text;
+      background-clip: text;
       color: transparent;
     }
 
-    .hero-title span.highlight-sub {
-      background: linear-gradient(120deg, #38bdf8, #22c55e);
+    .hero-title span:nth-child(4) {
+      background: linear-gradient(90deg, #4be1ff, #8b5cff);
       -webkit-background-clip: text;
+      background-clip: text;
       color: transparent;
     }
 
     .hero-subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      max-width: 540px;
-      margin-bottom: 18px;
+      margin: 0 0 20px;
+      color: var(--text-soft);
+      max-width: 640px;
+      font-size: 15px;
     }
 
-    .hero-badges-row {
+    .hero-badges {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .pill-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(75,85,99,0.85);
-      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.95));
-      font-size: 11px;
-      color: #e5e7eb;
-    }
-
-    .pill-badge span.icon {
-      font-size: 13px;
-    }
-
-    .hero-card {
-      margin-top: 10px;
-    }
-
-    .hero-card-title {
-      font-size: 18px;
-      font-weight: 650;
-      margin-bottom: 10px;
-    }
-
-    .hero-card-title span.child {
-      color: #f97316;
-    }
-
-    .hero-card-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 13px;
-      color: #e5e7eb;
-    }
-
-    .hero-card-list li {
-      display: flex;
-      align-items: flex-start;
       gap: 8px;
+      margin-bottom: 20px;
     }
 
-    .hero-card-list span.check-icon {
-      color: #22c55e;
-      margin-top: 1px;
-    }
-
-    .hero-stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .hero-stat-chip {
-      padding: 6px 10px;
+    .hero-chip {
+      font-size: 12px;
+      padding: 6px 11px;
       border-radius: 999px;
-      border: 1px solid rgba(55,65,81,0.9);
-      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.8);
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    .hero-stat-chip span.value {
-      color: #e5e7eb;
-      font-weight: 600;
+    .hero-chip span {
+      font-size: 14px;
     }
 
-    .hero-form-card-wrapper {
-      border-radius: var(--radius-xl);
+    .hero-main-card {
+      margin-top: 8px;
+      border-radius: var(--radius-2xl);
+      padding: 22px 22px 24px;
+      background:
+        radial-gradient(circle at top left, rgba(96, 165, 250, 0.32), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(192, 132, 252, 0.32), transparent 55%),
+        linear-gradient(145deg, #020617, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.5);
       box-shadow: var(--shadow-soft);
-      background: radial-gradient(circle at top left, #111827 0, #020617 55%);
-      border: 1px solid rgba(75,85,99,0.8);
+      position: relative;
       overflow: hidden;
     }
 
-    .hero-form-card {
-      padding: 22px 22px 24px;
+    .hero-main-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top center, rgba(248, 250, 252, 0.06), transparent 55%);
+      pointer-events: none;
     }
 
-    .alert-banner {
-      display: none;
+    .hero-main-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 12px;
+    }
+
+    .hero-main-title span {
+      color: #f97316;
+    }
+
+    .hero-main-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 18px;
+      font-size: 13px;
+    }
+
+    .hero-main-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .hero-main-list li span.icon {
+      font-size: 16px;
+      margin-top: 1px;
+    }
+
+    .hero-main-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .metric-pill {
+      padding: 7px 12px;
       border-radius: 999px;
-      padding: 8px 14px;
-      margin-bottom: 14px;
-      font-size: 11px;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(248,113,113,0.7);
-      color: #fecaca;
-      display: none;
-    }
-
-    .alert-banner.show {
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.86);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      color: #e5e7eb;
     }
 
-    .alert-banner span.icon {
-      font-size: 13px;
+    .metric-pill span.value {
+      font-weight: 600;
+    }
+
+    /* RIGHT: FORM ------------------------------------------------------ */
+
+    .form-card {
+      border-radius: var(--radius-2xl);
+      padding: 20px 22px 22px;
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(244, 114, 182, 0.18), transparent 55%),
+                  #020617;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      box-shadow: var(--shadow-soft);
+      max-width: 540px;
+      margin-left: auto;
+      backdrop-filter: blur(18px);
     }
 
     .form-header-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 10px;
     }
 
-    .form-title-block h2 {
-      font-size: 15px;
-      margin: 0 0 4px;
+    .form-header-title {
+      font-size: 18px;
+      font-weight: 600;
     }
 
-    .form-title-block p {
-      margin: 0;
-      font-size: 11px;
+    .form-header-subtitle {
+      font-size: 12px;
       color: var(--text-soft);
-    }
-
-    .step-meta {
-      text-align: right;
-      font-size: 11px;
-      color: var(--text-soft);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
     }
 
     .step-indicator {
+      text-align: right;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-soft);
+    }
+
+    .step-indicator-bars {
+      margin-top: 8px;
       display: flex;
       gap: 6px;
-      width: 120px;
+      justify-content: flex-end;
     }
 
     .step-bar {
       flex: 1;
       height: 4px;
       border-radius: 999px;
-      background: #020617;
-      border: 1px solid rgba(31,41,55,0.85);
+      background: rgba(30, 64, 175, 0.9);
       overflow: hidden;
     }
 
     .step-bar-inner {
-      width: 0;
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
-      box-shadow: 0 0 18px rgba(59,130,246,0.85);
-      transition: width var(--transition-med);
+      background: var(--gradient-cta);
+      transform-origin: left center;
+      transform: scaleX(0);
+      transition: transform 220ms ease-out;
     }
 
-    .step-bar-inner.active {
-      width: 100%;
+    .step-bar--active .step-bar-inner {
+      transform: scaleX(1);
+    }
+
+    .step-bar--done {
+      background: rgba(16, 185, 129, 0.65);
+    }
+
+    .step-bar--done .step-bar-inner {
+      transform: scaleX(1);
+      background: rgba(34, 197, 94, 0.9);
+    }
+
+    .alert-banner {
+      display: none;
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid transparent;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-banner.show {
+      display: flex;
+    }
+
+    .alert-error {
+      background: var(--error-bg);
+      border-color: var(--error-border);
+      color: #fecaca;
+    }
+
+    .alert-success {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+      color: #bbf7d0;
+    }
+
+    .alert-banner span.icon {
+      font-size: 14px;
+    }
+
+    .form-body {
+      border-radius: 18px;
+      padding: 16px 16px 18px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(148, 163, 184, 0.65);
     }
 
     .form-section-title {
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
     }
 
     .form-section-subtitle {
       font-size: 11px;
       color: var(--text-soft);
-      margin-bottom: 12px;
-    }
-
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 10px;
-    }
-
-    .field-group {
       margin-bottom: 10px;
     }
 
-    .field-row-inline {
+    .field-grid-two {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
     }
 
-    label.field-label {
+    .field-grid-two + .field-grid-two {
+      margin-top: 10px;
+    }
+
+    .field {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      margin-bottom: 4px;
-      color: var(--text-muted);
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
     }
 
-    label.field-label span.right-hint {
-      font-size: 10px;
-      color: var(--text-soft);
-    }
-
-    .helper-text {
-      font-size: 10px;
-      color: var(--text-soft);
-      margin-top: 4px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    select,
-    .fake-input {
-      width: 100%;
-      padding: 9px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(55,65,81,0.95);
-      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
-      color: #e5e7eb;
+    .field label {
       font-size: 12px;
-      outline: none;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
-        background var(--transition-fast), transform var(--transition-fast);
+      color: #cbd5f5;
     }
 
-    input:focus,
-    select:focus {
-      border-color: rgba(129,140,248,0.95);
-      box-shadow: 0 0 0 1px rgba(129,140,248,0.7);
-      transform: translateY(-0.5px);
-      background: radial-gradient(circle at top left,#020617 0,#020617 70%);
+    .field-hint {
+      font-size: 10px;
+      color: var(--text-soft);
     }
 
-    .intl-tel-input {
+    .input,
+    select {
       width: 100%;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 9px 13px;
+      font-size: 13px;
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
 
-    .intl-tel-input .selected-flag {
-      border-radius: 999px 0 0 999px;
+    .input::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    .input:focus,
+    select:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.6);
       background: #020617;
     }
 
-    .intl-tel-input .iti__selected-flag {
-      padding-left: 10px;
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+      background-position: calc(100% - 15px) 10px, calc(100% - 10px) 10px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 30px;
     }
 
-    .intl-tel-input input[type="tel"] {
-      width: 100%;
-      border-radius: 999px;
-      border: 1px solid rgba(55,65,81,0.95);
-      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
-      color: #e5e7eb;
-      font-size: 12px;
-      padding: 9px 11px 9px 96px;
-    }
-
-    .toggle-pill-group {
+    .toggle-group {
       display: inline-flex;
       padding: 3px;
       border-radius: 999px;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid rgba(55,65,81,0.9);
-      gap: 3px;
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), #020617);
+      border: 1px solid var(--border-subtle);
+      gap: 4px;
+      font-size: 12px;
+      margin-top: 4px;
     }
 
     .toggle-pill {
       border-radius: 999px;
+      padding: 6px 14px;
       border: none;
       background: transparent;
-      color: var(--text-muted);
-      font-size: 11px;
-      padding: 6px 16px;
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        box-shadow var(--transition-fast), transform var(--transition-fast);
+      color: var(--text-soft);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
     }
 
     .toggle-pill span.icon {
-      font-size: 12px;
+      font-size: 14px;
     }
 
     .toggle-pill.active {
-      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
+      background: var(--gradient-cta);
       color: #020617;
-      box-shadow: 0 10px 28px rgba(59,130,246,0.65);
-      transform: translateY(-0.5px);
+      box-shadow: 0 10px 30px rgba(248, 250, 252, 0.28);
     }
 
-    .primary-cta {
-      width: 100%;
-      border-radius: 999px;
-      border: none;
-      margin-top: 10px;
-      padding: 11px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      background: linear-gradient(120deg, var(--accent-start), var(--accent-mid), var(--accent-end));
-      color: #020617;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 18px 45px rgba(59,130,246,0.65);
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
-    }
+    /* CTA -------------------------------------------------------------- */
 
-    .primary-cta span.icon {
-      font-size: 16px;
-    }
-
-    .primary-cta:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.05);
-      box-shadow: 0 20px 50px rgba(37,99,235,0.85);
-    }
-
-    .primary-cta:disabled {
-      opacity: 0.6;
-      cursor: default;
-      box-shadow: none;
-      transform: none;
-    }
-
-    .cta-footnote {
-      font-size: 10px;
-      color: var(--text-soft);
-      margin-top: 5px;
+    .cta-wrapper {
+      margin-top: 16px;
       text-align: center;
     }
 
-    .back-link {
+    .cta-button {
+      width: 100%;
+      border-radius: 999px;
+      padding: 12px 22px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      background: var(--gradient-cta);
+      color: #020617;
+      box-shadow: 0 18px 60px rgba(248, 250, 252, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .cta-button span.icon {
+      font-size: 18px;
+    }
+
+    .cta-note {
+      margin-top: 5px;
+      font-size: 10px;
+      color: var(--text-soft);
+    }
+
+    /* STEP 2 ----------------------------------------------------------- */
+
+    .step-nav-back {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-soft);
       cursor: pointer;
       margin-bottom: 10px;
-      transition: color var(--transition-fast), transform var(--transition-fast);
     }
 
-    .back-link span.icon {
-      font-size: 13px;
+    .date-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
-    .back-link:hover {
-      color: #e5e7eb;
-      transform: translateX(-2px);
+    .date-pill {
+      flex: 1 1 120px;
+      min-width: 120px;
+      border-radius: 18px;
+      padding: 10px 11px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(15, 23, 42, 0.9);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .date-grid,
+    .date-pill span.label {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .date-pill span.value {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .date-pill.active {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.9);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.28), rgba(15, 23, 42, 0.95));
+    }
+
     .time-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
       margin-bottom: 14px;
     }
 
-    .date-chip,
-    .time-chip {
-      border-radius: 16px;
-      padding: 10px 10px 9px;
-      background: rgba(15,23,42,0.95);
-      border: 1px solid rgba(55,65,81,0.8);
+    @media (max-width: 768px) {
+      .time-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .time-pill {
+      border-radius: 18px;
+      padding: 9px 11px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      background: rgba(15, 23, 42, 0.94);
       cursor: pointer;
+      font-size: 12px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       gap: 2px;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
-        transform var(--transition-fast), background var(--transition-fast);
-      font-size: 11px;
-      color: #e5e7eb;
-      min-height: 54px;
     }
 
-    .date-chip span.day-label {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .date-chip span.date-label {
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .date-chip.active,
-    .time-chip.active {
-      border-color: rgba(129,140,248,0.95);
-      box-shadow: 0 0 0 1px rgba(129,140,248,0.8);
-      background: radial-gradient(circle at top left,#020617 0,#020617 70%);
-      transform: translateY(-1px);
-    }
-
-    .time-chip-header {
+    .time-main-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 4px;
     }
 
-    .time-main-label {
-      font-size: 13px;
+    .time-pill span.time {
       font-weight: 600;
     }
 
-    .star-tag {
-      font-size: 9px;
-      padding: 2px 6px;
+    .time-pill span.tag {
+      font-size: 10px;
+      padding: 2px 7px;
       border-radius: 999px;
-      background: rgba(251,191,36,0.12);
-      border: 1px solid rgba(251,191,36,0.7);
-      color: #fde68a;
+      background: rgba(250, 204, 21, 0.12);
+      color: #facc15;
+      border: 1px solid rgba(250, 204, 21, 0.6);
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      white-space: nowrap;
     }
 
-    .star-tag span.icon {
+    .time-pill span.tag span.star {
       font-size: 11px;
     }
 
-    .slot-subtext {
+    .time-pill span.meta {
       font-size: 10px;
       color: var(--text-soft);
     }
 
-    .language-pills {
+    .time-pill.active {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.9);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.28), rgba(15, 23, 42, 0.96));
+    }
+
+    .language-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 10px;
       margin-top: 4px;
     }
 
     .language-pill {
+      padding: 6px 12px;
       border-radius: 999px;
-      padding: 5px 12px;
-      font-size: 11px;
-      border: 1px solid rgba(55,65,81,0.9);
-      background: rgba(15,23,42,0.95);
-      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      font-size: 12px;
       cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        box-shadow var(--transition-fast), transform var(--transition-fast);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-soft);
     }
 
     .language-pill.active {
-      background: linear-gradient(120deg,var(--accent-start),var(--accent-mid),var(--accent-end));
-      color: #020617;
-      box-shadow: 0 10px 25px rgba(37,99,235,0.7);
-      transform: translateY(-1px);
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.9);
+      color: #e5e7eb;
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.34), rgba(15, 23, 42, 0.96));
     }
 
-    .legal-note {
-      font-size: 10px;
-      color: var(--text-soft);
-      margin-top: 5px;
-      text-align: center;
-      line-height: 1.4;
-    }
+    /* STEP 3 ----------------------------------------------------------- */
 
-    .chip-group {
+    .choice-grid {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 12px;
-      margin-top: 4px;
     }
 
-    .choice-chip {
+    .choice-pill {
+      padding: 7px 13px;
       border-radius: 999px;
-      padding: 6px 13px;
-      font-size: 11px;
-      border: 1px solid rgba(55,65,81,0.85);
-      background: rgba(15,23,42,0.9);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: background var(--transition-fast), color var(--transition-fast),
-        box-shadow var(--transition-fast), transform var(--transition-fast);
-    }
-
-    .choice-chip.active {
-      background: linear-gradient(120deg,var(--accent-start),var(--accent-mid),var(--accent-end));
-      color: #020617;
-      box-shadow: 0 12px 30px rgba(37,99,235,0.75);
-      transform: translateY(-1px);
-    }
-
-    .step-caption {
-      font-size: 11px;
-      color: var(--text-soft);
-      margin-bottom: 6px;
-    }
-
-    .centered-message {
-      font-size: 11px;
-      color: var(--text-soft);
-      padding: 10px 0;
-    }
-
-    .success-message {
+      border: 1px solid rgba(148, 163, 184, 0.6);
       font-size: 12px;
-      color: #bbf7d0;
-      background: rgba(22,163,74,0.12);
-      border-radius: 16px;
-      padding: 10px 12px;
-      border: 1px solid rgba(34,197,94,0.6);
-      margin-top: 10px;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-soft);
     }
 
-    .error-text-inline {
-      font-size: 10px;
-      color: #fecaca;
-      margin-top: 4px;
+    .choice-pill.active {
+      border-color: #60a5fa;
+      color: #e5e7eb;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.95);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.3), rgba(15, 23, 42, 0.98));
     }
 
-    @media (max-width: 991px) {
-      .hero-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .hero-form-card-wrapper {
-        order: -1;
-      }
+    /* intl-tel-input dark theme --------------------------------------- */
+
+    .iti {
+      width: 100%;
+    }
+
+    .iti__flag-container {
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 999px 0 0 999px;
+      border: 1px solid var(--border-subtle);
+      border-right: none;
+    }
+
+    .iti input[type="tel"] {
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 0 999px 999px 0;
+      border: 1px solid var(--border-subtle);
+      border-left: none;
+      color: var(--text-main);
+      padding-left: 10px;
+    }
+
+    .iti input[type="tel"]::placeholder {
+      color: rgba(148, 163, 184, 0.85);
+    }
+
+    .iti__country-list {
+      background: #020617;
+      color: var(--text-main);
+    }
+
+    .iti__country.iti__highlight {
+      background: rgba(51, 65, 85, 0.9);
+    }
+
+    .iti__dial-code {
+      color: var(--text-soft);
+    }
+
+    .phone-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.3fr);
+      gap: 10px;
+      align-items: center;
     }
 
     @media (max-width: 640px) {
-      .nav {
-        padding-inline: 12px;
+      body {
+        padding: 18px 12px 32px;
       }
-      main {
-        padding: 10px 10px 32px;
-      }
-      .hero-form-card {
-        padding-inline: 16px;
-      }
-      .gradient-border-inner {
-        padding-inline: 18px;
-      }
-      .hero-title {
-        font-size: 26px;
-      }
-      .form-header-row {
+      .site-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
       }
-      .step-meta {
-        align-items: flex-start;
+      .form-card {
+        max-width: 100%;
       }
-      .field-row-inline {
-        grid-template-columns: minmax(0,1.25fr) minmax(0,1.5fr);
+      .phone-row {
+        grid-template-columns: minmax(0, 1fr);
       }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div class="nav">
-        <div class="nav-left">
-          <div class="logo-badge">U</div>
-          <div>
-            <div class="brand-text-main">Unischooly</div>
-            <div class="brand-text-sub">Future‑ready skills for kids</div>
-          </div>
-        </div>
-        <div class="nav-links">
-          <div class="nav-link">Programs</div>
-          <div class="nav-link">How it works</div>
-          <div class="nav-link">Parent reviews</div>
-          <button class="nav-cta" type="button" onclick="scrollToForm()">
-            <span class="icon">⚡</span>
-            <span>Book Free Trial</span>
-          </button>
+  <div class="page-shell">
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-logo"><span>U</span></div>
+        <div>
+          <div class="brand-text-title">Unischooly</div>
+          <div class="brand-text-subtitle">Future-ready skills for kids</div>
         </div>
       </div>
+      <nav class="nav">
+        <a href="#programs">Programs</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#reviews">Parent reviews</a>
+        <button class="nav-cta" type="button">
+          <span>⚡</span>
+          <span>Book Free Trial</span>
+        </button>
+      </nav>
     </header>
 
-    <main>
-      <div class="hero-layout">
-        <!-- LEFT: Hero copy -->
-        <section>
-          <div class="hero-left-badge-row">
-            <div class="dot-live"></div>
-            <span>LIVE 1:1 Free Trial</span>
-            <span>·</span>
-            <span>Limited daily slots</span>
+    <main class="hero-grid">
+      <!-- LEFT HERO -->
+      <section>
+        <div class="eyebrow-row">
+          <div class="eyebrow-pill">
+            <span class="eyebrow-dot-live"></span>
+            LIVE 1:1 Free Trial
           </div>
-          <h1 class="hero-title">
-            <span class="highlight-main">Book Now</span>
-            &nbsp;&amp;&nbsp;
-            <span class="highlight-sub">Get Certified</span>
-          </h1>
-          <p class="hero-subtitle">
-            Share your details, pick a slot in your child’s local time, and we’ll match
-            you with a certified Unischooly teacher for a personalised 1:1 coding trial class.
-          </p>
+          <div class="eyebrow-pill">Limited daily slots</div>
+        </div>
 
-          <div class="hero-badges-row">
-            <div class="pill-badge">
-              <span class="icon">🌎</span>
-              <span>Kids in 30+ countries</span>
+        <h1 class="hero-title">
+          <span>Book</span>
+          <span>Now</span>
+          <span>&amp;</span>
+          <span>Get Certified</span>
+        </h1>
+        <p class="hero-subtitle">
+          Share your details, pick a slot in your child's local time, and we'll match you with a certified
+          Unischooly teacher for a personalised 1:1 coding trial class.
+        </p>
+
+        <div class="hero-badges">
+          <div class="hero-chip"><span>🌍</span>Kids in 30+ countries</div>
+          <div class="hero-chip"><span>🚀</span>Live 1:1 project class</div>
+          <div class="hero-chip"><span>🏅</span>Certificate after demo</div>
+        </div>
+
+        <div class="hero-main-card">
+          <h2 class="hero-main-title">Free Live Coding Class for <span>Your Child</span></h2>
+          <ul class="hero-main-list">
+            <li><span class="icon">✅</span><span>Personalised 45-minute 1:1 session aligned to your child's grade &amp; interest.</span></li>
+            <li><span class="icon">✅</span><span>Hands-on live project inside the class — no boring slides.</span></li>
+            <li><span class="icon">✅</span><span>Detailed class report &amp; digital certificate shared on WhatsApp &amp; email.</span></li>
+          </ul>
+          <div class="hero-main-metrics">
+            <div class="metric-pill"><span class="value">25,000+</span><span>kids taught</span></div>
+            <div class="metric-pill"><span class="value">45 mins</span><span>live class</span></div>
+            <div class="metric-pill"><span class="value">4.8★</span><span>avg parent rating</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT FORM -->
+      <section>
+        <div class="form-card" id="booking-card">
+          <div id="alert-error" class="alert-banner alert-error">
+            <span class="icon">⚠️</span>
+            <span id="alert-error-text">Unable to save your details. Please try again in a moment.</span>
+          </div>
+          <div id="alert-success" class="alert-banner alert-success">
+            <span class="icon">✨</span>
+            <span id="alert-success-text">Your preferences are saved. Final step!</span>
+          </div>
+
+          <div class="form-header-row">
+            <div>
+              <div class="form-header-title">Free Live Coding Class for Your Child</div>
+              <div class="form-header-subtitle">
+                Three quick steps to unlock a personalised free trial class.
+              </div>
             </div>
-            <div class="pill-badge">
-              <span class="icon">💻</span>
-              <span>Live 1:1 project class</span>
-            </div>
-            <div class="pill-badge">
-              <span class="icon">🏅</span>
-              <span>Certificate after demo</span>
+            <div class="step-indicator">
+              <div id="step-label">STEP 1 OF 3</div>
+              <div class="step-indicator-bars">
+                <div class="step-bar step-bar--active" data-step-bar="1"><div class="step-bar-inner"></div></div>
+                <div class="step-bar" data-step-bar="2"><div class="step-bar-inner"></div></div>
+                <div class="step-bar" data-step-bar="3"><div class="step-bar-inner"></div></div>
+              </div>
             </div>
           </div>
 
-          <div class="hero-card gradient-border hero-card">
-            <div class="gradient-border-inner">
-              <div class="hero-card-title">
-                Free Live Coding Class for <span class="child">Your Child</span>
-              </div>
-              <ul class="hero-card-list">
-                <li>
-                  <span class="check-icon">✅</span>
-                  <span>Personalised 45‑minute 1:1 session aligned to your child’s grade &amp; interest.</span>
-                </li>
-                <li>
-                  <span class="check-icon">✅</span>
-                  <span>Hands‑on live project inside the class — no boring slides.</span>
-                </li>
-                <li>
-                  <span class="check-icon">✅</span>
-                  <span>Detailed class report &amp; digital certificate shared on WhatsApp &amp; email.</span>
-                </li>
-              </ul>
-              <div class="hero-stats-row">
-                <div class="hero-stat-chip">
-                  <span class="value">25,000+</span>
-                  <span>kids taught</span>
-                </div>
-                <div class="hero-stat-chip">
-                  <span class="value">45 mins</span>
-                  <span>live class</span>
-                </div>
-                <div class="hero-stat-chip">
-                  <span class="value">4.8★</span>
-                  <span>avg parent rating</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- RIGHT: 3‑step booking form -->
-        <section id="booking-form-card" class="hero-form-card-wrapper">
-          <div class="hero-form-card" id="form-top">
-            <div id="alert-banner" class="alert-banner">
-              <span class="icon">⚠️</span>
-              <span id="alert-text">Unable to save your details. Please try again in a moment.</span>
+          <div class="form-body" id="form-step-1">
+            <div class="form-section-title">Book Now &amp; Get Certified</div>
+            <div class="form-section-subtitle">
+              Share your details to unlock a personalised free trial class.
             </div>
 
-            <div class="form-header-row">
-              <div class="form-title-block">
-                <h2>Free Live Coding Class for Your Child</h2>
-                <p>Three quick steps to unlock a personalised free trial class.</p>
-              </div>
-              <div class="step-meta">
-                <span id="step-label">STEP 1 OF 3</span>
-                <div class="step-indicator">
-                  <div class="step-bar"><div id="step-bar-1" class="step-bar-inner active"></div></div>
-                  <div class="step-bar"><div id="step-bar-2" class="step-bar-inner"></div></div>
-                  <div class="step-bar"><div id="step-bar-3" class="step-bar-inner"></div></div>
+            <div class="field">
+              <label>WhatsApp Number</label>
+              <div class="phone-row">
+                <input id="whatsapp-input" type="tel" />
+                <div class="field">
+                  <label>We'll send class link &amp; updates here</label>
+                  <input id="phone-number-only" class="input" type="text" placeholder="10–12 digit number" />
                 </div>
+              </div>
+              <div class="field-hint">Please share the number that you use for WhatsApp.</div>
+            </div>
+
+            <div class="field-grid-two">
+              <div class="field">
+                <label>Child's Name</label>
+                <input id="child-name" class="input" type="text" placeholder="E.g. Aarav, Emma" />
+              </div>
+              <div class="field">
+                <label>Select Child's Grade</label>
+                <select id="child-grade">
+                  <option value="">Select grade</option>
+                  <option>Grade 1</option><option>Grade 2</option><option>Grade 3</option><option>Grade 4</option>
+                  <option>Grade 5</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option>
+                  <option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option>
+                </select>
               </div>
             </div>
 
-            <!-- STEP 1 -->
-            <div id="step-1">
-              <div class="form-section-title">Book Now &amp; Get Certified</div>
-              <div class="form-section-subtitle">
-                Share your details to unlock a personalised free trial class.
+            <div class="field-grid-two">
+              <div class="field">
+                <label>Parent's / Guardian Name</label>
+                <input id="parent-name" class="input" type="text" placeholder="Parent / Guardian full name" />
               </div>
+              <div class="field">
+                <label>Parent's Email</label>
+                <input id="parent-email" class="input" type="email" placeholder="We will send confirmation here" />
+              </div>
+            </div>
 
-              <form id="step-1-form">
-                <div class="field-group">
-                  <label class="field-label" for="phone-input">
-                    <span>WhatsApp Number</span>
-                    <span class="right-hint">We’ll send class link &amp; updates here</span>
-                  </label>
-                  <div class="field-row-inline">
-                    <input id="phone-input" type="tel" placeholder="Enter WhatsApp number" />
-                  </div>
-                  <div class="helper-text">
-                    Please share the number that you use for WhatsApp.
-                  </div>
-                  <div id="phone-error" class="error-text-inline" style="display:none;"></div>
-                </div>
-
-                <div class="form-grid-2">
-                  <div class="field-group">
-                    <label class="field-label" for="child-name">Child’s Name</label>
-                    <input id="child-name" type="text" placeholder="E.g. Aarav, Emma" autocomplete="off" />
-                  </div>
-                  <div class="field-group">
-                    <label class="field-label" for="child-grade">Select Child’s Grade</label>
-                    <select id="child-grade">
-                      <option value="">Select grade</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-grid-2">
-                  <div class="field-group">
-                    <label class="field-label" for="parent-name">Parent’s / Guardian Name</label>
-                    <input id="parent-name" type="text" placeholder="Parent / Guardian full name" autocomplete="off" />
-                  </div>
-                  <div class="field-group">
-                    <label class="field-label" for="parent-email">Parent’s Email</label>
-                    <input id="parent-email" type="email" placeholder="We will send confirmation here" autocomplete="off" />
-                  </div>
-                </div>
-
-                <div class="field-group">
-                  <label class="field-label">Do you have a Laptop / Desktop?</label>
-                  <div class="toggle-pill-group" id="laptop-toggle">
-                    <button type="button" class="toggle-pill active" data-value="Yes">
-                      <span class="icon">💻</span><span>Yes</span>
-                    </button>
-                    <button type="button" class="toggle-pill" data-value="No">
-                      <span class="icon">📱</span><span>No (Tablet / Mobile only)</span>
-                    </button>
-                  </div>
-                </div>
-
-                <button id="step-1-submit" type="submit" class="primary-cta">
-                  <span class="icon">🚀</span>
-                  <span>Book a Free Trial Class</span>
+            <div class="field">
+              <label>Do you have a Laptop / Desktop?</label>
+              <div class="toggle-group" id="laptop-toggle">
+                <button type="button" class="toggle-pill active" data-value="Yes">
+                  <span class="icon">💻</span><span>Yes</span>
                 </button>
-                <div class="cta-footnote">
-                  Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
-                </div>
-              </form>
+                <button type="button" class="toggle-pill" data-value="No">
+                  <span class="icon">📱</span><span>No (Tablet / Mobile only)</span>
+                </button>
+              </div>
             </div>
 
-            <!-- STEP 2 -->
-            <div id="step-2" style="display:none;">
-              <div class="back-link" onclick="goToStep(1)">
-                <span class="icon">←</span>
-                <span>Back to details</span>
+            <div class="cta-wrapper">
+              <button id="btn-step-1" class="cta-button" type="button">
+                <span class="icon">🚀</span>
+                <span>Book a Free Trial Class</span>
+              </button>
+              <div class="cta-note">
+                Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
               </div>
+            </div>
+          </div>
 
-              <div class="form-section-title">Select Date &amp; Time</div>
-              <div class="form-section-subtitle">
-                Choose a slot that works in your child’s local time. Your class will be for 1 hour.
+          <!-- STEP 2 -->
+          <div class="form-body" id="form-step-2" style="display:none;">
+            <div class="step-nav-back" data-back-to="1">← Back to details</div>
+            <div class="form-section-title">Select Date &amp; Time</div>
+            <div class="form-section-subtitle">
+              Choose a slot that works in your child's local time. Your class will be for 1 hour.
+            </div>
+
+            <div class="field">
+              <label>Select Date <span id="date-range-label" style="color:var(--text-soft);font-weight:400;margin-left:4px;"></span></label>
+              <div class="field-hint">Your class will be for 1 hour.</div>
+              <div class="date-row" id="date-row"></div>
+            </div>
+
+            <div class="field">
+              <label>Select Start Time</label>
+              <div class="field-hint">Class slots are limited. Times are shown in your local time zone.</div>
+              <div class="time-grid" id="time-grid"></div>
+            </div>
+
+            <div class="field">
+              <label>Select Language</label>
+              <div class="language-row" id="language-row">
+                <button type="button" class="language-pill active" data-lang="english">English</button>
+                <button type="button" class="language-pill" data-lang="arabic">Arabic</button>
+                <button type="button" class="language-pill" data-lang="bahasa">Bahasa</button>
+                <button type="button" class="language-pill" data-lang="vietnamese">Vietnamese</button>
+                <button type="button" class="language-pill" data-lang="filipino">Filipino</button>
+                <button type="button" class="language-pill" data-lang="thai">Thai</button>
               </div>
+            </div>
 
-              <div class="field-group">
-                <div class="field-label">
-                  <span>Select Date</span>
-                  <span class="right-hint" id="date-range-label"></span>
-                </div>
-                <div class="form-section-subtitle" style="margin-bottom:8px;">
-                  Your class will be for 1 hour.
-                </div>
-                <div id="date-grid" class="date-grid"></div>
-              </div>
-
-              <div class="field-group">
-                <div class="field-label">
-                  <span>Select Start Time</span>
-                </div>
-                <div class="form-section-subtitle" style="margin-bottom:8px;">
-                  Class slots are limited. Times are shown in your local time zone.
-                </div>
-                <div id="time-grid" class="time-grid"></div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label">
-                  <span>Select Language</span>
-                </label>
-                <div class="language-pills" id="language-pills">
-                  <!-- JS will fill pills -->
-                </div>
-              </div>
-
-              <button id="step-2-submit" type="button" class="primary-cta">
+            <div class="cta-wrapper">
+              <button id="btn-step-2" class="cta-button" type="button">
                 <span class="icon">✨</span>
                 <span>Confirm Class Time</span>
               </button>
-              <div class="cta-footnote">
-                Note: Free class will be conducted by reputed teachers.
-              </div>
-              <div class="legal-note">
+              <div class="cta-note">
+                Note: Free class will be conducted by reputed teachers.<br />
                 By continuing I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.
               </div>
-              <div id="step-2-error" class="error-text-inline" style="text-align:center; display:none;"></div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="form-body" id="form-step-3" style="display:none;">
+            <div class="step-nav-back" data-back-to="2">← Back to time selection</div>
+            <div class="form-section-title">Help us personalise your experience</div>
+
+            <div class="field">
+              <label>Who are you?</label>
+              <div class="choice-grid" id="who-row">
+                <button type="button" class="choice-pill" data-value="Parent">Parent</button>
+                <button type="button" class="choice-pill" data-value="Student">Student</button>
+                <button type="button" class="choice-pill" data-value="Guardian">Guardian</button>
+              </div>
             </div>
 
-            <!-- STEP 3 -->
-            <div id="step-3" style="display:none;">
-              <div class="back-link" onclick="goToStep(2)">
-                <span class="icon">←</span>
-                <span>Back to time selection</span>
+            <div class="field">
+              <label>Why are you booking this trial class?</label>
+              <div class="choice-grid" id="reason-row">
+                <button type="button" class="choice-pill" data-value="Want to buy course">Want to buy course</button>
+                <button type="button" class="choice-pill" data-value="To Compare Platform">To Compare Platform</button>
+                <button type="button" class="choice-pill" data-value="To strengthen Concept">To strengthen Concept</button>
+                <button type="button" class="choice-pill" data-value="Just for free demo">Just for free demo</button>
               </div>
+            </div>
 
-              <div class="form-section-title">Help us personalise your experience</div>
-              <div class="form-section-subtitle">
-                Answer a few quick questions so we can match the right mentor &amp; course plan.
+            <div class="field">
+              <label>When are you planning to purchase?</label>
+              <div class="choice-grid" id="timeline-row">
+                <button type="button" class="choice-pill" data-value="After the Demo">After the Demo</button>
+                <button type="button" class="choice-pill" data-value="This Week">This Week</button>
+                <button type="button" class="choice-pill" data-value="This Month">This Month</button>
+                <button type="button" class="choice-pill" data-value="Just Exploring">Just Exploring</button>
               </div>
+            </div>
 
-              <div class="field-group">
-                <div class="field-label">
-                  <span>Who are you?</span>
-                </div>
-                <div class="chip-group" id="chip-who">
-                  <button type="button" class="choice-chip" data-value="Parent">Parent</button>
-                  <button type="button" class="choice-chip" data-value="Student">Student</button>
-                  <button type="button" class="choice-chip" data-value="Guardian">Guardian</button>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <div class="field-label">
-                  <span>Why are you booking this trial class?</span>
-                </div>
-                <div class="chip-group" id="chip-why">
-                  <button type="button" class="choice-chip" data-value="Want to buy course">Want to buy course</button>
-                  <button type="button" class="choice-chip" data-value="To compare platform">To compare platform</button>
-                  <button type="button" class="choice-chip" data-value="To strengthen concepts">To strengthen concepts</button>
-                  <button type="button" class="choice-chip" data-value="Just for free demo">Just for free demo</button>
-                </div>
-              </div>
-
-              <div class="field-group">
-                <div class="field-label">
-                  <span>When are you planning to purchase?</span>
-                </div>
-                <div class="chip-group" id="chip-when">
-                  <button type="button" class="choice-chip" data-value="After the demo">After the demo</button>
-                  <button type="button" class="choice-chip" data-value="This week">This week</button>
-                  <button type="button" class="choice-chip" data-value="This month">This month</button>
-                  <button type="button" class="choice-chip" data-value="Just exploring">Just exploring</button>
-                </div>
-              </div>
-
-              <button id="step-3-submit" type="button" class="primary-cta">
+            <div class="cta-wrapper">
+              <button id="btn-step-3" class="cta-button" type="button">
                 <span class="icon">✅</span>
                 <span>Submit</span>
               </button>
-              <div id="step-3-success" class="success-message" style="display:none;">
-                Thank you! Your free trial class has been booked. Our team will share the class link,
-                project brief &amp; certificate details on WhatsApp and email.
+              <div class="cta-note">
+                You will be redirected to the confirmation page after submission.
               </div>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </main>
   </div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script>
-  <script>
+  <!-- Supabase & intl-tel-input -->
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
-    // ISO2 -> Region mapping injected from your spreadsheet
-    const ISO2_TO_REGION = {
-  "AW": "ROW",
-  "AF": "ROW",
-  "AO": "ROW",
-  "AI": "ROW",
-  "AX": "ROW",
-  "AL": "ROW",
-  "AD": "ROW",
-  "AE": "MEA",
-  "AR": "ROW",
-  "AM": "ROW",
-  "AS": "ROW",
-  "AQ": "ROW",
-  "TF": "ROW",
-  "AG": "ROW",
-  "AU": "ANZ",
-  "AT": "ROW",
-  "AZ": "ROW",
-  "BI": "ROW",
-  "BE": "ROW",
-  "BJ": "ROW",
-  "BQ": "ROW",
-  "BF": "ROW",
-  "BD": "ASIA",
-  "BG": "ROW",
-  "BH": "MEA",
-  "BS": "ROW",
-  "BA": "ROW",
-  "BL": "ROW",
-  "BY": "ROW",
-  "BZ": "ROW",
-  "BM": "ROW",
-  "BO": "ROW",
-  "BR": "ROW",
-  "BB": "ROW",
-  "BN": "ROW",
-  "BT": "ASIA",
-  "BV": "ROW",
-  "BW": "ROW",
-  "CF": "ROW",
-  "CA": "USA",
-  "CC": "ROW",
-  "CH": "ROW",
-  "CL": "ROW",
-  "CN": "ASIA",
-  "CI": "ROW",
-  "CM": "ROW",
-  "CD": "ROW",
-  "CG": "ROW",
-  "CK": "ROW",
-  "CO": "ROW",
-  "KM": "ROW",
-  "CV": "ROW",
-  "CR": "ROW",
-  "CU": "ROW",
-  "CW": "ROW",
-  "CX": "ROW",
-  "KY": "ROW",
-  "CY": "ROW",
-  "CZ": "ROW",
-  "DE": "ROW",
-  "DJ": "ROW",
-  "DM": "ROW",
-  "DK": "ROW",
-  "DO": "ROW",
-  "DZ": "ROW",
-  "EC": "ROW",
-  "EG": "MEA",
-  "ER": "ROW",
-  "EH": "ROW",
-  "ES": "ROW",
-  "EE": "ROW",
-  "ET": "ROW",
-  "FI": "ROW",
-  "FJ": "ROW",
-  "FK": "ROW",
-  "FR": "ROW",
-  "FO": "ROW",
-  "FM": "ROW",
-  "GA": "ROW",
-  "GB": "ROW",
-  "GE": "ROW",
-  "GG": "ROW",
-  "GH": "ROW",
-  "GI": "ROW",
-  "GN": "ROW",
-  "GP": "ROW",
-  "GM": "ROW",
-  "GW": "ROW",
-  "GQ": "ROW",
-  "GR": "ROW",
-  "GD": "ROW",
-  "GL": "ROW",
-  "GT": "ROW",
-  "GF": "ROW",
-  "GU": "ROW",
-  "GY": "ROW",
-  "HK": "ROW",
-  "HM": "ROW",
-  "HN": "ROW",
-  "HR": "ROW",
-  "HT": "ROW",
-  "HU": "ROW",
-  "ID": "SEA",
-  "IM": "ROW",
-  "IN": "ASIA",
-  "IO": "ROW",
-  "IE": "ROW",
-  "IR": "ROW",
-  "IQ": "MEA",
-  "IS": "ROW",
-  "IL": "ROW",
-  "IT": "ROW",
-  "JM": "ROW",
-  "JE": "ROW",
-  "JO": "MEA",
-  "JP": "ASIA",
-  "KZ": "ROW",
-  "KE": "ROW",
-  "KG": "ROW",
-  "KH": "SEA",
-  "KI": "ROW",
-  "KN": "ROW",
-  "KR": "ROW",
-  "KW": "MEA",
-  "LA": "ROW",
-  "LB": "MEA",
-  "LR": "ROW",
-  "LY": "ROW",
-  "LC": "ROW",
-  "LI": "ROW",
-  "LK": "ASIA",
-  "LS": "ROW",
-  "LT": "ROW",
-  "LU": "ROW",
-  "LV": "ROW",
-  "MO": "ROW",
-  "MF": "ROW",
-  "MA": "ROW",
-  "MC": "ROW",
-  "MD": "ROW",
-  "MG": "ROW",
-  "MV": "ASIA",
-  "MX": "ROW",
-  "MH": "ROW",
-  "MK": "ROW",
-  "ML": "ROW",
-  "MT": "ROW",
-  "MM": "SEA",
-  "ME": "ROW",
-  "MN": "ASIA",
-  "MP": "ROW",
-  "MZ": "ROW",
-  "MR": "ROW",
-  "MS": "ROW",
-  "MQ": "ROW",
-  "MU": "ROW",
-  "MW": "ROW",
-  "MY": "SEA",
-  "YT": "ROW",
-  "NA": "ROW",
-  "NC": "ROW",
-  "NE": "ROW",
-  "NF": "ROW",
-  "NG": "ROW",
-  "NI": "ROW",
-  "NU": "ROW",
-  "NL": "ROW",
-  "NO": "ROW",
-  "NP": "ASIA",
-  "NR": "ROW",
-  "NZ": "ANZ",
-  "OM": "MEA",
-  "PK": "ASIA",
-  "PA": "ROW",
-  "PN": "ROW",
-  "PE": "ROW",
-  "PH": "SEA",
-  "PW": "ROW",
-  "PG": "ROW",
-  "PL": "ROW",
-  "PR": "ROW",
-  "KP": "ROW",
-  "PT": "ROW",
-  "PY": "ROW",
-  "PS": "ROW",
-  "PF": "ROW",
-  "QA": "MEA",
-  "RE": "ROW",
-  "RO": "ROW",
-  "RU": "ROW",
-  "RW": "ROW",
-  "SA": "MEA",
-  "SD": "ROW",
-  "SN": "ROW",
-  "SG": "SEA",
-  "GS": "ROW",
-  "SH": "ROW",
-  "SJ": "ROW",
-  "SB": "ROW",
-  "SL": "ROW",
-  "SV": "ROW",
-  "SM": "ROW",
-  "SO": "ROW",
-  "PM": "ROW",
-  "RS": "ROW",
-  "SS": "ROW",
-  "ST": "ROW",
-  "SR": "ROW",
-  "SK": "ROW",
-  "SI": "ROW",
-  "SE": "ROW",
-  "SZ": "ROW",
-  "SX": "ROW",
-  "SC": "ROW",
-  "SY": "ROW",
-  "TC": "ROW",
-  "TD": "ROW",
-  "TG": "ROW",
-  "TH": "SEA",
-  "TJ": "ROW",
-  "TK": "ROW",
-  "TM": "ROW",
-  "TL": "ROW",
-  "TO": "ROW",
-  "TT": "ROW",
-  "TN": "ROW",
-  "TR": "ROW",
-  "TV": "ROW",
-  "TW": "ROW",
-  "TZ": "ROW",
-  "UG": "ROW",
-  "UA": "ROW",
-  "UM": "ROW",
-  "UY": "ROW",
-  "US": "USA",
-  "UZ": "ROW",
-  "VA": "ROW",
-  "VC": "ROW",
-  "VE": "ROW",
-  "VG": "ROW",
-  "VI": "ROW",
-  "VN": "SEA",
-  "VU": "ROW",
-  "WF": "ROW",
-  "WS": "ROW",
-  "YE": "ROW",
-  "ZA": "ROW",
-  "ZM": "ROW",
-  "ZW": "ROW"
-};
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const LANGUAGES = ["english", "arabic", "bahasa", "vietnamese", "filipino", "thai"];
+    // ---------- UI helpers ----------
+    const alertError = document.getElementById("alert-error");
+    const alertErrorText = document.getElementById("alert-error-text");
+    const alertSuccess = document.getElementById("alert-success");
+    const alertSuccessText = document.getElementById("alert-success-text");
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    let itiInstance = null;
-    let currentStep = 1;
-    let currentLeadId = null;
-    let currentRegionKey = null;
-    let currentCourseId = null;
-    let landingLang = null;
-    let selectedSlot = null;
-    let selectedLanguage = null;
-
-    function scrollToForm() {
-      const el = document.getElementById("form-top");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    function showError(msg) {
+      alertErrorText.textContent = msg;
+      alertError.classList.add("show");
+      setTimeout(() => alertError.classList.remove("show"), 5000);
     }
 
-    function setAlert(message, type = "error") {
-      const banner = document.getElementById("alert-banner");
-      const text = document.getElementById("alert-text");
-      if (!banner || !text) return;
-      text.textContent = message;
-      if (type === "error") {
-        banner.style.background = "rgba(239,68,68,0.1)";
-        banner.style.borderColor = "rgba(248,113,113,0.7)";
-      } else {
-        banner.style.background = "rgba(22,163,74,0.1)";
-        banner.style.borderColor = "rgba(34,197,94,0.7)";
-      }
-      banner.classList.add("show");
+    function showSuccess(msg) {
+      alertSuccessText.textContent = msg;
+      alertSuccess.classList.add("show");
+      setTimeout(() => alertSuccess.classList.remove("show"), 5000);
     }
 
-    function hideAlert() {
-      const banner = document.getElementById("alert-banner");
-      if (banner) banner.classList.remove("show");
-    }
-
-    function updateStepUI(step) {
-      currentStep = step;
+    function setStep(step) {
       const stepLabel = document.getElementById("step-label");
-      if (stepLabel) stepLabel.textContent = `STEP ${step} OF 3`;
+      stepLabel.textContent = `STEP ${step} OF 3`;
 
-      ["step-1","step-2","step-3"].forEach((id, index) => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.style.display = (index + 1 === step) ? "block" : "none";
-      });
-
-      [1,2,3].forEach(num => {
-        const bar = document.getElementById(`step-bar-${num}`);
-        if (!bar) return;
-        if (num <= step) bar.classList.add("active");
-        else bar.classList.remove("active");
-      });
-    }
-
-    function goToStep(step) {
-      hideAlert();
-      if (step === 1) {
-        updateStepUI(1);
-        selectedSlot = null;
-      } else if (step === 2) {
-        if (!currentLeadId) {
-          setAlert("Please complete Step 1 first.", "error");
-          return;
-        }
-        updateStepUI(2);
-      } else if (step === 3) {
-        if (!currentLeadId || !selectedSlot) {
-          setAlert("Please confirm your date & time first.", "error");
-          return;
-        }
-        updateStepUI(3);
-      }
-    }
-
-    function populateGrades() {
-      const gradeSelect = document.getElementById("child-grade");
-      if (!gradeSelect) return;
-      const options = [];
-      for (let i = 1; i <= 12; i++) {
-        const opt = document.createElement("option");
-        opt.value = `Grade ${
-          i
-        }`;
-        opt.textContent = `Grade ${ i }`;
-        options.push(opt);
-      }
-      options.forEach(o => gradeSelect.appendChild(o));
-    }
-
-    function setupLaptopToggle() {
-      const group = document.getElementById("laptop-toggle");
-      if (!group) return;
-      const buttons = Array.from(group.querySelectorAll(".toggle-pill"));
-      buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          buttons.forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-        });
-      });
-    }
-
-    function getLaptopValue() {
-      const group = document.getElementById("laptop-toggle");
-      if (!group) return null;
-      const active = group.querySelector(".toggle-pill.active");
-      return active ? active.getAttribute("data-value") : null;
-    }
-
-    function initPhoneInput() {
-      const input = document.getElementById("phone-input");
-      if (!input) return;
-
-      itiInstance = window.intlTelInput(input, {
-        initialCountry: "auto",
-        preferredCountries: ["us","gb","ae","sa","in","ca","au","nz","sg","qa","kw","bh","om"],
-        geoIpLookup: function(callback) {
-          fetch("https://ipapi.co/json/")
-            .then(function(res) { return res.json(); })
-            .then(function(data) { callback((data && data.country_code) ? data.country_code.toLowerCase() : "ae"); })
-            .catch(function() { callback("ae"); });
-        },
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
-      });
-    }
-
-    function parseUrlParams() {
-      const params = new URLSearchParams(window.location.search);
-      const courseIdRaw = params.get("courseId");
-      const langParam = params.get("lang");
-      currentCourseId = courseIdRaw ? parseInt(courseIdRaw, 10) || null : null;
-      landingLang = langParam ? String(langParam).toLowerCase() : null;
-    }
-
-    function buildLanguagePills() {
-      const container = document.getElementById("language-pills");
-      if (!container) return;
-      container.innerHTML = "";
-      LANGUAGES.forEach(lang => {
-        const label = lang.charAt(0).toUpperCase() + lang.slice(1);
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "language-pill";
-        btn.textContent = label;
-        btn.dataset.value = lang;
-        btn.addEventListener("click", () => {
-          Array.from(container.querySelectorAll(".language-pill")).forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          selectedLanguage = lang;
-        });
-        container.appendChild(btn);
-      });
-    }
-
-    function setupChips(groupId, onChange) {
-      const container = document.getElementById(groupId);
-      if (!container) return;
-      const chips = Array.from(container.querySelectorAll(".choice-chip"));
-      chips.forEach(chip => {
-        chip.addEventListener("click", () => {
-          chips.forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          if (onChange) onChange(chip.getAttribute("data-value"));
-        });
-      });
-    }
-
-    function setupStep1Form() {
-      const form = document.getElementById("step-1-form");
-      const submitBtn = document.getElementById("step-1-submit");
-      const phoneError = document.getElementById("phone-error");
-      const childNameInput = document.getElementById("child-name");
-      const gradeSelect = document.getElementById("child-grade");
-      const parentNameInput = document.getElementById("parent-name");
-      const parentEmailInput = document.getElementById("parent-email");
-
-      if (!form || !submitBtn) return;
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        hideAlert();
-        if (phoneError) phoneError.style.display = "none";
-
-        if (!itiInstance) {
-          setAlert("Phone selector failed to load. Please refresh and try again.");
-          return;
-        }
-
-        const phoneNumber = (document.getElementById("phone-input").value || "").trim();
-        const numberValid = itiInstance.isValidNumber();
-        const countryData = itiInstance.getSelectedCountryData();
-
-        if (!phoneNumber || !numberValid || !countryData) {
-          if (phoneError) {
-            phoneError.textContent = "Please enter a valid WhatsApp number with country code.";
-            phoneError.style.display = "block";
-          }
-          return;
-        }
-
-        const childName = (childNameInput.value || "").trim();
-        const childGrade = gradeSelect.value || "";
-        const parentName = (parentNameInput.value || "").trim();
-        const parentEmail = (parentEmailInput.value || "").trim();
-        const hasLaptop = getLaptopValue();
-
-        if (!childName || !childGrade || !parentName || !parentEmail) {
-          setAlert("Please fill all the fields to continue.", "error");
-          return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Saving details...";
-
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
-        const browser = navigator.userAgent || null;
-        const iso2 = (countryData.iso2 || "").toUpperCase();
-        const regionKey = ISO2_TO_REGION[iso2] || null;
-        currentRegionKey = regionKey;
-
-        const payload = {
-          child_name: childName,
-          child_grade: childGrade,
-          parent_name: parentName,
-          parent_email: parentEmail,
-          phone_country_code: "+" + countryData.dialCode,
-          phone_number: phoneNumber,
-          is_whatsapp: true,
-          has_laptop: hasLaptop,
-          course_id: currentCourseId,
-          lang: landingLang || "english",
-          landing_page_path: window.location.pathname,
-          full_url: window.location.href,
-          timezone,
-          browser,
-          country: countryData.name || null,
-          region_key: regionKey,
-          page_completed: 1
-        };
-
-        try {
-          const { data, error } = await supabaseClient
-            .from("demo_leads")
-            .insert([payload])
-            .select()
-            .single();
-
-          if (error || !data) {
-            console.error("Insert error", error);
-            setAlert("Unable to save your details. Please try again in a moment.", "error");
-          } else {
-            currentLeadId = data.id;
-            goToStep(2);
-            await loadSlotsForRegion();
-          }
-        } catch (err) {
-          console.error(err);
-          setAlert("Something went wrong while saving your details. Please try again.", "error");
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Book a Free Trial Class";
-        }
-      });
-    }
-
-    async function loadSlotsForRegion() {
-      const dateGrid = document.getElementById("date-grid");
-      const timeGrid = document.getElementById("time-grid");
-      const dateRangeLabel = document.getElementById("date-range-label");
-      const step2Error = document.getElementById("step-2-error");
-      if (!dateGrid || !timeGrid) return;
-
-      dateGrid.innerHTML = "";
-      timeGrid.innerHTML = "";
-      if (step2Error) step2Error.style.display = "none";
-
-      if (!currentRegionKey || !currentCourseId) {
-        if (step2Error) {
-          step2Error.textContent = "We couldn’t detect your region. Please refresh and try again.";
-          step2Error.style.display = "block";
-        }
-        return;
-      }
-
-      const now = new Date();
-      const todayStr = now.toISOString().slice(0,10);
-      const maxDate = new Date(now.getTime());
-      maxDate.setDate(maxDate.getDate() + 5);
-      const maxStr = maxDate.toISOString().slice(0,10);
-
-      if (dateRangeLabel) {
-        const opts = { month: "short", day: "numeric" };
-        dateRangeLabel.textContent = `${ now.toLocaleDateString(undefined, opts) } – ${ maxDate.toLocaleDateString(undefined, opts) }`;
-      }
-
-      try {
-        const { data: slots, error } = await supabaseClient
-          .from("demo_slots_live")
-          .select("*")
-          .eq("region_key", currentRegionKey)
-          .eq("course_id", currentCourseId)
-          .eq("is_active", true)
-          .gt("capacity_remaining", 0)
-          .gte("slot_date", todayStr)
-          .lte("slot_date", maxStr)
-          .order("slot_datetime_ist", { ascending: true });
-
-        if (error) {
-          console.error("Slots error", error);
-          if (step2Error) {
-            step2Error.textContent = "Unable to load live slots. Please refresh and try again.";
-            step2Error.style.display = "block";
-          }
-          return;
-        }
-
-        if (!slots || !slots.length) {
-          dateGrid.innerHTML = '<div class="centered-message">No live slots are available for the next few days in your region. Please check again later.</div>';
-          return;
-        }
-
-        const byDate = new Map();
-        slots.forEach(slot => {
-          const dateKey = slot.slot_date;
-          if (!byDate.has(dateKey)) byDate.set(dateKey, []);
-          byDate.get(dateKey).push(slot);
-        });
-
-        const sortedDates = Array.from(byDate.keys()).sort();
-
-        let firstDateKey = null;
-
-        sortedDates.forEach((dateKey, index) => {
-          const dateObj = new Date(dateKey);
-          const isToday = dateKey === todayStr;
-          const diffDays = Math.round((dateObj - new Date(todayStr)) / (1000*60*60*24));
-          let dayLabel = dateObj.toLocaleDateString(undefined, { weekday: "long" });
-          if (diffDays === 0) dayLabel = "Today";
-          else if (diffDays === 1) dayLabel = "Tomorrow";
-
-          const dateLabel = dateObj.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
-
-          const chip = document.createElement("button");
-          chip.type = "button";
-          chip.className = "date-chip";
-          chip.dataset.dateKey = dateKey;
-          chip.innerHTML = `<span class="day-label">${ dayLabel }</span><span class="date-label">${ dateLabel }</span>`;
-
-          chip.addEventListener("click", () => {
-            Array.from(dateGrid.querySelectorAll(".date-chip")).forEach(c => c.classList.remove("active"));
-            chip.classList.add("active");
-            renderTimeChips(dateKey, byDate.get(dateKey) || []);
-          });
-
-          if (index === 0) {
-            firstDateKey = dateKey;
-          }
-
-          dateGrid.appendChild(chip);
-        });
-
-        if (firstDateKey) {
-          const firstChip = dateGrid.querySelector(`.date-chip[data-date-key="${firstDateKey}"]`);
-          if (firstChip) firstChip.classList.add("active");
-          renderTimeChips(firstDateKey, byDate.get(firstDateKey) || []);
-        }
-
-      } catch (err) {
-        console.error(err);
-        if (step2Error) {
-          step2Error.textContent = "Unable to load live slots. Please refresh and try again.";
-          step2Error.style.display = "block";
+      for (let i = 1; i <= 3; i++) {
+        const bar = document.querySelector(`[data-step-bar="${i}"]`);
+        bar.classList.remove("step-bar--active", "step-bar--done");
+        if (i < step) {
+          bar.classList.add("step-bar--done");
+        } else if (i === step) {
+          bar.classList.add("step-bar--active");
         }
       }
+
+      document.getElementById("form-step-1").style.display = step === 1 ? "block" : "none";
+      document.getElementById("form-step-2").style.display = step === 2 ? "block" : "none";
+      document.getElementById("form-step-3").style.display = step === 3 ? "block" : "none";
     }
 
-    function renderTimeChips(dateKey, slotsForDay) {
-      const timeGrid = document.getElementById("time-grid");
-      if (!timeGrid) return;
-      timeGrid.innerHTML = "";
-      selectedSlot = null;
-
-      if (!slotsForDay || !slotsForDay.length) {
-        timeGrid.innerHTML = '<div class="centered-message">No slots are available on this day. Please try another date.</div>';
-        return;
-      }
-
-      slotsForDay.forEach(slot => {
-        const istDate = new Date(slot.slot_datetime_ist);
-        const timeLabel = istDate.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "time-chip";
-        chip.dataset.slotId = slot.id;
-
-        const starHtml = slot.is_star_teacher
-          ? '<span class="star-tag"><span class="icon">⭐</span><span>Star teacher</span></span>'
-          : "";
-
-        chip.innerHTML = `
-          <div class="time-chip-header">
-            <span class="time-main-label">${ timeLabel }</span>
-            ${ starHtml }
-          </div>
-          <div class="slot-subtext">1:1 live class · 60 mins</div>
-        `;
-
-        chip.addEventListener("click", () => {
-          Array.from(timeGrid.querySelectorAll(".time-chip")).forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          selectedSlot = Object.assign({ }, slot, { local_time_label: timeLabel });
-        });
-
-        timeGrid.appendChild(chip);
+    document.querySelectorAll(".step-nav-back").forEach(el => {
+      el.addEventListener("click", () => {
+        const backTo = parseInt(el.dataset.backTo, 10);
+        setStep(backTo);
       });
-    }
-
-    function setupStep2Submit() {
-      const btn = document.getElementById("step-2-submit");
-      const errorEl = document.getElementById("step-2-error");
-      if (!btn) return;
-
-      btn.addEventListener("click", async () => {
-        hideAlert();
-        if (errorEl) errorEl.style.display = "none";
-
-        if (!currentLeadId) {
-          if (errorEl) {
-            errorEl.textContent = "Please complete Step 1 first.";
-            errorEl.style.display = "block";
-          }
-          return;
-        }
-
-        if (!selectedSlot) {
-          if (errorEl) {
-            errorEl.textContent = "Please select a date and time for your class.";
-            errorEl.style.display = "block";
-          }
-          return;
-        }
-
-        if (!selectedLanguage) {
-          if (errorEl) {
-            errorEl.textContent = "Please select your preferred language.";
-            errorEl.style.display = "block";
-          }
-          return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Confirming...";
-
-        try {
-          const updates = {
-            preferred_date: selectedSlot.slot_date,
-            preferred_time_slot: selectedSlot.local_time_label,
-            slot_id: selectedSlot.id,
-            lang: selectedLanguage,
-            page_completed: 2
-          };
-
-          const { error } = await supabaseClient
-            .from("demo_leads")
-            .update(updates)
-            .eq("id", currentLeadId);
-
-          if (error) {
-            console.error("Update step 2 error", error);
-            if (errorEl) {
-              errorEl.textContent = "Unable to confirm slot right now. Please try another time or date.";
-              errorEl.style.display = "block";
-            }
-          } else {
-            goToStep(3);
-          }
-        } catch (err) {
-          console.error(err);
-          if (errorEl) {
-            errorEl.textContent = "Something went wrong. Please try again.";
-            errorEl.style.display = "block";
-          }
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Confirm Class Time";
-        }
-      });
-    }
-
-    function setupStep3Submit() {
-      const btn = document.getElementById("step-3-submit");
-      const successEl = document.getElementById("step-3-success");
-      if (!btn || !successEl) return;
-
-      let whoValue = null;
-      let whyValue = null;
-      let whenValue = null;
-
-      setupChips("chip-who", (val) => { whoValue = val; });
-      setupChips("chip-why", (val) => { whyValue = val; });
-      setupChips("chip-when", (val) => { whenValue = val; });
-
-      btn.addEventListener("click", async () => {
-        hideAlert();
-        successEl.style.display = "none";
-
-        if (!currentLeadId) {
-          setAlert("Please start again from Step 1.", "error");
-          return;
-        }
-
-        if (!whoValue || !whyValue || !whenValue) {
-          setAlert("Please answer all the questions so we can personalise your experience.", "error");
-          return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Submitting...";
-
-        try {
-          const updates = {
-            who_are_you: whoValue,
-            booking_reason: whyValue,
-            purchase_timeline: whenValue,
-            page_completed: 3
-          };
-
-          const { error } = await supabaseClient
-            .from("demo_leads")
-            .update(updates)
-            .eq("id", currentLeadId);
-
-          if (error) {
-            console.error("Update step 3 error", error);
-            setAlert("Unable to save your responses right now. Please try again.", "error");
-          } else {
-            successEl.style.display = "block";
-          }
-        } catch (err) {
-          console.error(err);
-          setAlert("Something went wrong. Please try again.", "error");
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Submit";
-        }
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      parseUrlParams();
-      populateGrades();
-      setupLaptopToggle();
-      initPhoneInput();
-      setupStep1Form();
-      buildLanguagePills();
-      setupStep2Submit();
-      setupStep3Submit();
-      updateStepUI(1);
     });
+
+    // ---------- intl-tel-input (needs window.iti) ----------
+    import "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.5.6/js/intlTelInput.min.js";
+
+    const whatsappInput = document.getElementById("whatsapp-input");
+    const iti = window.intlTelInput(whatsappInput, {
+      initialCountry: "auto",
+      preferredCountries: ["us", "gb", "ae", "sa", "in", "ca"],
+      geoIpLookup: callback => {
+        fetch("https://ipapi.co/json/")
+          .then(res => res.json())
+          .then(data => callback(data.country_code ? data.country_code.toLowerCase() : "in"))
+          .catch(() => callback("in"));
+      },
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.5.6/js/utils.js"
+    });
+
+    // ---------- Laptop toggle ----------
+    let hasLaptop = "Yes";
+    document.getElementById("laptop-toggle").addEventListener("click", e => {
+      const pill = e.target.closest(".toggle-pill");
+      if (!pill) return;
+      hasLaptop = pill.dataset.value;
+      document.querySelectorAll("#laptop-toggle .toggle-pill").forEach(btn => btn.classList.remove("active"));
+      pill.classList.add("active");
+    });
+
+    // ---------- Step 1 SUBMIT ----------
+    let leadRow = null; // store row for later updates
+    let selectedSlotId = null;
+    let selectedLanguage = "english";
+
+    document.getElementById("btn-step-1").addEventListener("click", async () => {
+      const childName = document.getElementById("child-name").value.trim();
+      const grade = document.getElementById("child-grade").value;
+      const parentName = document.getElementById("parent-name").value.trim();
+      const parentEmail = document.getElementById("parent-email").value.trim();
+      const phoneNumberOnly = document.getElementById("phone-number-only").value.trim();
+
+      if (!phoneNumberOnly || !childName || !grade || !parentName || !parentEmail) {
+        showError("Please complete all fields on this step.");
+        return;
+      }
+
+      const phoneCountryCode = "+" + iti.getSelectedCountryData().dialCode;
+      const ipInfo = await fetch("https://ipapi.co/json/").then(r => r.json()).catch(() => null);
+
+      const insertPayload = {
+        child_name: childName,
+        child_grade: grade,
+        parent_name: parentName,
+        parent_email: parentEmail,
+        phone_country_code: phoneCountryCode,
+        phone_number: phoneNumberOnly,
+        has_laptop: hasLaptop,
+        lang: "english",
+        page_completed: 1,
+        ip_address: ipInfo?.ip ?? null,
+        city: ipInfo?.city ?? null,
+        country: ipInfo?.country_name ?? null,
+        timezone: ipInfo?.timezone ?? null
+      };
+
+      const { data, error } = await supabase.from("demo_leads").insert(insertPayload).select().maybeSingle();
+
+      if (error || !data) {
+        console.error(error);
+        showError("Unable to save your details. Please try again in a moment.");
+        return;
+      }
+
+      leadRow = data;
+      await loadSlots();
+      setStep(2);
+    });
+
+    // ---------- Load slots for STEP 2 ----------
+    let slots = [];
+
+    async function loadSlots() {
+      // Get next 6 days of slots from demo_slots_live view
+      const { data, error } = await supabase
+        .from("demo_slots_live")
+        .select("*")
+        .order("slot_datetime_local", { ascending: true })
+        .limit(200);
+
+      if (error) {
+        console.error(error);
+        showError("Unable to load time slots. Please refresh and try again.");
+        return;
+      }
+
+      slots = data || [];
+      renderDatesAndTimes();
+    }
+
+    function formatDateLabel(dateObj) {
+      const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const dayName = dayNames[dateObj.getDay()];
+      const date = String(dateObj.getDate()).padStart(2, "0");
+      const month = monthNames[dateObj.getMonth()];
+      return { dayName, date, month };
+    }
+
+    function formatTime12(dateObj) {
+      let hours = dateObj.getHours();
+      const minutes = dateObj.getMinutes();
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      if (hours === 0) hours = 12;
+      const hStr = String(hours).padStart(2, "0");
+      const mStr = String(minutes).padStart(2, "0");
+      return `${hStr}:${mStr} ${ampm}`;
+    }
+
+    function renderDatesAndTimes() {
+      if (!slots.length) return;
+
+      // Group slots by local date (yyyy-mm-dd)
+      const byDate = new Map();
+      for (const s of slots) {
+        const dt = new Date(s.slot_datetime_local);
+        const key = dt.toISOString().slice(0, 10);
+        if (!byDate.has(key)) byDate.set(key, []);
+        byDate.get(key).push(s);
+      }
+
+      const sortedDates = Array.from(byDate.keys()).sort();
+      const visibleDates = sortedDates.slice(0, 5); // show today + 4 days
+
+      const dateRow = document.getElementById("date-row");
+      dateRow.innerHTML = "";
+      let firstDateKey = null;
+      let lastDateKey = null;
+
+      visibleDates.forEach((key, idx) => {
+        if (!firstDateKey) firstDateKey = key;
+        lastDateKey = key;
+
+        const dateObj = new Date(key + "T00:00:00");
+        const { dayName, date, month } = formatDateLabel(dateObj);
+        const labelPrefix = idx === 0 ? "Today" : idx === 1 ? "Tomorrow" : dayName;
+
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "date-pill" + (idx === 0 ? " active" : "");
+        pill.dataset.dateKey = key;
+        pill.innerHTML = `<span class="label">${labelPrefix}</span><span class="value">${date} ${month}</span>`;
+        dateRow.appendChild(pill);
+      });
+
+      // Set date-range-label
+      if (firstDateKey && lastDateKey) {
+        const start = new Date(firstDateKey + "T00:00:00");
+        const end = new Date(lastDateKey + "T00:00:00");
+        const { date: sDate, month: sMonth } = formatDateLabel(start);
+        const { date: eDate, month: eMonth } = formatDateLabel(end);
+        const label =
+          sMonth === eMonth ? `${sDate}–${eDate} ${sMonth}` : `${sDate} ${sMonth} – ${eDate} ${eMonth}`;
+        document.getElementById("date-range-label").textContent = label;
+      }
+
+      // Click handlers
+      document.querySelectorAll(".date-pill").forEach(el => {
+        el.addEventListener("click", () => {
+          document.querySelectorAll(".date-pill").forEach(p => p.classList.remove("active"));
+          el.classList.add("active");
+          renderTimesForDate(el.dataset.dateKey, byDate);
+        });
+      });
+
+      // Initial times for first date
+      if (visibleDates.length) {
+        renderTimesForDate(visibleDates[0], byDate);
+      }
+    }
+
+    function renderTimesForDate(dateKey, byDate) {
+      const timeGrid = document.getElementById("time-grid");
+      timeGrid.innerHTML = "";
+      selectedSlotId = null;
+
+      const slotList = byDate.get(dateKey) || [];
+      slotList.forEach(slot => {
+        const dt = new Date(slot.slot_datetime_local);
+        const label = formatTime12(dt);
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "time-pill";
+        pill.dataset.slotId = slot.slot_id;
+        pill.innerHTML = `
+          <div class="time-main-row">
+            <span class="time">${label}</span>
+            ${slot.is_star_teacher ? `<span class="tag"><span class="star">⭐</span> Star teacher</span>` : ""}
+          </div>
+          <span class="meta">1:1 live class · 60 mins</span>
+        `;
+        timeGrid.appendChild(pill);
+      });
+
+      document.querySelectorAll(".time-pill").forEach(el => {
+        el.addEventListener("click", () => {
+          document.querySelectorAll(".time-pill").forEach(p => p.classList.remove("active"));
+          el.classList.add("active");
+          selectedSlotId = el.dataset.slotId;
+        });
+      });
+    }
+
+    // Language select
+    document.getElementById("language-row").addEventListener("click", e => {
+      const pill = e.target.closest(".language-pill");
+      if (!pill) return;
+      selectedLanguage = pill.dataset.lang;
+      document.querySelectorAll(".language-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+    });
+
+    // ---------- Step 2 SUBMIT ----------
+    document.getElementById("btn-step-2").addEventListener("click", async () => {
+      if (!leadRow) {
+        showError("Something went wrong. Please refresh and try again.");
+        return;
+      }
+      if (!selectedSlotId) {
+        showError("Please select a date and time for the class.");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("demo_leads")
+        .update({
+          slot_id: selectedSlotId,
+          lang: selectedLanguage,
+          page_completed: 2
+        })
+        .eq("id", leadRow.id);
+
+      if (error) {
+        console.error(error);
+        showError("Unable to save your selected time. Please try again.");
+        return;
+      }
+
+      showSuccess("Great! Final quick step to personalise your class.");
+      setStep(3);
+    });
+
+    // ---------- Step 3 choices & SUBMIT ----------
+    let whoAreYou = null;
+    let bookingReason = null;
+    let purchaseTimeline = null;
+
+    function setupChoiceRow(rowId, setter) {
+      const row = document.getElementById(rowId);
+      row.addEventListener("click", e => {
+        const pill = e.target.closest(".choice-pill");
+        if (!pill) return;
+        row.querySelectorAll(".choice-pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        setter(pill.dataset.value);
+      });
+    }
+
+    setupChoiceRow("who-row", val => (whoAreYou = val));
+    setupChoiceRow("reason-row", val => (bookingReason = val));
+    setupChoiceRow("timeline-row", val => (purchaseTimeline = val));
+
+    document.getElementById("btn-step-3").addEventListener("click", async () => {
+      if (!leadRow) {
+        showError("Something went wrong. Please refresh and try again.");
+        return;
+      }
+      const { error } = await supabase
+        .from("demo_leads")
+        .update({
+          who_are_you: whoAreYou,
+          booking_reason: bookingReason,
+          purchase_timeline: purchaseTimeline,
+          page_completed: 3
+        })
+        .eq("id", leadRow.id);
+
+      if (error) {
+        console.error(error);
+        showError("Unable to save your answers. Please try again.");
+        return;
+      }
+
+      showSuccess("All set! Your demo class is booked.");
+      // TODO: redirect to confirmation page
+    });
+
   </script>
 </body>
 </html>

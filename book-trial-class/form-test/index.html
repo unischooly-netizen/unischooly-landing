@@ -5,12 +5,12 @@
   <title>Book Now &amp; Get Certified | Unischooly</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    :root{
+    :root {
       --bg:#020617;
       --bg-soft:#05081a;
       --card:#050816;
-      --card-soft:#060a1c;
       --primary:#6366f1;
       --primary-soft:#818cf8;
       --accent:#22c55e;
@@ -18,15 +18,14 @@
       --text:#e5e7eb;
       --muted:#9ca3af;
       --border:#1f2937;
-      --radius-lg:18px;
-      --radius-md:12px;
-      --input-bg:#020617;
     }
-    *{box-sizing:border-box;}
+
+    * { box-sizing:border-box; }
+
     body{
       margin:0;
       min-height:100vh;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",sans-serif;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;
       background:radial-gradient(circle at top,#111827 0,#020617 48%,#000 100%);
       color:var(--text);
       display:flex;
@@ -34,38 +33,45 @@
       align-items:flex-start;
       padding:24px;
     }
+
     .shell{
       width:100%;
-      max-width:460px;
-      background:linear-gradient(145deg,rgba(148,163,184,0.16),transparent 40%) border-box,
-                 radial-gradient(circle at top left,rgba(96,165,250,0.16),transparent 55%) border-box,
-                 linear-gradient(180deg,#020617,#020617) padding-box;
+      max-width:470px;
+      background:
+        linear-gradient(145deg,rgba(148,163,184,0.16),transparent 40%) border-box,
+        radial-gradient(circle at top left,rgba(96,165,250,0.16),transparent 55%) border-box,
+        linear-gradient(180deg,#020617,#020617) padding-box;
       border-radius:26px;
       border:1px solid rgba(148,163,184,0.45);
       padding:18px 18px 20px;
       box-shadow:0 22px 60px rgba(15,23,42,0.9);
     }
+
     header{
       padding:4px 4px 10px;
     }
+
     h1{
       margin:0 0 4px;
-      font-size:1.55rem;
+      font-size:1.6rem;
       letter-spacing:-0.03em;
       background:linear-gradient(120deg,#f97316,#ec4899,#6366f1);
       -webkit-background-clip:text;
       color:transparent;
     }
+
     .subtitle{
       margin:0;
       font-size:0.88rem;
       color:var(--muted);
     }
+
     .step-label{
       margin-top:6px;
       font-size:0.78rem;
       color:var(--muted);
     }
+
     .progress-bar{
       margin-top:10px;
       height:4px;
@@ -84,6 +90,7 @@
     .progress-seg.current{
       background:linear-gradient(90deg,#22c55e,#6366f1);
     }
+
     main{
       margin-top:12px;
       background:radial-gradient(circle at top,rgba(15,23,42,0.9),rgba(2,6,23,1));
@@ -91,24 +98,28 @@
       border:1px solid rgba(31,41,55,0.9);
       padding:16px 14px 14px;
     }
-    .hidden{display:none !important;}
+
+    .hidden{ display:none !important; }
+
     label{
       font-size:0.82rem;
       display:block;
       margin-bottom:4px;
     }
-    .field{
-      margin-bottom:10px;
-    }
+
+    .field{ margin-bottom:10px; }
+
     .hint{
       font-size:0.75rem;
       color:var(--muted);
     }
+
     .stack{
       display:flex;
       gap:8px;
       align-items:stretch;
     }
+
     select,
     input[type="text"],
     input[type="tel"],
@@ -118,17 +129,19 @@
       padding:9px 10px;
       border-radius:999px;
       border:1px solid var(--border);
-      background:var(--input-bg);
+      background:#020617;
       color:var(--text);
       font-size:0.9rem;
       outline:none;
       transition:border-color 0.12s ease,box-shadow 0.12s ease,background 0.12s ease;
     }
+
     textarea{
-      border-radius:var(--radius-md);
+      border-radius:12px;
       resize:vertical;
       min-height:60px;
     }
+
     select:focus,
     input:focus,
     textarea:focus{
@@ -136,20 +149,17 @@
       box-shadow:0 0 0 1px rgba(129,140,248,0.55);
       background:#020617;
     }
+
     select{
       appearance:none;
-      background-image:linear-gradient(45deg,transparent 50%,#6b7280 50%),linear-gradient(135deg,#6b7280 50%,transparent 50%);
+      background-image:
+        linear-gradient(45deg,transparent 50%,#6b7280 50%),
+        linear-gradient(135deg,#6b7280 50%,transparent 50%);
       background-position:calc(100% - 14px) 52%,calc(100% - 9px) 52%;
       background-size:6px 6px,6px 6px;
       background-repeat:no-repeat;
     }
-    .input-caption{
-      display:flex;
-      justify-content:space-between;
-      font-size:0.72rem;
-      color:var(--muted);
-      margin-top:3px;
-    }
+
     .radio-row{
       display:flex;
       gap:12px;
@@ -157,6 +167,7 @@
       font-size:0.86rem;
       margin-top:4px;
     }
+
     .radio-row label{
       margin:0;
       display:flex;
@@ -164,6 +175,7 @@
       gap:6px;
       cursor:pointer;
     }
+
     .btn{
       border-radius:999px;
       border:none;
@@ -177,6 +189,7 @@
       gap:8px;
       transition:transform 0.08s ease,box-shadow 0.12s ease,background 0.12s ease,opacity 0.12s ease;
     }
+
     .btn-primary{
       width:100%;
       background:linear-gradient(135deg,#ec4899,#6366f1,#22c55e);
@@ -190,14 +203,7 @@
     }
     .btn-primary:active{
       transform:translateY(0);
-      box-shadow:0 12px 30px rgba(79,70,229,0.7);
-    }
-    .btn-outline{
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--muted);
-      padding:7px 12px;
-      font-size:0.82rem;
+      box-shadow:0 12px 30px rgba(79,70,229,0.6);
     }
     .btn[disabled]{
       opacity:0.6;
@@ -205,22 +211,28 @@
       box-shadow:none;
       transform:none;
     }
+
+    .btn-outline{
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--muted);
+      padding:7px 12px;
+      font-size:0.82rem;
+    }
+
     .cta-note{
       margin-top:4px;
       font-size:0.72rem;
       color:var(--muted);
       text-align:center;
     }
-    .error-text{
-      margin-top:6px;
-      font-size:0.78rem;
-      color:var(--danger);
-    }
+
     .global-error{
       margin-top:6px;
       font-size:0.8rem;
       color:var(--danger);
     }
+
     .top-row{
       display:flex;
       align-items:center;
@@ -229,6 +241,7 @@
       margin-bottom:8px;
       font-size:0.8rem;
     }
+
     .back-link{
       display:inline-flex;
       align-items:center;
@@ -246,39 +259,45 @@
       border-radius:999px;
       border:1px solid var(--border);
     }
+
     .pill-row{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
       margin-top:8px;
     }
+
     .date-pill{
       flex:1 1 calc(33.333% - 8px);
       min-width:90px;
       padding:8px 9px;
       text-align:left;
-      border-radius:var(--radius-md);
+      border-radius:12px;
       background:rgba(15,23,42,0.9);
       border:1px solid rgba(31,41,55,1);
       cursor:pointer;
       font-size:0.8rem;
     }
+
     .date-pill .dow{font-weight:600;font-size:0.8rem;}
     .date-pill .dom{font-size:0.78rem;color:var(--muted);}
+
     .date-pill.active{
       border-color:var(--primary-soft);
       box-shadow:0 12px 30px rgba(79,70,229,0.5);
       background:radial-gradient(circle at top,rgba(99,102,241,0.18),#020617);
     }
+
     .slots-wrap{
       margin-top:10px;
       max-height:220px;
       overflow-y:auto;
-      border-radius:var(--radius-md);
+      border-radius:12px;
       border:1px solid rgba(31,41,55,1);
       background:rgba(2,6,23,0.9);
       padding:6px;
     }
+
     .slot-row{
       display:flex;
       justify-content:space-between;
@@ -290,21 +309,26 @@
       font-size:0.82rem;
       border:1px solid transparent;
     }
-    .slot-row + .slot-row{margin-top:4px;}
+
+    .slot-row + .slot-row{ margin-top:4px; }
+
     .slot-row:hover{
       background:rgba(15,23,42,0.95);
       border-color:rgba(55,65,81,0.95);
     }
+
     .slot-row.active{
       background:radial-gradient(circle at top left,rgba(99,102,241,0.25),rgba(2,6,23,1));
       border-color:var(--primary-soft);
       box-shadow:0 0 0 1px rgba(79,70,229,0.7);
     }
+
     .slot-meta{
       font-size:0.74rem;
       color:var(--muted);
       margin-top:2px;
     }
+
     .tag-star{
       font-size:0.72rem;
       color:#fde68a;
@@ -316,13 +340,14 @@
       align-items:center;
       gap:4px;
     }
+
     .tag-star span.badge-dot{
-      width:8px;
-      height:8px;
+      width:8px;height:8px;
       border-radius:999px;
       background:radial-gradient(circle at 30% 0,#facc15,#eab308);
       box-shadow:0 0 0 4px rgba(234,179,8,0.4);
     }
+
     .lang-pill{
       padding:6px 10px;
       border-radius:999px;
@@ -331,27 +356,32 @@
       font-size:0.8rem;
       cursor:pointer;
     }
+
     .lang-pill.active{
       border-color:var(--primary-soft);
       background:radial-gradient(circle at top,rgba(99,102,241,0.3),rgba(2,6,23,1));
       box-shadow:0 0 0 1px rgba(79,70,229,0.6);
     }
+
     .section-title{
       font-size:0.9rem;
       font-weight:600;
       margin-top:4px;
     }
+
     .section-sub{
       font-size:0.76rem;
       color:var(--muted);
       margin-top:2px;
     }
+
     .chip-row{
       display:flex;
       flex-wrap:wrap;
       gap:7px;
       margin-top:6px;
     }
+
     .chip{
       border-radius:999px;
       border:1px solid rgba(31,41,55,1);
@@ -360,6 +390,7 @@
       font-size:0.8rem;
       cursor:pointer;
     }
+
     .chip.active{
       border-color:var(--primary-soft);
       background:radial-gradient(circle at top left,rgba(99,102,241,0.26),rgba(2,6,23,1));
@@ -372,7 +403,7 @@
   <header>
     <h1>Book Now &amp; Get Certified</h1>
     <p class="subtitle">Step 1 of 3 · Share your child &amp; parent details to unlock a personalised trial class.</p>
-    <div class="step-label">This is a simple 3-step form: details → time slot → motivation.</div>
+    <div class="step-label">Three quick steps: details → time slot → motivation.</div>
     <div class="progress-bar">
       <div class="progress-seg current" data-step-bar="1"></div>
       <div class="progress-seg" data-step-bar="2"></div>
@@ -384,16 +415,14 @@
     <!-- STEP 1 -->
     <form id="step-1" autocomplete="on">
       <div class="field">
-        <label for="phone-number">Parent WhatsApp Number<span style="color:#facc15;"> *</span></label>
+        <label>Parent WhatsApp Number<span style="color:#facc15;"> *</span></label>
         <div class="stack">
-          <div style="flex:0 0 130px;">
+          <div style="flex:0 0 140px;">
             <div class="hint" style="margin-bottom:3px;">Country code</div>
             <select id="phone-country-code"></select>
           </div>
           <div style="flex:1;">
-            <div class="hint" style="margin-bottom:3px;display:flex;justify-content:space-between;">
-              <span>Mobile number</span>
-            </div>
+            <div class="hint" style="margin-bottom:3px;">Mobile number</div>
             <input type="tel" id="phone-number" placeholder="Enter mobile number" inputmode="tel" required />
           </div>
         </div>
@@ -443,10 +472,11 @@
       </div>
 
       <button type="submit" class="btn btn-primary" id="step-1-submit">
-        <span>Book a Free Trial Class</span>
-        <span aria-hidden="true">✨</span>
+        <span>Book a Free Trial Class</span><span aria-hidden="true">✨</span>
       </button>
-      <div class="cta-note">Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.</div>
+      <div class="cta-note">
+        Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
+      </div>
       <div class="global-error" id="error-step-1" style="display:none;"></div>
     </form>
 
@@ -454,11 +484,11 @@
     <form id="step-2" class="hidden">
       <div class="top-row">
         <div class="back-link" data-back="1">
-          <span class="icon">←</span>
-          <span>Back</span>
+          <span class="icon">←</span><span>Back</span>
         </div>
         <div style="color:var(--muted);font-size:0.78rem;">Step 2 of 3</div>
       </div>
+
       <h2 class="section-title">Select Date &amp; Time</h2>
 
       <div class="field" style="margin-top:6px;">
@@ -488,8 +518,7 @@
       </div>
 
       <button type="submit" class="btn btn-primary" id="step-2-submit">
-        <span>Confirm Class Time</span>
-        <span aria-hidden="true">✅</span>
+        <span>Confirm Class Time</span><span aria-hidden="true">✅</span>
       </button>
       <div class="cta-note">
         Note: Free class will be conducted by reputed teachers.<br/>
@@ -502,8 +531,7 @@
     <form id="step-3" class="hidden">
       <div class="top-row">
         <div class="back-link" data-back="2">
-          <span class="icon">←</span>
-          <span>Back</span>
+          <span class="icon">←</span><span>Back</span>
         </div>
         <div style="color:var(--muted);font-size:0.78rem;">Step 3 of 3</div>
       </div>
@@ -539,13 +567,12 @@
       </div>
 
       <button type="submit" class="btn btn-primary" id="step-3-submit">
-        <span>Submit</span>
-        <span aria-hidden="true">🚀</span>
+        <span>Submit</span><span aria-hidden="true">🚀</span>
       </button>
       <div class="global-error" id="error-step-3" style="display:none;"></div>
     </form>
 
-    <!-- SUCCESS (brief, then redirect) -->
+    <!-- SUCCESS -->
     <section id="success-section" class="hidden">
       <h2 class="section-title">Your trial is booked! 🎉</h2>
       <p class="section-sub">Your trial is booked! Check your WhatsApp &amp; email for details.</p>
@@ -554,34 +581,49 @@
 </div>
 
 <script>
-  // ---------------- CONFIG ----------------
+  // ---------- CONFIG ----------
   const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+
+  // after step 3, redirect here (change if needed)
   const INTERIM_REDIRECT_URL = "/book-trial-class/interim";
+
+  // courseId from URL (?courseId=1)
   const COURSE_ID = Number(new URLSearchParams(window.location.search).get("courseId")) || 1;
 
+  // Minimal mapping; extend this array from your CSV as needed.
   const COUNTRY_OPTIONS = [
-    { code:"US", name:"United States", timeZone:"America/New_York", dialCode:"+1",  label:"United States — Eastern (ET) · +1",  region_key:"USA" },
-    { code:"US", name:"United States", timeZone:"America/Chicago",   dialCode:"+1",  label:"United States — Central (CT) · +1", region_key:"USA" },
-    { code:"US", name:"United States", timeZone:"America/Denver",    dialCode:"+1",  label:"United States — Mountain (MT) · +1", region_key:"USA" },
-    { code:"US", name:"United States", timeZone:"America/Los_Angeles", dialCode:"+1",label:"United States — Pacific (PT) · +1",  region_key:"USA" },
+    // US (multiple TZ, same region)
+    { code:"US", name:"United States — Eastern",  timeZone:"America/New_York",    dialCode:"+1",  region_key:"USA" },
+    { code:"US", name:"United States — Central",  timeZone:"America/Chicago",     dialCode:"+1",  region_key:"USA" },
+    { code:"US", name:"United States — Mountain", timeZone:"America/Denver",      dialCode:"+1",  region_key:"USA" },
+    { code:"US", name:"United States — Pacific",  timeZone:"America/Los_Angeles", dialCode:"+1",  region_key:"USA" },
 
-    { code:"IN", name:"India", timeZone:"Asia/Kolkata", dialCode:"+91", label:"India — IST (Asia/Kolkata) · +91", region_key:"INDIA" },
-    { code:"AE", name:"UAE", timeZone:"Asia/Dubai", dialCode:"+971", label:"UAE — Dubai (GMT+4) · +971", region_key:"MEA" },
-    { code:"SA", name:"Saudi Arabia", timeZone:"Asia/Riyadh", dialCode:"+966", label:"Saudi Arabia — Riyadh (GMT+3) · +966", region_key:"MEA" },
-    { code:"SG", name:"Singapore", timeZone:"Asia/Singapore", dialCode:"+65", label:"Singapore — Singapore · +65", region_key:"SEA" },
-    { code:"MY", name:"Malaysia", timeZone:"Asia/Kuala_Lumpur", dialCode:"+60", label:"Malaysia — Kuala Lumpur · +60", region_key:"SEA" },
-    { code:"ID", name:"Indonesia", timeZone:"Asia/Jakarta", dialCode:"+62", label:"Indonesia — Jakarta · +62", region_key:"SEA" },
-    { code:"PH", name:"Philippines", timeZone:"Asia/Manila", dialCode:"+63", label:"Philippines — Manila · +63", region_key:"SEA" },
-    { code:"TH", name:"Thailand", timeZone:"Asia/Bangkok", dialCode:"+66", label:"Thailand — Bangkok · +66", region_key:"SEA" },
-    { code:"VN", name:"Vietnam", timeZone:"Asia/Ho_Chi_Minh", dialCode:"+84", label:"Vietnam — Ho Chi Minh · +84", region_key:"SEA" },
-    { code:"GB", name:"United Kingdom", timeZone:"Europe/London", dialCode:"+44", label:"United Kingdom — London · +44", region_key:"EUROPE" },
-    { code:"DE", name:"Germany", timeZone:"Europe/Berlin", dialCode:"+49", label:"Germany — Berlin · +49", region_key:"EUROPE" },
-    { code:"FR", name:"France", timeZone:"Europe/Paris", dialCode:"+33", label:"France — Paris · +33", region_key:"EUROPE" }
-    // Add more as needed, keeping region_key matching your Supabase data
+    // India (adjust region_key if needed)
+    { code:"IN", name:"India — IST", timeZone:"Asia/Kolkata", dialCode:"+91", region_key:"INDIA" },
+
+    // MEA
+    { code:"AE", name:"UAE — Dubai (GMT+4)",      timeZone:"Asia/Dubai",  dialCode:"+971", region_key:"MEA" },
+    { code:"SA", name:"Saudi Arabia — Riyadh",    timeZone:"Asia/Riyadh", dialCode:"+966", region_key:"MEA" },
+
+    // SEA
+    { code:"SG", name:"Singapore",                timeZone:"Asia/Singapore",   dialCode:"+65", region_key:"SEA" },
+    { code:"MY", name:"Malaysia — Kuala Lumpur",  timeZone:"Asia/Kuala_Lumpur",dialCode:"+60", region_key:"SEA" },
+    { code:"ID", name:"Indonesia — Jakarta",      timeZone:"Asia/Jakarta",     dialCode:"+62", region_key:"SEA" },
+    { code:"PH", name:"Philippines — Manila",     timeZone:"Asia/Manila",      dialCode:"+63", region_key:"SEA" },
+    { code:"TH", name:"Thailand — Bangkok",       timeZone:"Asia/Bangkok",     dialCode:"+66", region_key:"SEA" },
+    { code:"VN", name:"Vietnam — Ho Chi Minh",    timeZone:"Asia/Ho_Chi_Minh", dialCode:"+84", region_key:"SEA" },
+
+    // Europe
+    { code:"GB", name:"United Kingdom — London",  timeZone:"Europe/London", dialCode:"+44", region_key:"EUROPE" },
+    { code:"DE", name:"Germany — Berlin",         timeZone:"Europe/Berlin", dialCode:"+49", region_key:"EUROPE" },
+    { code:"FR", name:"France — Paris",           timeZone:"Europe/Paris", dialCode:"+33", region_key:"EUROPE" }
   ];
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  function $(s){return document.querySelector(s);}
+  function $all(s){return Array.from(document.querySelectorAll(s));}
 
   let leadId = null;
   let selectedRegionKey = null;
@@ -590,10 +632,10 @@
   let selectedLang = "English";
   let utmParams = {};
   let clientMeta = {
-    ip_address: null,
-    browser: navigator.userAgent || null,
-    device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "mobile" : "desktop",
-    internet_speed_mbps: null
+    ip_address:null,
+    browser:navigator.userAgent || null,
+    device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?"mobile":"desktop",
+    internet_speed_mbps:null
   };
 
   try{
@@ -603,29 +645,27 @@
     }
   }catch(e){}
 
-  function $(sel){ return document.querySelector(sel); }
-  function $all(sel){ return Array.from(document.querySelectorAll(sel)); }
-
   function setStep(step){
     $("#step-1").classList.toggle("hidden", step !== 1);
     $("#step-2").classList.toggle("hidden", step !== 2);
     $("#step-3").classList.toggle("hidden", step !== 3);
     $("#success-section").classList.toggle("hidden", step !== 4);
-    $all("[data-step-bar]").forEach(el => {
-      const s = Number(el.getAttribute("data-step-bar"));
-      el.classList.remove("current","active");
+
+    $all("[data-step-bar]").forEach(el=>{
+      const s = Number(el.dataset.stepBar);
+      el.classList.remove("active","current");
       if(s < step) el.classList.add("active");
       if(s === step) el.classList.add("current");
     });
   }
 
-  function qsError(step){ return document.getElementById("error-step-" + step); }
+  function qsError(step){ return document.getElementById("error-step-"+step); }
 
   function parseUtm(){
     const params = new URLSearchParams(window.location.search);
-    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content"].forEach(k => {
+    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content"].forEach(k=>{
       const v = params.get(k);
-      if(v) utmParams[k] = v;
+      if(v) utmParams[k]=v;
     });
   }
 
@@ -637,9 +677,10 @@
       clientMeta.ip_address = data.ip || null;
       const cc = data.country || data.country_code;
       if(cc){
-        const match = COUNTRY_OPTIONS.find(c => c.code === cc);
+        const match = COUNTRY_OPTIONS.find(c=>c.code === cc);
         if(match){
-          $("#phone-country-code").value = match.dialCode + "|" + match.timeZone + "|" + match.region_key + "|" + match.name;
+          $("#phone-country-code").value =
+            match.dialCode+"|"+match.timeZone+"|"+match.region_key+"|"+match.name;
           selectedRegionKey = match.region_key;
           selectedTimezone = match.timeZone;
         }
@@ -651,28 +692,28 @@
 
   function initCountryDropdown(){
     const select = $("#phone-country-code");
-    COUNTRY_OPTIONS.forEach(opt => {
-      const option = document.createElement("option");
-      option.value = opt.dialCode + "|" + opt.timeZone + "|" + opt.region_key + "|" + opt.name;
-      option.textContent = opt.dialCode + " " + opt.name;
-      select.appendChild(option);
+    COUNTRY_OPTIONS.forEach(opt=>{
+      const o = document.createElement("option");
+      o.value = opt.dialCode+"|"+opt.timeZone+"|"+opt.region_key+"|"+opt.name;
+      o.textContent = `${opt.dialCode} ${opt.name}`;
+      select.appendChild(o);
     });
-    select.addEventListener("change", () => {
-      const [dial,timeZone,regionKey,_name] = select.value.split("|");
-      selectedRegionKey = regionKey;
-      selectedTimezone = timeZone;
+    select.addEventListener("change",()=>{
+      const [dial,tz,region,name] = select.value.split("|");
+      selectedRegionKey = region;
+      selectedTimezone = tz;
     });
     if(select.options.length){
-      const [dial,timeZone,regionKey,_name] = select.options[0].value.split("|");
-      selectedRegionKey = regionKey;
-      selectedTimezone = timeZone;
+      const [dial,tz,region,name] = select.options[0].value.split("|");
+      selectedRegionKey = region;
+      selectedTimezone = tz;
     }
   }
 
   async function saveLeadStep1(){
-    const dialData = $("#phone-country-code").value.split("|");
-    const phone_country_code = dialData[0];
-    const countryName = dialData[3];
+    const [phone_country_code, tz, region_key, countryName] =
+      $("#phone-country-code").value.split("|");
+
     const phone_number = $("#phone-number").value.trim();
     const child_name = $("#child-name").value.trim();
     const child_grade = $("#child-grade").value;
@@ -682,28 +723,28 @@
 
     const payload = {
       child_name,
-      child_grade: String(child_grade),
+      child_grade:String(child_grade),
       parent_name,
       parent_email,
       phone_country_code,
       phone_number,
-      is_whatsapp: true,
-      has_laptop: hasLaptop ? "yes" : "no",
-      course_id: COURSE_ID,
-      region_key: selectedRegionKey,
-      country: countryName,
-      timezone: selectedTimezone,
-      landing_page_path: window.location.pathname,
-      full_url: window.location.href,
-      ip_address: clientMeta.ip_address,
-      browser: clientMeta.browser,
-      device_type: clientMeta.device_type,
-      internet_speed_mbps: clientMeta.internet_speed_mbps,
-      page_completed: 1,
+      is_whatsapp:true,
+      has_laptop:hasLaptop?"yes":"no",
+      course_id:COURSE_ID,
+      region_key:region_key,
+      country:countryName,
+      timezone:tz,
+      landing_page_path:window.location.pathname,
+      full_url:window.location.href,
+      ip_address:clientMeta.ip_address,
+      browser:clientMeta.browser,
+      device_type:clientMeta.device_type,
+      internet_speed_mbps:clientMeta.internet_speed_mbps,
+      page_completed:1,
       ...utmParams
     };
 
-    // try insert; if unique phone conflict, update existing
+    // insert; if unique phone conflict, update instead
     const { data, error } = await supabase
       .from("demo_leads")
       .insert(payload)
@@ -718,9 +759,7 @@
           .eq("phone_country_code", phone_country_code)
           .eq("phone_number", phone_number)
           .maybeSingle();
-        if(existing.error){
-          throw existing.error;
-        }
+        if(existing.error) throw existing.error;
         if(existing.data && existing.data.id){
           leadId = existing.data.id;
           const upd = await supabase
@@ -732,8 +771,9 @@
         }
       }
       throw error;
-    }else{
-      leadId = data && data.id ? data.id : (Array.isArray(data) && data[0] && data[0].id) || leadId;
+    } else {
+      leadId = data && data.id ? data.id :
+               (Array.isArray(data) && data[0] && data[0].id) || leadId;
     }
   }
 
@@ -741,7 +781,7 @@
     const out = [];
     const now = new Date();
     for(let i=0;i<days;i++){
-      const d = new Date(now.getTime() + i * 24*60*60*1000);
+      const d = new Date(now.getTime() + i*24*60*60*1000);
       const parts = new Intl.DateTimeFormat("en-CA",{
         timeZone:"Asia/Kolkata",
         year:"numeric",
@@ -772,7 +812,7 @@
 
     const range = getIstDateRange(6);
     const fromIso = range[0].iso;
-    const toIso = range[range.length - 1].iso;
+    const toIso = range[range.length-1].iso;
 
     const { data, error } = await supabase
       .from("demo_slots_live_view")
@@ -795,25 +835,27 @@
     });
 
     const grouped = {};
-    slots.forEach(s => {
-      if(s.capacity_remaining !== undefined && s.capacity_remaining <= 0) return;
-      if(!grouped[s.slot_date]) grouped[s.slot_date] = [];
+    slots.forEach(s=>{
+      if(!grouped[s.slot_date]) grouped[s.slot_date]=[];
       grouped[s.slot_date].push(s);
     });
 
-    range.forEach(({iso,js}, idx) => {
+    range.forEach(({iso,js})=>{
       const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "date-pill";
+      btn.type="button";
+      btn.className="date-pill";
       btn.dataset.dateIso = iso;
-      btn.innerHTML = `<div class="dow">${js.toLocaleDateString(undefined,{weekday:"short"})}</div>
-                       <div class="dom">${js.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</div>
-                       <div class="dom">${(grouped[iso]||[]).length ? (grouped[iso].length + " slots") : "No slots"}</div>`;
-      if(!(grouped[iso]||[]).length){
+      const count = (grouped[iso] || []).length;
+      btn.innerHTML = `
+        <div class="dow">${js.toLocaleDateString(undefined,{weekday:"short"})}</div>
+        <div class="dom">${js.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</div>
+        <div class="dom">${count ? count+" slots" : "No slots"}</div>
+      `;
+      if(!count){
         btn.disabled = true;
         btn.style.opacity = "0.5";
       }else{
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click",()=>{
           $all(".date-pill").forEach(p=>p.classList.remove("active"));
           btn.classList.add("active");
           renderSlotsForDate(grouped[iso]);
@@ -824,7 +866,7 @@
 
     const firstWithSlots = range.find(r => (grouped[r.iso]||[]).length);
     if(firstWithSlots){
-      const btn = $all(".date-pill").find(b => b.dataset.dateIso === firstWithSlots.iso);
+      const btn = $all(".date-pill").find(b=>b.dataset.dateIso===firstWithSlots.iso);
       if(btn) btn.click();
     }else{
       slotsWrap.innerHTML = '<div class="hint">No live slots available in the next 6 days for your region.</div>';
@@ -838,20 +880,28 @@
 
     const tz = selectedTimezone || "UTC";
 
-    slotsForDate.slice().sort((a,b)=>{
+    const sorted = slotsForDate.slice().sort((a,b)=>{
       const da = new Date(a.slot_datetime_local || a.slot_datetime_ist);
       const db = new Date(b.slot_datetime_local || b.slot_datetime_ist);
       return da - db;
-    }).forEach(slot => {
+    });
+
+    if(!sorted.length){
+      wrap.innerHTML = '<div class="hint">No slots available for this date.</div>';
+      return;
+    }
+
+    sorted.forEach(slot=>{
       const iso = slot.slot_datetime_local || slot.slot_datetime_ist;
       const localLabel = new Date(iso).toLocaleTimeString(undefined,{
         hour:"2-digit",
         minute:"2-digit",
         hour12:true,
-        timeZone: tz
+        timeZone:tz
       });
+
       const row = document.createElement("div");
-      row.className = "slot-row";
+      row.className="slot-row";
       row.dataset.slotId = slot.slot_id || slot.id;
       row.innerHTML = `
         <div>
@@ -860,7 +910,7 @@
         </div>
         ${slot.is_star_teacher ? `<div class="tag-star"><span class="badge-dot"></span><span>Star Teacher</span></div>` : ""}
       `;
-      row.addEventListener("click", () => {
+      row.addEventListener("click",()=>{
         $all(".slot-row").forEach(r=>r.classList.remove("active"));
         row.classList.add("active");
         selectedSlot = {
@@ -877,12 +927,12 @@
   async function saveLeadStep2(){
     if(!selectedSlot) throw new Error("No slot selected");
     const payload = {
-      preferred_date: selectedSlot.slot_date,
-      preferred_time_slot: selectedSlot.local_label,
-      slot_id: selectedSlot.slot_id,
-      lang: selectedLang,
-      star_teacher_selected: selectedSlot.is_star_teacher,
-      page_completed: 2
+      preferred_date:selectedSlot.slot_date,
+      preferred_time_slot:selectedSlot.local_label,
+      slot_id:selectedSlot.slot_id,
+      lang:selectedLang,
+      star_teacher_selected:selectedSlot.is_star_teacher,
+      page_completed:2
     };
     if(leadId){
       const { error } = await supabase
@@ -893,7 +943,7 @@
     }else{
       const { data, error } = await supabase
         .from("demo_leads")
-        .insert({ ...payload, course_id: COURSE_ID })
+        .insert({ ...payload, course_id:COURSE_ID })
         .select("id")
         .maybeSingle();
       if(error) throw error;
@@ -903,10 +953,10 @@
 
   async function saveLeadStep3(who,reason,timeline){
     const payload = {
-      who_are_you: who,
-      booking_reason: reason,
-      purchase_timeline: timeline,
-      page_completed: 3
+      who_are_you:who,
+      booking_reason:reason,
+      purchase_timeline:timeline,
+      page_completed:3
     };
     if(leadId){
       const { error } = await supabase
@@ -917,7 +967,7 @@
     }else{
       const { data, error } = await supabase
         .from("demo_leads")
-        .insert({ ...payload, course_id: COURSE_ID })
+        .insert({ ...payload, course_id:COURSE_ID })
         .select("id")
         .maybeSingle();
       if(error) throw error;
@@ -925,86 +975,100 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded",()=>{
     initCountryDropdown();
     detectCountry();
     parseUtm();
+    setStep(1);
 
-    $("#step-1").addEventListener("submit", async (e) => {
+    $("#step-1").addEventListener("submit",async e=>{
       e.preventDefault();
       const errBox = qsError(1);
-      errBox.style.display = "none";
-      const btn = $("#step-1-submit");
-      const phoneNumber = $("#phone-number").value.trim();
-      const childName = $("#child-name").value.trim();
+      errBox.style.display="none";
+
+      const phone = $("#phone-number").value.trim();
+      const child = $("#child-name").value.trim();
       const grade = $("#child-grade").value;
-      const parentName = $("#parent-name").value.trim();
+      const parent = $("#parent-name").value.trim();
       const email = $("#parent-email").value.trim();
-      if(!phoneNumber || !childName || !grade || !parentName || !email){
-        errBox.textContent = "Please fill all required fields."; errBox.style.display="block"; return;
+
+      if(!phone || !child || !grade || !parent || !email){
+        errBox.textContent = "Please fill all required fields.";
+        errBox.style.display="block";
+        return;
       }
+
+      const btn = $("#step-1-submit");
       btn.disabled = true;
       btn.textContent = "Saving details…";
+
       try{
         await saveLeadStep1();
         setStep(2);
         await loadSlotsForRange();
       }catch(err){
         console.error("Step1 error", err);
-        errBox.textContent = "We couldn't save your details. Please try again."; errBox.style.display="block";
+        errBox.textContent = "We couldn't save your details. Please try again.";
+        errBox.style.display="block";
       }finally{
         btn.disabled = false;
         btn.textContent = "Book a Free Trial Class";
       }
     });
 
-    $all("[data-back]").forEach(el => {
-      el.addEventListener("click", () => {
-        const step = Number(el.getAttribute("data-back"));
+    $all("[data-back]").forEach(el=>{
+      el.addEventListener("click",()=>{
+        const step = Number(el.dataset.back);
         setStep(step);
       });
     });
 
-    $("#step-2").addEventListener("submit", async (e) => {
+    $("#step-2").addEventListener("submit",async e=>{
       e.preventDefault();
       const errBox = qsError(2);
-      errBox.style.display = "none";
+      errBox.style.display="none";
+
       if(!selectedSlot){
-        errBox.textContent = "Please select a class time."; errBox.style.display="block"; return;
+        errBox.textContent = "Please select a class time.";
+        errBox.style.display="block";
+        return;
       }
+
       const btn = $("#step-2-submit");
       btn.disabled = true;
       btn.textContent = "Locking your slot…";
+
       try{
         await saveLeadStep2();
         setStep(3);
       }catch(err){
         console.error("Step2 error", err);
-        errBox.textContent = "We couldn't save your selected slot. Please try again."; errBox.style.display="block";
+        errBox.textContent = "We couldn't save your selected slot. Please try again.";
+        errBox.style.display="block";
       }finally{
         btn.disabled = false;
         btn.textContent = "Confirm Class Time";
       }
     });
 
-    $all(".lang-pill").forEach(p => {
-      p.addEventListener("click", () => {
-        $all(".lang-pill").forEach(x => x.classList.remove("active"));
+    $all(".lang-pill").forEach(p=>{
+      p.addEventListener("click",()=>{
+        $all(".lang-pill").forEach(x=>x.classList.remove("active"));
         p.classList.add("active");
-        selectedLang = p.getAttribute("data-lang");
+        selectedLang = p.dataset.lang;
       });
     });
 
     function initChipGroup(id, attr){
-      const chips = $all("#" + id + " .chip");
-      chips.forEach(ch => {
-        ch.addEventListener("click", () => {
-          chips.forEach(c => c.classList.remove("active"));
+      const chips = $all("#"+id+" .chip");
+      chips.forEach(ch=>{
+        ch.addEventListener("click",()=>{
+          chips.forEach(c=>c.classList.remove("active"));
           ch.classList.add("active");
         });
       });
-      return () => {
-        const active = chips.find(c => c.classList.contains("active"));
+      return ()=> {
+        const active = chips.find(c=>c.classList.contains("active"));
         return active ? active.getAttribute(attr) : null;
       };
     }
@@ -1013,35 +1077,38 @@
     const getReason = initChipGroup("reason-chips","data-reason");
     const getTimeline = initChipGroup("timeline-chips","data-timeline");
 
-    $("#step-3").addEventListener("submit", async (e) => {
+    $("#step-3").addEventListener("submit",async e=>{
       e.preventDefault();
       const errBox = qsError(3);
-      errBox.style.display = "none";
+      errBox.style.display="none";
+
       const who = getWho();
       const reason = getReason();
       const timeline = getTimeline();
+
       if(!who || !reason || !timeline){
-        errBox.textContent = "Please select all options."; errBox.style.display="block"; return;
+        errBox.textContent = "Please select all options.";
+        errBox.style.display="block";
+        return;
       }
+
       const btn = $("#step-3-submit");
       btn.disabled = true;
       btn.textContent = "Submitting…";
+
       try{
         await saveLeadStep3(who,reason,timeline);
         setStep(4);
-        setTimeout(() => {
-          window.location.href = INTERIM_REDIRECT_URL;
-        }, 1200);
+        setTimeout(()=>{ window.location.href = INTERIM_REDIRECT_URL; }, 1200);
       }catch(err){
         console.error("Step3 error", err);
-        errBox.textContent = "We couldn't submit your booking. Please try again."; errBox.style.display="block";
+        errBox.textContent = "We couldn't submit your booking. Please try again.";
+        errBox.style.display="block";
       }finally{
         btn.disabled = false;
         btn.textContent = "Submit";
       }
     });
-
-    setStep(1);
   });
 </script>
 </body>

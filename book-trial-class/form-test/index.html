@@ -989,7 +989,7 @@
       const minMinutesToday = now.getHours() * 60 + now.getMinutes() + 60;
 
       const { data, error } = await client
-        .from("demo_slots_live")
+        .from("demo_slots_live_view")
         .select(
           "slot_id, slot_date, slot_datetime_local, is_star_teacher, region_key, course_id"
         )

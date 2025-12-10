@@ -711,495 +711,537 @@
     </section>
   </div>
 
-  <script type="module">
-  // ---------- CONFIG ----------
-  const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+  <script>
+    // ===== CONFIG =====
+    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
-  // ⚠️ This is only for BACKEND TEST.
-  // In your real form we will read region_key + timezone from demo_leads.
-  const TEST_REGION = {
-    regionKey: "MEA",          // same region you used for UAE
-    courseId: 1,               // Coding course
-    timeZone: "Asia/Dubai"     // UAE timezone
-  };
+    const { createClient } = supabase;
+    const supa = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseIdParam = urlParams.get("courseId") || urlParams.get("course") || "1";
+    const courseId = parseInt(courseIdParam, 10) || 1;
+    const langParam = (urlParams.get("lang") || "english").toLowerCase();
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // For this backend test we fix region to MEA (you can change to USA, ASIA, etc. if needed)
+    const REGION_KEY = "MEA";
+    const COUNTRY_NAME = "Backend Test Country";
 
-  // ---------- HELPERS ----------
+    // ===== STATE =====
+    let leadRow = null;
+    let leadId = null;
 
-  function getInternetSpeedMbps() {
-    const nav = navigator;
-    const conn =
-      nav.connection || nav.mozConnection || nav.webkitConnection || null;
-    if (!conn || typeof conn.downlink !== "number") return null;
-    // Round to 1 decimal place
-    return Math.round(conn.downlink * 10) / 10;
-  }
+    let hasLaptop = "yes";
+    let selectedDateKey = null;
+    let selectedSlot = null;
+    let language = "english";
 
-  function formatDateRangeLabel(minDate, maxDate, timeZone) {
-    const opt = { day: "2-digit", month: "short", year: "numeric", timeZone };
-    const minStr = minDate.toLocaleDateString("en-GB", opt);
-    const maxStr = maxDate.toLocaleDateString("en-GB", opt);
-    return `${minStr} – ${maxStr}`;
-  }
+    let whoValue = null;
+    let whyValue = null;
+    let whenValue = null;
 
-  function makeDateKey(date, timeZone) {
-    // Returns YYYY-MM-DD in the given timeZone
-    return date.toLocaleDateString("en-CA", { timeZone }); // en-CA => 2025-12-10
-  }
-
-  function formatDayLabels(date, todayKey, tomorrowKey, timeZone) {
-    const dateKey = makeDateKey(date, timeZone);
-    const bottomLabel = date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      timeZone,
-    }); // 10 Dec
-
-    let topLabel;
-    if (dateKey === todayKey) topLabel = "Today";
-    else if (dateKey === tomorrowKey) topLabel = "Tomorrow";
-    else {
-      topLabel = date.toLocaleDateString("en-GB", {
-        weekday: "short",
-        timeZone,
-      }); // Mon, Tue...
+    // ===== HELPERS =====
+    function showError(msg) {
+      const banner = document.getElementById("error-banner");
+      const text = document.getElementById("error-text");
+      text.textContent = msg;
+      banner.classList.add("show");
+      setTimeout(() => banner.classList.remove("show"), 6000);
     }
-    return { topLabel, bottomLabel, dateKey };
-  }
 
-  function formatTimeLabel(date, timeZone) {
-    return date
-      .toLocaleTimeString("en-US", {
-        timeZone,
-        hour: "numeric",
+    function showSuccess(msg) {
+      const banner = document.getElementById("success-banner");
+      const text = document.getElementById("success-text");
+      text.textContent = msg;
+      banner.classList.add("show");
+      setTimeout(() => banner.classList.remove("show"), 5000);
+    }
+
+    function setStep(step) {
+      document.getElementById("step-label").textContent = step;
+      const titles = {
+        1: "Details",
+        2: "Date & Time",
+        3: "Motivation",
+      };
+      document.getElementById("step-title").textContent = titles[step];
+
+      document.getElementById("step-1").style.display = step === 1 ? "block" : "none";
+      document.getElementById("step-2").style.display = step === 2 ? "block" : "none";
+      document.getElementById("step-3").style.display = step === 3 ? "block" : "none";
+
+      const bar2 = document.getElementById("step-bar-2");
+      const bar3 = document.getElementById("step-bar-3");
+
+      bar2.className = "step-bar";
+      bar3.className = "step-bar";
+
+      if (step >= 2) bar2.classList.add("completed");
+      if (step === 2) bar2.classList.add("active");
+      if (step === 3) {
+        bar2.classList.add("completed");
+        bar3.classList.add("completed");
+        bar3.classList.add("active");
+      }
+    }
+
+    function getTimezone() {
+      try {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+      } catch {
+        return null;
+      }
+    }
+
+    function formatDateLabel(date) {
+      const today = new Date();
+      const diffDays = Math.floor((date - startOfDay(today)) / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return "Today";
+      if (diffDays === 1) return "Tomorrow";
+      return date.toLocaleDateString(undefined, { weekday: "short" });
+    }
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function formatDateKey(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatDayMonth(date) {
+      return date.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
+    }
+
+    function formatTimeLocal(date) {
+      return date.toLocaleTimeString(undefined, {
+        hour: "2-digit",
         minute: "2-digit",
         hour12: true,
-      })
-      .toLowerCase(); // e.g. "6:00 pm"
-  }
+      });
+    }
 
-  function getNowInZone(timeZone) {
-    // Build a Date that represents "now" in given zone
-    const now = new Date();
-    const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    })
-      .formatToParts(now)
-      .reduce((acc, p) => {
-        acc[p.type] = p.value;
-        return acc;
-      }, {});
+    
+    // ===== CLIENT INFO HELPERS (IP, CITY, DEVICE, BROWSER) =====
+    let cachedClientInfo = null;
 
-    const isoLike = `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:00`;
-    return new Date(isoLike);
-  }
+    async function fetchClientInfo() {
+      if (cachedClientInfo) return cachedClientInfo;
+      try {
+        const resp = await fetch("https://ipapi.co/json/");
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        cachedClientInfo = data;
+        return data;
+      } catch (err) {
+        console.error("Error fetching client info", err);
+        return null;
+      }
+    }
 
-  // ---------- STATE ----------
-  let currentStep = 1;
-  let currentLead = null; // { id, region_key, timezone, lang, ... }
-  let groupedSlots = {};  // dateKey -> { date, slots[] }
-  let selectedDateKey = null;
-  let selectedSlot = null;
-  let selectedLanguage = "english";
+    function detectDeviceInfo() {
+      const ua = navigator.userAgent || "";
+      let device_type = "desktop";
+      if (/Mobi|Android|iPhone|iPod/i.test(ua)) device_type = "mobile";
+      if (/iPad|Tablet/i.test(ua)) device_type = "tablet";
 
-  // DOM elements (ids/classes are from the existing test layout)
-  const step1Card = document.querySelector("[data-step='1']");
-  const step2Card = document.querySelector("[data-step='2']");
-  const step3Card = document.querySelector("[data-step='3']");
+      let browser = "Unknown";
+      if (ua.includes("Edg/")) browser = "Edge";
+      else if (ua.includes("OPR/") || ua.includes("Opera")) browser = "Opera";
+      else if (ua.includes("Chrome/") && !ua.includes("Chromium") && !ua.includes("Edg/"))
+        browser = "Chrome";
+      else if (ua.includes("Safari/") && !ua.includes("Chrome/")) browser = "Safari";
+      else if (ua.includes("Firefox/")) browser = "Firefox";
 
-  const pageProgressBars = document.querySelectorAll(".step-progress-bar");
+      return { device_type, browser };
+    }
 
-  const dateContainer = document.getElementById("slot-dates");
-  const timeContainer = document.getElementById("slot-times");
-  const dateRangeLabelEl = document.getElementById("date-range-label");
-  const languageSelect = document.getElementById("language-select");
-  const selectedTimeSummaryEl = document.getElementById("selected-time-summary");
+// ===== STEP 1 LOGIC =====
+    const laptopYesBtn = document.getElementById("laptop-yes");
+    const laptopNoBtn = document.getElementById("laptop-no");
 
-  const btnStep1Next = document.getElementById("btn-step1-next");
-  const btnStep2Back = document.getElementById("btn-step2-back");
-  const btnStep2Next = document.getElementById("btn-step2-next");
-  const btnStep3Submit = document.getElementById("btn-step3-submit");
-
-  const leadForm = document.getElementById("lead-form");
-  const motivationsForm = document.getElementById("motivations-form");
-
-  // ---------- UI STEP CONTROL ----------
-
-  function updateStepUI() {
-    step1Card.style.display = currentStep === 1 ? "block" : "none";
-    step2Card.style.display = currentStep === 2 ? "block" : "none";
-    step3Card.style.display = currentStep === 3 ? "block" : "none";
-
-    pageProgressBars.forEach((bar, index) => {
-      if (index < currentStep) bar.classList.add("is-active");
-      else bar.classList.remove("is-active");
+    laptopYesBtn.addEventListener("click", () => {
+      hasLaptop = "yes";
+      laptopYesBtn.classList.add("active");
+      laptopYesBtn.classList.remove("inactive");
+      laptopNoBtn.classList.remove("active");
+      laptopNoBtn.classList.add("inactive");
     });
-  }
 
-  function goToStep(step) {
-    currentStep = step;
-    updateStepUI();
-  }
+    laptopNoBtn.addEventListener("click", () => {
+      hasLaptop = "no";
+      laptopNoBtn.classList.add("active");
+      laptopNoBtn.classList.remove("inactive");
+      laptopYesBtn.classList.remove("active");
+      laptopYesBtn.classList.add("inactive");
+    });
 
-  // ---------- STEP 1 – LEAD CREATION + INTERNET SPEED ----------
+    document.getElementById("btn-step-1").addEventListener("click", async () => {
+      const phoneCountryCode = document.getElementById("phone-country-code").value.trim();
+      const phoneNumber = document.getElementById("phone-number").value.trim();
+      const childName = document.getElementById("child-name").value.trim();
+      const childGrade = document.getElementById("child-grade").value;
+      const parentName = document.getElementById("parent-name").value.trim();
+      const parentEmail = document.getElementById("parent-email").value.trim();
 
-  async function handleStep1Submit(event) {
-    event.preventDefault();
-    btnStep1Next.disabled = true;
-    btnStep1Next.textContent = "Saving...";
-
-    // Minimal fields for backend test – adjust to your actual form ids
-    const phoneCode = document.getElementById("phone-country-code").value.trim();
-    const phoneNumber = document.getElementById("phone-number").value.trim();
-    const childName = document.getElementById("child-name").value.trim();
-    const childGrade = document.getElementById("child-grade").value.trim();
-    const parentName = document.getElementById("parent-name").value.trim();
-    const parentEmail = document.getElementById("parent-email").value.trim();
-    const hasLaptop = document.querySelector(
-      'input[name="has-laptop"]:checked'
-    )?.value;
-
-    if (
-      !phoneCode ||
-      !phoneNumber ||
-      !childName ||
-      !childGrade ||
-      !parentName ||
-      !parentEmail
-    ) {
-      alert("Please fill all required fields.");
-      btnStep1Next.disabled = false;
-      btnStep1Next.textContent = "Book a Free Trial Class";
-      return;
-    }
-
-    const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const internetSpeed = getInternetSpeedMbps();
-
-    const payload = {
-      child_name: childName,
-      child_grade: childGrade,
-      parent_name: parentName,
-      parent_email: parentEmail,
-      phone_country_code: phoneCode,
-      phone_number: phoneNumber,
-      has_laptop: hasLaptop,
-      // NEW: save internet speed
-      internet_speed_mbps: internetSpeed,
-      // For this backend test, we fix region+timezone.
-      region_key: TEST_REGION.regionKey,
-      timezone: TEST_REGION.timeZone,
-      course_id: TEST_REGION.courseId,
-      lang: "english",
-      page_completed: 1,
-      full_url: window.location.href,
-      landing_page_path: window.location.pathname,
-    };
-
-    const { data, error } = await supabase
-      .from("demo_leads")
-      .upsert(payload, {
-        onConflict: "phone_country_code,phone_number",
-        ignoreDuplicates: false,
-      })
-      .select("*")
-      .single();
-
-    btnStep1Next.disabled = false;
-    btnStep1Next.textContent = "Book a Free Trial Class";
-
-    if (error) {
-      console.error(error);
-      alert("Unable to save your details. Please try again.");
-      return;
-    }
-
-    currentLead = data;
-    await loadSlotsForLead(); // prepare Step 2
-    goToStep(2);
-  }
-
-  // ---------- STEP 2 – LOAD & DISPLAY SLOTS CORRECTLY ----------
-
-  async function loadSlotsForLead() {
-    if (!currentLead) return;
-
-    const regionKey = currentLead.region_key || TEST_REGION.regionKey;
-    const courseId = currentLead.course_id || TEST_REGION.courseId;
-    const timeZone = currentLead.timezone || TEST_REGION.timeZone;
-
-    // today + next 5 days based on REGION timezone
-    const nowInZone = getNowInZone(timeZone);
-    const todayKey = makeDateKey(nowInZone, timeZone);
-
-    const tomorrow = new Date(nowInZone.getTime() + 24 * 60 * 60 * 1000);
-    const tomorrowKey = makeDateKey(tomorrow, timeZone);
-
-    const lastDay = new Date(nowInZone.getTime() + 5 * 24 * 60 * 60 * 1000);
-    const minDateIso = todayKey; // YYYY-MM-DD
-    const maxDateIso = makeDateKey(lastDay, timeZone);
-
-    const { data, error } = await supabase
-      .from("demo_slots_live")
-      .select(
-        "slot_id, slot_date, slot_datetime_local, is_star_teacher, region_key, course_id"
-      )
-      .eq("region_key", regionKey)
-      .eq("course_id", courseId)
-      .gte("slot_date", minDateIso)
-      .lte("slot_date", maxDateIso)
-      .order("slot_datetime_local", { ascending: true });
-
-    if (error) {
-      console.error(error);
-      alert("Could not load slots.");
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      dateContainer.innerHTML = "<p>No slots found.</p>";
-      timeContainer.innerHTML = "";
-      return;
-    }
-
-    // Build groupedSlots: dateKey -> { date, slots: [] }
-    groupedSlots = {};
-    let minSlotDate = null;
-    let maxSlotDate = null;
-
-    for (const row of data) {
-      const utcDate = new Date(row.slot_datetime_local);
-      const dateKey = makeDateKey(utcDate, timeZone);
-
-      const localDateForLabels = new Date(
-        utcDate.toLocaleString("en-CA", { timeZone })
-      ); // still a Date object
-
-      if (!groupedSlots[dateKey]) {
-        groupedSlots[dateKey] = {
-          date: localDateForLabels,
-          slots: [],
-        };
+      if (!phoneCountryCode || !phoneNumber || !childName || !childGrade || !parentName || !parentEmail) {
+        showError("Please fill all required fields before continuing.");
+        return;
       }
 
-      // Filter: if it's "today" in region timezone, skip slots that are < now + 1 hour
-      const slotLocalDate = new Date(
-        utcDate.toLocaleString("en-CA", { timeZone })
-      );
-      const oneHourLater = new Date(nowInZone.getTime() + 60 * 60 * 1000);
-      const isToday = dateKey === todayKey;
-      if (isToday && slotLocalDate < oneHourLater) {
-        continue; // too close, skip
-      }
+      const btn = document.getElementById("btn-step-1");
+      btn.disabled = true;
 
-      groupedSlots[dateKey].slots.push({
-        id: row.slot_id,
-        dateKey,
-        localDate: slotLocalDate, // real Date in region timezone
-        timeLabel: formatTimeLabel(utcDate, timeZone),
-        isStar: !!row.is_star_teacher,
-      });
+      const tz = getTimezone();
+      const fullUrl = window.location.href;
+      const path = window.location.pathname + window.location.search;
 
-      // Track min/max for "Showing 10 Dec – 15 Dec"
-      if (!minSlotDate || slotLocalDate < minSlotDate) minSlotDate = slotLocalDate;
-      if (!maxSlotDate || slotLocalDate > maxSlotDate) maxSlotDate = slotLocalDate;
-    }
+      let ip_address = null;
+      let city = null;
+      let countryFromIP = null;
+      let device_type = null;
+      let browser = null;
 
-    // Sort slots within each day by real datetime
-    Object.values(groupedSlots).forEach((group) => {
-      group.slots.sort((a, b) => a.localDate - b.localDate);
-    });
-
-    // Render UI
-    renderDateButtons(timeZone, todayKey, tomorrowKey);
-    renderTimeButtons();
-
-    if (minSlotDate && maxSlotDate && dateRangeLabelEl) {
-      dateRangeLabelEl.textContent = formatDateRangeLabel(
-        minSlotDate,
-        maxSlotDate,
-        timeZone
-      );
-    }
-  }
-
-  function renderDateButtons(timeZone, todayKey, tomorrowKey) {
-    dateContainer.innerHTML = "";
-    selectedSlot = null;
-    selectedTimeSummaryEl.textContent = "Please select a time slot.";
-
-    const dateKeys = Object.keys(groupedSlots).sort(); // chronological
-
-    dateKeys.forEach((dateKey) => {
-      const group = groupedSlots[dateKey];
-      const labels = formatDayLabels(group.date, todayKey, tomorrowKey, timeZone);
-
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "date-pill";
-      btn.innerHTML = `
-        <span class="date-pill-top">${labels.topLabel}</span>
-        <span class="date-pill-bottom">${labels.bottomLabel}</span>
-      `;
-
-      if (!selectedDateKey) selectedDateKey = dateKey;
-      if (selectedDateKey === dateKey) btn.classList.add("is-selected");
-
-      btn.addEventListener("click", () => {
-        selectedDateKey = dateKey;
-        renderDateButtons(timeZone, todayKey, tomorrowKey); // re-render to update selection
-        renderTimeButtons();
-      });
-
-      dateContainer.appendChild(btn);
-    });
-  }
-
-  function renderTimeButtons() {
-    timeContainer.innerHTML = "";
-    selectedSlot = null;
-    selectedTimeSummaryEl.textContent = "Please select a time slot.";
-
-    const group = groupedSlots[selectedDateKey];
-    if (!group || !group.slots.length) {
-      timeContainer.innerHTML = "<p>No available slots for this day.</p>";
-      return;
-    }
-
-    group.slots.forEach((slot) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "time-pill";
-      btn.innerHTML = `
-        <div class="time-pill-main">${slot.timeLabel}</div>
-        <div class="time-pill-sub">1:1 live class · 60 mins</div>
-        ${
-          slot.isStar
-            ? '<div class="time-pill-star">⭐ Star teacher</div>'
-            : ""
+      try {
+        const info = await fetchClientInfo();
+        if (info) {
+          ip_address = info.ip || null;
+          city = info.city || null;
+          countryFromIP = info.country_name || null;
         }
-      `;
-
-      if (selectedSlot && selectedSlot.id === slot.id) {
-        btn.classList.add("is-selected");
+      } catch (e) {
+        console.error("Client info fetch error", e);
       }
 
-      btn.addEventListener("click", () => {
-        selectedSlot = slot;
-        // re-render to reflect selection
-        renderTimeButtons();
-        selectedTimeSummaryEl.textContent = `${slot.timeLabel} on ${selectedDateKey}`;
-      });
+      const deviceInfo = detectDeviceInfo();
+      device_type = deviceInfo.device_type;
+      browser = deviceInfo.browser;
 
-      timeContainer.appendChild(btn);
+      const resolvedCountry = countryFromIP || COUNTRY_NAME;
+
+      const payload = {
+        child_name: childName,
+        child_grade: childGrade,
+        parent_name: parentName,
+        parent_email: parentEmail,
+        phone_country_code: phoneCountryCode,
+        phone_number: phoneNumber,
+        has_laptop: hasLaptop,
+        region_key: REGION_KEY,
+        country: resolvedCountry,
+        timezone: tz,
+        lang: langParam,
+        course_id: courseId,
+        full_url: fullUrl,
+        landing_page_path: path,
+        ip_address: ip_address,
+        city: city,
+        device_type: device_type,
+        browser: browser,
+        internet_speed_mbps: null,
+        page_completed: 1,
+      };
+
+      try {
+        const { data, error } = await supa
+          .from("demo_leads")
+          .upsert(payload, {
+            onConflict: "phone_country_code,phone_number",
+          })
+          .select("*")
+          .single();
+
+        if (error) {
+          console.error(error);
+          showError(error.message || "Unable to save details. Please try again.");
+          btn.disabled = false;
+          return;
+        }
+
+        leadRow = data;
+        leadId = data.id;
+        showSuccess("Details saved. Now pick a date & time.");
+        await loadSlots();
+        setStep(2);
+      } catch (err) {
+        console.error(err);
+        showError("Unexpected error while saving details.");
+      } finally {
+        btn.disabled = false;
+      }
     });
-  }
 
-  async function handleStep2Confirm() {
-    if (!currentLead || !selectedSlot) {
-      alert("Please select a date and time.");
-      return;
+    // ===== STEP 2 – LOAD SLOTS =====
+    async function loadSlots() {
+      const dateRow = document.getElementById("date-row");
+      const timeRow = document.getElementById("time-row");
+      dateRow.innerHTML = "Loading slots...";
+      timeRow.innerHTML = "";
+
+      const today = startOfDay(new Date());
+      const end = new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000);
+
+      const todayKey = formatDateKey(today);
+      const endKey = formatDateKey(end);
+
+      document.getElementById(
+        "date-range-label"
+      ).textContent = `Showing ${todayKey} – ${endKey}`;
+
+      try {
+        const { data, error } = await supa
+          .from("demo_slots_live")
+          .select(
+            "id, slot_date, slot_time_ist, slot_datetime_ist, is_star_teacher, region_key, course_id"
+          )
+          .eq("region_key", REGION_KEY)
+          .eq("course_id", courseId)
+          .gte("slot_date", todayKey)
+          .lte("slot_date", endKey)
+          .order("slot_datetime_ist", { ascending: true });
+
+        if (error) {
+          console.error(error);
+          dateRow.innerHTML = "";
+          showError(error.message || "Could not load slots.");
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          dateRow.innerHTML = "No slots found for this period.";
+          return;
+        }
+
+        // Build grouped slots by local date
+        const grouped = {};
+        const now = new Date();
+        const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+
+        data.forEach((row) => {
+          if (!row.slot_datetime_ist) return;
+          const local = new Date(row.slot_datetime_ist);
+
+          // Enforce +1 hour rule for "today"
+          const isToday =
+            formatDateKey(local) === formatDateKey(now);
+          if (isToday && local < oneHourLater) {
+            return; // skip
+          }
+
+          const dateKey = formatDateKey(local);
+          if (!grouped[dateKey]) grouped[dateKey] = [];
+          grouped[dateKey].push({
+            id: row.id,
+            dateKey,
+            localDate: startOfDay(local),
+            localDateTime: local,
+            timeLabel: formatTimeLocal(local),
+            isStar: !!row.is_star_teacher,
+          });
+        });
+
+        const dateKeys = Object.keys(grouped).sort();
+        if (dateKeys.length === 0) {
+          dateRow.innerHTML = "No upcoming slots (respecting 1-hour rule).";
+          return;
+        }
+
+        // Render date pills
+        dateRow.innerHTML = "";
+        dateKeys.forEach((dk, idx) => {
+          const sample = grouped[dk][0];
+          const dateObj = sample.localDate;
+          const pill = document.createElement("button");
+          pill.type = "button";
+          pill.className = "date-pill";
+          pill.dataset.dateKey = dk;
+          pill.innerHTML = `
+            <div>${formatDateLabel(dateObj)}</div>
+            <strong>${formatDayMonth(dateObj)}</strong>
+          `;
+          if (idx === 0) {
+            pill.classList.add("selected");
+            selectedDateKey = dk;
+          }
+          pill.addEventListener("click", () => {
+            selectedDateKey = dk;
+            document.querySelectorAll(".date-pill").forEach((p) => p.classList.remove("selected"));
+            pill.classList.add("selected");
+            renderTimePills(grouped);
+          });
+          dateRow.appendChild(pill);
+        });
+
+        renderTimePills(grouped);
+      } catch (err) {
+        console.error(err);
+        dateRow.innerHTML = "";
+        showError("Unexpected error while loading slots.");
+      }
     }
 
-    btnStep2Next.disabled = true;
-    btnStep2Next.textContent = "Saving...";
+    function renderTimePills(grouped) {
+      const timeRow = document.getElementById("time-row");
+      timeRow.innerHTML = "";
 
-    const { error } = await supabase
-      .from("demo_leads")
-      .update({
-        preferred_date: selectedSlot.localDate.toISOString().slice(0, 10),
-        preferred_time_slot: selectedSlot.timeLabel,
-        slot_id: selectedSlot.id,
-        star_teacher_selected: selectedSlot.isStar,
-        lang: selectedLanguage,
-        page_completed: 2,
-      })
-      .eq("id", currentLead.id);
+      const list = grouped[selectedDateKey] || [];
+      if (!list.length) {
+        timeRow.textContent = "No slots for this date.";
+        return;
+      }
 
-    btnStep2Next.disabled = false;
-    btnStep2Next.textContent = "Confirm Class Time";
+      list.forEach((slot) => {
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "time-pill";
+        pill.dataset.slotId = slot.id;
+        pill.innerHTML = `
+          <div class="time-pill-header">
+            <div class="time-pill-main">${slot.timeLabel}</div>
+            ${
+              slot.isStar
+                ? '<div class="star-badge"><span>⭐</span><span>Star teacher</span></div>'
+                : ""
+            }
+          </div>
+          <div class="time-pill-sub">1:1 live class · 60 mins</div>
+        `;
 
-    if (error) {
-      console.error(error);
-      alert("Could not save your selected slot.");
-      return;
-    }
+        pill.addEventListener("click", () => {
+          selectedSlot = slot;
+          document.querySelectorAll(".time-pill").forEach((p) => p.classList.remove("selected"));
+          pill.classList.add("selected");
+        });
 
-    goToStep(3);
-  }
+        if (!selectedSlot) {
+          selectedSlot = slot;
+          pill.classList.add("selected");
+        } else if (selectedSlot && selectedSlot.id === slot.id) {
+          pill.classList.add("selected");
+        }
 
-  // ---------- STEP 3 – MOTIVATIONS (unchanged from your logic) ----------
-
-  async function handleStep3Submit(event) {
-    event.preventDefault();
-    if (!currentLead) return;
-
-    btnStep3Submit.disabled = true;
-    btnStep3Submit.textContent = "Saving...";
-
-    const who = document.querySelector(
-      'input[name="who_are_you"]:checked'
-    )?.value;
-    const reason = document.querySelector(
-      'input[name="booking_reason"]:checked'
-    )?.value;
-    const when = document.querySelector(
-      'input[name="purchase_timeline"]:checked'
-    )?.value;
-
-    const { error } = await supabase
-      .from("demo_leads")
-      .update({
-        who_are_you: who,
-        booking_reason: reason,
-        purchase_timeline: when,
-        page_completed: 3,
-      })
-      .eq("id", currentLead.id);
-
-    btnStep3Submit.disabled = false;
-    btnStep3Submit.textContent = "Submit";
-
-    if (error) {
-      console.error(error);
-      alert("Could not save your answers.");
-      return;
-    }
-
-    alert("Your trial class is booked! (Backend test).");
-  }
-
-  // ---------- EVENT WIRING ----------
-
-  document.addEventListener("DOMContentLoaded", () => {
-    updateStepUI();
-
-    if (leadForm) leadForm.addEventListener("submit", handleStep1Submit);
-    if (btnStep2Back)
-      btnStep2Back.addEventListener("click", () => goToStep(1));
-    if (btnStep2Next)
-      btnStep2Next.addEventListener("click", handleStep2Confirm);
-    if (motivationsForm)
-      motivationsForm.addEventListener("submit", handleStep3Submit);
-
-    if (languageSelect) {
-      languageSelect.addEventListener("change", (e) => {
-        selectedLanguage = e.target.value.toLowerCase();
+        timeRow.appendChild(pill);
       });
     }
-  });
-</script>
 
+    document.getElementById("language-select").addEventListener("change", (e) => {
+      language = e.target.value || "english";
+    });
+
+    document.getElementById("btn-back-to-1").addEventListener("click", () => {
+      setStep(1);
+    });
+
+    document.getElementById("btn-step-2").addEventListener("click", async () => {
+      if (!leadId || !selectedSlot) {
+        showError("Please select a time slot before continuing.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-step-2");
+      btn.disabled = true;
+
+      try {
+        const updatePayload = {
+          preferred_date: selectedSlot.dateKey,
+          preferred_time_slot: selectedSlot.timeLabel,
+          slot_id: selectedSlot.id,
+          star_teacher_selected: selectedSlot.isStar,
+          lang: language,
+          page_completed: 2,
+        };
+
+        const { error } = await supa
+          .from("demo_leads")
+          .update(updatePayload)
+          .eq("id", leadId);
+
+        if (error) {
+          console.error(error);
+          showError(error.message || "Could not save selected slot.");
+          btn.disabled = false;
+          return;
+        }
+
+        showSuccess("Class time confirmed. Final step – quick questions.");
+        setStep(3);
+      } catch (err) {
+        console.error(err);
+        showError("Unexpected error while saving slot.");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // ===== STEP 3 – MOTIVATIONS =====
+    function setupPillGroup(containerId, setter) {
+      const container = document.getElementById(containerId);
+      container.querySelectorAll(".pill-option").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const value = btn.getAttribute("data-value");
+          setter(value);
+          container.querySelectorAll(".pill-option").forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+        });
+      });
+    }
+
+    setupPillGroup("who-options", (v) => (whoValue = v));
+    setupPillGroup("why-options", (v) => (whyValue = v));
+    setupPillGroup("when-options", (v) => (whenValue = v));
+
+    document.getElementById("btn-back-to-2").addEventListener("click", () => {
+      setStep(2);
+    });
+
+    document.getElementById("btn-step-3").addEventListener("click", async () => {
+      if (!leadId) {
+        showError("Lead not found. Please start again.");
+        return;
+      }
+
+      const btn = document.getElementById("btn-step-3");
+      btn.disabled = true;
+
+      try {
+        const payload = {
+          who_are_you: whoValue,
+          booking_reason: whyValue,
+          purchase_timeline: whenValue,
+          page_completed: 3,
+        };
+
+        const { error } = await supa
+          .from("demo_leads")
+          .update(payload)
+          .eq("id", leadId);
+
+        if (error) {
+          console.error(error);
+          showError(error.message || "Could not save final answers.");
+          btn.disabled = false;
+          return;
+        }
+
+        showSuccess("All steps saved successfully.");
+        const finalMsg = document.getElementById("final-message");
+        finalMsg.style.display = "block";
+      } catch (err) {
+        console.error(err);
+        showError("Unexpected error while saving.");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Initialise
+    setStep(1);
+    document.getElementById("language-select").value = "english";
+  </script>
 </body>
 </html>

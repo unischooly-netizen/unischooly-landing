@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Unischooly – 3‑Step Booking Form (Backend Test)</title>
+  <title>Unischooly – 3-Step Booking Form (Backend Test)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Supabase v2 -->
@@ -264,7 +264,7 @@
   <div class="shell">
     <header>
       <h1>Unischooly – Booking Form (Backend Test)</h1>
-      <p class="subtitle">Single‑file 3‑step form wired to Supabase. Focus is on correct backend logic.</p>
+      <p class="subtitle">Single-file 3-step form wired to Supabase. Focus is on correct backend logic.</p>
     </header>
 
     <div class="step-indicator">
@@ -308,7 +308,7 @@
           <select id="timezone-select"></select>
         </div>
 
-        <div class="field-group" style="grid-column: span 4;">
+        <div class="field-group" style="grid-column: span 4%;">
           <div class="field-label-row">
             <label class="field-label">Phone country code</label>
           </div>
@@ -510,7 +510,7 @@
       "South Korea":"+82","China":"+86","New Zealand":"+64"
     };
 
-    // Short country list for dropdown (extend if you like)
+    // Short country list for dropdown
     const countryList = [
       "United Arab Emirates","Saudi Arabia","Oman","Qatar","Kuwait","Bahrain",
       "India","Pakistan","Bangladesh","Nepal","Sri Lanka","Japan","South Korea","China",
@@ -757,9 +757,10 @@
       end.setDate(end.getDate() + 5);
       const todayKey = fmtDateKey(today);
       const endKey = fmtDateKey(end);
-      const minTime = new Date(now.getTime() + 60*60*1000);
+      const minTime = new Date(now.getTime() + 60*60*1000); // now + 1hr
 
       try {
+        // Fetch only region+course; date filtering is done in JS to avoid schema issues
         const { data, error } = await supa
           .from("demo_slots_live")
           .select("*")
@@ -788,12 +789,14 @@
         });
 
         let valid = rows.filter(r => r._dt && r._dateKey);
+
+        // Filter by date range & +1hr rule (only for today)
         valid = valid.filter(r => {
-          if (r._dt < minTime) return false;
-          if (r._dateKey < todayKey) return false;
-          if (r._dateKey > endKey) return false;
+          if (r._dateKey < todayKey || r._dateKey > endKey) return false;
+          if (r._dateKey === todayKey && r._dt < minTime) return false;
           return true;
         });
+
         valid.sort((a,b) => a._dt - b._dt);
 
         if (!valid.length) {

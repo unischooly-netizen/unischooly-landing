@@ -2,1339 +2,2017 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Unischooly – Booking Form (Backend Test)</title>
+  <title>Book Your Trial Class</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
-
-  <!-- Supabase JS v2 -->
+  <!-- Replace these with your real Supabase project URL and anon key -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     :root {
-      --bg-main: #050818;
-      --bg-card: #0b1020;
-      --bg-card-soft: #12172b;
-      --accent-1: #ff6ad5;
-      --accent-2: #4be1ff;
-      --accent-3: #8b5cff;
-      --accent-4: #ffac35;
-      --text-main: #e5f0ff;
-      --text-soft: #9ca3af;
-      --border-subtle: rgba(148, 163, 184, 0.35);
-      --danger: #f97373;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #dbeafe;
+      --accent: #facc15;
+      --bg: #0f172a;
+      --card-bg: #020617;
+      --border-subtle: #1e293b;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #ef4444;
       --success: #22c55e;
+      --radius-lg: 1rem;
+      --radius-xl: 1.25rem;
+      --shadow-lg: 0 24px 60px rgba(15,23,42,0.9);
     }
 
-    * {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
     }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
-      color: var(--text-main);
-    }
-
     body {
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 32px 16px;
-    }
-
-    .shell {
-      width: 100%;
-      max-width: 1120px;
-      background: radial-gradient(circle at top left, #1f2937 0, #020617 55%);
-      border-radius: 24px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      box-shadow:
-        0 24px 60px rgba(15, 23, 42, 0.8),
-        0 0 0 1px rgba(56, 189, 248, 0.08);
-      padding: 28px 32px 32px;
-    }
-
-    .shell-header {
-      margin-bottom: 12px;
-    }
-
-    .shell-title {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      margin: 0 0 4px;
-      background: linear-gradient(90deg, #e5e7eb, #a5b4fc, #22d3ee);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .shell-subtitle {
       margin: 0;
-      font-size: 13px;
-      color: var(--text-soft);
-    }
-
-    .step-indicator {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at top, #1d2433 0, #020617 45%, #000 100%);
+      color: var(--text-main);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin: 18px 0 20px;
-      font-size: 12px;
-      color: var(--text-soft);
+      justify-content: center;
+      padding: 24px;
     }
 
-    .step-indicator span strong {
-      color: #e5e7eb;
-    }
-
-    .step-bars {
-      display: flex;
-      gap: 8px;
-      width: 160px;
-    }
-
-    .step-bar {
-      flex: 1;
-      height: 4px;
-      border-radius: 999px;
-      background: #111827;
+    .app-shell {
+      width: 100%;
+      max-width: 960px;
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.24), transparent 55%),
+                  radial-gradient(circle at top right, rgba(250,204,21,0.18), transparent 55%),
+                  linear-gradient(150deg, #020617 0%, #020617 40%, #020617 100%);
+      border-radius: 32px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(148,163,184,0.28);
+      padding: 28px 28px 24px;
+      position: relative;
       overflow: hidden;
     }
 
-    .step-bar.active {
-      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    .app-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 0, rgba(59,130,246,0.18), transparent 55%);
+      opacity: 0.7;
+      pointer-events: none;
     }
 
-    .step-bar.completed {
-      background: linear-gradient(90deg, #22c55e, #a7f3d0);
+    .app-inner {
+      position: relative;
+      z-index: 1;
     }
 
-    .step-bar-inner {
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-    }
-
-    .banner {
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 12px;
-      margin-bottom: 16px;
-      display: none;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .banner.show {
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
       display: flex;
-    }
-
-    .banner-error {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.7);
-      color: #fecaca;
-    }
-
-    .banner-success {
-      background: rgba(22, 163, 74, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.8);
-      color: #bbf7d0;
-    }
-
-    .banner-icon {
-      font-size: 16px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .field-group {
-      margin-bottom: 16px;
-    }
-
-    .field-label-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-    }
-
-    .field-label {
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-
-    .field-hint {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    .input,
-    select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: radial-gradient(circle at top, #020617 0, #020617 55%);
-      color: var(--text-main);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
-    }
-
-    .input::placeholder {
-      color: #4b5563;
-    }
-
-    .input:focus,
-    select:focus {
-      border-color: var(--accent-2);
-      box-shadow:
-        0 0 0 1px rgba(59, 130, 246, 0.4),
-        0 0 30px rgba(56, 189, 248, 0.3);
-    }
-
-    .pill-toggle {
-      display: inline-flex;
-      padding: 4px;
-      border-radius: 999px;
-      background: radial-gradient(circle at top, #020617 0, #020617 55%);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      gap: 4px;
-    }
-
-    .pill-toggle button {
-      border: none;
-      outline: none;
-      background: transparent;
-      color: var(--text-soft);
-      font-size: 12px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .pill-toggle button span {
-      font-size: 13px;
-    }
-
-    .pill-toggle button.active {
-      background: radial-gradient(circle at top, #111827 0, #020617 55%);
-      color: #f9fafb;
-      box-shadow:
-        0 0 0 1px rgba(96, 165, 250, 0.6),
-        0 8px 25px rgba(15, 23, 42, 0.9);
-    }
-
-    .pill-toggle button.inactive {
-      color: #9ca3af;
-    }
-
-    .btn-main {
-      width: 100%;
-      border-radius: 999px;
-      border: none;
-      padding: 14px 18px;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      cursor: pointer;
-      color: #0b1020;
-      background-image: linear-gradient(90deg, #ff6ad5, #8b5cff, #4be1ff);
-      background-size: 200% 100%;
-      box-shadow:
-        0 10px 40px rgba(59, 130, 246, 0.5),
-        0 0 0 1px rgba(191, 219, 254, 0.2);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: transform 0.1s ease, box-shadow 0.15s ease, background-position 0.2s;
-    }
-
-    .btn-main:hover {
-      background-position: 100% 0;
-      transform: translateY(-1px);
-      box-shadow:
-        0 14px 45px rgba(59, 130, 246, 0.65),
-        0 0 0 1px rgba(191, 219, 254, 0.35);
-    }
-
-    .btn-main:active {
-      transform: translateY(0);
-      box-shadow:
-        0 8px 30px rgba(15, 23, 42, 0.9),
-        0 0 0 1px rgba(148, 163, 184, 0.75);
-    }
-
-    .btn-main:disabled {
-      opacity: 0.65;
-      cursor: wait;
-      box-shadow: none;
-    }
-
-    .btn-secondary {
-      border-radius: 999px;
-      border: none;
-      padding: 8px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      color: var(--text-soft);
-      background: transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
-    .btn-secondary span {
-      font-size: 14px;
-    }
-
-    .btn-secondary:hover {
-      color: #e5e7eb;
-    }
-
-    .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .section-subtitle {
-      font-size: 12px;
-      color: var(--text-soft);
-      margin-bottom: 12px;
-    }
-
-    .date-row,
-    .time-row {
-      display: flex;
-      flex-wrap: wrap;
       gap: 10px;
     }
 
-    .date-pill {
-      min-width: 100px;
-      padding: 8px 10px;
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: radial-gradient(circle at top, #020617 0, #020617 55%);
-      cursor: pointer;
-      font-size: 11px;
-      color: var(--text-soft);
+    h1 span.badge {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: rgba(148,163,184,0.08);
+      border-radius: 999px;
+      padding: 3px 10px;
+      border: 1px solid rgba(148,163,184,0.36);
+      color: var(--text-muted);
+    }
+
+    .subtitle {
+      margin: 0 0 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .steps-header {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 2px;
-      transition: all 0.15s ease;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
     }
 
-    .date-pill strong {
-      font-size: 13px;
-      color: #e5e7eb;
+    .stepper {
+      display: flex;
+      gap: 10px;
+      flex: 1 1 auto;
+      min-width: 260px;
     }
 
-    .date-pill.selected {
-      border-color: var(--accent-2);
-      box-shadow:
-        0 0 0 1px rgba(59, 130, 246, 0.4),
-        0 10px 40px rgba(15, 23, 42, 0.95);
-      background: radial-gradient(circle at top, #020617 0, #020617 55%);
-    }
-
-    .time-pill {
-      flex: 1 0 150px;
+    .step-pill {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 8px 10px;
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: radial-gradient(circle at top, #020617 0, #020617 55%);
-      cursor: pointer;
-      font-size: 11px;
-      color: var(--text-soft);
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.85);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      backdrop-filter: blur(8px);
+    }
+
+    .step-pill.active {
+      border-color: rgba(59,130,246,0.9);
+      background: radial-gradient(circle at top left, rgba(96,165,250,0.25), rgba(15,23,42,0.98));
+      color: #e5edff;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.35);
+    }
+
+    .step-pill.completed {
+      border-color: rgba(34,197,94,0.85);
+      background: radial-gradient(circle at top left, rgba(22,163,74,0.22), rgba(15,23,42,0.96));
+      color: #bbf7d0;
+    }
+
+    .step-index {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    .step-pill.active .step-index {
+      border-color: rgba(191,219,254,0.9);
+      background: rgba(37,99,235,0.22);
+    }
+
+    .step-pill.completed .step-index {
+      border-color: rgba(22,163,74,0.9);
+      background: rgba(22,163,74,0.2);
+    }
+
+    .step-label-main {
+      font-weight: 500;
+    }
+
+    .step-label-sub {
+      font-size: 0.72rem;
+      opacity: 0.7;
+    }
+
+    .trust-copy {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .trust-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34,197,94,0.18);
+      flex-shrink: 0;
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.85), rgba(15,23,42,0.98));
+      border: 1px solid rgba(51,65,85,0.9);
+      padding: 18px 18px 16px;
+    }
+
+    @media (min-width: 880px) {
+      .card {
+        padding: 22px 22px 18px;
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 18px;
+    }
+
+    @media (max-width: 720px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      transition: all 0.15s ease;
+      gap: 6px;
+      font-size: 0.85rem;
     }
 
-    .time-pill-header {
+    .field-label {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-    }
-
-    .time-pill-main {
-      font-size: 13px;
-      font-weight: 600;
       color: #e5e7eb;
     }
 
-    .time-pill-sub {
-      font-size: 11px;
-      color: var(--text-soft);
+    .field-label span.helper {
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
 
-    .star-badge {
+    .field-required {
+      color: var(--accent);
+      margin-left: 2px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      border-radius: 10px;
+      border: 1px solid rgba(51,65,85,0.9);
+      padding: 9px 10px;
+      background: rgba(15,23,42,0.96);
+      color: var(--text-main);
+      font: inherit;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.16s;
+      min-height: 38px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(96,165,250,0.95);
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.4);
+      background: rgba(15,23,42,0.98);
+    }
+
+    select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #6b7280 50%),
+        linear-gradient(135deg, #6b7280 50%, transparent 50%);
+      background-position: calc(100% - 14px) 50%, calc(100% - 10px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 26px;
+    }
+
+    .input-inline {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .input-inline .country-code {
+      flex: 0 0 92px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.95);
+      cursor: pointer;
+      user-select: none;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      background: rgba(250, 204, 21, 0.12);
-      color: #facc15;
+      gap: 6px;
+    }
+
+    .chip input {
+      display: none;
+    }
+
+    .chip span.dot {
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 10px;
-      border: 1px solid rgba(250, 204, 21, 0.8);
+      border: 1px solid rgba(148,163,184,0.55);
     }
 
-    .star-badge span {
-      font-size: 11px;
+    .chip.active {
+      border-color: rgba(59,130,246,0.98);
+      background: radial-gradient(circle at top, rgba(37,99,235,0.22), rgba(15,23,42,0.98));
+      color: #e5edff;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.5);
     }
 
-    .time-pill.selected {
-      border-color: var(--accent-2);
-      box-shadow:
-        0 0 0 1px rgba(59, 130, 246, 0.4),
-        0 10px 40px rgba(15, 23, 42, 0.95);
+    .chip.active span.dot {
+      background: rgba(59,130,246,0.95);
+      border-color: rgba(147,197,253,0.95);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.5);
     }
 
-    .pill-options {
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 9px 18px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text-main);
+      transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s, border-color 0.12s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-color: rgba(191,219,254,0.85);
+      color: #eff6ff;
+      box-shadow: 0 18px 35px rgba(37,99,235,0.55);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 45px rgba(37,99,235,0.7);
+      background: linear-gradient(135deg, #1d4ed8, #4338ca);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 20px rgba(37,99,235,0.7);
+    }
+
+    .btn-ghost {
+      border-color: rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15,23,42,0.96);
+      border-color: rgba(156,163,175,0.9);
+      color: #e5e7eb;
+    }
+
+    .btn[disabled] {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .hint-inline {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .status-bar {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      border-radius: 999px;
+      padding: 5px 10px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot-live {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 6px rgba(34,197,94,0.24);
+    }
+
+    .status-dot-warn {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #f97316;
+      box-shadow: 0 0 0 6px rgba(248,148,60,0.2);
+    }
+
+    .status-dot-neutral {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #60a5fa;
+      box-shadow: 0 0 0 6px rgba(37,99,235,0.24);
+    }
+
+    .error-text {
+      font-size: 0.78rem;
+      color: var(--danger);
+      margin-top: 4px;
+    }
+
+    .global-error {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--danger);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* STEP 2 styles */
+    .days-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .day-chip {
+      min-width: 90px;
+      padding: 8px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.95);
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+    }
+
+    .day-chip.disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .day-chip .day-name {
+      font-weight: 500;
+      font-size: 0.78rem;
+    }
+
+    .day-chip .day-date {
+      font-size: 0.72rem;
+      opacity: 0.8;
+    }
+
+    .day-chip.active {
+      border-color: rgba(59,130,246,0.98);
+      background: radial-gradient(circle at top, rgba(37,99,235,0.22), rgba(15,23,42,0.98));
+      color: #e5edff;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.45);
+    }
+
+    .slots-container {
+      border-radius: 14px;
+      border: 1px solid rgba(31,41,55,0.95);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,1));
+      padding: 10px 9px 8px;
+      min-height: 70px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .slots-container-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      min-height: 60px;
+    }
+
+    .slot-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(31,41,55,0.95);
+      background: rgba(15,23,42,0.96);
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .slot-row + .slot-row {
+      margin-top: 6px;
+    }
+
+    .slot-row:hover {
+      border-color: rgba(148,163,184,0.85);
+      background: rgba(15,23,42,1);
+    }
+
+    .slot-row.active {
+      border-color: rgba(59,130,246,0.98);
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.2), rgba(15,23,42,1));
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.6);
+    }
+
+    .slot-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slot-time {
+      font-weight: 500;
+    }
+
+    .slot-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .slot-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      flex-wrap: wrap;
+    }
+
+    .tag-star {
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(234,179,8,0.15);
+      border: 1px solid rgba(234,179,8,0.6);
+      color: #facc15;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .tag-star span.icon {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #facc15, #eab308);
+      box-shadow: 0 0 0 3px rgba(234,179,8,0.4);
+      display: inline-block;
+    }
+
+    .tag-capacity {
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(15,23,42,0.98);
+      border: 1px solid rgba(148,163,184,0.55);
+      color: #9ca3af;
+    }
+
+    .lang-select-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .lang-chip {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 6px 9px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.95);
+      cursor: pointer;
+    }
+
+    .lang-chip.active {
+      border-color: rgba(59,130,246,0.98);
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.22), rgba(15,23,42,0.98));
+      color: #e5edff;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.5);
+    }
+
+    /* STEP 3 */
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 720px) {
+      .option-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-card {
+      border-radius: 12px;
+      border: 1px solid rgba(55,65,81,0.95);
+      background: rgba(15,23,42,0.97);
+      padding: 9px 10px;
+      font-size: 0.82rem;
+      display: flex;
+      gap: 8px;
+      cursor: pointer;
+      align-items: flex-start;
+    }
+
+    .option-card input {
+      margin-top: 3px;
+    }
+
+    .option-card-title {
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .option-card-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .option-card.active {
+      border-color: rgba(59,130,246,0.98);
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.5);
+      background: radial-gradient(circle at top left, rgba(37,99,235,0.2), rgba(15,23,42,1));
+    }
+
+    /* SUCCESS */
+    .success-panel {
+      text-align: left;
+      padding: 4px 2px 0;
+    }
+
+    .success-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0, #22c55e, #16a34a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      box-shadow: 0 14px 30px rgba(16,185,129,0.7);
+    }
+
+    .success-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .success-body {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 520px;
       margin-bottom: 12px;
     }
 
-    .pill-option {
+    .success-highlight {
+      border-radius: 12px;
+      border: 1px solid rgba(34,197,94,0.7);
+      background: rgba(15,23,42,0.96);
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      color: #bbf7d0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .success-next {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .success-next strong {
+      color: #e5e7eb;
+    }
+
+    .badge-soft {
       border-radius: 999px;
-      padding: 6px 12px;
-      border: 1px solid var(--border-subtle);
-      font-size: 12px;
-      background: radial-gradient(circle at top, #020617 0, #020617 55%);
-      color: var(--text-soft);
-      cursor: pointer;
-      transition: all 0.15s ease;
+      padding: 3px 7px;
+      font-size: 0.72rem;
+      background: rgba(37,99,235,0.16);
+      border: 1px solid rgba(59,130,246,0.6);
+      color: #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .pill-option.selected {
-      border-color: var(--accent-2);
-      color: #f9fafb;
-      box-shadow:
-        0 0 0 1px rgba(59, 130, 246, 0.4),
-        0 8px 28px rgba(15, 23, 42, 0.95);
+    .badge-soft span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #60a5fa;
     }
 
-    .footer-note {
-      margin-top: 10px;
-      font-size: 11px;
-      color: var(--text-soft);
-      text-align: center;
+    /* Scrollbar styling */
+    .slots-container::-webkit-scrollbar {
+      width: 6px;
     }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 16px 8px;
-      }
-
-      .shell {
-        padding: 20px 16px 20px;
-        border-radius: 20px;
-      }
-
-      .grid {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-      }
+    .slots-container::-webkit-scrollbar-track {
+      background: rgba(15,23,42,0.9);
+    }
+    .slots-container::-webkit-scrollbar-thumb {
+      background: rgba(55,65,81,0.9);
+      border-radius: 999px;
     }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="shell-header">
-      <h1 class="shell-title">Unischooly – Booking Form (Backend Test)</h1>
-      <p class="shell-subtitle">
-        Simple 3-step form to test Supabase integration. No fancy design – only logic.
+<div class="app-shell">
+  <div class="app-inner">
+    <header>
+      <h1>
+        Book a Live Trial Class
+        <span class="badge">Takes &lt; 60 seconds</span>
+      </h1>
+      <p class="subtitle">
+        Pick a time that works for your child, anywhere in the world. We’ll match you with a top teacher and send a calendar invite instantly.
       </p>
+      <div class="steps-header">
+        <div class="stepper">
+          <div class="step-pill active" data-step-pill="1">
+            <div class="step-index">1</div>
+            <div>
+              <div class="step-label-main">Your details</div>
+              <div class="step-label-sub">Country, student &amp; parent</div>
+            </div>
+          </div>
+          <div class="step-pill" data-step-pill="2">
+            <div class="step-index">2</div>
+            <div>
+              <div class="step-label-main">Pick a time</div>
+              <div class="step-label-sub">6 days of live slots</div>
+            </div>
+          </div>
+          <div class="step-pill" data-step-pill="3">
+            <div class="step-index">3</div>
+            <div>
+              <div class="step-label-main">Motivation</div>
+              <div class="step-label-sub">Helps us personalise</div>
+            </div>
+          </div>
+        </div>
+        <div class="trust-copy">
+          <span class="trust-dot"></span>
+          <span>Secure booking via Supabase · No spam ever</span>
+        </div>
+      </div>
     </header>
 
-    <div class="step-indicator">
-      <span>Step <strong id="step-label">1</strong> of 3 – <span id="step-title">Details</span></span>
-      <div class="step-bars">
-        <div class="step-bar completed"><div class="step-bar-inner"></div></div>
-        <div class="step-bar" id="step-bar-2"><div class="step-bar-inner"></div></div>
-        <div class="step-bar" id="step-bar-3"><div class="step-bar-inner"></div></div>
-      </div>
-    </div>
+    <main>
+      <div class="card">
+        <!-- STEP 1 -->
+        <form id="step-1" autocomplete="on">
+          <div class="form-grid">
+            <div class="field">
+              <label class="field-label">
+                <span>Country &amp; time zone<span class="field-required">*</span></span>
+                <span class="helper" id="detected-location-hint">Detecting your location…</span>
+              </label>
+              <select id="country-select" required>
+                <option value="">Select your country &amp; time zone</option>
+                <!-- value: COUNTRY_CODE -->
+                <!-- data-timezone: IANA time zone -->
+                <!-- data-dial: phone country code -->
+                <!-- data-region-key: your Supabase region_key -->
+                <option value="US" data-timezone="America/New_York" data-dial="+1" data-region-key="us_east">
+                  🇺🇸 United States — New York (ET) · +1
+                </option>
+                <option value="US" data-timezone="America/Chicago" data-dial="+1" data-region-key="us_central">
+                  🇺🇸 United States — Chicago (CT) · +1
+                </option>
+                <option value="US" data-timezone="America/Denver" data-dial="+1" data-region-key="us_mountain">
+                  🇺🇸 United States — Denver (MT) · +1
+                </option>
+                <option value="US" data-timezone="America/Los_Angeles" data-dial="+1" data-region-key="us_pacific">
+                  🇺🇸 United States — Los Angeles (PT) · +1
+                </option>
 
-    <div id="error-banner" class="banner banner-error">
-      <div class="banner-icon">⚠️</div>
-      <div id="error-text">Something went wrong.</div>
-    </div>
+                <option value="IN" data-timezone="Asia/Kolkata" data-dial="+91" data-region-key="in">
+                  🇮🇳 India — IST (Asia/Kolkata) · +91
+                </option>
+                <option value="AE" data-timezone="Asia/Dubai" data-dial="+971" data-region-key="uae">
+                  🇦🇪 UAE — Dubai (GMT+4) · +971
+                </option>
+                <option value="SA" data-timezone="Asia/Riyadh" data-dial="+966" data-region-key="saudi">
+                  🇸🇦 Saudi Arabia — Riyadh (GMT+3) · +966
+                </option>
+                <option value="ID" data-timezone="Asia/Jakarta" data-dial="+62" data-region-key="indonesia">
+                  🇮🇩 Indonesia — Jakarta (WIB) · +62
+                </option>
+                <option value="VN" data-timezone="Asia/Ho_Chi_Minh" data-dial="+84" data-region-key="vietnam">
+                  🇻🇳 Vietnam — Ho Chi Minh City · +84
+                </option>
+                <option value="PH" data-timezone="Asia/Manila" data-dial="+63" data-region-key="philippines">
+                  🇵🇭 Philippines — Manila · +63
+                </option>
+                <option value="TH" data-timezone="Asia/Bangkok" data-dial="+66" data-region-key="thailand">
+                  🇹🇭 Thailand — Bangkok · +66
+                </option>
+                <option value="SG" data-timezone="Asia/Singapore" data-dial="+65" data-region-key="singapore">
+                  🇸🇬 Singapore — Singapore · +65
+                </option>
+                <option value="MY" data-timezone="Asia/Kuala_Lumpur" data-dial="+60" data-region-key="malaysia">
+                  🇲🇾 Malaysia — Kuala Lumpur · +60
+                </option>
+                <option value="GB" data-timezone="Europe/London" data-dial="+44" data-region-key="uk">
+                  🇬🇧 United Kingdom — London · +44
+                </option>
+                <option value="AU" data-timezone="Australia/Sydney" data-dial="+61" data-region-key="australia">
+                  🇦🇺 Australia — Sydney (AEST) · +61
+                </option>
+                <option value="CA" data-timezone="America/Toronto" data-dial="+1" data-region-key="canada">
+                  🇨🇦 Canada — Toronto (ET) · +1
+                </option>
+                <!-- Add / adjust more as needed for your regions -->
+              </select>
+              <div class="error-text hidden" data-error-for="country-select"></div>
+            </div>
 
-    <div id="success-banner" class="banner banner-success">
-      <div class="banner-icon">✅</div>
-      <div id="success-text">Saved successfully.</div>
-    </div>
+            <div class="field">
+              <label class="field-label">
+                <span>Phone number<span class="field-required">*</span></span>
+                <span class="helper">We’ll WhatsApp your confirmation</span>
+              </label>
+              <div class="input-inline">
+                <select id="phone-country-code" class="country-code" required>
+                  <option value="+1">+1</option>
+                  <option value="+44">+44</option>
+                  <option value="+60">+60</option>
+                  <option value="+61">+61</option>
+                  <option value="+62">+62</option>
+                  <option value="+63">+63</option>
+                  <option value="+65">+65</option>
+                  <option value="+66">+66</option>
+                  <option value="+84">+84</option>
+                  <option value="+91">+91</option>
+                  <option value="+966">+966</option>
+                  <option value="+971">+971</option>
+                </select>
+                <input
+                  type="tel"
+                  id="phone-number"
+                  placeholder="81234 56789"
+                  inputmode="tel"
+                  required
+                />
+              </div>
+              <div class="chip-group" style="margin-top:6px;">
+                <div class="chip active" data-whatsapp="true">
+                  <span class="dot"></span> This number is on WhatsApp
+                </div>
+                <div class="chip" data-whatsapp="false">
+                  <span class="dot"></span> Use a different number for WhatsApp
+                </div>
+              </div>
+              <div class="error-text hidden" data-error-for="phone-number"></div>
+            </div>
 
-    <!-- STEP 1 -->
-    <section id="step-1">
-      <div class="field-group">
-        <div class="section-title">Step 1 – Basic details</div>
-        <div class="section-subtitle">
-          Backend test: region fixed to <strong>MEA</strong>, language fixed to <strong>English</strong>.
-          We also capture IP, city, country, device type & browser.
-        </div>
-      </div>
+            <div class="field">
+              <label class="field-label">
+                <span>Child’s name<span class="field-required">*</span></span>
+              </label>
+              <input type="text" id="child-name" placeholder="Alex Sharma" required />
+              <div class="error-text hidden" data-error-for="child-name"></div>
+            </div>
 
-      <div class="grid">
-        <div class="field-group" style="grid-column: span 4;">
-          <div class="field-label-row">
-            <label class="field-label">Phone Country Code</label>
+            <div class="field">
+              <label class="field-label">
+                <span>Child’s grade<span class="field-required">*</span></span>
+                <span class="helper">Grade 1–12</span>
+              </label>
+              <select id="child-grade" required>
+                <option value="">Select grade</option>
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+              </select>
+              <div class="error-text hidden" data-error-for="child-grade"></div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">
+                <span>Parent / guardian name<span class="field-required">*</span></span>
+              </label>
+              <input type="text" id="parent-name" placeholder="Parent’s full name" required />
+              <div class="error-text hidden" data-error-for="parent-name"></div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">
+                <span>Parent email<span class="field-required">*</span></span>
+                <span class="helper">For calendar invite &amp; class link</span>
+              </label>
+              <input type="email" id="parent-email" placeholder="you@example.com" required />
+              <div class="error-text hidden" data-error-for="parent-email"></div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">
+                <span>Do you have a laptop or desktop?<span class="field-required">*</span></span>
+              </label>
+              <div class="chip-group">
+                <div class="chip active" data-laptop="true">
+                  <span class="dot"></span> Yes, we have a laptop / desktop
+                </div>
+                <div class="chip" data-laptop="false">
+                  <span class="dot"></span> No, we’ll use a phone / tablet
+                </div>
+              </div>
+              <div class="error-text hidden" data-error-for="has-laptop"></div>
+            </div>
+
+            <div class="field">
+              <label class="field-label">
+                <span>Anything else we should know?</span>
+                <span class="helper">Optional</span>
+              </label>
+              <textarea id="notes" rows="2" placeholder="Learning goals, preferred teacher style, etc."></textarea>
+            </div>
           </div>
-          <input id="phone-country-code" class="input" type="text" placeholder="+971" value="+971" />
-        </div>
 
-        <div class="field-group" style="grid-column: span 8;">
-          <div class="field-label-row">
-            <label class="field-label">WhatsApp Number</label>
-            <span class="field-hint">We'll send class link &amp; updates here</span>
-          </div>
-          <input
-            id="phone-number"
-            class="input"
-            type="tel"
-            placeholder="10–12 digit number"
-          />
-          <div class="field-hint" style="margin-top: 4px;">
-            Please share the number that you use for WhatsApp.
-          </div>
-        </div>
-
-        <div class="field-group" style="grid-column: span 6;">
-          <div class="field-label-row">
-            <label class="field-label">Child's Name</label>
-          </div>
-          <input id="child-name" class="input" type="text" placeholder="E.g. Aarav, Emma" />
-        </div>
-
-        <div class="field-group" style="grid-column: span 6;">
-          <div class="field-label-row">
-            <label class="field-label">Select Child's Grade</label>
-          </div>
-          <select id="child-grade">
-            <option value="">Select grade</option>
-            <option>Grade 1</option>
-            <option>Grade 2</option>
-            <option>Grade 3</option>
-            <option>Grade 4</option>
-            <option>Grade 5</option>
-            <option>Grade 6</option>
-            <option>Grade 7</option>
-            <option>Grade 8</option>
-            <option>Grade 9</option>
-            <option>Grade 10</option>
-            <option>Grade 11</option>
-            <option>Grade 12</option>
-          </select>
-        </div>
-
-        <div class="field-group" style="grid-column: span 6;">
-          <div class="field-label-row">
-            <label class="field-label">Parent / Guardian Name</label>
-          </div>
-          <input id="parent-name" class="input" type="text" placeholder="Full name" />
-        </div>
-
-        <div class="field-group" style="grid-column: span 6;">
-          <div class="field-label-row">
-            <label class="field-label">Parent's Email</label>
-          </div>
-          <input id="parent-email" class="input" type="email" placeholder="We'll send confirmation here" />
-        </div>
-
-        <div class="field-group" style="grid-column: span 12;">
-          <div class="field-label-row">
-            <label class="field-label">Do you have a Laptop / Desktop?</label>
-          </div>
-          <div class="pill-toggle">
-            <button type="button" id="laptop-yes" class="active">
-              <span>💻</span> Yes
+          <div class="actions">
+            <div class="hint-inline">
+              Step 1 of 3 — You can always come back and edit before confirming.
+            </div>
+            <button type="submit" class="btn btn-primary" id="step-1-next">
+              Continue to time selection
+              <span aria-hidden="true">→</span>
             </button>
-            <button type="button" id="laptop-no" class="inactive">
-              <span>📱</span> No (Tablet / Mobile only)
+          </div>
+          <div class="status-bar">
+            <div class="status-pill">
+              <div class="status-dot-live"></div>
+              <span id="status-connect">Connecting securely to booking server…</span>
+            </div>
+            <div class="status-pill">
+              <span>Auto-detecting your time zone</span>
+            </div>
+          </div>
+          <div class="global-error hidden" id="global-error-1"></div>
+        </form>
+
+        <!-- STEP 2 -->
+        <form id="step-2" class="hidden">
+          <div class="form-grid">
+            <div class="field" style="grid-column: 1 / -1;">
+              <label class="field-label">
+                <span>Select a date<span class="field-required">*</span></span>
+                <span class="helper" id="slots-timezone-label">
+                  Showing times in your local time
+                </span>
+              </label>
+              <div class="days-row" id="days-row">
+                <!-- date chips injected here -->
+              </div>
+              <div class="error-text hidden" data-error-for="slot-date"></div>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label class="field-label">
+                <span>Select a time slot<span class="field-required">*</span></span>
+                <span class="helper">All classes are 1:1 live sessions</span>
+              </label>
+              <div id="slots-container" class="slots-container">
+                <div class="slots-container-empty" id="slots-empty-msg">
+                  Choose a date above to see live time slots.
+                </div>
+              </div>
+              <div class="error-text hidden" data-error-for="slot-time"></div>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label class="field-label">
+                <span>Preferred language for the session<span class="field-required">*</span></span>
+              </label>
+              <div class="lang-select-inline" id="language-selector">
+                <div class="lang-chip active" data-lang="English">English</div>
+                <div class="lang-chip" data-lang="Arabic">Arabic</div>
+                <div class="lang-chip" data-lang="Bahasa">Bahasa</div>
+                <div class="lang-chip" data-lang="Vietnamese">Vietnamese</div>
+                <div class="lang-chip" data-lang="Filipino">Filipino</div>
+                <div class="lang-chip" data-lang="Thai">Thai</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" data-back-to="1">
+              ← Back
+            </button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span class="hint-inline" id="slot-summary-hint">
+                No slot selected yet.
+              </span>
+              <button type="submit" class="btn btn-primary" id="step-2-next">
+                Continue to final step
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+          <div class="status-bar">
+            <div class="status-pill">
+              <div class="status-dot-neutral"></div>
+              <span id="slots-status-label">Fetching live availability…</span>
+            </div>
+            <div class="status-pill" id="slots-range-label">
+              Next 6 days of classes
+            </div>
+          </div>
+          <div class="global-error hidden" id="global-error-2"></div>
+        </form>
+
+        <!-- STEP 3 -->
+        <form id="step-3" class="hidden">
+          <div class="form-grid">
+            <div class="field" style="grid-column: 1 / -1;">
+              <label class="field-label">
+                <span>Who are you? <span class="field-required">*</span></span>
+              </label>
+              <div class="option-grid" id="who-are-you-group">
+                <div class="option-card" data-who="Parent">
+                  <input type="radio" name="who-are-you" />
+                  <div>
+                    <div class="option-card-title">I’m a parent</div>
+                    <div class="option-card-desc">
+                      I’m booking this class for my child or children.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-who="Student">
+                  <input type="radio" name="who-are-you" />
+                  <div>
+                    <div class="option-card-title">I’m a student</div>
+                    <div class="option-card-desc">
+                      I’ll be the one attending the class.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-who="Guardian">
+                  <input type="radio" name="who-are-you" />
+                  <div>
+                    <div class="option-card-title">I’m a guardian / relative</div>
+                    <div class="option-card-desc">
+                      I’m booking on behalf of a child I take care of.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-who="School/Organisation">
+                  <input type="radio" name="who-are-you" />
+                  <div>
+                    <div class="option-card-title">I represent a school / org</div>
+                    <div class="option-card-desc">
+                      I’m exploring classes for a group of students.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="error-text hidden" data-error-for="who-are-you"></div>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label class="field-label">
+                <span>Why are you booking this trial? <span class="field-required">*</span></span>
+              </label>
+              <div class="option-grid" id="booking-reason-group">
+                <div class="option-card" data-reason="Explore curriculum & teaching style">
+                  <input type="radio" name="booking-reason" />
+                  <div>
+                    <div class="option-card-title">Explore curriculum &amp; teaching style</div>
+                    <div class="option-card-desc">
+                      I want to see how the classes run before I decide.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-reason="Assess my child’s level">
+                  <input type="radio" name="booking-reason" />
+                  <div>
+                    <div class="option-card-title">Assess my child’s level</div>
+                    <div class="option-card-desc">
+                      I want guidance on the right starting level.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-reason="Compare with another program">
+                  <input type="radio" name="booking-reason" />
+                  <div>
+                    <div class="option-card-title">Compare with another program</div>
+                    <div class="option-card-desc">
+                      We’re evaluating multiple programs right now.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-reason="Looking for long-term classes">
+                  <input type="radio" name="booking-reason" />
+                  <div>
+                    <div class="option-card-title">Looking for long-term classes</div>
+                    <div class="option-card-desc">
+                      If this goes well, I plan to enrol in a course.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="error-text hidden" data-error-for="booking-reason"></div>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label class="field-label">
+                <span>When do you plan to purchase a course? <span class="field-required">*</span></span>
+              </label>
+              <div class="option-grid" id="purchase-timeline-group">
+                <div class="option-card" data-timeline="Immediately after the trial">
+                  <input type="radio" name="purchase-timeline" />
+                  <div>
+                    <div class="option-card-title">Immediately after the trial</div>
+                    <div class="option-card-desc">
+                      If this goes well, I’m ready to enrol right away.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-timeline="Within this month">
+                  <input type="radio" name="purchase-timeline" />
+                  <div>
+                    <div class="option-card-title">Within this month</div>
+                    <div class="option-card-desc">
+                      I expect to make a decision in the next few weeks.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-timeline="In the next 2–3 months">
+                  <input type="radio" name="purchase-timeline" />
+                  <div>
+                    <div class="option-card-title">In the next 2–3 months</div>
+                    <div class="option-card-desc">
+                      I’m planning ahead and exploring options early.
+                    </div>
+                  </div>
+                </div>
+                <div class="option-card" data-timeline="Just exploring for now">
+                  <input type="radio" name="purchase-timeline" />
+                  <div>
+                    <div class="option-card-title">Just exploring for now</div>
+                    <div class="option-card-desc">
+                      I don’t have a fixed timeline yet.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="error-text hidden" data-error-for="purchase-timeline"></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" data-back-to="2">
+              ← Back
+            </button>
+            <button type="submit" class="btn btn-primary" id="step-3-submit">
+              Confirm booking
             </button>
           </div>
-        </div>
+          <div class="status-bar">
+            <div class="status-pill">
+              <div class="status-dot-neutral"></div>
+              <span>We use this to personalise the trial and follow-ups.</span>
+            </div>
+          </div>
+          <div class="global-error hidden" id="global-error-3"></div>
+        </form>
+
+        <!-- SUCCESS VIEW -->
+        <section id="success-view" class="hidden">
+          <div class="success-panel">
+            <div class="success-icon-circle" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="11" stroke="white" stroke-opacity="0.9" stroke-width="1.2"></circle>
+                <path d="M7 12.5L10.2 16L17 8" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <div class="success-title">Your trial class is booked! 🎉</div>
+            <p class="success-body">
+              We’ve locked in your chosen slot and started setting up your child’s learning profile. You’ll receive a confirmation email and WhatsApp message shortly with the meeting link, teacher details, and calendar invite.
+            </p>
+            <div class="success-highlight" id="success-highlight">
+              <div><strong>Summary</strong></div>
+              <div id="success-slot-line">Time: –</div>
+              <div id="success-parent-line">Parent: –</div>
+            </div>
+            <div class="success-next">
+              <p>
+                <strong>Next:</strong> Add the event to your calendar once you get the email. If you need to make any last-minute changes, simply reply to the WhatsApp confirmation and our team will help you out.
+              </p>
+              <p style="margin-top:6px;">
+                <span class="badge-soft">
+                  <span class="dot"></span>
+                  Pro tip: Joining from a laptop or desktop with headphones gives the best class experience.
+                </span>
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
-
-      <button id="btn-step-1" class="btn-main" style="margin-top: 8px;">
-        <span>🚀</span>
-        <span>Save &amp; Continue to Date &amp; Time</span>
-      </button>
-
-      <div class="footer-note">
-        Note: We will share the class link & certificate on Email & WhatsApp.
-      </div>
-    </section>
-
-    <!-- STEP 2 -->
-    <section id="step-2" style="display:none;">
-      <button class="btn-secondary" id="btn-back-to-1">
-        <span>←</span>
-        <span>Back to details</span>
-      </button>
-
-      <div class="field-group">
-        <div class="section-title">Select Date &amp; Time</div>
-        <div class="section-subtitle">
-          Choose a slot that works in your local time. Your class will be for 1 hour. Showing today + next 5 days.
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label">Select Date</label>
-          <span class="field-hint" id="date-range-label"></span>
-        </div>
-        <div class="date-row" id="date-row"></div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label">Select Start Time</label>
-          <span class="field-hint">
-            Class slots are limited. Times are shown in your local time.
-          </span>
-        </div>
-        <div class="time-row" id="time-row"></div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label">Select Language</label>
-        </div>
-        <select id="language-select">
-          <option value="english">English</option>
-          <option value="arabic">Arabic</option>
-          <option value="bahasa">Bahasa</option>
-          <option value="vietnamese">Vietnamese</option>
-          <option value="filipino">Filipino</option>
-          <option value="thai">Thai</option>
-        </select>
-      </div>
-
-      <button id="btn-step-2" class="btn-main" style="margin-top: 8px;">
-        <span>✨</span>
-        <span>Confirm Class Time</span>
-      </button>
-
-      <div class="footer-note">
-        Note: Free class will be conducted by reputed teachers. By continuing you agree to be contacted by Unischooly via WhatsApp / Phone / Email.
-      </div>
-    </section>
-
-    <!-- STEP 3 -->
-    <section id="step-3" style="display:none;">
-      <button class="btn-secondary" id="btn-back-to-2">
-        <span>←</span>
-        <span>Back to date &amp; time</span>
-      </button>
-
-      <div class="field-group">
-        <div class="section-title">Help us personalise your experience</div>
-        <div class="section-subtitle">
-          A few quick questions so we can plan the trial class for your child.
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label">Who are you?</label>
-        </div>
-        <div class="pill-options" id="who-options">
-          <button type="button" class="pill-option" data-value="Parent">Parent</button>
-          <button type="button" class="pill-option" data-value="Student">Student</button>
-          <button type="button" class="pill-option" data-value="Guardian">Guardian</button>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label">Why are you booking this trial class?</label>
-        </div>
-        <div class="pill-options" id="why-options">
-          <button type="button" class="pill-option" data-value="Want to buy course">Want to buy course</button>
-          <button type="button" class="pill-option" data-value="To Compare Platform">To Compare Platform</button>
-          <button type="button" class="pill-option" data-value="To strengthen Concept">To strengthen Concept</button>
-          <button type="button" class="pill-option" data-value="Just for free demo">Just for free demo</button>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-label-row">
-          <label class="field-label">When are you planning to purchase?</label>
-        </div>
-        <div class="pill-options" id="when-options">
-          <button type="button" class="pill-option" data-value="After the Demo">After the Demo</button>
-          <button type="button" class="pill-option" data-value="This Week">This Week</button>
-          <button type="button" class="pill-option" data-value="This Month">This Month</button>
-          <button type="button" class="pill-option" data-value="Just Exploring">Just Exploring</button>
-        </div>
-      </div>
-
-      <button id="btn-step-3" class="btn-main" style="margin-top: 8px;">
-        <span>✅</span>
-        <span>Submit</span>
-      </button>
-
-      <div class="footer-note" id="final-message" style="display:none; margin-top: 12px;">
-        Your trial class is booked. You can now close this test page.
-      </div>
-    </section>
+    </main>
   </div>
+</div>
 
-  
-  <script>
-    // ---------- CONFIG ----------
-    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+<script>
+  // ---------- CONFIG: replace with your real Supabase config & course id ----------
+  const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+  const COURSE_ID = Number(
+  new URLSearchParams(window.location.search).get("courseId")
+) || 1;
+  // -------------------------------------------------------------------------------
 
-    // Backend test: fix region + course for now
-    const FIXED_REGION_KEY = "MEA";
-    const FIXED_TIMEZONE = "Asia/Dubai";
-    const DEFAULT_COURSE_ID = 1;
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const { createClient } = supabase;
-    const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  let currentLeadId = null;
+  let selectedTimezone = null;
+  let selectedCountryCode = null; // ISO alpha-2
+  let selectedRegionKey = null;
+  let selectedSlot = null; // { slot_id, slot_date, localTimeLabel, istDateTimeIso, is_star_teacher }
+  let selectedLanguage = "English";
+  let isWhatsapp = true;
+  let hasLaptop = true;
+  let clientMeta = {
+    ip_address: null,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
+    browser: navigator.userAgent || null,
+    device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "mobile" : "desktop",
+    internet_speed_mbps: null
+  };
 
-    // ---------- SIMPLE HELPERS ----------
-
-    function showError(msg) {
-      const el = document.getElementById("error-banner");
-      if (!el) {
-        alert(msg);
-        return;
-      }
-      el.textContent = msg;
-      el.style.display = "block";
-      const success = document.getElementById("success-banner");
-      if (success) success.style.display = "none";
+  // Try to read estimated downlink (not supported everywhere)
+  try {
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (connection && typeof connection.downlink === "number") {
+      clientMeta.internet_speed_mbps = connection.downlink;
     }
+  } catch (e) {
+    console.warn("Could not read connection info", e);
+  }
 
-    function showSuccess(msg) {
-      const el = document.getElementById("success-banner");
-      if (!el) return;
-      el.textContent = msg;
-      el.style.display = "block";
-      const error = document.getElementById("error-banner");
-      if (error) error.style.display = "none";
-    }
+  // Helper: query params for UTM
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    const obj = {};
+    params.forEach((value, key) => {
+      obj[key] = value;
+    });
+    return obj;
+  }
 
-    function clearMessages() {
-      const e = document.getElementById("error-banner");
-      const s = document.getElementById("success-banner");
-      if (e) e.style.display = "none";
-      if (s) s.style.display = "none";
-    }
+  // Helper: format date range label
+  function formatDateForLabel(date) {
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric"
+    });
+  }
 
-    function formatDateKey(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const d = String(date.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
-
-    function formatDateLabel(date) {
-      return date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
+  // Helper: get today and +5 days in IST date-only strings (YYYY-MM-DD)
+  function getISTDateRange(days = 6) {
+    const results = [];
+    const now = new Date();
+    for (let i = 0; i < days; i++) {
+      const ms = now.getTime() + i * 24 * 60 * 60 * 1000;
+      const d = new Date(ms);
+      // convert to IST components using Intl
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(d);
+      const year = parts.find(p => p.type === "year").value;
+      const month = parts.find(p => p.type === "month").value;
+      const day = parts.find(p => p.type === "day").value;
+      results.push({
+        iso: `${year}-${month}-${day}`,
+        jsDate: new Date(`${year}-${month}-${day}T00:00:00+05:30`)
       });
     }
+    return results;
+  }
 
-    function formatWeekdayLabel(date) {
-      return date.toLocaleDateString("en-GB", {
-        weekday: "short",
-      });
+  // Helper: 12h time string in target timezone
+  function formatTimeInTimezone(isoString, timeZone) {
+    const d = new Date(isoString);
+    return d.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone
+    });
+  }
+
+  // Helper: weekday short name
+  function weekdayName(date) {
+    return date.toLocaleDateString(undefined, {
+      weekday: "short"
+    });
+  }
+
+  // UI: step switching
+  function setActiveStep(step) {
+    const forms = [1, 2, 3].map(n => document.getElementById(`step-${n}`));
+    forms.forEach((form, index) => {
+      if (index + 1 === step) form.classList.remove("hidden");
+      else form.classList.add("hidden");
+    });
+
+    const successView = document.getElementById("success-view");
+    if (step === "success") {
+      forms.forEach(f => f.classList.add("hidden"));
+      successView.classList.remove("hidden");
+    } else {
+      successView.classList.add("hidden");
     }
 
-    function formatTime12h(hour24, minute) {
-      const ampm = hour24 >= 12 ? "PM" : "AM";
-      let h = hour24 % 12;
-      if (h === 0) h = 12;
-      return `${h}:${String(minute).padStart(2, "0")} ${ampm}`;
-    }
-
-    function getInternetSpeedMbps() {
-      const nav = navigator;
-      const conn =
-        nav.connection || nav.mozConnection || nav.webkitConnection || null;
-      if (!conn || typeof conn.downlink !== "number") return null;
-      return Math.round(conn.downlink * 10) / 10;
-    }
-
-    function detectDeviceInfo() {
-      const ua = navigator.userAgent || "";
-      let device_type = "desktop";
-      if (/Mobi|Android|iPhone|iPod/i.test(ua)) device_type = "mobile";
-      if (/iPad|Tablet/i.test(ua)) device_type = "tablet";
-
-      let browser = "Unknown";
-      if (ua.includes("Edg/")) browser = "Edge";
-      else if (ua.includes("OPR/") || ua.includes("Opera")) browser = "Opera";
-      else if (ua.includes("Chrome/") && !ua.includes("Edg/"))
-        browser = "Chrome";
-      else if (ua.includes("Safari/") && !ua.includes("Chrome/"))
-        browser = "Safari";
-      else if (ua.includes("Firefox/")) browser = "Firefox";
-
-      return { device_type, browser };
-    }
-
-    async function fetchIpInfo() {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        if (!res.ok) return null;
-        return await res.json();
-      } catch (e) {
-        console.error("IP info error", e);
-        return null;
+    document.querySelectorAll("[data-step-pill]").forEach(el => {
+      const stepIndex = Number(el.getAttribute("data-step-pill"));
+      el.classList.remove("active");
+      if (stepIndex < step) {
+        el.classList.add("completed");
+      } else {
+        el.classList.remove("completed");
       }
-    }
-
-    // ---------- STEP STATE ----------
-    let currentStep = 1;
-    let leadRow = null;
-    let slotsByDate = {};
-    let selectedDateKey = null;
-    let selectedSlot = null;
-    let selectedLanguage = "english";
-
-    // ---------- STEP UI CONTROL ----------
-    function setStep(step) {
-      currentStep = step;
-      const s1 = document.getElementById("step-1");
-      const s2 = document.getElementById("step-2");
-      const s3 = document.getElementById("step-3");
-      if (s1) s1.style.display = step === 1 ? "block" : "none";
-      if (s2) s2.style.display = step === 2 ? "block" : "none";
-      if (s3) s3.style.display = step === 3 ? "block" : "none";
-
-      // step bars + title
-      const stepLabel = document.getElementById("step-label");
-      const stepTitle = document.getElementById("step-title");
-      const bar1 = document.getElementById("step-bar-1");
-      const bar2 = document.getElementById("step-bar-2");
-      const bar3 = document.getElementById("step-bar-3");
-
-      if (stepLabel) stepLabel.textContent = `Step ${step} of 3`;
-
-      if (stepTitle) {
-        if (step === 1) stepTitle.textContent = "Basic details";
-        if (step === 2) stepTitle.textContent = "Select date & time";
-        if (step === 3) stepTitle.textContent = "Personalise your experience";
-      }
-
-      if (bar1) bar1.classList.toggle("active", step >= 1);
-      if (bar2) bar2.classList.toggle("active", step >= 2);
-      if (bar3) bar3.classList.toggle("active", step >= 3);
-    }
-
-    // ---------- STEP 1 HANDLER ----------
-    async function handleStep1() {
-      clearMessages();
-      const btn = document.getElementById("btn-step-1");
-      if (!btn) return;
-      btn.disabled = true;
-      btn.textContent = "Saving...";
-
-      const phoneCodeEl = document.getElementById("phone-country-code");
-      const phoneNumEl = document.getElementById("phone-number");
-      const childNameEl = document.getElementById("child-name");
-      const childGradeEl = document.getElementById("child-grade");
-      const parentNameEl = document.getElementById("parent-name");
-      const parentEmailEl = document.getElementById("parent-email");
-
-      const phone_country_code = phoneCodeEl ? phoneCodeEl.value.trim() : "";
-      const phone_number = phoneNumEl ? phoneNumEl.value.trim() : "";
-      const child_name = childNameEl ? childNameEl.value.trim() : "";
-      const child_grade = childGradeEl ? childGradeEl.value.trim() : "";
-      const parent_name = parentNameEl ? parentNameEl.value.trim() : "";
-      const parent_email = parentEmailEl ? parentEmailEl.value.trim() : "";
-
-      const laptopYes = document.getElementById("laptop-yes");
-      const laptopNo = document.getElementById("laptop-no");
-      let has_laptop = "yes";
-      if (laptopYes && laptopYes.classList.contains("active")) {
-        has_laptop = "yes";
-      } else if (laptopNo && laptopNo.classList.contains("active")) {
-        has_laptop = "no";
-      }
-
-      if (
-        !phone_country_code ||
-        !phone_number ||
-        !child_name ||
-        !child_grade ||
-        !parent_name ||
-        !parent_email
-      ) {
-        showError("Please fill all required fields.");
-        btn.disabled = false;
-        btn.textContent = "Save & Continue to Date & Time";
-        return;
-      }
-
-      const url = new URL(window.location.href);
-      const courseIdParam = url.searchParams.get("courseId");
-      const langParam = (url.searchParams.get("lang") || "english").toLowerCase();
-      const course_id = courseIdParam ? parseInt(courseIdParam, 10) : DEFAULT_COURSE_ID;
-
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || FIXED_TIMEZONE;
-      const internet_speed_mbps = getInternetSpeedMbps();
-      const deviceInfo = detectDeviceInfo();
-      const ipInfo = await fetchIpInfo();
-
-      const ip_address = ipInfo?.ip || null;
-      const city = ipInfo?.city || null;
-      const countryFromIp = ipInfo?.country_name || null;
-
-      const payload = {
-        child_name,
-        child_grade,
-        parent_name,
-        parent_email,
-        phone_country_code,
-        phone_number,
-        has_laptop,
-        region_key: FIXED_REGION_KEY,
-        timezone: FIXED_TIMEZONE,
-        country: countryFromIp || null,
-        lang: langParam,
-        course_id,
-        full_url: window.location.href,
-        landing_page_path: window.location.pathname + window.location.search,
-        ip_address,
-        city,
-        device_type: deviceInfo.device_type,
-        browser: deviceInfo.browser,
-        internet_speed_mbps,
-        page_completed: 1,
-      };
-
-      const { data, error } = await client
-        .from("demo_leads")
-        .upsert(payload, {
-          onConflict: "phone_country_code,phone_number",
-          ignoreDuplicates: false,
-        })
-        .select("*")
-        .single();
-
-      btn.disabled = false;
-      btn.textContent = "Save & Continue to Date & Time";
-
-      if (error) {
-        console.error(error);
-        showError("Unable to save your details. Please try again.");
-        return;
-      }
-
-      leadRow = data;
-      showSuccess("Saved successfully.");
-      await loadSlots();
-      setStep(2);
-    }
-
-    // ---------- STEP 2: LOAD SLOTS ----------
-    async function loadSlots() {
-      const dateRow = document.getElementById("date-row");
-      const timeRow = document.getElementById("time-row");
-      const summary = document.getElementById("selected-time-summary");
-      if (dateRow) dateRow.innerHTML = "";
-      if (timeRow) timeRow.innerHTML = "";
-      if (summary) summary.textContent = "No time selected yet.";
-
-      slotsByDate = {};
-      selectedDateKey = null;
-      selectedSlot = null;
-
-      const url = new URL(window.location.href);
-      const courseIdParam = url.searchParams.get("courseId");
-      const course_id = courseIdParam ? parseInt(courseIdParam, 10) : DEFAULT_COURSE_ID;
-
-      const now = new Date();
-      const todayKey = formatDateKey(now);
-      const endDate = new Date(now);
-      endDate.setDate(endDate.getDate() + 5);
-      const endKey = formatDateKey(endDate);
-      const minMinutesToday = now.getHours() * 60 + now.getMinutes() + 60;
-
-      const { data, error } = await client
-        .from("demo_slots_live_view")
-        .select(
-          "slot_id, slot_date, slot_datetime_local, is_star_teacher, region_key, course_id"
-        )
-        .eq("region_key", FIXED_REGION_KEY)
-        .eq("course_id", course_id)
-        .gte("slot_date", todayKey)
-        .lte("slot_date", endKey)
-        .order("slot_date", { ascending: true })
-        .order("slot_datetime_local", { ascending: true });
-
-      if (error) {
-        console.error(error);
-        showError("Could not load available slots.");
-        return;
-      }
-
-      if (!data || !data.length) {
-        if (dateRow) {
-          dateRow.innerHTML = "<p>No slots found.</p>";
-        }
-        return;
-      }
-
-      let minDateObj = null;
-      let maxDateObj = null;
-
-      data.forEach((row) => {
-        const dateKey = row.slot_date; // YYYY-MM-DD
-        const dtStr = row.slot_datetime_local || "";
-        let h24 = 0;
-        let m = 0;
-        const mMatch = dtStr.match(/T(\d{2}):(\d{2})/);
-        if (mMatch) {
-          h24 = parseInt(mMatch[1], 10);
-          m = parseInt(mMatch[2], 10);
-        }
-        const slotMinutes = h24 * 60 + m;
-
-        // +1 hour filter for today's date (approx in local time)
-        if (dateKey === todayKey && slotMinutes < minMinutesToday) {
-          return;
-        }
-
-        if (!slotsByDate[dateKey]) {
-          const parts = dateKey.split("-");
-          const dObj = new Date(
-            parseInt(parts[0], 10),
-            parseInt(parts[1], 10) - 1,
-            parseInt(parts[2], 10)
-          );
-          slotsByDate[dateKey] = {
-            dateObj: dObj,
-            slots: [],
-          };
-
-          if (!minDateObj || dObj < minDateObj) minDateObj = dObj;
-          if (!maxDateObj || dObj > maxDateObj) maxDateObj = dObj;
-        }
-
-        slotsByDate[dateKey].slots.push({
-          id: row.slot_id,
-          dateKey,
-          hour24: h24,
-          minute: m,
-          label: formatTime12h(h24, m),
-          isStar: !!row.is_star_teacher,
-        });
-      });
-
-      // sort slots within each day
-      Object.values(slotsByDate).forEach((group) => {
-        group.slots.sort((a, b) => {
-          if (a.hour24 === b.hour24) return a.minute - b.minute;
-          return a.hour24 - b.hour24;
-        });
-      });
-
-      // render dates
-      const dateKeys = Object.keys(slotsByDate).sort();
-      if (!dateKeys.length) {
-        if (dateRow) {
-          dateRow.innerHTML = "<p>No slots available in the next few days.</p>";
-        }
-        return;
-      }
-
-      selectedDateKey = dateKeys[0];
-
-      renderDatePills(todayKey);
-      renderTimePills();
-
-      // date range label
-      const rangeLabel = document.getElementById("date-range-label");
-      if (rangeLabel && minDateObj && maxDateObj) {
-        const fromStr = formatDateLabel(minDateObj);
-        const toStr = formatDateLabel(maxDateObj);
-        rangeLabel.textContent = `${fromStr} – ${toStr}`;
-      }
-    }
-
-    function renderDatePills(todayKey) {
-      const dateRow = document.getElementById("date-row");
-      if (!dateRow) return;
-      dateRow.innerHTML = "";
-
-      const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowKey = formatDateKey(tomorrow);
-
-      Object.keys(slotsByDate)
-        .sort()
-        .forEach((dateKey) => {
-          const group = slotsByDate[dateKey];
-          const dObj = group.dateObj;
-          let top = formatWeekdayLabel(dObj);
-          if (dateKey === todayKey) top = "Today";
-          else if (dateKey === tomorrowKey) top = "Tomorrow";
-          const bottom = formatDateLabel(dObj);
-
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "date-pill";
-          if (dateKey === selectedDateKey) btn.classList.add("active");
-          btn.innerHTML = `
-            <div class="date-pill-top">${top}</div>
-            <div class="date-pill-bottom">${bottom}</div>
-          `;
-          btn.addEventListener("click", () => {
-            selectedDateKey = dateKey;
-            selectedSlot = null;
-            renderDatePills(todayKey);
-            renderTimePills();
-          });
-          dateRow.appendChild(btn);
-        });
-    }
-
-    function renderTimePills() {
-      const timeRow = document.getElementById("time-row");
-      const summary = document.getElementById("selected-time-summary");
-      if (!timeRow) return;
-      timeRow.innerHTML = "";
-      if (summary) summary.textContent = "No time selected yet.";
-
-      const group = slotsByDate[selectedDateKey];
-      if (!group || !group.slots.length) {
-        timeRow.innerHTML = "<p>No slots for this day.</p>";
-        return;
-      }
-
-      group.slots.forEach((slot) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "time-pill";
-        if (selectedSlot && selectedSlot.id === slot.id) {
-          btn.classList.add("active");
-        }
-        btn.innerHTML = `
-          <div class="time-pill-main">${slot.label}</div>
-          <div class="time-pill-sub">1:1 live class · 60 mins</div>
-          ${
-            slot.isStar
-              ? '<div class="time-pill-star">⭐ Star teacher</div>'
-              : ""
-          }
-        `;
-        btn.addEventListener("click", () => {
-          selectedSlot = slot;
-          renderTimePills();
-          if (summary) {
-            summary.textContent = `${slot.label} on ${selectedDateKey}`;
-          }
-        });
-        timeRow.appendChild(btn);
-      });
-    }
-
-    // ---------- STEP 2 SAVE ----------
-    async function handleStep2() {
-      clearMessages();
-      if (!leadRow) {
-        showError("Lead is missing. Please complete Step 1 again.");
-        setStep(1);
-        return;
-      }
-      if (!selectedSlot) {
-        showError("Please select a date and time slot.");
-        return;
-      }
-
-      const langSelect = document.getElementById("language-select");
-      const langValue = langSelect
-        ? (langSelect.value || "english").toLowerCase()
-        : "english";
-
-      const btn = document.getElementById("btn-step-2");
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Saving...";
-      }
-
-      const { error } = await client
-        .from("demo_leads")
-        .update({
-          preferred_date: selectedSlot.dateKey,
-          preferred_time_slot: selectedSlot.label,
-          slot_id: selectedSlot.id,
-          star_teacher_selected: selectedSlot.isStar,
-          lang: langValue,
-          page_completed: 2,
-        })
-        .eq("id", leadRow.id);
-
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "Confirm Class Time";
-      }
-
-      if (error) {
-        console.error(error);
-        showError("Could not save your selected slot.");
-        return;
-      }
-
-      showSuccess("Slot saved.");
-      setStep(3);
-    }
-
-    // ---------- STEP 3 HANDLERS ----------
-    function setupPillGroup(containerId, stateObj, key) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      container.addEventListener("click", (e) => {
-        const btn = e.target.closest(".pill-option");
-        if (!btn) return;
-        const val = btn.getAttribute("data-value");
-        stateObj[key] = val;
-
-        container.querySelectorAll(".pill-option").forEach((el) => {
-          el.classList.toggle("active", el === btn);
-        });
-      });
-    }
-
-    async function handleStep3() {
-      clearMessages();
-      if (!leadRow) {
-        showError("Lead is missing. Please complete Step 1 again.");
-        setStep(1);
-        return;
-      }
-
-      const btn = document.getElementById("btn-step-3");
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Saving...";
-      }
-
-      const state = {};
-      setupPillGroup("who-options", state, "who_are_you");
-      setupPillGroup("why-options", state, "booking_reason");
-      setupPillGroup("when-options", state, "purchase_timeline");
-
-      // Read selected values directly from active buttons
-      const whoBtn = document.querySelector("#who-options .pill-option.active");
-      const whyBtn = document.querySelector("#why-options .pill-option.active");
-      const whenBtn = document.querySelector(
-        "#when-options .pill-option.active"
-      );
-
-      const who_are_you = whoBtn ? whoBtn.getAttribute("data-value") : null;
-      const booking_reason = whyBtn ? whyBtn.getAttribute("data-value") : null;
-      const purchase_timeline = whenBtn
-        ? whenBtn.getAttribute("data-value")
-        : null;
-
-      const { error } = await client
-        .from("demo_leads")
-        .update({
-          who_are_you,
-          booking_reason,
-          purchase_timeline,
-          page_completed: 3,
-        })
-        .eq("id", leadRow.id);
-
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "Submit";
-      }
-
-      if (error) {
-        console.error(error);
-        showError("Could not save your answers.");
-        return;
-      }
-
-      const finalMsg = document.getElementById("final-message");
-      if (finalMsg) finalMsg.style.display = "block";
-      showSuccess("Your trial class is booked (backend test).");
-    }
-
-    // ---------- INIT ----------
-    document.addEventListener("DOMContentLoaded", () => {
-      setStep(1);
-      clearMessages();
-
-      const btn1 = document.getElementById("btn-step-1");
-      const btnBack1 = document.getElementById("btn-back-to-1");
-      const btn2 = document.getElementById("btn-step-2");
-      const btnBack2 = document.getElementById("btn-back-to-2");
-      const btn3 = document.getElementById("btn-step-3");
-
-      if (btn1) btn1.addEventListener("click", handleStep1);
-      if (btnBack1)
-        btnBack1.addEventListener("click", () => {
-          setStep(1);
-        });
-      if (btn2) btn2.addEventListener("click", handleStep2);
-      if (btnBack2)
-        btnBack2.addEventListener("click", () => {
-          setStep(2);
-        });
-      if (btn3) btn3.addEventListener("click", handleStep3);
-
-      // Laptop toggle UI
-      const laptopYes = document.getElementById("laptop-yes");
-      const laptopNo = document.getElementById("laptop-no");
-      if (laptopYes && laptopNo) {
-        laptopYes.addEventListener("click", () => {
-          laptopYes.classList.add("active");
-          laptopYes.classList.remove("inactive");
-          laptopNo.classList.remove("active");
-          laptopNo.classList.add("inactive");
-        });
-        laptopNo.addEventListener("click", () => {
-          laptopNo.classList.add("active");
-          laptopNo.classList.remove("inactive");
-          laptopYes.classList.remove("active");
-          laptopYes.classList.add("inactive");
-        });
+      if (stepIndex === step) {
+        el.classList.add("active");
       }
     });
-  </script>
+  }
 
+  // UI helper: show field error
+  function setFieldError(fieldId, message) {
+    const err = document.querySelector(`.error-text[data-error-for="${fieldId}"]`);
+    if (!err) return;
+    if (message) {
+      err.textContent = message;
+      err.classList.remove("hidden");
+    } else {
+      err.textContent = "";
+      err.classList.add("hidden");
+    }
+  }
+
+  function setGlobalError(step, message) {
+    const el = document.getElementById(`global-error-${step}`);
+    if (!el) return;
+    if (message) {
+      el.textContent = message;
+      el.classList.remove("hidden");
+    } else {
+      el.textContent = "";
+      el.classList.add("hidden");
+    }
+  }
+
+  // UI: WhatsApp chips
+  function initWhatsappChips() {
+    const chips = document.querySelectorAll(".chip[data-whatsapp]");
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        isWhatsapp = chip.getAttribute("data-whatsapp") === "true";
+      });
+    });
+  }
+
+  // UI: laptop chips
+  function initLaptopChips() {
+    const chips = document.querySelectorAll(".chip[data-laptop]");
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        hasLaptop = chip.getAttribute("data-laptop") === "true";
+      });
+    });
+  }
+
+  // UI: language chips
+  function initLanguageChips() {
+    const chips = document.querySelectorAll(".lang-chip");
+    chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        selectedLanguage = chip.getAttribute("data-lang");
+      });
+    });
+  }
+
+  // UI: option-card groups (radio-like)
+  function initOptionGroup(groupId, dataAttr, onChange) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    const cards = group.querySelectorAll(".option-card");
+    cards.forEach(card => {
+      card.addEventListener("click", () => {
+        cards.forEach(c => {
+          c.classList.remove("active");
+          const input = c.querySelector("input[type='radio']");
+          if (input) input.checked = false;
+        });
+        card.classList.add("active");
+        const input = card.querySelector("input[type='radio']");
+        if (input) input.checked = true;
+        if (typeof onChange === "function") {
+          onChange(card.getAttribute(dataAttr));
+        }
+      });
+    });
+  }
+
+  function getSelectedFromGroup(groupId, dataAttr) {
+    const group = document.getElementById(groupId);
+    if (!group) return null;
+    const active = group.querySelector(".option-card.active");
+    return active ? active.getAttribute(dataAttr) : null;
+  }
+
+  // Auto-detect IP + country
+  async function detectLocation() {
+    const hintEl = document.getElementById("detected-location-hint");
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      if (!res.ok) throw new Error("Failed IP lookup");
+      const data = await res.json();
+      clientMeta.ip_address = data.ip || null;
+      const countryCode = data.country || data.country_code;
+      const timezone = data.timezone || null;
+
+      if (countryCode) {
+        const countrySelect = document.getElementById("country-select");
+        let optionToSelect = null;
+
+        // Prefer exact timezone match if present
+        if (timezone) {
+          optionToSelect = Array.from(countrySelect.options).find(opt =>
+            opt.value === countryCode && opt.dataset.timezone === timezone
+          );
+        }
+        if (!optionToSelect) {
+          optionToSelect = Array.from(countrySelect.options).find(opt => opt.value === countryCode);
+        }
+
+        if (optionToSelect) {
+          countrySelect.value = optionToSelect.value;
+          countrySelect.selectedIndex = optionToSelect.index;
+          const dial = optionToSelect.dataset.dial;
+          const regionKey = optionToSelect.dataset.regionKey;
+          const tz = optionToSelect.dataset.timezone;
+
+          if (dial) {
+            document.getElementById("phone-country-code").value = dial;
+          }
+          selectedCountryCode = optionToSelect.value;
+          selectedTimezone = tz || clientMeta.timezone;
+          selectedRegionKey = regionKey || null;
+
+          document.getElementById("slots-timezone-label").textContent =
+            `Showing times in ${selectedTimezone || "your local time zone"}`;
+          hintEl.textContent = `Detected: ${data.city || ""} ${countryCode} · ${selectedTimezone || clientMeta.timezone || "time zone detected"}`;
+        } else {
+          hintEl.textContent = "Couldn’t auto-detect — please select manually.";
+        }
+      } else {
+        hintEl.textContent = "Couldn’t auto-detect — please select manually.";
+      }
+    } catch (e) {
+      console.warn("IP detection failed", e);
+      const hintEl = document.getElementById("detected-location-hint");
+      hintEl.textContent = "Couldn’t auto-detect — please select manually.";
+    }
+  }
+
+  // Handle manual country change
+  function initCountrySelect() {
+    const select = document.getElementById("country-select");
+    const phoneCodeSelect = document.getElementById("phone-country-code");
+    select.addEventListener("change", () => {
+      const option = select.options[select.selectedIndex];
+      if (!option || !option.value) return;
+      const dial = option.dataset.dial;
+      const tz = option.dataset.timezone;
+      const regionKey = option.dataset.regionKey;
+      selectedCountryCode = option.value;
+      selectedTimezone = tz || clientMeta.timezone;
+      selectedRegionKey = regionKey || null;
+
+      if (dial) {
+        phoneCodeSelect.value = dial;
+      }
+      document.getElementById("slots-timezone-label").textContent =
+        `Showing times in ${selectedTimezone || "your local time zone"}`;
+    });
+  }
+
+  // STEP 1 submit
+  async function handleStep1Submit(event) {
+    event.preventDefault();
+    setGlobalError(1, null);
+
+    const countrySelect = document.getElementById("country-select");
+    const phoneCodeEl = document.getElementById("phone-country-code");
+    const phoneEl = document.getElementById("phone-number");
+    const childNameEl = document.getElementById("child-name");
+    const childGradeEl = document.getElementById("child-grade");
+    const parentNameEl = document.getElementById("parent-name");
+    const parentEmailEl = document.getElementById("parent-email");
+    const notesEl = document.getElementById("notes");
+
+    let hasError = false;
+    if (!countrySelect.value) {
+      setFieldError("country-select", "Please choose your country & time zone.");
+      hasError = true;
+    } else {
+      setFieldError("country-select", null);
+    }
+
+    if (!phoneEl.value.trim()) {
+      setFieldError("phone-number", "Please enter a valid phone number.");
+      hasError = true;
+    } else {
+      setFieldError("phone-number", null);
+    }
+
+    if (!childNameEl.value.trim()) {
+      setFieldError("child-name", "Please enter the child’s name.");
+      hasError = true;
+    } else {
+      setFieldError("child-name", null);
+    }
+
+    if (!childGradeEl.value) {
+      setFieldError("child-grade", "Please select the child’s grade.");
+      hasError = true;
+    } else {
+      setFieldError("child-grade", null);
+    }
+
+    if (!parentNameEl.value.trim()) {
+      setFieldError("parent-name", "Please enter the parent / guardian name.");
+      hasError = true;
+    } else {
+      setFieldError("parent-name", null);
+    }
+
+    const emailVal = parentEmailEl.value.trim();
+    if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+      setFieldError("parent-email", "Please enter a valid email address.");
+      hasError = true;
+    } else {
+      setFieldError("parent-email", null);
+    }
+
+    if (!hasLaptop && hasLaptop !== false && hasLaptop !== true) {
+      setFieldError("has-laptop", "Please let us know if you have a laptop or desktop.");
+      hasError = true;
+    } else {
+      setFieldError("has-laptop", null);
+    }
+
+    if (hasError) return;
+
+    const option = countrySelect.options[countrySelect.selectedIndex];
+    const countryNameFull = option ? option.textContent.trim() : null;
+    const regionKey = option ? option.dataset.regionKey || null : null;
+    const tz = option ? option.dataset.timezone || selectedTimezone : selectedTimezone;
+
+    selectedRegionKey = regionKey;
+    selectedTimezone = tz;
+
+    const utm = getQueryParams();
+    const payload = {
+      child_name: childNameEl.value.trim(),
+      child_grade: childGradeEl.value,
+      parent_name: parentNameEl.value.trim(),
+      parent_email: parentEmailEl.value.trim(),
+      phone_country_code: phoneCodeEl.value,
+      phone_number: phoneEl.value.trim(),
+      is_whatsapp: isWhatsapp,
+      has_laptop: hasLaptop,
+      region_key: regionKey,
+      country: countryNameFull,
+      timezone: tz || clientMeta.timezone,
+      ip_address: clientMeta.ip_address,
+      browser: clientMeta.browser,
+      device_type: clientMeta.device_type,
+      internet_speed_mbps: clientMeta.internet_speed_mbps,
+      page_completed: 1,
+      notes: notesEl.value.trim() || null,
+      // Common UTM keys if present in URL:
+      utm_source: utm.utm_source || null,
+      utm_medium: utm.utm_medium || null,
+      utm_campaign: utm.utm_campaign || null,
+      utm_term: utm.utm_term || null,
+      utm_content: utm.utm_content || null,
+      referrer: document.referrer || null
+    };
+
+    const btn = document.getElementById("step-1-next");
+    btn.disabled = true;
+    btn.textContent = "Saving your details…";
+
+    try {
+      let result;
+      if (currentLeadId) {
+        // update existing lead
+        result = await supabaseClient
+          .from("demo_leads")
+          .update(payload)
+          .eq("id", currentLeadId)
+          .select("id")
+          .single();
+      } else {
+        result = await supabaseClient
+          .from("demo_leads")
+          .insert(payload)
+          .select("id")
+          .single();
+      }
+
+      if (result.error) throw result.error;
+      currentLeadId = result.data.id;
+      setActiveStep(2);
+      // After step 1 is saved, fetch slots
+      await loadSlotsForNextDays();
+    } catch (err) {
+      console.error("Step 1 save error", err);
+      setGlobalError(1, "We couldn’t save your details just now. Please check your connection and try again.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Continue to time selection";
+    }
+  }
+
+  // Fetch slots for region & course for next 6 days
+  async function loadSlotsForNextDays() {
+    const statusLabel = document.getElementById("slots-status-label");
+    const rangeLabel = document.getElementById("slots-range-label");
+    const daysRow = document.getElementById("days-row");
+    const slotsContainer = document.getElementById("slots-container");
+    const emptyMsg = document.getElementById("slots-empty-msg");
+
+    daysRow.innerHTML = "";
+    slotsContainer.innerHTML = "";
+    emptyMsg.textContent = "Fetching live availability…";
+
+    if (!selectedRegionKey) {
+      statusLabel.textContent = "Please go back and select your country.";
+      emptyMsg.textContent = "Region is missing. Go back to Step 1 and select your country.";
+      return;
+    }
+
+    const dateRange = getISTDateRange(6);
+    const fromIso = dateRange[0].iso;
+    const toIso = dateRange[dateRange.length - 1].iso;
+    rangeLabel.textContent = `Showing slots for ${formatDateForLabel(dateRange[0].jsDate)} – ${formatDateForLabel(dateRange[dateRange.length - 1].jsDate)} (IST dates)`;
+
+    try {
+      const { data, error } = await supabaseClient
+        .from("demo_slots_live_view")
+        .select("*")
+        .eq("region_key", selectedRegionKey)
+        .eq("course_id", COURSE_ID)
+        .gte("slot_date", fromIso)
+        .lte("slot_date", toIso)
+        .gt("capacity_remaining", 0);
+
+      if (error) throw error;
+
+      const slots = (data || []).slice().sort((a, b) => {
+        const da = new Date(a.slot_datetime_local || a.slot_datetime_ist);
+        const db = new Date(b.slot_datetime_local || b.slot_datetime_ist);
+        return da - db;
+      });
+
+      statusLabel.textContent = slots.length
+        ? `Found ${slots.length} live slots for the next 6 days.`
+        : "No live slots found in the next 6 days.";
+
+      // Group by slot_date
+      const byDate = {};
+      for (const slot of slots) {
+        if (!byDate[slot.slot_date]) byDate[slot.slot_date] = [];
+        byDate[slot.slot_date].push(slot);
+      }
+
+      // Render day chips for each of the 6 days (even if no slots)
+      const userTz = selectedTimezone || clientMeta.timezone || "UTC";
+      dateRange.forEach(({ iso, jsDate }) => {
+        const slotsForDay = byDate[iso] || [];
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "day-chip" + (slotsForDay.length ? "" : " disabled");
+        chip.dataset.dateIso = iso;
+        chip.innerHTML = `
+          <span class="day-name">${weekdayName(jsDate)}</span>
+          <span class="day-date">${jsDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+          <span style="font-size:0.7rem;opacity:0.7;">${slotsForDay.length ? slotsForDay.length + " slots" : "No slots"}</span>
+        `;
+        if (!slotsForDay.length) {
+          chip.disabled = true;
+        }
+        chip.addEventListener("click", () => {
+          if (!slotsForDay.length) return;
+          document.querySelectorAll(".day-chip").forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          renderSlotsList(slotsForDay, userTz);
+        });
+        daysRow.appendChild(chip);
+      });
+
+      if (!slots.length) {
+        slotsContainer.innerHTML = "";
+        emptyMsg.textContent = "No live classes are available in the next 6 days for your region. Please try a different time zone or contact support.";
+      } else {
+        emptyMsg.textContent = "Choose a date above to see live time slots.";
+      }
+    } catch (err) {
+      console.error("Error loading slots", err);
+      statusLabel.textContent = "Could not fetch live slots. Please try again.";
+      slotsContainer.innerHTML = "";
+      emptyMsg.textContent = "We couldn’t load slots right now. Please refresh or try again later.";
+    }
+  }
+
+  function renderSlotsList(slotsForDay, timeZone) {
+    const slotsContainer = document.getElementById("slots-container");
+    const emptyMsg = document.getElementById("slots-empty-msg");
+    const slotSummaryHint = document.getElementById("slot-summary-hint");
+    slotsContainer.innerHTML = "";
+    emptyMsg.textContent = "";
+    selectedSlot = null;
+    slotSummaryHint.textContent = "No slot selected yet.";
+
+    // Sort again by datetime local for safety
+    slotsForDay = slotsForDay.slice().sort((a, b) => {
+      const da = new Date(a.slot_datetime_local || a.slot_datetime_ist);
+      const db = new Date(b.slot_datetime_local || b.slot_datetime_ist);
+      return da - db;
+    });
+
+    const tz = timeZone || "UTC";
+
+    slotsForDay.forEach(slot => {
+      const isoSource = slot.slot_datetime_local || slot.slot_datetime_ist;
+      const localTime = formatTimeInTimezone(isoSource, tz);
+      const istTime = formatTimeInTimezone(isoSource, "Asia/Kolkata");
+      const row = document.createElement("div");
+      row.className = "slot-row";
+      row.dataset.slotId = slot.slot_id || slot.id;
+      row.innerHTML = `
+        <div class="slot-main">
+          <div class="slot-time">${localTime}</div>
+          <div class="slot-meta">
+            <span>Local time · ${tz}</span>
+            <span>IST: ${istTime}</span>
+          </div>
+        </div>
+        <div class="slot-badges">
+          ${slot.is_star_teacher ? `
+            <span class="tag-star">
+              <span class="icon"></span>
+              Star teacher
+            </span>
+          ` : ""}
+          <span class="tag-capacity">Seats left: ${slot.capacity_remaining}</span>
+        </div>
+      `;
+
+      row.addEventListener("click", () => {
+        document.querySelectorAll(".slot-row").forEach(r => r.classList.remove("active"));
+        row.classList.add("active");
+        const localTimeLabel = localTime;
+        selectedSlot = {
+          slot_id: slot.slot_id || slot.id,
+          slot_date: slot.slot_date,
+          localTimeLabel,
+          istDateTimeIso: isoSource,
+          is_star_teacher: !!slot.is_star_teacher
+        };
+        slotSummaryHint.textContent = `Selected: ${localTimeLabel} on ${slot.slot_date} (${tz})`;
+      });
+
+      slotsContainer.appendChild(row);
+    });
+  }
+
+  // STEP 2 submit
+  async function handleStep2Submit(event) {
+    event.preventDefault();
+    setGlobalError(2, null);
+
+    if (!selectedSlot || !selectedSlot.slot_id) {
+      setFieldError("slot-time", "Please select a time slot to continue.");
+      return;
+    } else {
+      setFieldError("slot-time", null);
+    }
+
+    if (!selectedLanguage) {
+      selectedLanguage = "English";
+    }
+
+    const btn = document.getElementById("step-2-next");
+    btn.disabled = true;
+    btn.textContent = "Locking your slot…";
+
+    try {
+      const payload = {
+        preferred_date: selectedSlot.slot_date,
+        preferred_time_slot: selectedSlot.localTimeLabel,
+        slot_id: selectedSlot.slot_id,
+        session_language: selectedLanguage,
+        page_completed: 2
+      };
+
+      const { error } = await supabaseClient
+        .from("demo_leads")
+        .update(payload)
+        .eq("id", currentLeadId);
+
+      if (error) throw error;
+
+      setActiveStep(3);
+    } catch (err) {
+      console.error("Step 2 save error", err);
+      setGlobalError(2, "We couldn’t save your selected slot. Please try again or pick a different time.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Continue to final step";
+    }
+  }
+
+  // STEP 3 submit
+  async function handleStep3Submit(event) {
+    event.preventDefault();
+    setGlobalError(3, null);
+
+    const who = getSelectedFromGroup("who-are-you-group", "data-who");
+    const reason = getSelectedFromGroup("booking-reason-group", "data-reason");
+    const timeline = getSelectedFromGroup("purchase-timeline-group", "data-timeline");
+
+    let hasError = false;
+    if (!who) {
+      setFieldError("who-are-you", "Please select an option.");
+      hasError = true;
+    } else {
+      setFieldError("who-are-you", null);
+    }
+    if (!reason) {
+      setFieldError("booking-reason", "Please select why you’re booking this trial.");
+      hasError = true;
+    } else {
+      setFieldError("booking-reason", null);
+    }
+    if (!timeline) {
+      setFieldError("purchase-timeline", "Please select your purchase timeline.");
+      hasError = true;
+    } else {
+      setFieldError("purchase-timeline", null);
+    }
+    if (hasError) return;
+
+    const btn = document.getElementById("step-3-submit");
+    btn.disabled = true;
+    btn.textContent = "Confirming your booking…";
+
+    try {
+      const payload = {
+        who_are_you: who,
+        booking_reason: reason,
+        purchase_timeline: timeline,
+        page_completed: 3
+      };
+
+      const { error } = await supabaseClient
+        .from("demo_leads")
+        .update(payload)
+        .eq("id", currentLeadId);
+
+      if (error) throw error;
+
+      // success view
+      populateSuccessView();
+      setActiveStep("success");
+    } catch (err) {
+      console.error("Step 3 save error", err);
+      setGlobalError(3, "We couldn’t finalise your booking. Please try again in a moment.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Confirm booking";
+    }
+  }
+
+  function populateSuccessView() {
+    const slotLine = document.getElementById("success-slot-line");
+    const parentLine = document.getElementById("success-parent-line");
+    const parentName = document.getElementById("parent-name").value.trim();
+    const childName = document.getElementById("child-name").value.trim();
+    const email = document.getElementById("parent-email").value.trim();
+
+    if (selectedSlot) {
+      const tz = selectedTimezone || clientMeta.timezone || "your time zone";
+      slotLine.textContent = `Time: ${selectedSlot.localTimeLabel} on ${selectedSlot.slot_date} (${tz}) · Language: ${selectedLanguage}`;
+    } else {
+      slotLine.textContent = "Time: Confirmed slot";
+    }
+
+    parentLine.textContent = `Family: ${childName || "Your child"} · Parent: ${parentName || "You"} · Email: ${email || "—"}`;
+  }
+
+  function initBackButtons() {
+    document.querySelectorAll("button[data-back-to]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const toStep = Number(btn.getAttribute("data-back-to"));
+        if (toStep >= 1 && toStep <= 3) {
+          setActiveStep(toStep);
+        }
+      });
+    });
+  }
+
+  function initStatusConnect() {
+    const label = document.getElementById("status-connect");
+    // quick check: if supabase url is placeholder, warn
+    if (SUPABASE_URL.includes("YOUR_PROJECT_ID")) {
+      label.textContent = "Supabase not configured yet — add your project URL & anon key.";
+    } else {
+      label.textContent = "Connected to secure booking server.";
+    }
+  }
+
+  // Init all
+  document.addEventListener("DOMContentLoaded", () => {
+    initWhatsappChips();
+    initLaptopChips();
+    initLanguageChips();
+    initCountrySelect();
+    initOptionGroup("who-are-you-group", "data-who");
+    initOptionGroup("booking-reason-group", "data-reason");
+    initOptionGroup("purchase-timeline-group", "data-timeline");
+    initBackButtons();
+    initStatusConnect();
+
+    document.getElementById("step-1").addEventListener("submit", handleStep1Submit);
+    document.getElementById("step-2").addEventListener("submit", handleStep2Submit);
+    document.getElementById("step-3").addEventListener("submit", handleStep3Submit);
+
+    detectLocation();
+  });
+</script>
 </body>
 </html>

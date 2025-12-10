@@ -551,7 +551,7 @@
           <input id="parent-email" class="input" type="email" placeholder="We'll send confirmation here" />
         </div>
 
-        <div class="field-group" style="grid-column: span 12;">
+        <div class="field-group" style="grid-column: span 12%;">
           <div class="field-label-row">
             <label class="field-label">Do you have a Laptop / Desktop?</label>
           </div>
@@ -633,7 +633,7 @@
     </section>
 
     <!-- STEP 3 -->
-    <section id="step-3" style="display:none%;">
+    <section id="step-3" style="display:none;">
       <button class="btn-secondary" id="btn-back-to-2">
         <span>←</span>
         <span>Back to date &amp; time</span>
@@ -701,7 +701,6 @@
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Fixed test context
     const TEST_REGION = {
       regionKey: "MEA",
       courseId: 1,
@@ -807,7 +806,7 @@
       if (ua.includes("Chrome/")) return "Chrome";
       if (ua.includes("Safari/")) return "Safari";
       if (ua.includes("Firefox/")) return "Firefox";
-      return ua.slice(0, 120); // fallback: trimmed UA
+      return ua.slice(0, 120);
     }
 
     function showStep(step) {
@@ -842,12 +841,11 @@
       return Math.round(conn.downlink * 10) / 10;
     }
 
-    // STEP 1
     async function handleStep1() {
       clearBanners();
 
       const phoneCode = $("phone-country-code").value.trim();
-      const phoneNumber = $("phone-number").value.trim().replace(/\\D/g, "");
+      const phoneNumber = $("phone-number").value.trim().replace(/\D/g, "");
       const childName = $("child-name").value.trim();
       const childGrade = $("child-grade").value.trim();
       const parentName = $("parent-name").value.trim();
@@ -931,7 +929,7 @@
       }
     }
 
-    // STEP 2: slots
+    // ---- STEP 2: load slots without assuming column names ----
     async function loadSlots() {
       if (!leadId) return;
 
@@ -948,29 +946,61 @@
 
       const todayKey = fmtDateISO(today);
       const endKey = fmtDateISO(end);
+      const minTime = new Date(now.getTime() + 60 * 60 * 1000); // +1hr
 
       try {
         const { data, error } = await supabase
           .from("demo_slots_live")
-          .select(
-            "id, slot_date, slot_datetime_local, is_star_teacher, region_key, course_id"
-          )
+          .select("*")
           .eq("region_key", regionKey)
-          .eq("course_id", courseId)
-          .gte("slot_date", todayKey)
-          .lte("slot_date", endKey)
-          .order("slot_datetime_local", { ascending: true });
+          .eq("course_id", courseId);
 
         if (error) throw error;
 
-        const minTime = new Date(now.getTime() + 60 * 60 * 1000); // +1hr
+        const rows = (data || []).map((row) => {
+          // Determine datetime field
+          let dt;
+          if (row.slot_datetime_local) dt = new Date(row.slot_datetime_local);
+          else if (row.slot_datetime_ist) dt = new Date(row.slot_datetime_ist);
+          else if (row.slot_date && row.slot_time_ist) {
+            dt = new Date(row.slot_date + "T" + row.slot_time_ist);
+          } else if (row.slot_date) {
+            dt = new Date(row.slot_date + "T00:00:00");
+          } else {
+            dt = null;
+          }
 
-        // map id -> slot_id so we can keep using slot_id everywhere
-        const validSlots = (data || [])
-          .filter((s) => new Date(s.slot_datetime_local) >= minTime)
-          .map((s) => ({ ...s, slot_id: s.id }));
+          // Determine date key (YYYY-MM-DD)
+          let dateKey;
+          if (row.slot_date) {
+            dateKey = row.slot_date;
+          } else if (dt) {
+            dateKey = fmtDateISO(dt);
+          }
 
-        if (!validSlots.length) {
+          return {
+            ...row,
+            _dt: dt,
+            _dateKey: dateKey,
+            slot_id: row.slot_id || row.id,
+          };
+        });
+
+        // Filter out rows with no date or dt
+        let valid = rows.filter((r) => r._dt && r._dateKey);
+
+        // Filter by +1hr and date window
+        valid = valid.filter((r) => {
+          if (r._dt < minTime) return false;
+          if (r._dateKey < todayKey) return false;
+          if (r._dateKey > endKey) return false;
+          return true;
+        });
+
+        // Sort by datetime
+        valid.sort((a, b) => a._dt - b._dt);
+
+        if (!valid.length) {
           dateRowEl.innerHTML = "<p>No slots available.</p>";
           return;
         }
@@ -978,13 +1008,12 @@
         let minDate = null;
         let maxDate = null;
 
-        validSlots.forEach((row) => {
-          const dateKey = row.slot_date;
+        valid.forEach((row) => {
+          const key = row._dateKey;
+          if (!slotsByDate[key]) slotsByDate[key] = [];
+          slotsByDate[key].push(row);
 
-          if (!slotsByDate[dateKey]) slotsByDate[dateKey] = [];
-          slotsByDate[dateKey].push(row);
-
-          const d = new Date(dateKey + "T00:00:00");
+          const d = new Date(key + "T00:00:00");
           if (!minDate || d < minDate) minDate = d;
           if (!maxDate || d > maxDate) maxDate = d;
         });
@@ -996,7 +1025,7 @@
         renderDatePills(todayKey);
       } catch (err) {
         console.error(err);
-        showError("Failed to load slots: " + (err.message || ""));
+        showError("Failed to load slots.");
       }
     }
 
@@ -1051,7 +1080,7 @@
       }
 
       list.forEach((row) => {
-        const dt = new Date(row.slot_datetime_local);
+        const dt = row._dt;
         const label = formatTimeLabel(dt);
         const btn = document.createElement("button");
         btn.type = "button";
@@ -1091,7 +1120,7 @@
         const { error } = await supabase
           .from("demo_leads")
           .update({
-            preferred_date: selectedSlot.slot_date,
+            preferred_date: selectedSlot._dateKey,
             preferred_time_slot: selectedSlot.timeLabel,
             slot_id: selectedSlot.slot_id,
             star_teacher_selected: !!selectedSlot.is_star_teacher,

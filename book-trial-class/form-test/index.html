@@ -633,7 +633,7 @@
     </section>
 
     <!-- STEP 3 -->
-    <section id="step-3" style="display:none;">
+    <section id="step-3" style="display:none%;">
       <button class="btn-secondary" id="btn-back-to-2">
         <span>←</span>
         <span>Back to date &amp; time</span>
@@ -701,14 +701,13 @@
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // For this backend test we fix region to MEA, course=1, timezone=Asia/Dubai
+    // Fixed test context
     const TEST_REGION = {
       regionKey: "MEA",
       courseId: 1,
       timeZone: "Asia/Dubai",
     };
 
-    // ---- state ----
     let currentStep = 1;
     let leadId = null;
     let regionKey = TEST_REGION.regionKey;
@@ -725,7 +724,6 @@
     let whyValue = null;
     let whenValue = null;
 
-    // ---- DOM helpers ----
     const $ = (id) => document.getElementById(id);
 
     const step1El = $("step-1");
@@ -756,7 +754,6 @@
 
     const finalMessageEl = $("final-message");
 
-    // ---- small helpers ----
     function showError(msg) {
       if (!errorBanner) return;
       errorText.textContent = msg;
@@ -796,6 +793,23 @@
       });
     }
 
+    function detectDeviceType() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera || "";
+      if (/tablet|ipad/i.test(ua)) return "tablet";
+      if (/mobi|android/i.test(ua)) return "mobile";
+      return "desktop";
+    }
+
+    function detectBrowser() {
+      const ua = navigator.userAgent || "";
+      if (ua.includes("Edg/")) return "Edge";
+      if (ua.includes("OPR/") || ua.includes("Opera")) return "Opera";
+      if (ua.includes("Chrome/")) return "Chrome";
+      if (ua.includes("Safari/")) return "Safari";
+      if (ua.includes("Firefox/")) return "Firefox";
+      return ua.slice(0, 120); // fallback: trimmed UA
+    }
+
     function showStep(step) {
       currentStep = step;
       if (step1El) step1El.style.display = step === 1 ? "block" : "none";
@@ -828,7 +842,7 @@
       return Math.round(conn.downlink * 10) / 10;
     }
 
-    // ---- STEP 1 ----
+    // STEP 1
     async function handleStep1() {
       clearBanners();
 
@@ -863,6 +877,8 @@
       }
 
       const internetSpeed = getInternetSpeedMbps();
+      const deviceType = detectDeviceType();
+      const browserName = detectBrowser();
 
       const payload = {
         child_name: childName,
@@ -873,6 +889,8 @@
         phone_number: phoneNumber,
         has_laptop: hasLaptopValue,
         internet_speed_mbps: internetSpeed,
+        device_type: deviceType,
+        browser: browserName,
         region_key: regionKey,
         timezone: regionTimeZone,
         course_id: courseId,
@@ -913,7 +931,7 @@
       }
     }
 
-    // ---- STEP 2: slots ----
+    // STEP 2: slots
     async function loadSlots() {
       if (!leadId) return;
 
@@ -935,7 +953,7 @@
         const { data, error } = await supabase
           .from("demo_slots_live")
           .select(
-            "slot_id, slot_date, slot_datetime_local, is_star_teacher, region_key, course_id"
+            "id, slot_date, slot_datetime_local, is_star_teacher, region_key, course_id"
           )
           .eq("region_key", regionKey)
           .eq("course_id", courseId)
@@ -947,10 +965,10 @@
 
         const minTime = new Date(now.getTime() + 60 * 60 * 1000); // +1hr
 
-        const validSlots = (data || []).filter((s) => {
-          const dt = new Date(s.slot_datetime_local);
-          return dt >= minTime;
-        });
+        // map id -> slot_id so we can keep using slot_id everywhere
+        const validSlots = (data || [])
+          .filter((s) => new Date(s.slot_datetime_local) >= minTime)
+          .map((s) => ({ ...s, slot_id: s.id }));
 
         if (!validSlots.length) {
           dateRowEl.innerHTML = "<p>No slots available.</p>";
@@ -961,7 +979,7 @@
         let maxDate = null;
 
         validSlots.forEach((row) => {
-          const dateKey = row.slot_date; // already YYYY-MM-DD
+          const dateKey = row.slot_date;
 
           if (!slotsByDate[dateKey]) slotsByDate[dateKey] = [];
           slotsByDate[dateKey].push(row);
@@ -978,7 +996,7 @@
         renderDatePills(todayKey);
       } catch (err) {
         console.error(err);
-        showError("Failed to load slots.");
+        showError("Failed to load slots: " + (err.message || ""));
       }
     }
 
@@ -1095,7 +1113,6 @@
       }
     }
 
-    // ---- STEP 3 ----
     function setupPillGroup(containerId, setter) {
       const container = $(containerId);
       if (!container) return;
@@ -1144,11 +1161,9 @@
       }
     }
 
-    // ---- init ----
     document.addEventListener("DOMContentLoaded", () => {
       showStep(1);
 
-      // laptop toggle
       if (laptopYesBtn && laptopNoBtn) {
         laptopYesBtn.addEventListener("click", () => {
           hasLaptopValue = "Yes";

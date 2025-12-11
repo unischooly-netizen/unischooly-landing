@@ -1,1115 +1,1601 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Book Now &amp; Get Certified | Unischooly</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>Unischooly | Book Trial Class (Form Only)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     :root {
-      --bg:#020617;
-      --bg-soft:#05081a;
-      --card:#050816;
-      --primary:#6366f1;
-      --primary-soft:#818cf8;
-      --accent:#22c55e;
-      --danger:#fb7185;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --border:#1f2937;
+      --primary: #9b5bff;
+      --primary-strong: #7b3ffc;
+      --primary-soft: #e6ddff;
+      --accent: #ff7b5f;
+      --bg: #050816;
+      --bg-card: #0b0f24;
+      --bg-soft: #10152e;
+      --text-main: #f8f5ff;
+      --text-sub: #a8acd0;
+      --text-muted: #777a9b;
+      --border-subtle: #262a40;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
+      --transition-fast: 0.16s ease-out;
+      --transition-med: 0.22s ease-out;
     }
 
-    * { box-sizing:border-box; }
-
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;
-      background:radial-gradient(circle at top,#111827 0,#020617 48%,#000 100%);
-      color:var(--text);
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-      padding:24px;
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
 
-    .shell{
-      width:100%;
-      max-width:470px;
-      background:
-        linear-gradient(145deg,rgba(148,163,184,0.16),transparent 40%) border-box,
-        radial-gradient(circle at top left,rgba(96,165,250,0.16),transparent 55%) border-box,
-        linear-gradient(180deg,#020617,#020617) padding-box;
-      border-radius:26px;
-      border:1px solid rgba(148,163,184,0.45);
-      padding:18px 18px 20px;
-      box-shadow:0 22px 60px rgba(15,23,42,0.9);
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 12px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #211a44 0, #050816 50%, #020010 100%);
+      color: var(--text-main);
     }
 
-    header{
-      padding:4px 4px 10px;
+    .form-shell {
+      width: 100%;
+      max-width: 960px;
+      background: radial-gradient(circle at 0 0, #171436 0, #050816 55%, #120f2e 100%);
+      border-radius: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: var(--shadow-soft);
+      padding: 22px 18px 20px;
     }
 
-    h1{
-      margin:0 0 4px;
-      font-size:1.6rem;
-      letter-spacing:-0.03em;
-      background:linear-gradient(120deg,#f97316,#ec4899,#6366f1);
-      -webkit-background-clip:text;
-      color:transparent;
+    @media (min-width: 900px) {
+      .form-shell {
+        padding: 26px 24px 22px;
+      }
     }
 
-    .subtitle{
-      margin:0;
-      font-size:0.88rem;
-      color:var(--muted);
+    .form-header {
+      margin-bottom: 16px;
     }
 
-    .step-label{
-      margin-top:6px;
-      font-size:0.78rem;
-      color:var(--muted);
+    .form-title {
+      margin: 0 0 4px;
+      font-size: 22px;
+      letter-spacing: 0.02em;
     }
 
-    .progress-bar{
-      margin-top:10px;
-      height:4px;
-      background:rgba(15,23,42,0.9);
-      border-radius:999px;
-      overflow:hidden;
-      display:flex;
-    }
-    .progress-seg{
-      flex:1;
-      background:radial-gradient(circle at top,#1f2937,transparent);
-    }
-    .progress-seg.active{
-      background:linear-gradient(90deg,#22c55e,#22c55e);
-    }
-    .progress-seg.current{
-      background:linear-gradient(90deg,#22c55e,#6366f1);
+    .form-subtitle {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-sub);
     }
 
-    main{
-      margin-top:12px;
-      background:radial-gradient(circle at top,rgba(15,23,42,0.9),rgba(2,6,23,1));
-      border-radius:22px;
-      border:1px solid rgba(31,41,55,0.9);
-      padding:16px 14px 14px;
+    .steps-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
     }
 
-    .hidden{ display:none !important; }
-
-    label{
-      font-size:0.82rem;
-      display:block;
-      margin-bottom:4px;
+    .step-pill {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 11, 32, 0.95);
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: background var(--transition-med), border-color var(--transition-med), color var(--transition-med);
     }
 
-    .field{ margin-bottom:10px; }
-
-    .hint{
-      font-size:0.75rem;
-      color:var(--muted);
+    .step-pill.active {
+      background: linear-gradient(135deg, #9b5bff, #ff7b5f);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 10px 24px rgba(155, 91, 255, 0.7);
     }
 
-    .stack{
-      display:flex;
-      gap:8px;
-      align-items:stretch;
+    .step-pill.completed {
+      border-color: rgba(40, 199, 111, 0.9);
+      color: #e5fff4;
     }
 
-    select,
-    input[type="text"],
-    input[type="tel"],
-    input[type="email"],
-    textarea{
-      width:100%;
-      padding:9px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:#020617;
-      color:var(--text);
-      font-size:0.9rem;
-      outline:none;
-      transition:border-color 0.12s ease,box-shadow 0.12s ease,background 0.12s ease;
+    .step-index {
+      width: 18px;
+      height: 18px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    textarea{
-      border-radius:12px;
-      resize:vertical;
-      min-height:60px;
+    .step-pill.active .step-index {
+      background: rgba(0, 0, 0, 0.4);
     }
 
-    select:focus,
-    input:focus,
-    textarea:focus{
-      border-color:var(--primary-soft);
-      box-shadow:0 0 0 1px rgba(129,140,248,0.55);
-      background:#020617;
+    .step-text-main {
+      font-weight: 600;
     }
 
-    select{
-      appearance:none;
+    .step-text-sub {
+      font-size: 11px;
+      opacity: 0.92;
+    }
+
+    .step-progress {
+      width: 100%;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .step-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #9b5bff, #ff7b5f);
+      border-radius: inherit;
+      transition: width var(--transition-med);
+    }
+
+    .form-body {
+      background: rgba(5, 7, 22, 0.98);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px 14px 14px;
+    }
+
+    @media (min-width: 800px) {
+      .form-body {
+        padding: 18px 18px 16px;
+      }
+    }
+
+    .global-error {
+      display: none;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      background: rgba(86, 12, 20, 0.94);
+      border: 1px solid rgba(255, 94, 94, 0.9);
+      color: #ffe6e6;
+    }
+
+    .global-error.visible {
+      display: block;
+    }
+
+    .step-view {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .step-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-heading {
+      margin: 0 0 2px;
+      font-size: 17px;
+    }
+
+    .section-sub {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .section-steps-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    @media (min-width: 720px) {
+      .fields-grid.two-col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #f0edff;
+      font-weight: 500;
+    }
+
+    .required {
+      color: #ffb499;
+      margin-left: 2px;
+    }
+
+    .hint-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: linear-gradient(135deg, #070b1c, #0a0f24);
+      color: var(--text-main);
+      padding: 9px 11px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), transform 0.1s ease-out;
+    }
+
+    .input::placeholder {
+      color: rgba(158, 163, 196, 0.9);
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: rgba(155, 91, 255, 1);
+      box-shadow: 0 0 0 1px rgba(155, 91, 255, 0.45);
+      transform: translateY(-0.5px);
+    }
+
+    .select {
+      padding-right: 30px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
       background-image:
-        linear-gradient(45deg,transparent 50%,#6b7280 50%),
-        linear-gradient(135deg,#6b7280 50%,transparent 50%);
-      background-position:calc(100% - 14px) 52%,calc(100% - 9px) 52%;
-      background-size:6px 6px,6px 6px;
-      background-repeat:no-repeat;
+        linear-gradient(135deg, #070b1c, #0a0f24),
+        linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.8) 50%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%);
+      background-repeat: no-repeat, no-repeat, no-repeat;
+      background-position: 0 0, calc(100% - 18px) 52%, calc(100% - 12px) 52%;
+      background-size: 100% 100%, 6px 6px, 6px 6px;
     }
 
-    .radio-row{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      font-size:0.86rem;
-      margin-top:4px;
+    .phone-row {
+      display: grid;
+      grid-template-columns: 100px minmax(0, 1fr);
+      gap: 8px;
+      align-items: stretch;
     }
 
-    .radio-row label{
-      margin:0;
-      display:flex;
-      align-items:center;
-      gap:6px;
-      cursor:pointer;
+    .country-select-wrapper {
+      position: relative;
     }
 
-    .btn{
-      border-radius:999px;
-      border:none;
-      cursor:pointer;
-      font-size:0.94rem;
-      font-weight:600;
-      padding:10px 16px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      transition:transform 0.08s ease,box-shadow 0.12s ease,background 0.12s ease,opacity 0.12s ease;
+    .country-visible {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
     }
 
-    .btn-primary{
-      width:100%;
-      background:linear-gradient(135deg,#ec4899,#6366f1,#22c55e);
-      color:#f9fafb;
-      box-shadow:0 18px 40px rgba(79,70,229,0.55);
-      margin-top:10px;
-    }
-    .btn-primary:hover{
-      transform:translateY(-1px);
-      box-shadow:0 22px 48px rgba(79,70,229,0.75);
-    }
-    .btn-primary:active{
-      transform:translateY(0);
-      box-shadow:0 12px 30px rgba(79,70,229,0.6);
-    }
-    .btn[disabled]{
-      opacity:0.6;
-      cursor:not-allowed;
-      box-shadow:none;
-      transform:none;
+    .country-dial {
+      padding: 0 4px;
     }
 
-    .btn-outline{
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--muted);
-      padding:7px 12px;
-      font-size:0.82rem;
+    .country-inner-select {
+      opacity: 0;
+      color: transparent;
+      cursor: pointer;
     }
 
-    .cta-note{
-      margin-top:4px;
-      font-size:0.72rem;
-      color:var(--muted);
-      text-align:center;
+    .radio-chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .global-error{
-      margin-top:6px;
-      font-size:0.8rem;
-      color:var(--danger);
+    .radio-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 11px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(7, 11, 32, 0.98);
+      font-size: 12px;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform 0.08s ease-out;
     }
 
-    .top-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      margin-bottom:8px;
-      font-size:0.8rem;
+    .radio-chip:hover {
+      border-color: rgba(167, 139, 250, 1);
+      transform: translateY(-0.5px);
     }
 
-    .back-link{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      cursor:pointer;
-      color:var(--muted);
-      font-size:0.8rem;
-    }
-    .back-link span.icon{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:18px;
-      height:18px;
-      border-radius:999px;
-      border:1px solid var(--border);
+    .radio-chip input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .pill-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:8px;
+    .radio-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .date-pill{
-      flex:1 1 calc(33.333% - 8px);
-      min-width:90px;
-      padding:8px 9px;
-      text-align:left;
-      border-radius:12px;
-      background:rgba(15,23,42,0.9);
-      border:1px solid rgba(31,41,55,1);
-      cursor:pointer;
-      font-size:0.8rem;
+    .radio-dot-inner {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+      transition: background var(--transition-fast);
     }
 
-    .date-pill .dow{font-weight:600;font-size:0.8rem;}
-    .date-pill .dom{font-size:0.78rem;color:var(--muted);}
-
-    .date-pill.active{
-      border-color:var(--primary-soft);
-      box-shadow:0 12px 30px rgba(79,70,229,0.5);
-      background:radial-gradient(circle at top,rgba(99,102,241,0.18),#020617);
+    .radio-chip.selected {
+      border-color: rgba(155, 91, 255, 1);
+      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(9, 12, 38, 0.98);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(7, 10, 35, 1);
     }
 
-    .slots-wrap{
-      margin-top:10px;
-      max-height:220px;
-      overflow-y:auto;
-      border-radius:12px;
-      border:1px solid rgba(31,41,55,1);
-      background:rgba(2,6,23,0.9);
-      padding:6px;
+    .radio-chip.selected .radio-dot-inner {
+      background: linear-gradient(135deg, #9b5bff, #ff7b5f);
     }
 
-    .slot-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:7px 8px;
-      border-radius:10px;
-      cursor:pointer;
-      font-size:0.82rem;
-      border:1px solid transparent;
+    .button-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
     }
 
-    .slot-row + .slot-row{ margin-top:4px; }
-
-    .slot-row:hover{
-      background:rgba(15,23,42,0.95);
-      border-color:rgba(55,65,81,0.95);
+    .btn {
+      border-radius: var(--radius-pill);
+      padding: 9px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), opacity var(--transition-fast);
     }
 
-    .slot-row.active{
-      background:radial-gradient(circle at top left,rgba(99,102,241,0.25),rgba(2,6,23,1));
-      border-color:var(--primary-soft);
-      box-shadow:0 0 0 1px rgba(79,70,229,0.7);
+    .btn-primary {
+      background: linear-gradient(135deg, #9b5bff, #ff7b5f);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(155, 91, 255, 0.8);
     }
 
-    .slot-meta{
-      font-size:0.74rem;
-      color:var(--muted);
-      margin-top:2px;
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(155, 91, 255, 0.9);
     }
 
-    .tag-star{
-      font-size:0.72rem;
-      color:#fde68a;
-      border-radius:999px;
-      padding:3px 7px;
-      border:1px solid rgba(250,204,21,0.7);
-      background:rgba(30,64,175,0.35);
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 10px 22px rgba(155, 91, 255, 0.75);
     }
 
-    .tag-star span.badge-dot{
-      width:8px;height:8px;
-      border-radius:999px;
-      background:radial-gradient(circle at 30% 0,#facc15,#eab308);
-      box-shadow:0 0 0 4px rgba(234,179,8,0.4);
+    .btn-secondary {
+      background: rgba(8, 11, 30, 0.98);
+      color: var(--text-sub);
+      border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
-    .lang-pill{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(31,41,55,1);
-      background:rgba(2,6,23,0.9);
-      font-size:0.8rem;
-      cursor:pointer;
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(13, 17, 40, 0.98);
+      color: #fff;
     }
 
-    .lang-pill.active{
-      border-color:var(--primary-soft);
-      background:radial-gradient(circle at top,rgba(99,102,241,0.3),rgba(2,6,23,1));
-      box-shadow:0 0 0 1px rgba(79,70,229,0.6);
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
     }
 
-    .section-title{
-      font-size:0.9rem;
-      font-weight:600;
-      margin-top:4px;
+    .btn-icon {
+      font-size: 16px;
     }
 
-    .section-sub{
-      font-size:0.76rem;
-      color:var(--muted);
-      margin-top:2px;
+    .tiny-note {
+      margin-top: 6px;
+      font-size: 10px;
+      color: var(--text-muted);
     }
 
-    .chip-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:7px;
-      margin-top:6px;
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-sub);
+      cursor: pointer;
+      margin-bottom: 6px;
     }
 
-    .chip{
-      border-radius:999px;
-      border:1px solid rgba(31,41,55,1);
-      background:rgba(2,6,23,0.9);
-      padding:7px 11px;
-      font-size:0.8rem;
-      cursor:pointer;
+    .back-link:hover {
+      color: #fff;
     }
 
-    .chip.active{
-      border-color:var(--primary-soft);
-      background:radial-gradient(circle at top left,rgba(99,102,241,0.26),rgba(2,6,23,1));
-      box-shadow:0 0 0 1px rgba(79,70,229,0.7);
+    .slot-dates-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .slot-date-pill {
+      min-width: 110px;
+      padding: 6px 9px;
+      border-radius: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(7, 10, 28, 0.98);
+      font-size: 12px;
+      color: var(--text-sub);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .slot-date-pill span:first-child {
+      font-weight: 600;
+      color: #f5f2ff;
+    }
+
+    .slot-date-pill span:last-child {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .slot-date-pill:hover {
+      border-color: rgba(167, 139, 250, 1);
+      transform: translateY(-0.5px);
+    }
+
+    .slot-date-pill.active {
+      border-color: rgba(155, 91, 255, 1);
+      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
+      box-shadow: 0 12px 24px rgba(8, 12, 40, 1);
+      color: #fff;
+    }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    @media (min-width: 640px) {
+      .slot-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .slot-chip {
+      padding: 7px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(7, 10, 28, 0.98);
+      font-size: 12px;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .slot-chip:hover {
+      border-color: rgba(167, 139, 250, 1);
+      transform: translateY(-0.5px);
+    }
+
+    .slot-chip.selected {
+      border-color: rgba(155, 91, 255, 1);
+      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
+      box-shadow: 0 12px 24px rgba(8, 12, 40, 1);
+      color: #fff;
+    }
+
+    .slot-time-main {
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .slot-time-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .slot-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 222, 140, 0.9);
+      background: rgba(79, 54, 7, 0.55);
+      color: #ffeec4;
+      white-space: nowrap;
+    }
+
+    .slot-empty {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .lang-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .lang-pill {
+      border-radius: var(--radius-pill);
+      padding: 6px 10px;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(7, 10, 28, 0.98);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .lang-pill:hover {
+      border-color: rgba(167, 139, 250, 1);
+      transform: translateY(-0.5px);
+    }
+
+    .lang-pill.active {
+      border-color: rgba(155, 91, 255, 1);
+      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
+      box-shadow: 0 10px 22px rgba(8, 12, 40, 1);
+      color: #fff;
     }
   </style>
 </head>
 <body>
-<div class="shell">
-  <header>
-    <h1>Book Now &amp; Get Certified</h1>
-    <p class="subtitle">Step 1 of 3 · Share your child &amp; parent details to unlock a personalised trial class.</p>
-    <div class="step-label">Three quick steps: details → time slot → motivation.</div>
-    <div class="progress-bar">
-      <div class="progress-seg current" data-step-bar="1"></div>
-      <div class="progress-seg" data-step-bar="2"></div>
-      <div class="progress-seg" data-step-bar="3"></div>
+  <div class="form-shell">
+    <div class="form-header">
+      <h1 class="form-title">Book Now &amp; Get Certified</h1>
+      <p class="form-subtitle">Share your details to unlock a personalised free trial class.</p>
+      <div class="steps-bar">
+        <div class="step-pill" data-step-pill="1">
+          <div class="step-index">1</div>
+          <div>
+            <div class="step-text-main">Your Details</div>
+            <div class="step-text-sub">Contact &amp; child info</div>
+          </div>
+        </div>
+        <div class="step-pill" data-step-pill="2">
+          <div class="step-index">2</div>
+          <div>
+            <div class="step-text-main">Date &amp; Time</div>
+            <div class="step-text-sub">Pick your local slot</div>
+          </div>
+        </div>
+        <div class="step-pill" data-step-pill="3">
+          <div class="step-index">3</div>
+          <div>
+            <div class="step-text-main">Personalise</div>
+            <div class="step-text-sub">Help us customise</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-progress">
+        <div class="step-progress-fill" id="step-progress-fill"></div>
+      </div>
+      <div class="section-steps-hint">
+        Step 1: Details • Step 2: Date &amp; Time • Step 3: Preferences
+      </div>
     </div>
-  </header>
 
-  <main>
-    <!-- STEP 1 -->
-    <form id="step-1" autocomplete="on">
-      <div class="field">
-        <label>Parent WhatsApp Number<span style="color:#facc15;"> *</span></label>
-        <div class="stack">
-          <div style="flex:0 0 140px;">
-            <div class="hint" style="margin-bottom:3px;">Country code</div>
-            <select id="phone-country-code"></select>
+    <div class="form-body">
+      <div id="global-error" class="global-error"></div>
+
+      <!-- STEP 1 -->
+      <div class="step-view" id="step-1">
+        <h2 class="section-heading">Your contact &amp; child details</h2>
+        <p class="section-sub">We’ll use these details to share the class link and certificate.</p>
+
+        <div class="fields-grid">
+          <div class="field">
+            <div class="field-label-row">
+              <label>Country Code &amp; Mobile Number<span class="required">*</span></label>
+            </div>
+            <div class="phone-row">
+              <div class="country-select-wrapper">
+                <select id="country-select" class="select country-inner-select"></select>
+                <div class="country-visible">
+                  <span id="country-dial" class="country-dial">+91</span>
+                </div>
+              </div>
+              <input id="phone-number" class="input" type="tel" placeholder="Enter WhatsApp number" />
+            </div>
+            <div class="hint-text">Please share the number that you use for WhatsApp.</div>
           </div>
-          <div style="flex:1;">
-            <div class="hint" style="margin-bottom:3px;">Mobile number</div>
-            <input type="tel" id="phone-number" placeholder="Enter mobile number" inputmode="tel" required />
+        </div>
+
+        <div class="fields-grid two-col" style="margin-top: 10px;">
+          <div class="field">
+            <div class="field-label-row">
+              <label>Child's Name<span class="required">*</span></label>
+            </div>
+            <input id="child-name" class="input" type="text" placeholder="Enter child's full name" />
+          </div>
+          <div class="field">
+            <div class="field-label-row">
+              <label>Child's Grade<span class="required">*</span></label>
+            </div>
+            <select id="child-grade" class="select">
+              <option value="">Select Grade</option>
+              <option value="1">Grade 1</option>
+              <option value="2">Grade 2</option>
+              <option value="3">Grade 3</option>
+              <option value="4">Grade 4</option>
+              <option value="5">Grade 5</option>
+              <option value="6">Grade 6</option>
+              <option value="7">Grade 7</option>
+              <option value="8">Grade 8</option>
+              <option value="9">Grade 9</option>
+              <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
+              <option value="12">Grade 12</option>
+            </select>
           </div>
         </div>
-        <div class="hint" style="margin-top:6px;">Please share the number that you use for WhatsApp.</div>
-      </div>
 
-      <div class="field">
-        <label for="child-name">Child Name<span style="color:#facc15;"> *</span></label>
-        <input type="text" id="child-name" placeholder="Enter child's name" required />
-      </div>
+        <div class="fields-grid two-col" style="margin-top: 10px;">
+          <div class="field">
+            <div class="field-label-row">
+              <label>Parent's Name<span class="required">*</span></label>
+            </div>
+            <input id="parent-name" class="input" type="text" placeholder="Enter parent's full name" />
+          </div>
+          <div class="field">
+            <div class="field-label-row">
+              <label>Email ID<span class="required">*</span></label>
+            </div>
+            <input id="parent-email" class="input" type="email" placeholder="Enter email address" />
+          </div>
+        </div>
 
-      <div class="field">
-        <label for="child-grade">Child Grade<span style="color:#facc15;"> *</span></label>
-        <select id="child-grade" required>
-          <option value="">Select Grade</option>
-          <option value="1">Grade 1</option>
-          <option value="2">Grade 2</option>
-          <option value="3">Grade 3</option>
-          <option value="4">Grade 4</option>
-          <option value="5">Grade 5</option>
-          <option value="6">Grade 6</option>
-          <option value="7">Grade 7</option>
-          <option value="8">Grade 8</option>
-          <option value="9">Grade 9</option>
-          <option value="10">Grade 10</option>
-          <option value="11">Grade 11</option>
-          <option value="12">Grade 12</option>
-        </select>
-      </div>
+        <div class="field" style="margin-top: 10px;">
+          <div class="field-label-row">
+            <label>Do you have a Laptop or Desktop?<span class="required">*</span></label>
+          </div>
+          <div id="has-laptop-group" class="radio-chip-group">
+            <label class="radio-chip" data-value="Yes">
+              <input type="radio" name="has-laptop" value="Yes" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Yes</span>
+            </label>
+            <label class="radio-chip" data-value="No">
+              <input type="radio" name="has-laptop" value="No" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>No</span>
+            </label>
+          </div>
+        </div>
 
-      <div class="field">
-        <label for="parent-name">Parent Name<span style="color:#facc15;"> *</span></label>
-        <input type="text" id="parent-name" placeholder="Enter parent name" required />
-      </div>
-
-      <div class="field">
-        <label for="parent-email">Parent Email<span style="color:#facc15;"> *</span></label>
-        <input type="email" id="parent-email" placeholder="Enter email" required />
-      </div>
-
-      <div class="field">
-        <label>Do you have a Laptop or Desktop?<span style="color:#facc15;"> *</span></label>
-        <div class="radio-row">
-          <label><input type="radio" name="has-laptop" value="yes" checked /> Yes</label>
-          <label><input type="radio" name="has-laptop" value="no" /> No</label>
+        <div class="button-row">
+          <button id="step-1-next" class="btn btn-primary">
+            <span class="btn-icon">🚀</span>
+            <span>Book a Free Trial Class</span>
+          </button>
+        </div>
+        <div class="tiny-note">
+          Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary" id="step-1-submit">
-        <span>Book a Free Trial Class</span><span aria-hidden="true">✨</span>
-      </button>
-      <div class="cta-note">
-        Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
-      </div>
-      <div class="global-error" id="error-step-1" style="display:none;"></div>
-    </form>
-
-    <!-- STEP 2 -->
-    <form id="step-2" class="hidden">
-      <div class="top-row">
-        <div class="back-link" data-back="1">
-          <span class="icon">←</span><span>Back</span>
+      <!-- STEP 2 -->
+      <div class="step-view" id="step-2">
+        <div class="back-link" data-back-step="1">
+          <span>&larr;</span><span>Back to your details</span>
         </div>
-        <div style="color:var(--muted);font-size:0.78rem;">Step 2 of 3</div>
-      </div>
+        <h2 class="section-heading">Select Date &amp; Time</h2>
+        <p class="section-sub">Pick a 1-hour slot that works best for your child.</p>
 
-      <h2 class="section-title">Select Date &amp; Time</h2>
-
-      <div class="field" style="margin-top:6px;">
-        <div class="section-title">Select Date</div>
-        <div class="section-sub">Your class will be for 1 hour.</div>
-        <div class="pill-row" id="date-pills"></div>
-      </div>
-
-      <div class="field" style="margin-top:8px;">
-        <div class="section-title">Select Start Time</div>
-        <div class="section-sub">Class slots are limited. Times are shown in your local time zone.</div>
-        <div class="slots-wrap" id="slots-wrap">
-          <div class="hint">Choose a date above to view live slots.</div>
+        <div class="field">
+          <div class="field-label-row">
+            <label>Select Date<span class="required">*</span></label>
+          </div>
+          <div class="hint-text">Your class will be for 1 hour.</div>
+          <div id="slot-dates-row" class="slot-dates-row"></div>
         </div>
-      </div>
 
-      <div class="field" style="margin-top:10px;">
-        <div class="section-title">Select Language</div>
-        <div class="pill-row" id="lang-pills">
-          <button type="button" class="lang-pill active" data-lang="English">English</button>
-          <button type="button" class="lang-pill" data-lang="Arabic">Arabic</button>
-          <button type="button" class="lang-pill" data-lang="Bahasa">Bahasa</button>
-          <button type="button" class="lang-pill" data-lang="Vietnamese">Vietnamese</button>
-          <button type="button" class="lang-pill" data-lang="Filipino">Filipino</button>
-          <button type="button" class="lang-pill" data-lang="Thai">Thai</button>
+        <div class="field" style="margin-top: 10px;">
+          <div class="field-label-row">
+            <label>Select Start Time<span class="required">*</span></label>
+          </div>
+          <div class="hint-text">Class slots are limited. Times are shown in your local time zone.</div>
+          <div id="slot-times-grid" class="slot-grid"></div>
+          <div id="slot-times-empty" class="slot-empty" style="display:none;">
+            No slots available for this date. Please choose another date.
+          </div>
         </div>
-      </div>
 
-      <button type="submit" class="btn btn-primary" id="step-2-submit">
-        <span>Confirm Class Time</span><span aria-hidden="true">✅</span>
-      </button>
-      <div class="cta-note">
-        Note: Free class will be conducted by reputed teachers.<br/>
-        By continuing I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.
-      </div>
-      <div class="global-error" id="error-step-2" style="display:none;"></div>
-    </form>
-
-    <!-- STEP 3 -->
-    <form id="step-3" class="hidden">
-      <div class="top-row">
-        <div class="back-link" data-back="2">
-          <span class="icon">←</span><span>Back</span>
+        <div class="field" style="margin-top: 10px;">
+          <div class="field-label-row">
+            <label>Select Language<span class="required">*</span></label>
+          </div>
+          <div id="lang-pills" class="lang-pills">
+            <button type="button" class="lang-pill" data-lang="English">English</button>
+            <button type="button" class="lang-pill" data-lang="Arabic">Arabic</button>
+            <button type="button" class="lang-pill" data-lang="Bahasa">Bahasa</button>
+            <button type="button" class="lang-pill" data-lang="Filipino">Filipino</button>
+            <button type="button" class="lang-pill" data-lang="Vietnamese">Vietnamese</button>
+            <button type="button" class="lang-pill" data-lang="Thai">Thai</button>
+          </div>
         </div>
-        <div style="color:var(--muted);font-size:0.78rem;">Step 3 of 3</div>
-      </div>
-      <h2 class="section-title">Help us personalise your experience</h2>
 
-      <div class="field" style="margin-top:10px;">
-        <div class="section-sub">Who are you?</div>
-        <div class="chip-row" id="who-chips">
-          <button type="button" class="chip" data-who="Parent">Parent</button>
-          <button type="button" class="chip" data-who="Student">Student</button>
-          <button type="button" class="chip" data-who="Guardian">Guardian</button>
+        <div class="button-row">
+          <button type="button" class="btn btn-secondary" data-back-step="1">
+            <span>&larr;</span><span>Back</span>
+          </button>
+          <button id="step-2-next" class="btn btn-primary">
+            <span class="btn-icon">✅</span>
+            <span>Confirm Class Time</span>
+          </button>
+        </div>
+        <div class="tiny-note">
+          Note: Free class will be conducted by reputed teachers.<br />
+          By continuing I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.
         </div>
       </div>
 
-      <div class="field" style="margin-top:8px;">
-        <div class="section-sub">Why are you booking this trial class?</div>
-        <div class="chip-row" id="reason-chips">
-          <button type="button" class="chip" data-reason="Want to buy course">Want to buy course</button>
-          <button type="button" class="chip" data-reason="To Compare Platform">To Compare Platform</button>
-          <button type="button" class="chip" data-reason="To strengthen Concept">To strengthen Concept</button>
-          <button type="button" class="chip" data-reason="Just for free demo">Just for free demo</button>
+      <!-- STEP 3 -->
+      <div class="step-view" id="step-3">
+        <div class="back-link" data-back-step="2">
+          <span>&larr;</span><span>Back to date &amp; time</span>
+        </div>
+        <h2 class="section-heading">Help us personalise your experience</h2>
+        <p class="section-sub">Tell us a bit more so we can tailor the trial session for your child.</p>
+
+        <div class="field">
+          <div class="field-label-row">
+            <label>Who are you?<span class="required">*</span></label>
+          </div>
+          <div id="who-group" class="radio-chip-group">
+            <label class="radio-chip" data-value="Parent">
+              <input type="radio" name="who-are-you" value="Parent" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Parent</span>
+            </label>
+            <label class="radio-chip" data-value="Student">
+              <input type="radio" name="who-are-you" value="Student" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Student</span>
+            </label>
+            <label class="radio-chip" data-value="Guardian">
+              <input type="radio" name="who-are-you" value="Guardian" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Guardian</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 10px;">
+          <div class="field-label-row">
+            <label>Why are you booking this trial class?<span class="required">*</span></label>
+          </div>
+          <div id="reason-group" class="radio-chip-group">
+            <label class="radio-chip" data-value="Want to buy course">
+              <input type="radio" name="booking-reason" value="Want to buy course" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Want to buy course</span>
+            </label>
+            <label class="radio-chip" data-value="To Compare Platform">
+              <input type="radio" name="booking-reason" value="To Compare Platform" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>To Compare Platform</span>
+            </label>
+            <label class="radio-chip" data-value="To strengthen Concept">
+              <input type="radio" name="booking-reason" value="To strengthen Concept" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>To strengthen Concept</span>
+            </label>
+            <label class="radio-chip" data-value="Just for free demo">
+              <input type="radio" name="booking-reason" value="Just for free demo" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Just for free demo</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 10px;">
+          <div class="field-label-row">
+            <label>When are you planning to purchase?<span class="required">*</span></label>
+          </div>
+          <div id="timeline-group" class="radio-chip-group">
+            <label class="radio-chip" data-value="After the Demo">
+              <input type="radio" name="purchase-timeline" value="After the Demo" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>After the Demo</span>
+            </label>
+            <label class="radio-chip" data-value="This Week">
+              <input type="radio" name="purchase-timeline" value="This Week" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>This Week</span>
+            </label>
+            <label class="radio-chip" data-value="This Month">
+              <input type="radio" name="purchase-timeline" value="This Month" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>This Month</span>
+            </label>
+            <label class="radio-chip" data-value="Just Exploring">
+              <input type="radio" name="purchase-timeline" value="Just Exploring" />
+              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
+              <span>Just Exploring</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button type="button" class="btn btn-secondary" data-back-step="2">
+            <span>&larr;</span><span>Back</span>
+          </button>
+          <button id="step-3-submit" class="btn btn-primary">
+            <span class="btn-icon">✨</span>
+            <span>Submit</span>
+          </button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="field" style="margin-top:8px;">
-        <div class="section-sub">When are you planning to purchase?</div>
-        <div class="chip-row" id="timeline-chips">
-          <button type="button" class="chip" data-timeline="After the Demo">After the Demo</button>
-          <button type="button" class="chip" data-timeline="This Week">This Week</button>
-          <button type="button" class="chip" data-timeline="This Month">This Month</button>
-          <button type="button" class="chip" data-timeline="Just Exploring">Just Exploring</button>
-        </div>
-      </div>
+  <script>
+    // =======================
+    // Supabase Config
+    // =======================
+    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+    const DEMO_LEADS_TABLE = "demo_leads";
+    const DEMO_SLOTS_LIVE = "demo_slots_live";
 
-      <button type="submit" class="btn btn-primary" id="step-3-submit">
-        <span>Submit</span><span aria-hidden="true">🚀</span>
-      </button>
-      <div class="global-error" id="error-step-3" style="display:none;"></div>
-    </form>
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <!-- SUCCESS -->
-    <section id="success-section" class="hidden">
-      <h2 class="section-title">Your trial is booked! 🎉</h2>
-      <p class="section-sub">Your trial is booked! Check your WhatsApp &amp; email for details.</p>
-    </section>
-  </main>
-</div>
+    // =======================
+    // Country / Region / Timezone Mapping
+    // =======================
+    const COUNTRY_OPTIONS = [
+      // MEA
+      { id: "ae_dubai",   countryName: "United Arab Emirates", label: "🇦🇪 UAE – Dubai (UTC+4)  •  +971", dialCode: "+971", timeZone: "Asia/Dubai",       regionKey: "MEA" },
+      { id: "sa_riyadh",  countryName: "Saudi Arabia",        label: "🇸🇦 Saudi Arabia – Riyadh (UTC+3)  •  +966", dialCode: "+966", timeZone: "Asia/Riyadh",     regionKey: "MEA" },
+      { id: "qa_doha",    countryName: "Qatar",               label: "🇶🇦 Qatar – Doha (UTC+3)  •  +974",  dialCode: "+974", timeZone: "Asia/Qatar",      regionKey: "MEA" },
+      { id: "om_muscat",  countryName: "Oman",                label: "🇴🇲 Oman – Muscat (UTC+4)  •  +968", dialCode: "+968", timeZone: "Asia/Muscat",     regionKey: "MEA" },
+      { id: "kw_kuwait",  countryName: "Kuwait",              label: "🇰🇼 Kuwait – Kuwait City (UTC+3)  •  +965", dialCode: "+965", timeZone: "Asia/Kuwait",     regionKey: "MEA" },
 
-<script>
-  // ---------- CONFIG ----------
-  const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+      // India / ASIA
+      { id: "in_india",   countryName: "India",               label: "🇮🇳 India – All Cities (UTC+5:30)  •  +91", dialCode: "+91", timeZone: "Asia/Kolkata",   regionKey: "ASIA" },
 
-  // after step 3, redirect here (change if needed)
-  const INTERIM_REDIRECT_URL = "/book-trial-class/interim";
+      // SEA
+      { id: "sg_singapore", countryName: "Singapore",         label: "🇸🇬 Singapore (UTC+8)  •  +65", dialCode: "+65", timeZone: "Asia/Singapore",  regionKey: "SEA" },
+      { id: "my_kuala",     countryName: "Malaysia",          label: "🇲🇾 Malaysia – Kuala Lumpur (UTC+8)  •  +60", dialCode: "+60", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
+      { id: "ph_manila",    countryName: "Philippines",       label: "🇵🇭 Philippines – Manila (UTC+8)  •  +63", dialCode: "+63", timeZone: "Asia/Manila",    regionKey: "SEA" },
+      { id: "id_jakarta",   countryName: "Indonesia",         label: "🇮🇩 Indonesia – Jakarta (UTC+7)  •  +62", dialCode: "+62", timeZone: "Asia/Jakarta",   regionKey: "SEA" },
+      { id: "vn_hanoi",     countryName: "Viet Nam",          label: "🇻🇳 Vietnam – Hanoi (UTC+7)  •  +84", dialCode: "+84", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
+      { id: "th_bangkok",   countryName: "Thailand",          label: "🇹🇭 Thailand – Bangkok (UTC+7)  •  +66", dialCode: "+66", timeZone: "Asia/Bangkok",  regionKey: "SEA" },
 
-  // courseId from URL (?courseId=1)
-  const COURSE_ID = Number(new URLSearchParams(window.location.search).get("courseId")) || 1;
+      // Europe / ROW
+      { id: "uk_london", countryName: "United Kingdom", label: "🇬🇧 United Kingdom – London (UTC±0/±1)  •  +44", dialCode: "+44", timeZone: "Europe/London", regionKey: "ROW" },
 
-  // Minimal mapping; extend this array from your CSV as needed.
-  const COUNTRY_OPTIONS = [
-    // US (multiple TZ, same region)
-    { code:"US", name:"United States — Eastern",  timeZone:"America/New_York",    dialCode:"+1",  region_key:"USA" },
-    { code:"US", name:"United States — Central",  timeZone:"America/Chicago",     dialCode:"+1",  region_key:"USA" },
-    { code:"US", name:"United States — Mountain", timeZone:"America/Denver",      dialCode:"+1",  region_key:"USA" },
-    { code:"US", name:"United States — Pacific",  timeZone:"America/Los_Angeles", dialCode:"+1",  region_key:"USA" },
+      // USA + Canada
+      { id: "us_eastern",  countryName: "United States", label: "🇺🇸 USA – Eastern Time (ET)  •  +1", dialCode: "+1", timeZone: "America/New_York",   regionKey: "USA" },
+      { id: "us_central",  countryName: "United States", label: "🇺🇸 USA – Central Time (CT)  •  +1", dialCode: "+1", timeZone: "America/Chicago",    regionKey: "USA" },
+      { id: "us_mountain", countryName: "United States", label: "🇺🇸 USA – Mountain Time (MT)  •  +1", dialCode: "+1", timeZone: "America/Denver",     regionKey: "USA" },
+      { id: "us_pacific",  countryName: "United States", label: "🇺🇸 USA – Pacific Time (PT)  •  +1", dialCode: "+1", timeZone: "America/Los_Angeles", regionKey: "USA" },
+      { id: "ca_toronto",  countryName: "Canada",        label: "🇨🇦 Canada – Toronto (ET)  •  +1",   dialCode: "+1", timeZone: "America/Toronto",    regionKey: "USA" },
+      { id: "ca_vancouver",countryName: "Canada",        label: "🇨🇦 Canada – Vancouver (PT)  •  +1", dialCode: "+1", timeZone: "America/Vancouver",  regionKey: "USA" },
 
-    // India (adjust region_key if needed)
-    { code:"IN", name:"India — IST", timeZone:"Asia/Kolkata", dialCode:"+91", region_key:"INDIA" },
+      // ANZ
+      { id: "au_sydney", countryName: "Australia", label: "🇦🇺 Australia – Sydney (UTC+10)  •  +61", dialCode: "+61", timeZone: "Australia/Sydney", regionKey: "ANZ" }
+    ];
 
-    // MEA
-    { code:"AE", name:"UAE — Dubai (GMT+4)",      timeZone:"Asia/Dubai",  dialCode:"+971", region_key:"MEA" },
-    { code:"SA", name:"Saudi Arabia — Riyadh",    timeZone:"Asia/Riyadh", dialCode:"+966", region_key:"MEA" },
-
-    // SEA
-    { code:"SG", name:"Singapore",                timeZone:"Asia/Singapore",   dialCode:"+65", region_key:"SEA" },
-    { code:"MY", name:"Malaysia — Kuala Lumpur",  timeZone:"Asia/Kuala_Lumpur",dialCode:"+60", region_key:"SEA" },
-    { code:"ID", name:"Indonesia — Jakarta",      timeZone:"Asia/Jakarta",     dialCode:"+62", region_key:"SEA" },
-    { code:"PH", name:"Philippines — Manila",     timeZone:"Asia/Manila",      dialCode:"+63", region_key:"SEA" },
-    { code:"TH", name:"Thailand — Bangkok",       timeZone:"Asia/Bangkok",     dialCode:"+66", region_key:"SEA" },
-    { code:"VN", name:"Vietnam — Ho Chi Minh",    timeZone:"Asia/Ho_Chi_Minh", dialCode:"+84", region_key:"SEA" },
-
-    // Europe
-    { code:"GB", name:"United Kingdom — London",  timeZone:"Europe/London", dialCode:"+44", region_key:"EUROPE" },
-    { code:"DE", name:"Germany — Berlin",         timeZone:"Europe/Berlin", dialCode:"+49", region_key:"EUROPE" },
-    { code:"FR", name:"France — Paris",           timeZone:"Europe/Paris", dialCode:"+33", region_key:"EUROPE" }
-  ];
-
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  function $(s){return document.querySelector(s);}
-  function $all(s){return Array.from(document.querySelectorAll(s));}
-
-  let leadId = null;
-  let selectedRegionKey = null;
-  let selectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  let selectedSlot = null;
-  let selectedLang = "English";
-  let utmParams = {};
-  let clientMeta = {
-    ip_address:null,
-    browser:navigator.userAgent || null,
-    device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?"mobile":"desktop",
-    internet_speed_mbps:null
-  };
-
-  try{
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if(conn && typeof conn.downlink === "number"){
-      clientMeta.internet_speed_mbps = conn.downlink;
-    }
-  }catch(e){}
-
-  function setStep(step){
-    $("#step-1").classList.toggle("hidden", step !== 1);
-    $("#step-2").classList.toggle("hidden", step !== 2);
-    $("#step-3").classList.toggle("hidden", step !== 3);
-    $("#success-section").classList.toggle("hidden", step !== 4);
-
-    $all("[data-step-bar]").forEach(el=>{
-      const s = Number(el.dataset.stepBar);
-      el.classList.remove("active","current");
-      if(s < step) el.classList.add("active");
-      if(s === step) el.classList.add("current");
-    });
-  }
-
-  function qsError(step){ return document.getElementById("error-step-"+step); }
-
-  function parseUtm(){
-    const params = new URLSearchParams(window.location.search);
-    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content"].forEach(k=>{
-      const v = params.get(k);
-      if(v) utmParams[k]=v;
-    });
-  }
-
-  async function detectCountry(){
-    try{
-      const res = await fetch("https://ipapi.co/json/");
-      if(!res.ok) return;
-      const data = await res.json();
-      clientMeta.ip_address = data.ip || null;
-      const cc = data.country || data.country_code;
-      if(cc){
-        const match = COUNTRY_OPTIONS.find(c=>c.code === cc);
-        if(match){
-          $("#phone-country-code").value =
-            match.dialCode+"|"+match.timeZone+"|"+match.region_key+"|"+match.name;
-          selectedRegionKey = match.region_key;
-          selectedTimezone = match.timeZone;
-        }
-      }
-    }catch(e){
-      console.warn("IP detection failed", e);
-    }
-  }
-
-  function initCountryDropdown(){
-    const select = $("#phone-country-code");
-    COUNTRY_OPTIONS.forEach(opt=>{
-      const o = document.createElement("option");
-      o.value = opt.dialCode+"|"+opt.timeZone+"|"+opt.region_key+"|"+opt.name;
-      o.textContent = `${opt.dialCode} ${opt.name}`;
-      select.appendChild(o);
-    });
-    select.addEventListener("change",()=>{
-      const [dial,tz,region,name] = select.value.split("|");
-      selectedRegionKey = region;
-      selectedTimezone = tz;
-    });
-    if(select.options.length){
-      const [dial,tz,region,name] = select.options[0].value.split("|");
-      selectedRegionKey = region;
-      selectedTimezone = tz;
-    }
-  }
-
-  async function saveLeadStep1(){
-    const [phone_country_code, tz, region_key, countryName] =
-      $("#phone-country-code").value.split("|");
-
-    const phone_number = $("#phone-number").value.trim();
-    const child_name = $("#child-name").value.trim();
-    const child_grade = $("#child-grade").value;
-    const parent_name = $("#parent-name").value.trim();
-    const parent_email = $("#parent-email").value.trim();
-    const hasLaptop = document.querySelector("input[name='has-laptop']:checked")?.value === "yes";
-
-    const payload = {
-      child_name,
-      child_grade:String(child_grade),
-      parent_name,
-      parent_email,
-      phone_country_code,
-      phone_number,
-      is_whatsapp:true,
-      has_laptop:hasLaptop?"yes":"no",
-      course_id:COURSE_ID,
-      region_key:region_key,
-      country:countryName,
-      timezone:tz,
-      landing_page_path:window.location.pathname,
-      full_url:window.location.href,
-      ip_address:clientMeta.ip_address,
-      browser:clientMeta.browser,
-      device_type:clientMeta.device_type,
-      internet_speed_mbps:clientMeta.internet_speed_mbps,
-      page_completed:1,
-      ...utmParams
+    // =======================
+    // State
+    // =======================
+    const state = {
+      currentStep: 1,
+      leadId: null,
+      courseId: null,
+      utm: {},
+      selectedCountry: null,
+      selectedRegionKey: null,
+      selectedTimeZone: null,
+      ipInfo: null,
+      slotDataByDate: {},
+      selectedDate: null,
+      selectedSlotId: null,
+      selectedSlotDisplayTime: null,
+      selectedSlotIsStar: false,
+      selectedLang: "English"
     };
 
-    // insert; if unique phone conflict, update instead
-    const { data, error } = await supabase
-      .from("demo_leads")
-      .insert(payload)
-      .select("id")
-      .maybeSingle();
+    // =======================
+    // Helpers
+    // =======================
+    function parseUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const courseIdRaw = params.get("courseId");
+      state.courseId = courseIdRaw ? parseInt(courseIdRaw, 10) : null;
 
-    if(error){
-      if(error.code === "23505" || (error.message && error.message.includes("unique_lead_per_phone"))){
-        const existing = await supabase
-          .from("demo_leads")
-          .select("id")
-          .eq("phone_country_code", phone_country_code)
-          .eq("phone_number", phone_number)
-          .maybeSingle();
-        if(existing.error) throw existing.error;
-        if(existing.data && existing.data.id){
-          leadId = existing.data.id;
-          const upd = await supabase
-            .from("demo_leads")
-            .update(payload)
-            .eq("id", leadId);
-          if(upd.error) throw upd.error;
-          return;
-        }
+      state.utm.utm_source   = params.get("utm_source")   || null;
+      state.utm.utm_medium   = params.get("utm_medium")   || null;
+      state.utm.utm_campaign = params.get("utm_campaign") || null;
+      state.utm.utm_term     = params.get("utm_term")     || null;
+      state.utm.utm_content  = params.get("utm_content")  || null;
+    }
+
+    function getDeviceType() {
+      const width = window.innerWidth || document.documentElement.clientWidth;
+      if (width <= 640) return "mobile";
+      if (width <= 1024) return "tablet";
+      return "desktop";
+    }
+
+    function getBrowserInfo() {
+      return navigator.userAgent || "";
+    }
+
+    function toIstDateString(offsetDays) {
+      const now = new Date();
+      const istString = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+      const istDate = new Date(istString);
+      istDate.setDate(istDate.getDate() + offsetDays);
+      const y = istDate.getFullYear();
+      const m = String(istDate.getMonth() + 1).padStart(2, "0");
+      const d = String(istDate.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatLocalTimeLabel(utcDateTimeString, timeZone) {
+      try {
+        const d = new Date(utcDateTimeString);
+        const opts = { hour: "2-digit", minute: "2-digit", hour12: true, timeZone };
+        return new Intl.DateTimeFormat("en-US", opts).format(d);
+      } catch (e) {
+        console.error("Time label error", e);
+        return "";
       }
-      throw error;
-    } else {
-      leadId = data && data.id ? data.id :
-               (Array.isArray(data) && data[0] && data[0].id) || leadId;
-    }
-  }
-
-  function getIstDateRange(days){
-    const out = [];
-    const now = new Date();
-    for(let i=0;i<days;i++){
-      const d = new Date(now.getTime() + i*24*60*60*1000);
-      const parts = new Intl.DateTimeFormat("en-CA",{
-        timeZone:"Asia/Kolkata",
-        year:"numeric",
-        month:"2-digit",
-        day:"2-digit"
-      }).formatToParts(d);
-      const y = parts.find(p=>p.type==="year").value;
-      const m = parts.find(p=>p.type==="month").value;
-      const da = parts.find(p=>p.type==="day").value;
-      const iso = `${y}-${m}-${da}`;
-      const js = new Date(`${iso}T00:00:00+05:30`);
-      out.push({ iso, js });
-    }
-    return out;
-  }
-
-  async function loadSlotsForRange(){
-    const pillsWrap = $("#date-pills");
-    const slotsWrap = $("#slots-wrap");
-    pillsWrap.innerHTML = "";
-    slotsWrap.innerHTML = '<div class="hint">Loading slots…</div>';
-    selectedSlot = null;
-
-    if(!selectedRegionKey){
-      slotsWrap.innerHTML = '<div class="hint">Please go back and choose a country / code to detect region.</div>';
-      return;
     }
 
-    const range = getIstDateRange(6);
-    const fromIso = range[0].iso;
-    const toIso = range[range.length-1].iso;
-
-    const { data, error } = await supabase
-      .from("demo_slots_live_view")
-      .select("*")
-      .eq("course_id", COURSE_ID)
-      .eq("region_key", selectedRegionKey)
-      .gte("slot_date", fromIso)
-      .lte("slot_date", toIso);
-
-    if(error){
-      console.error("Slots load error", error);
-      slotsWrap.innerHTML = '<div class="hint">Could not load slots. Please try again later.</div>';
-      return;
-    }
-
-    const slots = (data || []).slice().sort((a,b)=>{
-      const da = new Date(a.slot_datetime_local || a.slot_datetime_ist);
-      const db = new Date(b.slot_datetime_local || b.slot_datetime_ist);
-      return da - db;
-    });
-
-    const grouped = {};
-    slots.forEach(s=>{
-      if(!grouped[s.slot_date]) grouped[s.slot_date]=[];
-      grouped[s.slot_date].push(s);
-    });
-
-    range.forEach(({iso,js})=>{
-      const btn = document.createElement("button");
-      btn.type="button";
-      btn.className="date-pill";
-      btn.dataset.dateIso = iso;
-      const count = (grouped[iso] || []).length;
-      btn.innerHTML = `
-        <div class="dow">${js.toLocaleDateString(undefined,{weekday:"short"})}</div>
-        <div class="dom">${js.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</div>
-        <div class="dom">${count ? count+" slots" : "No slots"}</div>
-      `;
-      if(!count){
-        btn.disabled = true;
-        btn.style.opacity = "0.5";
-      }else{
-        btn.addEventListener("click",()=>{
-          $all(".date-pill").forEach(p=>p.classList.remove("active"));
-          btn.classList.add("active");
-          renderSlotsForDate(grouped[iso]);
-        });
-      }
-      pillsWrap.appendChild(btn);
-    });
-
-    const firstWithSlots = range.find(r => (grouped[r.iso]||[]).length);
-    if(firstWithSlots){
-      const btn = $all(".date-pill").find(b=>b.dataset.dateIso===firstWithSlots.iso);
-      if(btn) btn.click();
-    }else{
-      slotsWrap.innerHTML = '<div class="hint">No live slots available in the next 6 days for your region.</div>';
-    }
-  }
-
-  function renderSlotsForDate(slotsForDate){
-    const wrap = $("#slots-wrap");
-    wrap.innerHTML = "";
-    selectedSlot = null;
-
-    const tz = selectedTimezone || "UTC";
-
-    const sorted = slotsForDate.slice().sort((a,b)=>{
-      const da = new Date(a.slot_datetime_local || a.slot_datetime_ist);
-      const db = new Date(b.slot_datetime_local || b.slot_datetime_ist);
-      return da - db;
-    });
-
-    if(!sorted.length){
-      wrap.innerHTML = '<div class="hint">No slots available for this date.</div>';
-      return;
-    }
-
-    sorted.forEach(slot=>{
-      const iso = slot.slot_datetime_local || slot.slot_datetime_ist;
-      const localLabel = new Date(iso).toLocaleTimeString(undefined,{
-        hour:"2-digit",
-        minute:"2-digit",
-        hour12:true,
-        timeZone:tz
-      });
-
-      const row = document.createElement("div");
-      row.className="slot-row";
-      row.dataset.slotId = slot.slot_id || slot.id;
-      row.innerHTML = `
-        <div>
-          <div>${localLabel}</div>
-          <div class="slot-meta">${tz}</div>
-        </div>
-        ${slot.is_star_teacher ? `<div class="tag-star"><span class="badge-dot"></span><span>Star Teacher</span></div>` : ""}
-      `;
-      row.addEventListener("click",()=>{
-        $all(".slot-row").forEach(r=>r.classList.remove("active"));
-        row.classList.add("active");
-        selectedSlot = {
-          slot_id: row.dataset.slotId,
-          slot_date: slot.slot_date,
-          local_label: localLabel,
-          is_star_teacher: !!slot.is_star_teacher
-        };
-      });
-      wrap.appendChild(row);
-    });
-  }
-
-  async function saveLeadStep2(){
-    if(!selectedSlot) throw new Error("No slot selected");
-    const payload = {
-      preferred_date:selectedSlot.slot_date,
-      preferred_time_slot:selectedSlot.local_label,
-      slot_id:selectedSlot.slot_id,
-      lang:selectedLang,
-      star_teacher_selected:selectedSlot.is_star_teacher,
-      page_completed:2
-    };
-    if(leadId){
-      const { error } = await supabase
-        .from("demo_leads")
-        .update(payload)
-        .eq("id", leadId);
-      if(error) throw error;
-    }else{
-      const { data, error } = await supabase
-        .from("demo_leads")
-        .insert({ ...payload, course_id:COURSE_ID })
-        .select("id")
-        .maybeSingle();
-      if(error) throw error;
-      leadId = data && data.id ? data.id : leadId;
-    }
-  }
-
-  async function saveLeadStep3(who,reason,timeline){
-    const payload = {
-      who_are_you:who,
-      booking_reason:reason,
-      purchase_timeline:timeline,
-      page_completed:3
-    };
-    if(leadId){
-      const { error } = await supabase
-        .from("demo_leads")
-        .update(payload)
-        .eq("id", leadId);
-      if(error) throw error;
-    }else{
-      const { data, error } = await supabase
-        .from("demo_leads")
-        .insert({ ...payload, course_id:COURSE_ID })
-        .select("id")
-        .maybeSingle();
-      if(error) throw error;
-      leadId = data && data.id ? data.id : leadId;
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded",()=>{
-    initCountryDropdown();
-    detectCountry();
-    parseUtm();
-    setStep(1);
-
-    $("#step-1").addEventListener("submit",async e=>{
-      e.preventDefault();
-      const errBox = qsError(1);
-      errBox.style.display="none";
-
-      const phone = $("#phone-number").value.trim();
-      const child = $("#child-name").value.trim();
-      const grade = $("#child-grade").value;
-      const parent = $("#parent-name").value.trim();
-      const email = $("#parent-email").value.trim();
-
-      if(!phone || !child || !grade || !parent || !email){
-        errBox.textContent = "Please fill all required fields.";
-        errBox.style.display="block";
-        return;
-      }
-
-      const btn = $("#step-1-submit");
-      btn.disabled = true;
-      btn.textContent = "Saving details…";
-
-      try{
-        await saveLeadStep1();
-        setStep(2);
-        await loadSlotsForRange();
-      }catch(err){
-        console.error("Step1 error", err);
-        errBox.textContent = "We couldn't save your details. Please try again.";
-        errBox.style.display="block";
-      }finally{
-        btn.disabled = false;
-        btn.textContent = "Book a Free Trial Class";
-      }
-    });
-
-    $all("[data-back]").forEach(el=>{
-      el.addEventListener("click",()=>{
-        const step = Number(el.dataset.back);
-        setStep(step);
-      });
-    });
-
-    $("#step-2").addEventListener("submit",async e=>{
-      e.preventDefault();
-      const errBox = qsError(2);
-      errBox.style.display="none";
-
-      if(!selectedSlot){
-        errBox.textContent = "Please select a class time.";
-        errBox.style.display="block";
-        return;
-      }
-
-      const btn = $("#step-2-submit");
-      btn.disabled = true;
-      btn.textContent = "Locking your slot…";
-
-      try{
-        await saveLeadStep2();
-        setStep(3);
-      }catch(err){
-        console.error("Step2 error", err);
-        errBox.textContent = "We couldn't save your selected slot. Please try again.";
-        errBox.style.display="block";
-      }finally{
-        btn.disabled = false;
-        btn.textContent = "Confirm Class Time";
-      }
-    });
-
-    $all(".lang-pill").forEach(p=>{
-      p.addEventListener("click",()=>{
-        $all(".lang-pill").forEach(x=>x.classList.remove("active"));
-        p.classList.add("active");
-        selectedLang = p.dataset.lang;
-      });
-    });
-
-    function initChipGroup(id, attr){
-      const chips = $all("#"+id+" .chip");
-      chips.forEach(ch=>{
-        ch.addEventListener("click",()=>{
-          chips.forEach(c=>c.classList.remove("active"));
-          ch.classList.add("active");
-        });
-      });
-      return ()=> {
-        const active = chips.find(c=>c.classList.contains("active"));
-        return active ? active.getAttribute(attr) : null;
+    function formatDatePill(dateStr) {
+      const [y, m, d] = dateStr.split("-").map(x => parseInt(x, 10));
+      const dt = new Date(Date.UTC(y, m - 1, d));
+      const weekday = dt.toLocaleDateString("en-US", { weekday: "short" });
+      const day = String(d).padStart(2, "0");
+      const month = dt.toLocaleDateString("en-US", { month: "short" });
+      return {
+        line1: `${weekday} • ${day} ${month}`,
+        line2: `Date: ${dateStr}`
       };
     }
 
-    const getWho = initChipGroup("who-chips","data-who");
-    const getReason = initChipGroup("reason-chips","data-reason");
-    const getTimeline = initChipGroup("timeline-chips","data-timeline");
+    function showGlobalError(msg) {
+      const el = document.getElementById("global-error");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("visible");
+      setTimeout(() => {
+        el.classList.remove("visible");
+      }, 5000);
+    }
 
-    $("#step-3").addEventListener("submit",async e=>{
-      e.preventDefault();
-      const errBox = qsError(3);
-      errBox.style.display="none";
+    function clearGlobalError() {
+      const el = document.getElementById("global-error");
+      if (!el) return;
+      el.textContent = "";
+      el.classList.remove("visible");
+    }
 
-      const who = getWho();
-      const reason = getReason();
-      const timeline = getTimeline();
+    function updateStepUI() {
+      const step = state.currentStep;
+      [1, 2, 3].forEach(n => {
+        const v = document.getElementById(`step-${n}`);
+        if (!v) return;
+        v.classList.toggle("active", n === step);
+      });
 
-      if(!who || !reason || !timeline){
-        errBox.textContent = "Please select all options.";
-        errBox.style.display="block";
+      const pills = Array.from(document.querySelectorAll("[data-step-pill]"));
+      pills.forEach(p => {
+        const s = parseInt(p.getAttribute("data-step-pill"), 10);
+        p.classList.remove("active", "completed");
+        if (s === step) {
+          p.classList.add("active");
+        } else if (s < step) {
+          p.classList.add("completed");
+        }
+      });
+
+      const progress = document.getElementById("step-progress-fill");
+      if (progress) {
+        let percent = 0;
+        if (step === 1) percent = 33;
+        else if (step === 2) percent = 66;
+        else if (step === 3) percent = 100;
+        progress.style.width = percent + "%";
+      }
+    }
+
+    // =======================
+    // Country selector
+    // =======================
+    function renderCountrySelect(defaultDial) {
+      const selectEl = document.getElementById("country-select");
+      const dialEl = document.getElementById("country-dial");
+      if (!selectEl || !dialEl) return;
+
+      selectEl.innerHTML = "";
+      COUNTRY_OPTIONS.forEach(opt => {
+        const optionEl = document.createElement("option");
+        optionEl.value = opt.id;
+        optionEl.textContent = opt.label;
+        selectEl.appendChild(optionEl);
+      });
+
+      let selectedOpt = COUNTRY_OPTIONS.find(o => o.dialCode === defaultDial) || COUNTRY_OPTIONS[0];
+      state.selectedCountry = selectedOpt;
+      state.selectedTimeZone = selectedOpt.timeZone;
+      state.selectedRegionKey = selectedOpt.regionKey;
+
+      selectEl.value = selectedOpt.id;
+      dialEl.textContent = selectedOpt.dialCode;
+    }
+
+    function handleCountryChange() {
+      const selectEl = document.getElementById("country-select");
+      const dialEl = document.getElementById("country-dial");
+      if (!selectEl || !dialEl) return;
+      const selectedId = selectEl.value;
+      const opt = COUNTRY_OPTIONS.find(o => o.id === selectedId);
+      if (!opt) return;
+      state.selectedCountry = opt;
+      state.selectedTimeZone = opt.timeZone;
+      state.selectedRegionKey = opt.regionKey;
+      dialEl.textContent = opt.dialCode;
+    }
+
+    async function detectIpAndSetCountry() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        if (!res.ok) throw new Error("IP API failed");
+        const data = await res.json();
+        state.ipInfo = data;
+        const countryName = data.country_name || null;
+
+        if (countryName) {
+          const match = COUNTRY_OPTIONS.find(o => o.countryName === countryName);
+          if (match) {
+            const selectEl = document.getElementById("country-select");
+            const dialEl = document.getElementById("country-dial");
+            if (selectEl && dialEl) {
+              selectEl.value = match.id;
+              dialEl.textContent = match.dialCode;
+            }
+            state.selectedCountry = match;
+            state.selectedTimeZone = match.timeZone;
+            state.selectedRegionKey = match.regionKey;
+          }
+        }
+      } catch (e) {
+        console.warn("IP detection failed", e);
+      }
+    }
+
+    // =======================
+    // Radio chip groups
+    // =======================
+    function setupRadioChipGroup(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.addEventListener("click", (e) => {
+        const chip = e.target.closest(".radio-chip");
+        if (!chip) return;
+        Array.from(container.querySelectorAll(".radio-chip")).forEach(c =>
+          c.classList.remove("selected")
+        );
+        chip.classList.add("selected");
+      });
+    }
+
+    function setupLangPills() {
+      const langContainer = document.getElementById("lang-pills");
+      if (!langContainer) return;
+      const defaultLang = "English";
+      Array.from(langContainer.querySelectorAll(".lang-pill")).forEach(btn => {
+        const lang = btn.getAttribute("data-lang");
+        if (lang === defaultLang) {
+          btn.classList.add("active");
+          state.selectedLang = lang;
+        }
+        btn.addEventListener("click", () => {
+          Array.from(langContainer.querySelectorAll(".lang-pill")).forEach(b =>
+            b.classList.remove("active")
+          );
+          btn.classList.add("active");
+          state.selectedLang = lang;
+        });
+      });
+    }
+
+    // =======================
+    // Slots loading + rendering
+    // =======================
+    async function fetchSlotsForNextSixDays() {
+      if (!state.selectedRegionKey || !state.courseId) {
+        showGlobalError("We couldn't detect your region or course. Please refresh and try again.");
         return;
       }
 
-      const btn = $("#step-3-submit");
-      btn.disabled = true;
-      btn.textContent = "Submitting…";
+      const todayIst = toIstDateString(0);
+      const plus5Ist = toIstDateString(5);
 
-      try{
-        await saveLeadStep3(who,reason,timeline);
-        setStep(4);
-        setTimeout(()=>{ window.location.href = INTERIM_REDIRECT_URL; }, 1200);
-      }catch(err){
-        console.error("Step3 error", err);
-        errBox.textContent = "We couldn't submit your booking. Please try again.";
-        errBox.style.display="block";
-      }finally{
-        btn.disabled = false;
-        btn.textContent = "Submit";
+      const { data, error } = await supabaseClient
+        .from(DEMO_SLOTS_LIVE)
+        .select("id, region_key, course_id, slot_date, slot_time_ist, slot_datetime_ist, is_star_teacher, capacity_remaining, is_active")
+        .eq("region_key", state.selectedRegionKey)
+        .eq("course_id", state.courseId)
+        .gte("slot_date", todayIst)
+        .lte("slot_date", plus5Ist)
+        .gt("capacity_remaining", 0)
+        .eq("is_active", true)
+        .order("slot_datetime_ist", { ascending: true });
+
+      if (error) {
+        console.error("Slots fetch error", error);
+        showGlobalError("We couldn't load the available slots. Please refresh and try again.");
+        return;
       }
-    });
-  });
-</script>
+
+      const byDate = {};
+      (data || []).forEach(row => {
+        const dateKey = row.slot_date;
+        if (!byDate[dateKey]) byDate[dateKey] = [];
+        byDate[dateKey].push(row);
+      });
+      state.slotDataByDate = byDate;
+      renderSlotDates();
+    }
+
+    function renderSlotDates() {
+      const container = document.getElementById("slot-dates-row");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const dates = Object.keys(state.slotDataByDate).sort();
+      if (dates.length === 0) {
+        state.selectedDate = null;
+        renderSlotTimes();
+        return;
+      }
+
+      if (!state.selectedDate || !dates.includes(state.selectedDate)) {
+        state.selectedDate = dates[0];
+      }
+
+      dates.forEach(dateStr => {
+        const pillData = formatDatePill(dateStr);
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = "slot-date-pill";
+        if (dateStr === state.selectedDate) pill.classList.add("active");
+        const line1 = document.createElement("span");
+        line1.textContent = pillData.line1;
+        const line2 = document.createElement("span");
+        line2.textContent = pillData.line2;
+        pill.appendChild(line1);
+        pill.appendChild(line2);
+        pill.addEventListener("click", () => {
+          state.selectedDate = dateStr;
+          renderSlotDates();
+          renderSlotTimes();
+        });
+        container.appendChild(pill);
+      });
+
+      renderSlotTimes();
+    }
+
+    function renderSlotTimes() {
+      const grid = document.getElementById("slot-times-grid");
+      const emptyEl = document.getElementById("slot-times-empty");
+      if (!grid || !emptyEl) return;
+      grid.innerHTML = "";
+
+      const slots = state.selectedDate ? (state.slotDataByDate[state.selectedDate] || []) : [];
+      if (!slots.length) {
+        emptyEl.style.display = "block";
+        state.selectedSlotId = null;
+        state.selectedSlotDisplayTime = null;
+        state.selectedSlotIsStar = false;
+        return;
+      }
+      emptyEl.style.display = "none";
+
+      const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      slots.forEach(slot => {
+        const label = formatLocalTimeLabel(slot.slot_datetime_ist, tz);
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "slot-chip";
+        if (slot.id === state.selectedSlotId) chip.classList.add("selected");
+
+        const left = document.createElement("div");
+        const main = document.createElement("div");
+        main.className = "slot-time-main";
+        main.textContent = label;
+        const sub = document.createElement("div");
+        sub.className = "slot-time-sub";
+        sub.textContent = "Local time";
+        left.appendChild(main);
+        left.appendChild(sub);
+
+        chip.appendChild(left);
+
+        if (slot.is_star_teacher) {
+          const tag = document.createElement("div");
+          tag.className = "slot-tag";
+          tag.textContent = "⭐ Star Teacher";
+          chip.appendChild(tag);
+        }
+
+        chip.addEventListener("click", () => {
+          state.selectedSlotId = slot.id;
+          state.selectedSlotDisplayTime = label;
+          state.selectedSlotIsStar = !!slot.is_star_teacher;
+          renderSlotTimes();
+        });
+
+        grid.appendChild(chip);
+      });
+    }
+
+    // =======================
+    // STEP 1: Save lead
+    // =======================
+    async function handleStep1Next() {
+      clearGlobalError();
+
+      const countryDialEl = document.getElementById("country-dial");
+      const phoneEl = document.getElementById("phone-number");
+      const childNameEl = document.getElementById("child-name");
+      const gradeEl = document.getElementById("child-grade");
+      const parentNameEl = document.getElementById("parent-name");
+      const parentEmailEl = document.getElementById("parent-email");
+      const hasLaptopContainer = document.getElementById("has-laptop-group");
+
+      const phoneCountryCode = countryDialEl ? countryDialEl.textContent.trim() : "";
+      const phoneNumber = phoneEl ? phoneEl.value.trim() : "";
+      const childName = childNameEl ? childNameEl.value.trim() : "";
+      const childGrade = gradeEl ? gradeEl.value : "";
+      const parentName = parentNameEl ? parentNameEl.value.trim() : "";
+      const parentEmail = parentEmailEl ? parentEmailEl.value.trim() : "";
+
+      let hasLaptop = null;
+      if (hasLaptopContainer) {
+        const selected = hasLaptopContainer.querySelector(".radio-chip.selected");
+        if (selected) hasLaptop = selected.getAttribute("data-value");
+      }
+
+      if (!phoneCountryCode || !phoneNumber || !childName || !childGrade || !parentName || !parentEmail || !hasLaptop) {
+        showGlobalError("Please fill all required fields on this step before continuing.");
+        return;
+      }
+
+      if (!state.selectedCountry) {
+        showGlobalError("Please select your country.");
+        return;
+      }
+
+      const deviceType = getDeviceType();
+      const browserInfo = getBrowserInfo();
+
+      const ip = state.ipInfo?.ip || null;
+      const city = state.ipInfo?.city || null;
+      const countryNameFromIp = state.ipInfo?.country_name || null;
+
+      const regionKey = state.selectedRegionKey;
+      const timezone = state.selectedTimeZone;
+
+      const payload = {
+        child_name: childName,
+        child_grade: childGrade,
+        parent_name: parentName,
+        parent_email: parentEmail,
+        phone_country_code: phoneCountryCode,
+        phone_number: phoneNumber,
+        is_whatsapp: true,
+        has_laptop: hasLaptop,
+        course_id: state.courseId,
+        lang: state.selectedLang,
+        utm_source: state.utm.utm_source,
+        utm_medium: state.utm.utm_medium,
+        utm_campaign: state.utm.utm_campaign,
+        utm_term: state.utm.utm_term,
+        utm_content: state.utm.utm_content,
+        landing_page_path: window.location.pathname,
+        full_url: window.location.href,
+        ip_address: ip,
+        city: city,
+        country: state.selectedCountry.countryName || countryNameFromIp,
+        region_key: regionKey,
+        device_type: deviceType,
+        browser: browserInfo,
+        timezone: timezone,
+        page_completed: 1
+      };
+
+      const btn = document.getElementById("step-1-next");
+      if (btn) btn.disabled = true;
+
+      try {
+        const { data, error } = await supabaseClient
+          .from(DEMO_LEADS_TABLE)
+          .upsert(payload, { onConflict: "phone_country_code,phone_number" })
+          .select()
+          .single();
+
+        if (error) {
+          console.error("Step 1 upsert error", error);
+          showGlobalError("We couldn't save your details. Please try again in a moment.");
+          return;
+        }
+
+        state.leadId = data.id;
+        state.selectedRegionKey = regionKey;
+
+        state.currentStep = 2;
+        updateStepUI();
+        await fetchSlotsForNextSixDays();
+      } catch (e) {
+        console.error("Step 1 exception", e);
+        showGlobalError("Something went wrong while saving your details. Please try again.");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // =======================
+    // STEP 2: Save slot
+    // =======================
+    async function handleStep2Next() {
+      clearGlobalError();
+
+      if (!state.selectedDate || !state.selectedSlotId || !state.selectedSlotDisplayTime) {
+        showGlobalError("Please select a date, time and language to continue.");
+        return;
+      }
+      if (!state.leadId) {
+        showGlobalError("Your details are not saved yet. Please go back to Step 1.");
+        return;
+      }
+
+      const payload = {
+        preferred_date: state.selectedDate,
+        preferred_time_slot: state.selectedSlotDisplayTime,
+        slot_id: state.selectedSlotId,
+        lang: state.selectedLang,
+        star_teacher_selected: state.selectedSlotIsStar,
+        page_completed: 2
+      };
+
+      const btn = document.getElementById("step-2-next");
+      if (btn) btn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient
+          .from(DEMO_LEADS_TABLE)
+          .update(payload)
+          .eq("id", state.leadId);
+
+        if (error) {
+          console.error("Step 2 update error", error);
+          showGlobalError("We couldn't save your selected slot. Please try again.");
+          return;
+        }
+
+        state.currentStep = 3;
+        updateStepUI();
+      } catch (e) {
+        console.error("Step 2 exception", e);
+        showGlobalError("Something went wrong while saving your slot. Please try again.");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // =======================
+    // STEP 3: Save motivations + redirect
+    // =======================
+    async function handleStep3Submit() {
+      clearGlobalError();
+      if (!state.leadId) {
+        showGlobalError("Your booking details are missing. Please start again.");
+        return;
+      }
+
+      const whoContainer = document.getElementById("who-group");
+      const reasonContainer = document.getElementById("reason-group");
+      const timelineContainer = document.getElementById("timeline-group");
+
+      let who = null, reason = null, timeline = null;
+
+      if (whoContainer) {
+        const sel = whoContainer.querySelector(".radio-chip.selected");
+        if (sel) who = sel.getAttribute("data-value");
+      }
+      if (reasonContainer) {
+        const sel = reasonContainer.querySelector(".radio-chip.selected");
+        if (sel) reason = sel.getAttribute("data-value");
+      }
+      if (timelineContainer) {
+        const sel = timelineContainer.querySelector(".radio-chip.selected");
+        if (sel) timeline = sel.getAttribute("data-value");
+      }
+
+      if (!who || !reason || !timeline) {
+        showGlobalError("Please complete all questions to help us personalise your experience.");
+        return;
+      }
+
+      const payload = {
+        who_are_you: who,
+        booking_reason: reason,
+        purchase_timeline: timeline,
+        page_completed: 3
+      };
+
+      const btn = document.getElementById("step-3-submit");
+      if (btn) btn.disabled = true;
+
+      try {
+        const { error } = await supabaseClient
+          .from(DEMO_LEADS_TABLE)
+          .update(payload)
+          .eq("id", state.leadId);
+
+        if (error) {
+          console.error("Step 3 update error", error);
+          showGlobalError("We couldn't save your preferences. Please try again.");
+          return;
+        }
+
+        // ✅ Final redirect
+        const bookingUUID = state.leadId;
+        const courseIdParam = state.courseId || "";
+        const redirectUrl =
+          "https://portal.unischooly.com/demo-dashboard/" +
+          "?bookingUUID=" + encodeURIComponent(bookingUUID) +
+          "&medium=dashboard" +
+          "&courseId=" + encodeURIComponent(courseIdParam) +
+          "&post_booking=true";
+
+        window.location.href = redirectUrl;
+      } catch (e) {
+        console.error("Step 3 exception", e);
+        showGlobalError("Something went wrong while finalising your booking. Please try again.");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // =======================
+    // Navigation: Back links
+    // =======================
+    function setupBackLinks() {
+      document.querySelectorAll("[data-back-step]").forEach(el => {
+        el.addEventListener("click", () => {
+          const step = parseInt(el.getAttribute("data-back-step"), 10);
+          if (!Number.isNaN(step)) {
+            state.currentStep = step;
+            updateStepUI();
+          }
+        });
+      });
+    }
+
+    // =======================
+    // Init
+    // =======================
+    function initStepEvents() {
+      const step1Btn = document.getElementById("step-1-next");
+      if (step1Btn) step1Btn.addEventListener("click", handleStep1Next);
+
+      const step2Btn = document.getElementById("step-2-next");
+      if (step2Btn) step2Btn.addEventListener("click", handleStep2Next);
+
+      const step3Btn = document.getElementById("step-3-submit");
+      if (step3Btn) step3Btn.addEventListener("click", handleStep3Submit);
+    }
+
+    function initCountrySelector() {
+      renderCountrySelect("+91");
+      const selectEl = document.getElementById("country-select");
+      if (selectEl) {
+        selectEl.addEventListener("change", handleCountryChange);
+      }
+      detectIpAndSetCountry();
+    }
+
+    function initRadioGroups() {
+      setupRadioChipGroup("has-laptop-group");
+      setupRadioChipGroup("who-group");
+      setupRadioChipGroup("reason-group");
+      setupRadioChipGroup("timeline-group");
+    }
+
+    function init() {
+      parseUrlParams();
+      initCountrySelector();
+      initRadioGroups();
+      setupLangPills();
+      setupBackLinks();
+      initStepEvents();
+      state.currentStep = 1;
+      updateStepUI();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
 </body>
 </html>

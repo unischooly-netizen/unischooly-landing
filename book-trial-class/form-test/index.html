@@ -849,7 +849,9 @@ const state = {
   selectedLang: "English",
   todayLocalKey: null,
   localDayKeys: [],
-  slotsByDate: {} // dateKey -> [{slot_id, label, isStar, localDate}]
+  slotsByDate: {}, // dateKey -> [{slot_id, label, isStar, localDate}]
+  ipAddress: null,
+  city: null
 };
 
 // =========================
@@ -1077,6 +1079,48 @@ async function autodetectCountry() {
     setSelectedCountry("in_india");
   }
 }
+async function detectIpAndCity() {
+  let ip = null;
+  let city = null;
+
+  // Primary: ipapi.co
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    if (res.ok) {
+      const j = await res.json();
+      ip = j.ip || null;
+      city = j.city || null;
+    }
+  } catch (e) {}
+
+  // Fallback 1: ipwho.is
+  if (!ip) {
+    try {
+      const res = await fetch("https://ipwho.is/");
+      const j = await res.json();
+      if (j && j.ip) {
+        ip = j.ip;
+        if (!city && j.city) city = j.city;
+      }
+    } catch (e) {}
+  }
+
+  // Fallback 2: country.is (country + ip only)
+  if (!ip) {
+    try {
+      const res = await fetch("https://api.country.is/");
+      const j = await res.json();
+      if (j && j.ip) {
+        ip = j.ip;
+      }
+    } catch (e) {}
+  }
+
+  // Store into state (can be null if everything failed)
+  state.ipAddress = ip;
+  state.city = city;
+}
+
 
 // =========================
 // Internet speed (best-effort)
@@ -1181,6 +1225,8 @@ async function handleStep1Next() {
       utm_content: state.utm.utm_content,
       fmt: state.utm.fmt,
       internet_speed_mbps: speed,
+      ip_address: state.ipAddress,
+      city: state.city,
       page_completed: 1,
       landing_page_path: window.location.pathname,
       full_url: window.location.href,
@@ -1567,6 +1613,7 @@ function init() {
 
   populateCountrySelect();
   autodetectCountry();
+  detectIpAndCity();
 
   const countrySelect = document.getElementById("country-select");
   if (countrySelect) {

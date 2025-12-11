@@ -1,1577 +1,757 @@
-<!DOCTYPE html>
+<!-- form-test_full.txt
+     Save this file as form-test/index.html in your unischooly-landing repo.
+     Single-file functional 3-step booking test (vanilla HTML + JS + Supabase).
+-->
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Unischooly | Book Trial Class (Form Only)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Supabase JS v2 -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --primary: #9b5bff;
-      --primary-strong: #7b3ffc;
-      --accent: #ff7b5f;
-      --bg: #050816;
-      --bg-card: #0b0f24;
-      --bg-soft: #10152e;
-      --text-main: #f8f5ff;
-      --text-sub: #a8acd0;
-      --text-muted: #777a9b;
-      --border-subtle: #262a40;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-pill: 999px;
-      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
-      --transition-fast: 0.16s ease-out;
-      --transition-med: 0.22s ease-out;
-    }
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 12px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #211a44 0, #050816 50%, #020010 100%);
-      color: var(--text-main);
-    }
-    .form-shell {
-      width: 100%;
-      max-width: 960px;
-      background: radial-gradient(circle at 0 0, #171436 0, #050816 55%, #120f2e 100%);
-      border-radius: 26px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: var(--shadow-soft);
-      padding: 22px 18px 20px;
-    }
-    @media (min-width: 900px) {
-      .form-shell { padding: 26px 24px 22px; }
-    }
-    .form-header { margin-bottom: 16px; }
-    .form-title {
-      margin: 0 0 4px;
-      font-size: 22px;
-      letter-spacing: 0.02em;
-    }
-    .form-subtitle {
-      margin: 0;
-      font-size: 13px;
-      color: var(--text-sub);
-    }
-    .steps-bar {
-      display: flex;
-      gap: 8px;
-      margin-top: 14px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-    .step-pill {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(7, 11, 32, 0.95);
-      font-size: 12px;
-      color: var(--text-muted);
-      transition: background var(--transition-med), border-color var(--transition-med), color var(--transition-med);
-    }
-    .step-pill.active {
-      background: linear-gradient(135deg, #9b5bff, #ff7b5f);
-      color: #fff;
-      border-color: transparent;
-      box-shadow: 0 10px 24px rgba(155, 91, 255, 0.7);
-    }
-    .step-pill.completed {
-      border-color: rgba(40, 199, 111, 0.9);
-      color: #e5fff4;
-    }
-    .step-index {
-      width: 18px;
-      height: 18px;
-      border-radius: var(--radius-pill);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 600;
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .step-pill.active .step-index { background: rgba(0, 0, 0, 0.4); }
-    .step-text-main { font-weight: 600; }
-    .step-text-sub { font-size: 11px; opacity: 0.92; }
-    .step-progress {
-      width: 100%;
-      height: 3px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-    .step-progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #9b5bff, #ff7b5f);
-      border-radius: inherit;
-      transition: width var(--transition-med);
-    }
-    .form-body {
-      background: rgba(5, 7, 22, 0.98);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 16px 14px 14px;
-    }
-    @media (min-width: 800px) {
-      .form-body { padding: 18px 18px 16px; }
-    }
-    .global-error {
-      display: none;
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size: 12px;
-      margin-bottom: 8px;
-      background: rgba(86, 12, 20, 0.94);
-      border: 1px solid rgba(255, 94, 94, 0.9);
-      color: #ffe6e6;
-    }
-    .global-error.visible { display: block; }
-    .step-view {
-      display: none;
-      animation: fadeIn 0.2s ease-out;
-    }
-    .step-view.active { display: block; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .section-heading {
-      margin: 0 0 2px;
-      font-size: 17px;
-    }
-    .section-sub {
-      margin: 0 0 10px;
-      font-size: 13px;
-      color: var(--text-sub);
-    }
-    .section-steps-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-    .fields-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 10px;
-    }
-    @media (min-width: 720px) {
-      .fields-grid.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    .field { display: flex; flex-direction: column; gap: 4px; }
-    .field-label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 6px;
-    }
-    label {
-      font-size: 13px;
-      color: #f0edff;
-      font-weight: 500;
-    }
-    .required { color: #ffb499; margin-left: 2px; }
-    .hint-text {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .input,
-    .select {
-      width: 100%;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: linear-gradient(135deg, #070b1c, #0a0f24);
-      color: var(--text-main);
-      padding: 9px 11px;
-      font-size: 14px;
-      outline: none;
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), transform 0.1s ease-out;
-    }
-    .input::placeholder { color: rgba(158, 163, 196, 0.9); }
-    .input:focus,
-    .select:focus {
-      border-color: rgba(155, 91, 255, 1);
-      box-shadow: 0 0 0 1px rgba(155, 91, 255, 0.45);
-      transform: translateY(-0.5px);
-    }
-    .select {
-      padding-right: 30px;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background-image:
-        linear-gradient(135deg, #070b1c, #0a0f24),
-        linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.8) 50%),
-        linear-gradient(135deg, rgba(255, 255, 255, 0.8) 50%, transparent 50%);
-      background-repeat: no-repeat, no-repeat, no-repeat;
-      background-position: 0 0, calc(100% - 18px) 52%, calc(100% - 12px) 52%;
-      background-size: 100% 100%, 6px 6px, 6px 6px;
-    }
-    .phone-row {
-      display: grid;
-      grid-template-columns: 140px minmax(0, 1fr);
-      gap: 8px;
-      align-items: stretch;
-    }
-    .country-select-wrapper { position: relative; }
-    .country-visible {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-main);
-      gap: 4px;
-    }
-    .country-flag { font-size: 16px; }
-    .country-dial { padding: 0 4px; }
-    .country-inner-select {
-      opacity: 0;
-      color: transparent;
-      cursor: pointer;
-    }
-    .radio-chip-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .radio-chip {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 11px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(7, 11, 32, 0.98);
-      font-size: 12px;
-      color: var(--text-sub);
-      cursor: pointer;
-      transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform 0.08s ease-out;
-    }
-    .radio-chip:hover {
-      border-color: rgba(167, 139, 250, 1);
-      transform: translateY(-0.5px);
-    }
-    .radio-chip input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .radio-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .radio-dot-inner {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: transparent;
-      transition: background var(--transition-fast);
-    }
-    .radio-chip.selected {
-      border-color: rgba(155, 91, 255, 1);
-      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(9, 12, 38, 0.98);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(7, 10, 35, 1);
-    }
-    .radio-chip.selected .radio-dot-inner {
-      background: linear-gradient(135deg, #9b5bff, #ff7b5f);
-    }
-    .button-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-    .btn {
-      border-radius: var(--radius-pill);
-      padding: 9px 16px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      white-space: nowrap;
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), opacity var(--transition-fast);
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, #9b5bff, #ff7b5f);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(155, 91, 255, 0.8);
-    }
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 28px rgba(155, 91, 255, 0.9);
-    }
-    .btn-primary:active:not(:disabled) {
-      transform: translateY(0);
-      box-shadow: 0 10px 22px rgba(155, 91, 255, 0.75);
-    }
-    .btn-secondary {
-      background: rgba(8, 11, 30, 0.98);
-      color: var(--text-sub);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-    .btn-secondary:hover:not(:disabled) {
-      background: rgba(13, 17, 40, 0.98);
-      color: #fff;
-    }
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-    .btn-icon { font-size: 16px; }
-    .tiny-note {
-      margin-top: 6px;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-      color: var(--text-sub);
-      cursor: pointer;
-      margin-bottom: 6px;
-    }
-    .back-link:hover { color: #fff; }
-    .slot-dates-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 6px;
-    }
-    .slot-date-pill {
-      min-width: 110px;
-      padding: 6px 9px;
-      border-radius: 13px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(7, 10, 28, 0.98);
-      font-size: 12px;
-      color: var(--text-sub);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      cursor: pointer;
-      transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-    }
-    .slot-date-pill span:first-child {
-      font-weight: 600;
-      color: #f5f2ff;
-    }
-    .slot-date-pill span:last-child {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .slot-date-pill:hover {
-      border-color: rgba(167, 139, 250, 1);
-      transform: translateY(-0.5px);
-    }
-    .slot-date-pill.active {
-      border-color: rgba(155, 91, 255, 1);
-      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
-      box-shadow: 0 12px 24px rgba(8, 12, 40, 1);
-      color: #fff;
-    }
-    .slot-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 8px;
-    }
-    @media (min-width: 640px) {
-      .slot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    .slot-chip {
-      padding: 7px 9px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(7, 10, 28, 0.98);
-      font-size: 12px;
-      color: var(--text-sub);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-    }
-    .slot-chip:hover {
-      border-color: rgba(167, 139, 250, 1);
-      transform: translateY(-0.5px);
-    }
-    .slot-chip.selected {
-      border-color: rgba(155, 91, 255, 1);
-      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
-      box-shadow: 0 12px 24px rgba(8, 12, 40, 1);
-      color: #fff;
-    }
-    .slot-time-main { font-weight: 600; font-size: 12px; }
-    .slot-time-sub { font-size: 10px; color: var(--text-muted); }
-    .slot-tag {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: var(--radius-pill);
-      border: 1px solid rgba(255, 222, 140, 0.9);
-      background: rgba(79, 54, 7, 0.55);
-      color: #ffeec4;
-      white-space: nowrap;
-    }
-    .slot-empty {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 8px;
-    }
-    .lang-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 6px;
-    }
-    .lang-pill {
-      border-radius: var(--radius-pill);
-      padding: 6px 10px;
-      font-size: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(7, 10, 28, 0.98);
-      color: var(--text-sub);
-      cursor: pointer;
-      transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
-    }
-    .lang-pill:hover {
-      border-color: rgba(167, 139, 250, 1);
-      transform: translateY(-0.5px);
-    }
-    .lang-pill.active {
-      border-color: rgba(155, 91, 255, 1);
-      background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
-      box-shadow: 0 10px 22px rgba(8, 12, 40, 1);
-      color: #fff;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Unischooly — Booking form test</title>
+<style>
+  /* Minimal, readable styling */
+  body{font-family:Inter,system-ui,-apple-system; background:#041028;color:#dbeafe;padding:20px}
+  .card{max-width:900px;margin:0 auto;background:#06102a;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+  h1{font-size:20px;margin-bottom:6px}
+  .muted{color:#93c5fd;font-size:13px;margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .field{margin-bottom:12px}
+  label{display:block;font-size:13px;margin-bottom:6px}
+  input,select,button{width:100%;padding:10px;border-radius:8px;border:1px solid #1e293b;background:#021025;color:#dbeafe}
+  button{cursor:pointer}
+  .radio-chip{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;border:1px solid #13324a;background:#021b33;margin-right:8px;cursor:pointer}
+  .radio-chip.selected{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:#021025}
+  .slot-dates-row{display:flex;gap:8px;overflow:auto;padding:8px 0;margin-bottom:12px}
+  .slot-date-pill{min-width:130px;border-radius:10px;padding:10px;border:1px solid #16324a;background:#021b33;color:#dbeafe;cursor:pointer}
+  .slot-date-pill.active{background:linear-gradient(90deg,#7c3aed,#06b6d4);color:#021025}
+  .slot-grid{display:flex;flex-wrap:wrap;gap:8px}
+  .slot-pill{padding:8px 12px;border-radius:8px;border:1px solid #123047;background:#012033;cursor:pointer}
+  .slot-pill.star{box-shadow:0 0 0 2px rgba(250,204,21,0.12),0 6px 18px rgba(2,6,23,0.6)}
+  .slot-pill.full{opacity:0.45;cursor:not-allowed}
+  .error{color:#fecaca}
+  .success{color:#bbf7d0}
+  .loader-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:1000}
+  .loader-box{background:#021025;padding:22px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);text-align:center}
+  .small{font-size:12px;color:#93c5fd}
+  .hint{font-size:12px;color:#93c5fd;margin-top:6px}
+  .back-link{cursor:pointer;color:#a5b4fc;margin-bottom:10px;display:inline-block}
+</style>
 </head>
 <body>
-  <div class="form-shell">
-    <div class="form-header">
-      <h1 class="form-title">Book Now &amp; Get Certified</h1>
-      <p class="form-subtitle">Share your details to unlock a personalised free trial class.</p>
-      <div class="steps-bar">
-        <div class="step-pill" data-step-pill="1">
-          <div class="step-index">1</div>
-          <div>
-            <div class="step-text-main">Your Details</div>
-            <div class="step-text-sub">Contact &amp; child info</div>
-          </div>
-        </div>
-        <div class="step-pill" data-step-pill="2">
-          <div class="step-index">2</div>
-          <div>
-            <div class="step-text-main">Date &amp; Time</div>
-            <div class="step-text-sub">Pick your local slot</div>
-          </div>
-        </div>
-        <div class="step-pill" data-step-pill="3">
-          <div class="step-index">3</div>
-          <div>
-            <div class="step-text-main">Personalise</div>
-            <div class="step-text-sub">Help us customise</div>
-          </div>
+  <div class="card">
+    <h1>Unischooly — Booking test (3 steps)</h1>
+    <div class="muted">This page tests the backend flow for demo_leads & demo_slots_live. Fill step 1 → select slot → submit step 3.</div>
+
+    <div id="global-error" class="error" style="margin-bottom:8px"></div>
+    <div id="global-success" class="success" style="margin-bottom:8px"></div>
+
+    <!-- STEP 1 -->
+    <div id="step-1">
+      <h2>Step 1 — Contact & child details</h2>
+
+      <div class="field">
+        <label>Country</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <select id="country-select"></select>
+          <div id="country-flag">🏳️</div>
+          <div id="country-dial" class="small">+--</div>
         </div>
       </div>
-      <div class="step-progress">
-        <div class="step-progress-fill" id="step-progress-fill"></div>
+
+      <div class="field">
+        <label>WhatsApp mobile number</label>
+        <input id="phone-number" placeholder="Digits only" />
+        <div id="phone-error" class="error" style="display:none"></div>
       </div>
-      <div class="section-steps-hint">
-        Step 1: Details • Step 2: Date &amp; Time • Step 3: Preferences
+
+      <div class="grid">
+        <div class="field">
+          <label>Child's name</label>
+          <input id="child-name" />
+        </div>
+        <div class="field">
+          <label>Child's grade</label>
+          <select id="child-grade">
+            <option value="">Select</option>
+            <script>for(let i=1;i<=12;i++){document.write(`<option value="Grade ${i}">Grade ${i}</option>`)};</script>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label>Parent / Guardian name</label>
+          <input id="parent-name" />
+        </div>
+        <div class="field">
+          <label>Parent email</label>
+          <input id="parent-email" />
+          <div id="email-error" class="error" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Do you have a Laptop or Desktop?</label>
+        <div id="has-laptop-group">
+          <label class="radio-chip selected" data-value="Yes"><input type="radio" name="has-laptop" checked/> Yes</label>
+          <label class="radio-chip" data-value="No"><input type="radio" name="has-laptop"/> No</label>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px">
+        <button id="step-1-next">Save & Continue</button>
+      </div>
+      <div class="hint">We will capture device & browser automatically. You can change country if your child's country differs from your IP.</div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step-2" style="display:none;margin-top:14px">
+      <div class="back-link" id="back-to-step-1">&larr; Back to details</div>
+      <h2>Step 2 — Date & Time</h2>
+      <div class="field">
+        <label>Language</label>
+        <div id="lang-pills" style="display:flex;gap:8px">
+          <div class="radio-chip selected lang-pill" data-lang="English">English</div>
+          <div class="radio-chip lang-pill" data-lang="Arabic">Arabic</div>
+          <div class="radio-chip lang-pill" data-lang="Bahasa">Bahasa</div>
+          <div class="radio-chip lang-pill" data-lang="Vietnamese">Vietnamese</div>
+          <div class="radio-chip lang-pill" data-lang="Filipino">Filipino</div>
+          <div class="radio-chip lang-pill" data-lang="Thai">Thai</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Select Date</label>
+        <div id="slot-dates-row" class="slot-dates-row"></div>
+      </div>
+      <div class="field">
+        <label>Select Start Time (local)</label>
+        <div id="slot-times-grid" class="slot-grid"></div>
+        <div id="slot-times-empty" style="display:none" class="small">No slots available for this date.</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button id="step-2-next">Confirm slot & Continue</button>
       </div>
     </div>
 
-    <div class="form-body">
-      <div id="global-error" class="global-error"></div>
+    <!-- STEP 3 -->
+    <div id="step-3" style="display:none;margin-top:14px">
+      <div class="back-link" id="back-to-step-2">&larr; Back to date & time</div>
+      <h2>Step 3 — Personalise</h2>
 
-      <!-- STEP 1 -->
-      <div class="step-view" id="step-1">
-        <h2 class="section-heading">Your contact &amp; child details</h2>
-        <p class="section-sub">We’ll use these details to share the class link and certificate.</p>
-
-        <div class="fields-grid">
-          <div class="field">
-            <div class="field-label-row">
-              <label>Country Code &amp; Mobile Number<span class="required">*</span></label>
-            </div>
-            <div class="phone-row">
-              <div class="country-select-wrapper">
-                <select id="country-select" class="select country-inner-select"></select>
-                <div class="country-visible">
-                  <span id="country-flag" class="country-flag">🇮🇳</span>
-                  <span id="country-dial" class="country-dial">+91</span>
-                </div>
-              </div>
-              <input id="phone-number" class="input" type="tel" placeholder="Enter WhatsApp number" />
-            </div>
-            <div class="hint-text">Please share the number that you use for WhatsApp.</div>
-          </div>
-        </div>
-
-        <div class="fields-grid two-col" style="margin-top: 10px;">
-          <div class="field">
-            <div class="field-label-row">
-              <label>Child's Name<span class="required">*</span></label>
-            </div>
-            <input id="child-name" class="input" type="text" placeholder="Enter child's full name" />
-          </div>
-          <div class="field">
-            <div class="field-label-row">
-              <label>Child's Grade<span class="required">*</span></label>
-            </div>
-            <select id="child-grade" class="select">
-              <option value="">Select Grade</option>
-              <option value="1">Grade 1</option>
-              <option value="2">Grade 2</option>
-              <option value="3">Grade 3</option>
-              <option value="4">Grade 4</option>
-              <option value="5">Grade 5</option>
-              <option value="6">Grade 6</option>
-              <option value="7">Grade 7</option>
-              <option value="8">Grade 8</option>
-              <option value="9">Grade 9</option>
-              <option value="10">Grade 10</option>
-              <option value="11">Grade 11</option>
-              <option value="12">Grade 12</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="fields-grid two-col" style="margin-top: 10px;">
-          <div class="field">
-            <div class="field-label-row">
-              <label>Parent's Name<span class="required">*</span></label>
-            </div>
-            <input id="parent-name" class="input" type="text" placeholder="Enter parent's full name" />
-          </div>
-          <div class="field">
-            <div class="field-label-row">
-              <label>Email ID<span class="required">*</span></label>
-            </div>
-            <input id="parent-email" class="input" type="email" placeholder="Enter email address" />
-          </div>
-        </div>
-
-        <div class="field" style="margin-top: 10px;">
-          <div class="field-label-row">
-            <label>Do you have a Laptop or Desktop?<span class="required">*</span></label>
-          </div>
-          <div id="has-laptop-group" class="radio-chip-group">
-            <label class="radio-chip selected" data-value="Yes">
-              <input type="radio" name="has-laptop" value="Yes" checked />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Yes</span>
-            </label>
-            <label class="radio-chip" data-value="No">
-              <input type="radio" name="has-laptop" value="No" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>No</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="button-row">
-          <button id="step-1-next" class="btn btn-primary">
-            <span class="btn-icon">🚀</span>
-            <span>Book a Free Trial Class</span>
-          </button>
-        </div>
-        <div class="tiny-note">
-          Note: We will share the class link &amp; certificate on Email &amp; WhatsApp.
+      <div class="field">
+        <label>Who are you?</label>
+        <div id="who-group">
+          <label class="radio-chip selected" data-value="Parent">Parent</label>
+          <label class="radio-chip" data-value="Student">Student</label>
+          <label class="radio-chip" data-value="Guardian">Guardian</label>
         </div>
       </div>
 
-      <!-- STEP 2 -->
-      <div class="step-view" id="step-2">
-        <div class="back-link" data-back-step="1">
-          <span>&larr;</span><span>Back to your details</span>
-        </div>
-        <h2 class="section-heading">Select Date &amp; Time</h2>
-        <p class="section-sub">Pick a 1-hour slot that works best for your child.</p>
-
-        <div class="field">
-          <div class="field-label-row">
-            <label>Select Date<span class="required">*</span></label>
-          </div>
-          <div class="hint-text">Your class will be for 1 hour.</div>
-          <div id="slot-dates-row" class="slot-dates-row"></div>
-        </div>
-
-        <div class="field" style="margin-top: 10px;">
-          <div class="field-label-row">
-            <label>Select Start Time<span class="required">*</span></label>
-          </div>
-          <div class="hint-text">Class slots are limited. Times are shown in your local time zone.</div>
-          <div id="slot-times-grid" class="slot-grid"></div>
-          <div id="slot-times-empty" class="slot-empty" style="display:none;">
-            No slots available for this date. Please choose another date.
-          </div>
-        </div>
-
-        <div class="field" style="margin-top: 10px;">
-          <div class="field-label-row">
-            <label>Select Language<span class="required">*</span></label>
-          </div>
-          <div id="lang-pills" class="lang-pills">
-            <button type="button" class="lang-pill" data-lang="English">English</button>
-            <button type="button" class="lang-pill" data-lang="Arabic">Arabic</button>
-            <button type="button" class="lang-pill" data-lang="Bahasa">Bahasa</button>
-            <button type="button" class="lang-pill" data-lang="Filipino">Filipino</button>
-            <button type="button" class="lang-pill" data-lang="Vietnamese">Vietnamese</button>
-            <button type="button" class="lang-pill" data-lang="Thai">Thai</button>
-          </div>
-        </div>
-
-        <div class="button-row">
-          <button type="button" class="btn btn-secondary" data-back-step="1">
-            <span>&larr;</span><span>Back</span>
-          </button>
-          <button id="step-2-next" class="btn btn-primary">
-            <span class="btn-icon">✅</span>
-            <span>Confirm Class Time</span>
-          </button>
-        </div>
-        <div class="tiny-note">
-          Note: Free class will be conducted by reputed teachers.<br />
-          By continuing I agree to be contacted by Unischooly via WhatsApp / Phone / Email for this booking.
+      <div class="field">
+        <label>Why are you booking this demo?</label>
+        <div id="reason-group">
+          <label class="radio-chip selected" data-value="Want to buy course">Want to buy course</label>
+          <label class="radio-chip" data-value="To Compare Platform">To Compare Platform</label>
+          <label class="radio-chip" data-value="To strengthen Concept">To strengthen Concept</label>
+          <label class="radio-chip" data-value="Just for free demo">Just for free demo</label>
         </div>
       </div>
 
-      <!-- STEP 3 -->
-      <div class="step-view" id="step-3">
-        <div class="back-link" data-back-step="2">
-          <span>&larr;</span><span>Back to date &amp; time</span>
-        </div>
-        <h2 class="section-heading">Help us personalise your experience</h2>
-        <p class="section-sub">Tell us a bit more so we can tailor the trial session for your child.</p>
-
-        <div class="field">
-          <div class="field-label-row">
-            <label>Who are you?<span class="required">*</span></label>
-          </div>
-          <div id="who-group" class="radio-chip-group">
-            <label class="radio-chip" data-value="Parent">
-              <input type="radio" name="who-are-you" value="Parent" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Parent</span>
-            </label>
-            <label class="radio-chip" data-value="Student">
-              <input type="radio" name="who-are-you" value="Student" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Student</span>
-            </label>
-            <label class="radio-chip" data-value="Guardian">
-              <input type="radio" name="who-are-you" value="Guardian" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Guardian</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="field" style="margin-top: 10px;">
-          <div class="field-label-row">
-            <label>Why are you booking this trial class?<span class="required">*</span></label>
-          </div>
-          <div id="reason-group" class="radio-chip-group">
-            <label class="radio-chip" data-value="Want to buy course">
-              <input type="radio" name="booking-reason" value="Want to buy course" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Want to buy course</span>
-            </label>
-            <label class="radio-chip" data-value="To Compare Platform">
-              <input type="radio" name="booking-reason" value="To Compare Platform" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>To Compare Platform</span>
-            </label>
-            <label class="radio-chip" data-value="To strengthen Concept">
-              <input type="radio" name="booking-reason" value="To strengthen Concept" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>To strengthen Concept</span>
-            </label>
-            <label class="radio-chip" data-value="Just for free demo">
-              <input type="radio" name="booking-reason" value="Just for free demo" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Just for free demo</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="field" style="margin-top: 10px;">
-          <div class="field-label-row">
-            <label>When are you planning to purchase?<span class="required">*</span></label>
-          </div>
-          <div id="timeline-group" class="radio-chip-group">
-            <label class="radio-chip" data-value="After the Demo">
-              <input type="radio" name="purchase-timeline" value="After the Demo" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>After the Demo</span>
-            </label>
-            <label class="radio-chip" data-value="This Week">
-              <input type="radio" name="purchase-timeline" value="This Week" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>This Week</span>
-            </label>
-            <label class="radio-chip" data-value="This Month">
-              <input type="radio" name="purchase-timeline" value="This Month" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>This Month</span>
-            </label>
-            <label class="radio-chip" data-value="Just Exploring">
-              <input type="radio" name="purchase-timeline" value="Just Exploring" />
-              <span class="radio-dot"><span class="radio-dot-inner"></span></span>
-              <span>Just Exploring</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="button-row">
-          <button type="button" class="btn btn-secondary" data-back-step="2">
-            <span>&larr;</span><span>Back</span>
-          </button>
-          <button id="step-3-submit" class="btn btn-primary">
-            <span class="btn-icon">✨</span>
-            <span>Submit</span>
-          </button>
+      <div class="field">
+        <label>When will you purchase?</label>
+        <div id="timeline-group">
+          <label class="radio-chip selected" data-value="After the Demo">After the Demo</label>
+          <label class="radio-chip" data-value="This Week">This Week</label>
+          <label class="radio-chip" data-value="This Month">This Month</label>
+          <label class="radio-chip" data-value="Just Exploring">Just Exploring</label>
         </div>
       </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button id="step-3-submit">Finish booking</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="loader-modal" id="loader-modal">
+    <div class="loader-box">
+      <div style="font-weight:700;margin-bottom:8px">Booking your class…</div>
+      <div class="small">Please wait — we’re finalising your booking.</div>
     </div>
   </div>
 
-  <script>
-    // =========================
-    // Supabase Config
-    // =========================
-    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-    const DEMO_LEADS_TABLE = "demo_leads";
-    const DEMO_SLOTS_LIVE = "demo_slots_live";
+<script type="module">
+/* =========================
+   Config (use your Supabase)
+   ========================= */
+const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* Supabase client via ESM (cdn) */
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // =========================
-    // Country / Region / Timezone Mapping (target markets)
-    // =========================
-    const COUNTRY_OPTIONS = [
-      // MEA
-      { id: "ae_dubai",   flag: "🇦🇪", countryName: "United Arab Emirates", cityLabel: "Dubai",    tzLabel: "UTC+4",  dialCode: "+971", timeZone: "Asia/Dubai",       regionKey: "MEA" },
-      { id: "sa_riyadh",  flag: "🇸🇦", countryName: "Saudi Arabia",        cityLabel: "Riyadh",   tzLabel: "UTC+3",  dialCode: "+966", timeZone: "Asia/Riyadh",     regionKey: "MEA" },
-      { id: "qa_doha",    flag: "🇶🇦", countryName: "Qatar",               cityLabel: "Doha",     tzLabel: "UTC+3",  dialCode: "+974", timeZone: "Asia/Qatar",      regionKey: "MEA" },
-      { id: "om_muscat",  flag: "🇴🇲", countryName: "Oman",                cityLabel: "Muscat",   tzLabel: "UTC+4",  dialCode: "+968", timeZone: "Asia/Muscat",     regionKey: "MEA" },
-      { id: "kw_kuwait",  flag: "🇰🇼", countryName: "Kuwait",              cityLabel: "Kuwait",   tzLabel: "UTC+3",  dialCode: "+965", timeZone: "Asia/Kuwait",     regionKey: "MEA" },
-      { id: "bh_bahrain", flag: "🇧🇭", countryName: "Bahrain",             cityLabel: "Manama",   tzLabel: "UTC+3",  dialCode: "+973", timeZone: "Asia/Bahrain",    regionKey: "MEA" },
-      { id: "eg_cairo",   flag: "🇪🇬", countryName: "Egypt",               cityLabel: "Cairo",    tzLabel: "UTC+2",  dialCode: "+20",  timeZone: "Africa/Cairo",    regionKey: "MEA" },
-      { id: "lb_beirut",  flag: "🇱🇧", countryName: "Lebanon",             cityLabel: "Beirut",   tzLabel: "UTC+2",  dialCode: "+961", timeZone: "Asia/Beirut",     regionKey: "MEA" },
+/* Table names */
+const DEMO_LEADS_TABLE = "demo_leads";
+const DEMO_SLOTS_LIVE = "demo_slots_live";
 
-      // ASIA (India + neighbours)
-      { id: "in_india",   flag: "🇮🇳", countryName: "India",               cityLabel: "All Cities", tzLabel: "UTC+5:30", dialCode: "+91",  timeZone: "Asia/Kolkata",   regionKey: "ASIA" },
-      { id: "pk_karachi", flag: "🇵🇰", countryName: "Pakistan",            cityLabel: "Karachi",    tzLabel: "UTC+5",   dialCode: "+92",  timeZone: "Asia/Karachi",   regionKey: "ASIA" },
-      { id: "bd_dhaka",   flag: "🇧🇩", countryName: "Bangladesh",          cityLabel: "Dhaka",      tzLabel: "UTC+6",   dialCode: "+880", timeZone: "Asia/Dhaka",     regionKey: "ASIA" },
-      { id: "lk_colombo", flag: "🇱🇰", countryName: "Sri Lanka",           cityLabel: "Colombo",    tzLabel: "UTC+5:30",dialCode: "+94",  timeZone: "Asia/Colombo",   regionKey: "ASIA" },
-      { id: "np_kath",    flag: "🇳🇵", countryName: "Nepal",               cityLabel: "Kathmandu",  tzLabel: "UTC+5:45",dialCode: "+977", timeZone: "Asia/Kathmandu", regionKey: "ASIA" },
+/* =========================
+   App state
+   ========================= */
+const state = {
+  leadId: null,
+  courseId: null,
+  utm: {},
+  ipInfo: null,
+  selectedCountry: null,
+  selectedRegionKey: null,
+  selectedTimeZone: null,
+  selectedLang: "English",
+  selectedDate: null,
+  selectedSlotId: null,
+  selectedSlotDisplayTime: null,
+  selectedSlotIsStar: false,
+  slotDataByDate: {},
+  localDayKeys: [],
+  todayLocalKey: null,
+  internetSpeedMbps: 0,
+  fmt: null
+};
 
-      // USA + Canada
-      { id: "us_eastern",  flag: "🇺🇸", countryName: "United States", cityLabel: "Eastern Time (ET)",  tzLabel: "UTC-5/-4", dialCode: "+1", timeZone: "America/New_York",   regionKey: "USA" },
-      { id: "us_central",  flag: "🇺🇸", countryName: "United States", cityLabel: "Central Time (CT)",  tzLabel: "UTC-6/-5", dialCode: "+1", timeZone: "America/Chicago",    regionKey: "USA" },
-      { id: "us_mountain", flag: "🇺🇸", countryName: "United States", cityLabel: "Mountain Time (MT)", tzLabel: "UTC-7/-6", dialCode: "+1", timeZone: "America/Denver",     regionKey: "USA" },
-      { id: "us_pacific",  flag: "🇺🇸", countryName: "United States", cityLabel: "Pacific Time (PT)",  tzLabel: "UTC-8/-7", dialCode: "+1", timeZone: "America/Los_Angeles", regionKey: "USA" },
-      { id: "ca_toronto",  flag: "🇨🇦", countryName: "Canada",        cityLabel: "Toronto (ET)",       tzLabel: "UTC-5/-4", dialCode: "+1", timeZone: "America/Toronto",    regionKey: "USA" },
-      { id: "ca_vancouver",flag: "🇨🇦", countryName: "Canada",        cityLabel: "Vancouver (PT)",     tzLabel: "UTC-8/-7", dialCode: "+1", timeZone: "America/Vancouver",  regionKey: "USA" },
+/* =========================
+   Static country list
+   (Simplified; extend as needed)
+   Each entry: id, countryName, dialCode, flag, timeZone, regionKey
+   IMPORTANT: keep regionKey values one of: ANZ, EUROPE, ASIA, MEA, SEA, USA, ROW
+   ========================= */
+const COUNTRY_OPTIONS = [
+  { id: "IN", countryName: "India", dialCode: "+91", flag: "🇮🇳", timeZone: "Asia/Kolkata", regionKey: "ASIA" },
+  { id: "AE", countryName: "United Arab Emirates", dialCode: "+971", flag: "🇦🇪", timeZone: "Asia/Dubai", regionKey: "MEA" },
+  { id: "SA", countryName: "Saudi Arabia", dialCode: "+966", flag: "🇸🇦", timeZone: "Asia/Riyadh", regionKey: "MEA" },
+  { id: "US", countryName: "United States", dialCode: "+1", flag: "🇺🇸", timeZone: "America/New_York", regionKey: "USA" },
+  { id: "CA", countryName: "Canada", dialCode: "+1", flag: "🇨🇦", timeZone: "America/Toronto", regionKey: "USA" },
+  { id: "GB", countryName: "United Kingdom", dialCode: "+44", flag: "🇬🇧", timeZone: "Europe/London", regionKey: "EUROPE" },
+  { id: "AU", countryName: "Australia", dialCode: "+61", flag: "🇦🇺", timeZone: "Australia/Sydney", regionKey: "ANZ" },
+  { id: "NZ", countryName: "New Zealand", dialCode: "+64", flag: "🇳🇿", timeZone: "Pacific/Auckland", regionKey: "ANZ" },
+  { id: "SG", countryName: "Singapore", dialCode: "+65", flag: "🇸🇬", timeZone: "Asia/Singapore", regionKey: "SEA" },
+  { id: "ID", countryName: "Indonesia", dialCode: "+62", flag: "🇮🇩", timeZone: "Asia/Jakarta", regionKey: "SEA" },
+  { id: "PH", countryName: "Philippines", dialCode: "+63", flag: "🇵🇭", timeZone: "Asia/Manila", regionKey: "SEA" },
+  { id: "VN", countryName: "Vietnam", dialCode: "+84", flag: "🇻🇳", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
+  { id: "MY", countryName: "Malaysia", dialCode: "+60", flag: "🇲🇾", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
+  { id: "TH", countryName: "Thailand", dialCode: "+66", flag: "🇹🇭", timeZone: "Asia/Bangkok", regionKey: "SEA" },
+  { id: "JP", countryName: "Japan", dialCode: "+81", flag: "🇯🇵", timeZone: "Asia/Tokyo", regionKey: "ASIA" },
+  { id: "CN", countryName: "China", dialCode: "+86", flag: "🇨🇳", timeZone: "Asia/Shanghai", regionKey: "ASIA" },
+  // ... add remaining countries as required
+];
 
-      // SEA
-      { id: "sg_singapore", flag: "🇸🇬", countryName: "Singapore",         cityLabel: "Singapore",       tzLabel: "UTC+8",   dialCode: "+65", timeZone: "Asia/Singapore",  regionKey: "SEA" },
-      { id: "my_kuala",     flag: "🇲🇾", countryName: "Malaysia",          cityLabel: "Kuala Lumpur",    tzLabel: "UTC+8",   dialCode: "+60", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
-      { id: "ph_manila",    flag: "🇵🇭", countryName: "Philippines",       cityLabel: "Manila",          tzLabel: "UTC+8",   dialCode: "+63", timeZone: "Asia/Manila",    regionKey: "SEA" },
-      { id: "id_jakarta",   flag: "🇮🇩", countryName: "Indonesia",         cityLabel: "Jakarta",         tzLabel: "UTC+7",   dialCode: "+62", timeZone: "Asia/Jakarta",   regionKey: "SEA" },
-      { id: "th_bangkok",   flag: "🇹🇭", countryName: "Thailand",          cityLabel: "Bangkok",         tzLabel: "UTC+7",   dialCode: "+66", timeZone: "Asia/Bangkok",  regionKey: "SEA" },
-      { id: "vn_hcm",       flag: "🇻🇳", countryName: "Vietnam",           cityLabel: "Ho Chi Minh City",tzLabel: "UTC+7",   dialCode: "+84", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
+/* ---------- Helpers: DOM ---------- */
+function $(id){return document.getElementById(id)}
+function showGlobalError(msg){$('global-error').textContent=msg; setTimeout(()=>{$('global-error').textContent=''},7000)}
+function showGlobalSuccess(msg){$('global-success').textContent=msg; setTimeout(()=>{$('global-success').textContent=''},7000)}
+function showLoader(show){$('loader-modal').style.display = show ? 'flex' : 'none'}
 
-      // ANZ
-      { id: "au_sydney", flag: "🇦🇺", countryName: "Australia",  cityLabel: "Sydney",   tzLabel: "UTC+10", dialCode: "+61", timeZone: "Australia/Sydney",   regionKey: "ANZ" },
-      { id: "nz_auck",   flag: "🇳🇿", countryName: "New Zealand",cityLabel: "Auckland", tzLabel: "UTC+12", dialCode: "+64", timeZone: "Pacific/Auckland",   regionKey: "ANZ" },
+/* =========================
+   Init: populate countries, parse URL params, detect IP
+   ========================= */
+function populateCountrySelect(){
+  const sel = $('country-select');
+  sel.innerHTML = '';
+  COUNTRY_OPTIONS.forEach(opt=>{
+    const o = document.createElement('option');
+    o.value = opt.id;
+    o.textContent = `${opt.flag} ${opt.countryName} (${opt.dialCode})`;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', handleCountryChange);
+  // default to India index 0 if nothing
+  sel.value = COUNTRY_OPTIONS[0].id;
+  handleCountryChange();
+}
 
-      // EUROPE
-      { id: "uk_london", flag: "🇬🇧", countryName: "United Kingdom", cityLabel: "London",   tzLabel: "UTC±0/±1", dialCode: "+44", timeZone: "Europe/London",   regionKey: "EUROPE" },
-      { id: "ie_dublin", flag: "🇮🇪", countryName: "Ireland",        cityLabel: "Dublin",   tzLabel: "UTC±0/±1", dialCode: "+353",timeZone: "Europe/Dublin",   regionKey: "EUROPE" },
-      { id: "fr_paris",  flag: "🇫🇷", countryName: "France",         cityLabel: "Paris",    tzLabel: "UTC+1",     dialCode: "+33", timeZone: "Europe/Paris",    regionKey: "EUROPE" },
-      { id: "de_berlin", flag: "🇩🇪", countryName: "Germany",        cityLabel: "Berlin",   tzLabel: "UTC+1",     dialCode: "+49", timeZone: "Europe/Berlin",   regionKey: "EUROPE" },
-      { id: "es_madrid", flag: "🇪🇸", countryName: "Spain",          cityLabel: "Madrid",   tzLabel: "UTC+1",     dialCode: "+34", timeZone: "Europe/Madrid",   regionKey: "EUROPE" },
-      { id: "it_rome",   flag: "🇮🇹", countryName: "Italy",          cityLabel: "Rome",     tzLabel: "UTC+1",     dialCode: "+39", timeZone: "Europe/Rome",     regionKey: "EUROPE" },
-      { id: "nl_ams",    flag: "🇳🇱", countryName: "Netherlands",    cityLabel: "Amsterdam",tzLabel: "UTC+1",     dialCode: "+31", timeZone: "Europe/Amsterdam",regionKey: "EUROPE" },
-      { id: "ch_zurich", flag: "🇨🇭", countryName: "Switzerland",    cityLabel: "Zurich",   tzLabel: "UTC+1",     dialCode: "+41", timeZone: "Europe/Zurich",   regionKey: "EUROPE" },
-      { id: "se_stock",  flag: "🇸🇪", countryName: "Sweden",         cityLabel: "Stockholm",tzLabel: "UTC+1",     dialCode: "+46", timeZone: "Europe/Stockholm", regionKey: "EUROPE" },
+function handleCountryChange(){
+  const sel = $('country-select');
+  const id = sel.value;
+  const opt = COUNTRY_OPTIONS.find(o=>o.id===id);
+  if(!opt) return;
+  state.selectedCountry = opt;
+  state.selectedTimeZone = opt.timeZone;
+  state.selectedRegionKey = opt.regionKey;
+  $('country-flag').textContent = opt.flag;
+  $('country-dial').textContent = opt.dialCode;
+}
 
-      // ROW (placeholder example)
-      { id: "row_default", flag: "🌍", countryName: "Other Country", cityLabel: "Global", tzLabel: "UTC", dialCode: "+0", timeZone: "UTC", regionKey: "ROW" }
-    ];
+/* Parse URL: courseId, utm, fmt */
+function parseUrlParams(){
+  const params = new URLSearchParams(window.location.search);
+  const c = params.get('courseId');
+  state.courseId = c ? parseInt(c,10) : null;
+  state.utm.utm_source = params.get('utm_source') || null;
+  state.utm.utm_medium = params.get('utm_medium') || null;
+  state.utm.utm_campaign = params.get('utm_campaign') || null;
+  state.utm.utm_term = params.get('utm_term') || null;
+  state.utm.utm_content = params.get('utm_content') || null;
+  state.fmt = params.get('fmt') || null;
+}
 
-    // =========================
-    // State
-    // =========================
-    const state = {
-      currentStep: 1,
-      leadId: null,
-      courseId: null,
-      utm: {},
-      selectedCountry: null,
-      selectedRegionKey: null,
-      selectedTimeZone: null,
-      ipInfo: null,
-      localDayKeys: [],
-      todayLocalKey: null,
-      slotDataByDate: {},
-      selectedDate: null,
-      selectedSlotId: null,
-      selectedSlotDisplayTime: null,
-      selectedSlotIsStar: false,
-      selectedLang: "English",
-      internetSpeedMbps: 0
-    };
-
-    // =========================
-    // Helpers
-    // =========================
-    function parseUrlParams() {
-      const params = new URLSearchParams(window.location.search);
-      const courseIdRaw = params.get("courseId");
-      state.courseId = courseIdRaw ? parseInt(courseIdRaw, 10) : null;
-      state.utm.utm_source   = params.get("utm_source")   || null;
-      state.utm.utm_medium   = params.get("utm_medium")   || null;
-      state.utm.utm_campaign = params.get("utm_campaign") || null;
-      state.utm.utm_term     = params.get("utm_term")     || null;
-      state.utm.utm_content  = params.get("utm_content")  || null;
+/* IP detect and set selected country/timezone (as default, user can change) */
+async function detectIpAndSetCountry(){
+  try{
+    const r = await fetch('https://ipapi.co/json/');
+    const json = await r.json();
+    state.ipInfo = json;
+    const name = json.country_name;
+    if(!name) return;
+    const match = COUNTRY_OPTIONS.find(o=>o.countryName===name || o.id===json.country_code);
+    if(match){
+      $('country-select').value = match.id;
+      handleCountryChange();
     }
+  }catch(e){
+    console.warn('IP detection failed',e);
+  }
+}
 
-    function getDeviceType() {
-      const width = window.innerWidth || document.documentElement.clientWidth;
-      if (width <= 640) return "mobile";
-      if (width <= 1024) return "tablet";
-      return "desktop";
+/* Device/browser helpers */
+function getDeviceType(){
+  const w = window.innerWidth || document.documentElement.clientWidth;
+  if(w<=640) return 'mobile';
+  if(w<=1024) return 'tablet';
+  return 'desktop';
+}
+function getBrowserInfo(){ return navigator.userAgent || '' }
+function detectInternetSpeed(){
+  try{
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if(conn && typeof conn.downlink === 'number') state.internetSpeedMbps = conn.downlink;
+    else state.internetSpeedMbps = 0;
+  }catch(e){ state.internetSpeedMbps = 0 }
+}
+
+/* =========================
+   Validation
+   ========================= */
+function validatePhone(phone){
+  const cleaned = (phone||'').replace(/\D/g,'');
+  return cleaned.length>=7 && cleaned.length<=15;
+}
+function validateEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/* =========================
+   Step 1: Save lead (upsert)
+   ========================= */
+async function handleStep1Next(){
+  $('global-error').textContent='';
+  const phoneRaw = $('phone-number').value.trim();
+  const phoneDial = state.selectedCountry ? state.selectedCountry.dialCode : '+91';
+  const phoneClean = phoneRaw.replace(/\D/g,'');
+  const childName = $('child-name').value.trim();
+  const childGrade = $('child-grade').value;
+  const parentName = $('parent-name').value.trim();
+  const parentEmail = $('parent-email').value.trim();
+  const hasLaptopEl = document.querySelector('#has-laptop-group .radio-chip.selected');
+  const hasLaptop = hasLaptopEl ? hasLaptopEl.getAttribute('data-value') : 'Yes';
+
+  if(!phoneClean || !childName || !childGrade || !parentName || !parentEmail){
+    showGlobalError('Please fill all required fields.');
+    return;
+  }
+  if(!validatePhone(phoneClean)){ $('phone-error').style.display='block'; $('phone-error').textContent='Invalid phone number (7-15 digits)'; return } else $('phone-error').style.display='none';
+  if(!validateEmail(parentEmail)){ $('email-error').style.display='block'; $('email-error').textContent='Invalid email'; return } else $('email-error').style.display='none';
+
+  const deviceType = getDeviceType();
+  const browserInfo = getBrowserInfo();
+
+  const payload = {
+    child_name: childName,
+    child_grade: childGrade,
+    parent_name: parentName,
+    parent_email: parentEmail,
+    phone_country_code: phoneDial,
+    phone_number: phoneClean,
+    is_whatsapp: true,
+    has_laptop: hasLaptop,
+    course_id: state.courseId,
+    lang: state.selectedLang ? state.selectedLang.toLowerCase() : 'english',
+    utm_source: state.utm.utm_source,
+    utm_medium: state.utm.utm_medium,
+    utm_campaign: state.utm.utm_campaign,
+    utm_term: state.utm.utm_term,
+    utm_content: state.utm.utm_content,
+    landing_page_path: window.location.pathname,
+    full_url: window.location.href,
+    ip_address: state.ipInfo?.ip || null,
+    city: state.ipInfo?.city || null,
+    country: state.selectedCountry?.countryName || state.ipInfo?.country_name || null,
+    region_key: state.selectedRegionKey || null,
+    device_type: deviceType,
+    browser: browserInfo,
+    timezone: state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+    internet_speed_mbps: state.internetSpeedMbps || 0,
+    page_completed: 1,
+    fmt: state.fmt
+  };
+
+  const btn = $('step-1-next');
+  btn.disabled = true;
+  try {
+    const { data, error } = await supabaseClient
+      .from(DEMO_LEADS_TABLE)
+      .upsert(payload, { onConflict: "phone_country_code,phone_number" })
+      .select()
+      .single();
+
+    if(error){
+      console.error('Step1 upsert', error);
+      showGlobalError('Could not save details. Try again.');
+      return;
     }
+    state.leadId = data.id;
+    // move to step 2
+    $('step-1').style.display='none';
+    $('step-2').style.display='block';
+    await fetchSlotsForNextSevenDays();
+  }catch(e){
+    console.error(e); showGlobalError('Unexpected error saving lead.');
+  }finally{ btn.disabled=false }
+}
 
-    function getBrowserInfo() {
-      return navigator.userAgent || "";
+/* =========================
+   Slot helpers: IST → Local conversion rules
+   ========================= */
+
+/* toIstDateString: returns YYYY-MM-DD for IST today + offset */
+function toIstDateString(offsetDays){
+  const now = new Date();
+  const istString = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+  const istDate = new Date(istString);
+  istDate.setDate(istDate.getDate() + offsetDays);
+  const y = istDate.getFullYear();
+  const m = String(istDate.getMonth()+1).padStart(2,'0');
+  const d = String(istDate.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+
+/* computeLocalDayKeys: returns 7 days (today + 6) in user's timezone */
+function computeLocalDayKeys(timeZone){
+  const now = new Date();
+  const localStr = now.toLocaleString('en-US',{ timeZone });
+  const localDate = new Date(localStr);
+  const keys = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(localDate.getTime());
+    d.setDate(d.getDate() + i);
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    keys.push(`${y}-${m}-${dd}`);
+  }
+  return { todayKey: keys[0], keys };
+}
+
+/* convertSlotToLocalStruct:
+   - converts slot_row.slot_datetime_ist (IST timestamp) to local time using timezone
+   - applies rule: shift to next day IF local_time < 03:00 (for all regions OR optionally only some)
+   - applies SEA hide rule: if regionKey==='SEA' and local hour < 07:00 -> hide (return null)
+   - hides past slots for today (local) using nowLocalDateObj and also enforces +1 hour rule for today
+*/
+function convertSlotToLocalStruct(slotRow, timeZone, todayLocalKey, nowLocalDateObj, localDayKeysSet, regionKey) {
+  // parse IST datetime (assuming stored as ISO / timestamp with timezone in DB)
+  const istBase = new Date(slotRow.slot_datetime_ist);
+  // We'll convert IST -> local by using toLocaleString with the desired timeZone
+  // 1) convert istBase to local representation
+  let localStr = istBase.toLocaleString('en-US', { timeZone });
+  let local = new Date(localStr);
+
+  // AFTER converting to local time, check early-morning shift rule:
+  // If local hour < 3, then the intended class should be on the NEXT DAY (shift assignKey)
+  if(local.getHours() < 3){
+    // shift local to next day (keeping same clock time)
+    const shifted = new Date(local.getTime());
+    shifted.setDate(shifted.getDate() + 1);
+    local = shifted;
+    // recalc localStr for formatting if needed
+    localStr = local.toLocaleString('en-US', { timeZone });
+  }
+
+  // SEA rule: hide slots before 07:00 local
+  if(regionKey === 'SEA'){
+    if(local.getHours() < 7){
+      return null; // hide
     }
+  }
 
-    function detectInternetSpeed() {
-      try {
-        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        if (conn && typeof conn.downlink === "number") {
-          state.internetSpeedMbps = conn.downlink;
-        } else {
-          state.internetSpeedMbps = 0;
-        }
-      } catch (e) {
-        state.internetSpeedMbps = 0;
-      }
-    }
+  // assignKey using local date
+  const y = local.getFullYear();
+  const m = String(local.getMonth() + 1).padStart(2, '0');
+  const d = String(local.getDate()).padStart(2, '0');
+  const assignKey = `${y}-${m}-${d}`;
 
-    function toIstDateString(offsetDays) {
-      const now = new Date();
-      const istString = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
-      const istDate = new Date(istString);
-      istDate.setDate(istDate.getDate() + offsetDays);
-      const y = istDate.getFullYear();
-      const m = String(istDate.getMonth() + 1).padStart(2, "0");
-      const d = String(istDate.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
+  // Only keep if within 7-day local window
+  if(!localDayKeysSet.has(assignKey)) return null;
 
-    function computeLocalDayKeys(timeZone) {
-      const now = new Date();
-      const localString = now.toLocaleString("en-US", { timeZone });
-      const localDate = new Date(localString);
-      const keys = [];
-      for (let i = 0; i < 6; i++) {
-        const d = new Date(localDate.getTime());
-        d.setDate(d.getDate() + i);
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        keys.push(`${y}-${m}-${dd}`);
-      }
-      return { todayKey: keys[0], keys };
-    }
+  // Hide past slots for today (local) and also enforce "1 hour ahead" rule for today's slots
+  if(assignKey === todayLocalKey && nowLocalDateObj){
+    // require local >= nowLocal + 1 hour
+    const nowPlus1 = new Date(nowLocalDateObj.getTime() + (60*60*1000));
+    if(local < nowPlus1) return null;
+  }
 
-    function formatDatePillLocal(dateStr) {
-      const [y, m, d] = dateStr.split("-").map(x => parseInt(x, 10));
-      const dt = new Date(Date.UTC(y, m - 1, d));
-      const weekday = dt.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
-      const day = String(d).padStart(2, "0");
-      const month = dt.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
-      return {
-        line1: `${weekday} • ${day} ${month}`,
-        line2: `Date: ${dateStr}`
-      };
-    }
+  // Format display time (start time only) as 06:00 PM
+  const displayTime = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone
+  }).format(local);
 
-    function showGlobalError(msg) {
-      const el = document.getElementById("global-error");
-      if (!el) return;
-      el.textContent = msg;
-      el.classList.add("visible");
-      setTimeout(() => {
-        el.classList.remove("visible");
-      }, 6000);
-    }
+  // Determine if full (capacity_remaining <= 0)
+  const isFull = Number(slotRow.capacity_remaining) <= 0;
 
-    function clearGlobalError() {
-      const el = document.getElementById("global-error");
-      if (!el) return;
-      el.textContent = "";
-      el.classList.remove("visible");
-    }
+  return {
+    id: slotRow.id,
+    raw: slotRow,
+    displayTime,
+    isStar: !!slotRow.is_star_teacher,
+    isFull,
+    sortDate: local,
+    assignKey
+  };
+}
 
-    function updateStepUI() {
-      const step = state.currentStep;
-      [1, 2, 3].forEach(n => {
-        const v = document.getElementById(`step-${n}`);
-        if (!v) return;
-        v.classList.toggle("active", n === step);
-      });
+/* Fetch slots (today → +6 days) from demo_slots_live and convert to local
+   Note: demo_slots_live should already contain entries for today + 6 or +5 depending on backend.
+*/
+async function fetchSlotsForNextSevenDays(){
+  if(!state.selectedRegionKey || !state.courseId){
+    showGlobalError("Region or course not detected.");
+    return;
+  }
+  const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const { todayKey, keys } = computeLocalDayKeys(tz);
+  state.todayLocalKey = todayKey;
+  state.localDayKeys = keys;
+  const localDayKeysSet = new Set(keys);
 
-      const pills = Array.from(document.querySelectorAll("[data-step-pill]"));
-      pills.forEach(p => {
-        const s = parseInt(p.getAttribute("data-step-pill"), 10);
-        p.classList.remove("active", "completed");
-        if (s === step) {
-          p.classList.add("active");
-        } else if (s < step) {
-          p.classList.add("completed");
-        }
-      });
+  // IST date window: today .. today+6 (we ask backend to have at least +6 days)
+  const todayIst = toIstDateString(0);
+  const plus6Ist = toIstDateString(6);
 
-      const progress = document.getElementById("step-progress-fill");
-      if (progress) {
-        let percent = 0;
-        if (step === 1) percent = 33;
-        else if (step === 2) percent = 66;
-        else if (step === 3) percent = 100;
-        progress.style.width = percent + "%";
-      }
-    }
+  const now = new Date();
+  const nowLocalStr = now.toLocaleString('en-US', { timeZone: tz });
+  const nowLocalDateObj = new Date(nowLocalStr);
 
-    // =========================
-    // Country selector
-    // =========================
-    function renderCountrySelect(defaultDial) {
-      const selectEl = document.getElementById("country-select");
-      const dialEl = document.getElementById("country-dial");
-      const flagEl = document.getElementById("country-flag");
-      if (!selectEl || !dialEl || !flagEl) return;
+  const { data, error } = await supabaseClient
+    .from(DEMO_SLOTS_LIVE)
+    .select("id, region_key, course_id, slot_date, slot_time_ist, slot_datetime_ist, is_star_teacher, capacity_remaining, is_active")
+    .eq("region_key", state.selectedRegionKey)
+    .eq("course_id", state.courseId)
+    .gte("slot_date", todayIst)
+    .lte("slot_date", plus6Ist)
+    .eq("is_active", true)
+    .order("slot_datetime_ist", { ascending: true });
 
-      selectEl.innerHTML = "";
-      COUNTRY_OPTIONS.forEach(opt => {
-        const optionEl = document.createElement("option");
-        optionEl.value = opt.id;
-        optionEl.textContent = `${opt.flag} ${opt.countryName} – ${opt.cityLabel} (${opt.tzLabel})  ${opt.dialCode}`;
-        selectEl.appendChild(optionEl);
-      });
+  if(error){
+    console.error('Slots fetch error', error);
+    showGlobalError('Could not load slots.');
+    return;
+  }
 
-      let selectedOpt = COUNTRY_OPTIONS.find(o => o.dialCode === defaultDial) || COUNTRY_OPTIONS[0];
-      state.selectedCountry = selectedOpt;
-      state.selectedTimeZone = selectedOpt.timeZone;
-      state.selectedRegionKey = selectedOpt.regionKey;
+  const byDate = {};
+  (data||[]).forEach(row=>{
+    const converted = convertSlotToLocalStruct(row, tz, todayKey, nowLocalDateObj, localDayKeysSet, state.selectedRegionKey);
+    if(!converted) return;
+    if(!byDate[converted.assignKey]) byDate[converted.assignKey]=[];
+    byDate[converted.assignKey].push(converted);
+  });
 
-      selectEl.value = selectedOpt.id;
-      dialEl.textContent = selectedOpt.dialCode;
-      flagEl.textContent = selectedOpt.flag;
-    }
+  Object.keys(byDate).forEach(k => byDate[k].sort((a,b)=>a.sortDate - b.sortDate));
 
-    function handleCountryChange() {
-      const selectEl = document.getElementById("country-select");
-      const dialEl = document.getElementById("country-dial");
-      const flagEl = document.getElementById("country-flag");
-      if (!selectEl || !dialEl || !flagEl) return;
-      const selectedId = selectEl.value;
-      const opt = COUNTRY_OPTIONS.find(o => o.id === selectedId);
-      if (!opt) return;
-      state.selectedCountry = opt;
-      state.selectedTimeZone = opt.timeZone;
-      state.selectedRegionKey = opt.regionKey;
-      dialEl.textContent = opt.dialCode;
-      flagEl.textContent = opt.flag;
-    }
+  state.slotDataByDate = byDate;
+  renderSlotDates();
+}
 
-    async function detectIpAndSetCountry() {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        if (!res.ok) throw new Error("IP API failed");
-        const data = await res.json();
-        state.ipInfo = data;
-        const countryName = data.country_name || null;
-        if (countryName) {
-          const match = COUNTRY_OPTIONS.find(o => o.countryName === countryName);
-          if (match) {
-            const selectEl = document.getElementById("country-select");
-            const dialEl = document.getElementById("country-dial");
-            const flagEl = document.getElementById("country-flag");
-            if (selectEl && dialEl && flagEl) {
-              selectEl.value = match.id;
-              dialEl.textContent = match.dialCode;
-              flagEl.textContent = match.flag;
-            }
-            state.selectedCountry = match;
-            state.selectedTimeZone = match.timeZone;
-            state.selectedRegionKey = match.regionKey;
-          }
-        }
-      } catch (e) {
-        console.warn("IP detection failed", e);
-      }
-    }
-
-    // =========================
-    // Radio chip groups & language pills
-    // =========================
-    function setupRadioChipGroup(containerId) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      container.addEventListener("click", (e) => {
-        const chip = e.target.closest(".radio-chip");
-        if (!chip) return;
-        Array.from(container.querySelectorAll(".radio-chip")).forEach(c =>
-          c.classList.remove("selected")
-        );
-        chip.classList.add("selected");
-      });
-    }
-
-    function setupLangPills() {
-      const langContainer = document.getElementById("lang-pills");
-      if (!langContainer) return;
-      const defaultLang = "English";
-      Array.from(langContainer.querySelectorAll(".lang-pill")).forEach(btn => {
-        const lang = btn.getAttribute("data-lang");
-        if (lang === defaultLang) {
-          btn.classList.add("active");
-          state.selectedLang = lang;
-        }
-        btn.addEventListener("click", () => {
-          Array.from(langContainer.querySelectorAll(".lang-pill")).forEach(b =>
-            b.classList.remove("active")
-          );
-          btn.classList.add("active");
-          state.selectedLang = lang;
-        });
-      });
-    }
-
-    // =========================
-    // Slots: conversion & rendering
-    // =========================
-    function convertSlotToLocalStruct(slotRow, timeZone, todayLocalKey, nowLocalDateObj, localDayKeysSet, regionKey) {
-      // slot_datetime_ist is timestamptz stored as IST
-      const istBase = new Date(slotRow.slot_datetime_ist);
-      let istForDisplay = new Date(istBase.getTime());
-
-      // Region-aware IST shift rule:
-      // Only for MEA + ASIA: if IST time < 03:00, shift to next day
-      if (regionKey === "MEA" || regionKey === "ASIA") {
-        if (slotRow.slot_time_ist) {
-          const parts = String(slotRow.slot_time_ist).split(":");
-          const hh = parseInt(parts[0], 10);
-          if (!Number.isNaN(hh) && hh < 3) {
-            istForDisplay.setDate(istForDisplay.getDate() + 1);
-          }
-        }
-      }
-
-      // Convert this IST datetime to target local timezone
-      const localStr = istForDisplay.toLocaleString("en-US", { timeZone });
-      const local = new Date(localStr);
-
-      const y = local.getFullYear();
-      const m = String(local.getMonth() + 1).padStart(2, "0");
-      const d = String(local.getDate()).padStart(2, "0");
-      const assignKey = `${y}-${m}-${d}`;
-
-      // Only keep if within 6-day local window
-      if (!localDayKeysSet.has(assignKey)) return null;
-
-      // Hide past slots for "today" (local)
-      let isPast = false;
-      if (assignKey === todayLocalKey && nowLocalDateObj) {
-        if (local <= nowLocalDateObj) isPast = true;
-      }
-      if (isPast) return null;
-
-      const displayTime = new Intl.DateTimeFormat("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-        timeZone
-      }).format(istForDisplay);
-
-      return {
-        id: slotRow.id,
-        displayTime,
-        isStar: !!slotRow.is_star_teacher,
-        sortDate: local,
-        assignKey
-      };
-    }
-
-    async function fetchSlotsForNextSixDays() {
-      if (!state.selectedRegionKey || !state.courseId) {
-        showGlobalError("We couldn't detect your region or course. Please refresh and try again.");
-        return;
-      }
-
-      const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const { todayKey, keys } = computeLocalDayKeys(tz);
-      state.todayLocalKey = todayKey;
-      state.localDayKeys = keys;
-      const localDayKeysSet = new Set(keys);
-
-      const todayIst = toIstDateString(0);
-      const plus5Ist = toIstDateString(5);
-
-      const now = new Date();
-      const nowLocalStr = now.toLocaleString("en-US", { timeZone: tz });
-      const nowLocalDateObj = new Date(nowLocalStr);
-
-      const { data, error } = await supabaseClient
-        .from(DEMO_SLOTS_LIVE)
-        .select("id, region_key, course_id, slot_date, slot_time_ist, slot_datetime_ist, is_star_teacher, capacity_remaining, is_active")
-        .eq("region_key", state.selectedRegionKey)
-        .eq("course_id", state.courseId)
-        .gte("slot_date", todayIst)
-        .lte("slot_date", plus5Ist)
-        .gt("capacity_remaining", 0)
-        .eq("is_active", true)
-        .order("slot_datetime_ist", { ascending: true });
-
-      if (error) {
-        console.error("Slots fetch error", error);
-        showGlobalError("We couldn't load the available slots. Please refresh and try again.");
-        return;
-      }
-
-      const byDate = {};
-      (data || []).forEach(row => {
-        const converted = convertSlotToLocalStruct(row, tz, todayKey, nowLocalDateObj, localDayKeysSet, state.selectedRegionKey);
-        if (!converted) return;
-        if (!byDate[converted.assignKey]) byDate[converted.assignKey] = [];
-        byDate[converted.assignKey].push(converted);
-      });
-
-      Object.keys(byDate).forEach(key => {
-        byDate[key].sort((a, b) => a.sortDate - b.sortDate);
-      });
-
-      state.slotDataByDate = byDate;
+/* Render date pills and times */
+function renderSlotDates(){
+  const container = $('slot-dates-row');
+  container.innerHTML = '';
+  const keys = state.localDayKeys;
+  if(!state.selectedDate || !keys.includes(state.selectedDate)) state.selectedDate = keys[0];
+  keys.forEach(k=>{
+    const btn = document.createElement('button');
+    btn.className = 'slot-date-pill';
+    if(k === state.selectedDate) btn.classList.add('active');
+    // format pill
+    const [y,m,d] = k.split('-').map(x=>parseInt(x,10));
+    const dt = new Date(Date.UTC(y,m-1,d));
+    const weekday = dt.toLocaleDateString('en-US',{weekday:'short'});
+    const month = dt.toLocaleDateString('en-US',{month:'short'});
+    btn.innerHTML = `<div style="font-weight:700">${weekday} • ${String(d).padStart(2,'0')} ${month}</div><div class="small">${k}</div>`;
+    btn.addEventListener('click', ()=>{
+      state.selectedDate = k;
       renderSlotDates();
-    }
-
-    function renderSlotDates() {
-      const container = document.getElementById("slot-dates-row");
-      if (!container) return;
-      container.innerHTML = "";
-
-      const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const keys = state.localDayKeys && state.localDayKeys.length
-        ? state.localDayKeys
-        : computeLocalDayKeys(tz).keys;
-
-      if (!state.selectedDate || !keys.includes(state.selectedDate)) {
-        state.selectedDate = keys[0];
-      }
-
-      keys.forEach(dateStr => {
-        const pillData = formatDatePillLocal(dateStr);
-        const pill = document.createElement("button");
-        pill.type = "button";
-        pill.className = "slot-date-pill";
-        if (dateStr === state.selectedDate) pill.classList.add("active");
-        const line1 = document.createElement("span");
-        line1.textContent = pillData.line1;
-        const line2 = document.createElement("span");
-        line2.textContent = pillData.line2;
-        pill.appendChild(line1);
-        pill.appendChild(line2);
-        pill.addEventListener("click", () => {
-          state.selectedDate = dateStr;
-          renderSlotDates();
-          renderSlotTimes();
-        });
-        container.appendChild(pill);
-      });
-
       renderSlotTimes();
-    }
+    });
+    container.appendChild(btn);
+  });
+  renderSlotTimes();
+}
 
-    function renderSlotTimes() {
-      const grid = document.getElementById("slot-times-grid");
-      const emptyEl = document.getElementById("slot-times-empty");
-      if (!grid || !emptyEl) return;
-      grid.innerHTML = "";
+function renderSlotTimes(){
+  const grid = $('slot-times-grid');
+  const empty = $('slot-times-empty');
+  grid.innerHTML = '';
+  const dateKey = state.selectedDate;
+  const list = state.slotDataByDate[dateKey] || [];
+  if(!list.length){
+    empty.style.display = 'block';
+    return;
+  } else empty.style.display = 'none';
 
-      const slots = state.selectedDate ? (state.slotDataByDate[state.selectedDate] || []) : [];
-      if (!slots.length) {
-        emptyEl.style.display = "block";
-        state.selectedSlotId = null;
-        state.selectedSlotDisplayTime = null;
-        state.selectedSlotIsStar = false;
-        return;
-      }
-      emptyEl.style.display = "none";
-
-      slots.forEach(slot => {
-        const chip = document.createElement("button");
-        chip.type = "button";
-        chip.className = "slot-chip";
-        if (slot.id === state.selectedSlotId) chip.classList.add("selected");
-
-        const left = document.createElement("div");
-        const main = document.createElement("div");
-        main.className = "slot-time-main";
-        main.textContent = slot.displayTime;
-        const sub = document.createElement("div");
-        sub.className = "slot-time-sub";
-        sub.textContent = "Local time";
-        left.appendChild(main);
-        left.appendChild(sub);
-
-        chip.appendChild(left);
-
-        if (slot.isStar) {
-          const tag = document.createElement("div");
-          tag.className = "slot-tag";
-          tag.textContent = "⭐ Star Teacher";
-          chip.appendChild(tag);
-        }
-
-        chip.addEventListener("click", () => {
-          state.selectedSlotId = slot.id;
-          state.selectedSlotDisplayTime = slot.displayTime;
-          state.selectedSlotIsStar = !!slot.isStar;
-          renderSlotTimes();
-        });
-
-        grid.appendChild(chip);
+  list.forEach(slot=>{
+    const p = document.createElement('button');
+    p.type='button';
+    p.className = 'slot-pill';
+    if(slot.isStar) p.classList.add('star');
+    if(slot.isFull) p.classList.add('full');
+    p.innerHTML = `<div style="font-weight:700">${slot.displayTime}</div><div class="small">${slot.isStar ? '★ Star Teacher' : ''}</div>`;
+    if(!slot.isFull){
+      p.addEventListener('click', ()=>{
+        // select
+        state.selectedSlotId = slot.id;
+        state.selectedSlotDisplayTime = slot.displayTime;
+        state.selectedSlotIsStar = slot.isStar;
+        // update visual selection
+        Array.from(document.querySelectorAll('.slot-pill')).forEach(el=>el.style.outline='');
+        p.style.outline = '3px solid rgba(99,102,241,0.5)';
       });
     }
+    grid.appendChild(p);
+  });
+}
 
-    // =========================
-    // STEP 1: Save lead
-    // =========================
-    async function handleStep1Next() {
-      clearGlobalError();
+/* =========================
+   Step 2: Save slot to demo_leads
+   ========================= */
+async function handleStep2Next(){
+  $('global-error').textContent='';
+  if(!state.selectedDate || !state.selectedSlotId || !state.selectedSlotDisplayTime){
+    showGlobalError('Please select date & time.');
+    return;
+  }
+  if(!state.leadId){ showGlobalError('Lead not found. Please complete step 1.'); return; }
 
-      const countryDialEl = document.getElementById("country-dial");
-      const phoneEl = document.getElementById("phone-number");
-      const childNameEl = document.getElementById("child-name");
-      const gradeEl = document.getElementById("child-grade");
-      const parentNameEl = document.getElementById("parent-name");
-      const parentEmailEl = document.getElementById("parent-email");
-      const hasLaptopContainer = document.getElementById("has-laptop-group");
+  const payload = {
+    preferred_date: state.selectedDate,
+    preferred_time_slot: state.selectedSlotDisplayTime,
+    slot_id: state.selectedSlotId,
+    lang: state.selectedLang ? state.selectedLang.toLowerCase() : 'english',
+    star_teacher_selected: state.selectedSlotIsStar,
+    page_completed: 2
+  };
 
-      const phoneCountryCode = countryDialEl ? countryDialEl.textContent.trim() : "";
-      const phoneNumber = phoneEl ? phoneEl.value.trim() : "";
-      const childName = childNameEl ? childNameEl.value.trim() : "";
-      const childGrade = gradeEl ? gradeEl.value : "";
-      const parentName = parentNameEl ? parentNameEl.value.trim() : "";
-      const parentEmail = parentEmailEl ? parentEmailEl.value.trim() : "";
+  const btn = $('step-2-next');
+  btn.disabled = true;
+  try{
+    const { error } = await supabaseClient.from(DEMO_LEADS_TABLE).update(payload).eq('id', state.leadId);
+    if(error){ console.error('Step2 update', error); showGlobalError('Could not save slot.'); return; }
+    $('step-2').style.display='none';
+    $('step-3').style.display='block';
+  }catch(e){ console.error(e); showGlobalError('Error saving slot.'); }finally{ btn.disabled=false }
+}
 
-      let hasLaptop = null;
-      if (hasLaptopContainer) {
-        const selected = hasLaptopContainer.querySelector(".radio-chip.selected");
-        if (selected) hasLaptop = selected.getAttribute("data-value");
-      }
+/* =========================
+   Step 3: Save motivations and finalise
+   ========================= */
+async function handleStep3Submit(){
+  $('global-error').textContent='';
+  if(!state.leadId){ showGlobalError('Lead missing. Start again.'); return; }
 
-      if (!phoneCountryCode || !phoneNumber || !childName || !childGrade || !parentName || !parentEmail || !hasLaptop) {
-        showGlobalError("Please fill all required fields on this step before continuing.");
-        return;
-      }
+  const who = document.querySelector('#who-group .radio-chip.selected')?.getAttribute('data-value');
+  const reason = document.querySelector('#reason-group .radio-chip.selected')?.getAttribute('data-value');
+  const timeline = document.querySelector('#timeline-group .radio-chip.selected')?.getAttribute('data-value');
+  if(!who || !reason || !timeline){ showGlobalError('Please complete all questions.'); return; }
 
-      if (!state.selectedCountry) {
-        showGlobalError("Please select your country.");
-        return;
-      }
+  const payload = {
+    who_are_you: who,
+    booking_reason: reason,
+    purchase_timeline: timeline,
+    page_completed: 3
+  };
 
-      const deviceType = getDeviceType();
-      const browserInfo = getBrowserInfo();
+  const btn = $('step-3-submit');
+  btn.disabled = true;
+  showLoader(true);
+  try{
+    const { error } = await supabaseClient.from(DEMO_LEADS_TABLE).update(payload).eq('id', state.leadId);
+    if(error){ console.error('Step3 update', error); showGlobalError('Could not save preferences.'); return; }
+    showLoader(false);
+    // Redirect to portal (as before) — or show success
+    const bookingUUID = state.leadId;
+    const courseIdParam = state.courseId || '';
+    const redirectUrl = "https://portal.unischooly.com/demo-dashboard/?bookingUUID=" + encodeURIComponent(bookingUUID) + "&medium=dashboard&courseId=" + encodeURIComponent(courseIdParam) + "&post_booking=true";
+    // show success then redirect
+    showGlobalSuccess('Booking finalised. Redirecting…');
+    setTimeout(()=>{ window.location.href = redirectUrl; }, 1200);
+  }catch(e){ console.error(e); showGlobalError('Error finalising booking.'); showLoader(false); }finally{ btn.disabled=false }
+}
 
-      const ip = state.ipInfo?.ip || null;
-      const city = state.ipInfo?.city || null;
-      const countryNameFromIp = state.ipInfo?.country_name || null;
+/* =========================
+   UI helpers: set up chip groups
+   ========================= */
+function setupRadioChipGroup(containerId){
+  const c = document.getElementById(containerId);
+  if(!c) return;
+  c.addEventListener('click', (e)=>{
+    const chip = e.target.closest('.radio-chip');
+    if(!chip) return;
+    Array.from(c.querySelectorAll('.radio-chip')).forEach(cc=>cc.classList.remove('selected'));
+    chip.classList.add('selected');
+  });
+}
+function setupLangPills(){
+  const c = document.getElementById('lang-pills');
+  Array.from(c.querySelectorAll('.lang-pill')).forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      Array.from(c.querySelectorAll('.lang-pill')).forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.selectedLang = btn.getAttribute('data-lang');
+    });
+  });
+}
 
-      const regionKey = state.selectedRegionKey;
-      const timezone = state.selectedTimeZone;
+/* =========================
+   Bind events
+   ========================= */
+document.addEventListener('DOMContentLoaded', async ()=>{
+  parseUrlParams();
+  populateCountrySelect();
+  detectIpAndSetCountry();
+  detectInternetSpeed();
+  setupRadioChipGroup('has-laptop-group');
+  setupRadioChipGroup('who-group');
+  setupRadioChipGroup('reason-group');
+  setupRadioChipGroup('timeline-group');
+  setupLangPills();
 
-      const payload = {
-        child_name: childName,
-        child_grade: childGrade,
-        parent_name: parentName,
-        parent_email: parentEmail,
-        phone_country_code: phoneCountryCode,
-        phone_number: phoneNumber,
-        is_whatsapp: true,
-        has_laptop: hasLaptop,
-        course_id: state.courseId,
-        lang: state.selectedLang,
-        utm_source: state.utm.utm_source,
-        utm_medium: state.utm.utm_medium,
-        utm_campaign: state.utm.utm_campaign,
-        utm_term: state.utm.utm_term,
-        utm_content: state.utm.utm_content,
-        landing_page_path: window.location.pathname,
-        full_url: window.location.href,
-        ip_address: ip,
-        city: city,
-        country: state.selectedCountry.countryName || countryNameFromIp,
-        region_key: regionKey,
-        device_type: deviceType,
-        browser: browserInfo,
-        timezone: timezone,
-        internet_speed_mbps: state.internetSpeedMbps,
-        page_completed: 1
-      };
+  $('step-1-next').addEventListener('click', handleStep1Next);
+  $('step-2-next').addEventListener('click', handleStep2Next);
+  $('step-3-submit').addEventListener('click', handleStep3Submit);
+  $('back-to-step-1').addEventListener('click', ()=>{
+    $('step-2').style.display='none'; $('step-1').style.display='block';
+  });
+  $('back-to-step-2').addEventListener('click', ()=>{
+    $('step-3').style.display='none'; $('step-2').style.display='block';
+  });
+});
 
-      const btn = document.getElementById("step-1-next");
-      if (btn) btn.disabled = true;
+/* Expose for debugging if needed */
+window._unischoolyState = state;
 
-      try {
-        const { data, error } = await supabaseClient
-          .from(DEMO_LEADS_TABLE)
-          .upsert(payload, { onConflict: "phone_country_code,phone_number" })
-          .select()
-          .single();
-
-        if (error) {
-          console.error("Step 1 upsert error", error);
-          showGlobalError("We couldn't save your details. Please try again in a moment.");
-          return;
-        }
-
-        state.leadId = data.id;
-        state.selectedRegionKey = regionKey;
-
-        state.currentStep = 2;
-        updateStepUI();
-        await fetchSlotsForNextSixDays();
-      } catch (e) {
-        console.error("Step 1 exception", e);
-        showGlobalError("Something went wrong while saving your details. Please try again.");
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    }
-
-    // =========================
-    // STEP 2: Save slot
-    // =========================
-    async function handleStep2Next() {
-      clearGlobalError();
-
-      if (!state.selectedDate || !state.selectedSlotId || !state.selectedSlotDisplayTime) {
-        showGlobalError("Please select a date, time and language to continue.");
-        return;
-      }
-      if (!state.leadId) {
-        showGlobalError("Your details are not saved yet. Please go back to Step 1.");
-        return;
-      }
-
-      const payload = {
-        preferred_date: state.selectedDate,
-        preferred_time_slot: state.selectedSlotDisplayTime,
-        slot_id: state.selectedSlotId,
-        lang: state.selectedLang,
-        star_teacher_selected: state.selectedSlotIsStar,
-        page_completed: 2
-      };
-
-      const btn = document.getElementById("step-2-next");
-      if (btn) btn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient
-          .from(DEMO_LEADS_TABLE)
-          .update(payload)
-          .eq("id", state.leadId);
-
-        if (error) {
-          console.error("Step 2 update error", error);
-          showGlobalError("We couldn't save your selected slot. Please try again.");
-          return;
-        }
-
-        state.currentStep = 3;
-        updateStepUI();
-      } catch (e) {
-        console.error("Step 2 exception", e);
-        showGlobalError("Something went wrong while saving your slot. Please try again.");
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    }
-
-    // =========================
-    // STEP 3: Save motivations + redirect
-    // =========================
-    async function handleStep3Submit() {
-      clearGlobalError();
-      if (!state.leadId) {
-        showGlobalError("Your booking details are missing. Please start again.");
-        return;
-      }
-
-      const whoContainer = document.getElementById("who-group");
-      const reasonContainer = document.getElementById("reason-group");
-      const timelineContainer = document.getElementById("timeline-group");
-
-      let who = null, reason = null, timeline = null;
-
-      if (whoContainer) {
-        const sel = whoContainer.querySelector(".radio-chip.selected");
-        if (sel) who = sel.getAttribute("data-value");
-      }
-      if (reasonContainer) {
-        const sel = reasonContainer.querySelector(".radio-chip.selected");
-        if (sel) reason = sel.getAttribute("data-value");
-      }
-      if (timelineContainer) {
-        const sel = timelineContainer.querySelector(".radio-chip.selected");
-        if (sel) timeline = sel.getAttribute("data-value");
-      }
-
-      if (!who || !reason || !timeline) {
-        showGlobalError("Please complete all questions to help us personalise your experience.");
-        return;
-      }
-
-      const payload = {
-        who_are_you: who,
-        booking_reason: reason,
-        purchase_timeline: timeline,
-        page_completed: 3
-      };
-
-      const btn = document.getElementById("step-3-submit");
-      if (btn) btn.disabled = true;
-
-      try {
-        const { error } = await supabaseClient
-          .from(DEMO_LEADS_TABLE)
-          .update(payload)
-          .eq("id", state.leadId);
-
-        if (error) {
-          console.error("Step 3 update error", error);
-          showGlobalError("We couldn't save your preferences. Please try again.");
-          return;
-        }
-
-        const bookingUUID = state.leadId;
-        const courseIdParam = state.courseId || "";
-        const redirectUrl =
-          "https://portal.unischooly.com/demo-dashboard/" +
-          "?bookingUUID=" + encodeURIComponent(bookingUUID) +
-          "&medium=dashboard" +
-          "&courseId=" + encodeURIComponent(courseIdParam) +
-          "&post_booking=true";
-
-        window.location.href = redirectUrl;
-      } catch (e) {
-        console.error("Step 3 exception", e);
-        showGlobalError("Something went wrong while finalising your booking. Please try again.");
-      } finally {
-        if (btn) btn.disabled = false;
-      }
-    }
-
-    // =========================
-    // Navigation: Back links
-    // =========================
-    function setupBackLinks() {
-      document.querySelectorAll("[data-back-step]").forEach(el => {
-        el.addEventListener("click", () => {
-          const step = parseInt(el.getAttribute("data-back-step"), 10);
-          if (!Number.isNaN(step)) {
-            state.currentStep = step;
-            updateStepUI();
-          }
-        });
-      });
-    }
-
-    // =========================
-    // Init
-    // =========================
-    function initStepEvents() {
-      const step1Btn = document.getElementById("step-1-next");
-      if (step1Btn) step1Btn.addEventListener("click", handleStep1Next);
-
-      const step2Btn = document.getElementById("step-2-next");
-      if (step2Btn) step2Btn.addEventListener("click", handleStep2Next);
-
-      const step3Btn = document.getElementById("step-3-submit");
-      if (step3Btn) step3Btn.addEventListener("click", handleStep3Submit);
-    }
-
-    function initCountrySelector() {
-      renderCountrySelect("+91");
-      const selectEl = document.getElementById("country-select");
-      if (selectEl) {
-        selectEl.addEventListener("change", handleCountryChange);
-      }
-      detectIpAndSetCountry();
-    }
-
-    function initRadioGroups() {
-      setupRadioChipGroup("has-laptop-group");
-      setupRadioChipGroup("who-group");
-      setupRadioChipGroup("reason-group");
-      setupRadioChipGroup("timeline-group");
-    }
-
-    function init() {
-      parseUrlParams();
-      detectInternetSpeed();
-      initCountrySelector();
-      initRadioGroups();
-      setupLangPills();
-      setupBackLinks();
-      initStepEvents();
-      state.currentStep = 1;
-      updateStepUI();
-    }
-
-    document.addEventListener("DOMContentLoaded", init);
-  </script>
+</script>
 </body>
 </html>

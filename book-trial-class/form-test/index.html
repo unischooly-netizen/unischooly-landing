@@ -10,7 +10,6 @@
     :root {
       --primary: #9b5bff;
       --primary-strong: #7b3ffc;
-      --primary-soft: #e6ddff;
       --accent: #ff7b5f;
       --bg: #050816;
       --bg-card: #0b0f24;
@@ -26,11 +25,7 @@
       --transition-fast: 0.16s ease-out;
       --transition-med: 0.22s ease-out;
     }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
@@ -42,7 +37,6 @@
       background: radial-gradient(circle at top, #211a44 0, #050816 50%, #020010 100%);
       color: var(--text-main);
     }
-
     .form-shell {
       width: 100%;
       max-width: 960px;
@@ -52,29 +46,20 @@
       box-shadow: var(--shadow-soft);
       padding: 22px 18px 20px;
     }
-
     @media (min-width: 900px) {
-      .form-shell {
-        padding: 26px 24px 22px;
-      }
+      .form-shell { padding: 26px 24px 22px; }
     }
-
-    .form-header {
-      margin-bottom: 16px;
-    }
-
+    .form-header { margin-bottom: 16px; }
     .form-title {
       margin: 0 0 4px;
       font-size: 22px;
       letter-spacing: 0.02em;
     }
-
     .form-subtitle {
       margin: 0;
       font-size: 13px;
       color: var(--text-sub);
     }
-
     .steps-bar {
       display: flex;
       gap: 8px;
@@ -82,7 +67,6 @@
       margin-bottom: 8px;
       flex-wrap: wrap;
     }
-
     .step-pill {
       flex: 1;
       min-width: 0;
@@ -97,19 +81,16 @@
       color: var(--text-muted);
       transition: background var(--transition-med), border-color var(--transition-med), color var(--transition-med);
     }
-
     .step-pill.active {
       background: linear-gradient(135deg, #9b5bff, #ff7b5f);
       color: #fff;
       border-color: transparent;
       box-shadow: 0 10px 24px rgba(155, 91, 255, 0.7);
     }
-
     .step-pill.completed {
       border-color: rgba(40, 199, 111, 0.9);
       color: #e5fff4;
     }
-
     .step-index {
       width: 18px;
       height: 18px;
@@ -121,20 +102,9 @@
       font-weight: 600;
       background: rgba(255, 255, 255, 0.08);
     }
-
-    .step-pill.active .step-index {
-      background: rgba(0, 0, 0, 0.4);
-    }
-
-    .step-text-main {
-      font-weight: 600;
-    }
-
-    .step-text-sub {
-      font-size: 11px;
-      opacity: 0.92;
-    }
-
+    .step-pill.active .step-index { background: rgba(0, 0, 0, 0.4); }
+    .step-text-main { font-weight: 600; }
+    .step-text-sub { font-size: 11px; opacity: 0.92; }
     .step-progress {
       width: 100%;
       height: 3px;
@@ -143,7 +113,6 @@
       overflow: hidden;
       margin-bottom: 10px;
     }
-
     .step-progress-fill {
       width: 0%;
       height: 100%;
@@ -151,20 +120,15 @@
       border-radius: inherit;
       transition: width var(--transition-med);
     }
-
     .form-body {
       background: rgba(5, 7, 22, 0.98);
       border-radius: 20px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       padding: 16px 14px 14px;
     }
-
     @media (min-width: 800px) {
-      .form-body {
-        padding: 18px 18px 16px;
-      }
+      .form-body { padding: 18px 18px 16px; }
     }
-
     .global-error {
       display: none;
       border-radius: 12px;
@@ -175,89 +139,55 @@
       border: 1px solid rgba(255, 94, 94, 0.9);
       color: #ffe6e6;
     }
-
-    .global-error.visible {
-      display: block;
-    }
-
+    .global-error.visible { display: block; }
     .step-view {
       display: none;
       animation: fadeIn 0.2s ease-out;
     }
-
-    .step-view.active {
-      display: block;
-    }
-
+    .step-view.active { display: block; }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(4px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
     .section-heading {
       margin: 0 0 2px;
       font-size: 17px;
     }
-
     .section-sub {
       margin: 0 0 10px;
       font-size: 13px;
       color: var(--text-sub);
     }
-
     .section-steps-hint {
       font-size: 11px;
       color: var(--text-muted);
       margin-bottom: 10px;
     }
-
     .fields-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       gap: 10px;
     }
-
     @media (min-width: 720px) {
-      .fields-grid.two-col {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .fields-grid.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
+    .field { display: flex; flex-direction: column; gap: 4px; }
     .field-label-row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       gap: 6px;
     }
-
     label {
       font-size: 13px;
       color: #f0edff;
       font-weight: 500;
     }
-
-    .required {
-      color: #ffb499;
-      margin-left: 2px;
-    }
-
+    .required { color: #ffb499; margin-left: 2px; }
     .hint-text {
       font-size: 11px;
       color: var(--text-muted);
     }
-
     .input,
     .select {
       width: 100%;
@@ -270,18 +200,13 @@
       outline: none;
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), transform 0.1s ease-out;
     }
-
-    .input::placeholder {
-      color: rgba(158, 163, 196, 0.9);
-    }
-
+    .input::placeholder { color: rgba(158, 163, 196, 0.9); }
     .input:focus,
     .select:focus {
       border-color: rgba(155, 91, 255, 1);
       box-shadow: 0 0 0 1px rgba(155, 91, 255, 0.45);
       transform: translateY(-0.5px);
     }
-
     .select {
       padding-right: 30px;
       -webkit-appearance: none;
@@ -295,18 +220,13 @@
       background-position: 0 0, calc(100% - 18px) 52%, calc(100% - 12px) 52%;
       background-size: 100% 100%, 6px 6px, 6px 6px;
     }
-
     .phone-row {
       display: grid;
-      grid-template-columns: 100px minmax(0, 1fr);
+      grid-template-columns: 110px minmax(0, 1fr);
       gap: 8px;
       align-items: stretch;
     }
-
-    .country-select-wrapper {
-      position: relative;
-    }
-
+    .country-select-wrapper { position: relative; }
     .country-visible {
       position: absolute;
       inset: 0;
@@ -318,23 +238,17 @@
       font-weight: 600;
       color: var(--text-main);
     }
-
-    .country-dial {
-      padding: 0 4px;
-    }
-
+    .country-dial { padding: 0 4px; }
     .country-inner-select {
       opacity: 0;
       color: transparent;
       cursor: pointer;
     }
-
     .radio-chip-group {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
-
     .radio-chip {
       position: relative;
       display: inline-flex;
@@ -349,18 +263,15 @@
       cursor: pointer;
       transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform 0.08s ease-out;
     }
-
     .radio-chip:hover {
       border-color: rgba(167, 139, 250, 1);
       transform: translateY(-0.5px);
     }
-
     .radio-chip input {
       position: absolute;
       opacity: 0;
       pointer-events: none;
     }
-
     .radio-dot {
       width: 11px;
       height: 11px;
@@ -370,7 +281,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .radio-dot-inner {
       width: 6px;
       height: 6px;
@@ -378,18 +288,15 @@
       background: transparent;
       transition: background var(--transition-fast);
     }
-
     .radio-chip.selected {
       border-color: rgba(155, 91, 255, 1);
       background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(9, 12, 38, 0.98);
       color: #fff;
       box-shadow: 0 10px 22px rgba(7, 10, 35, 1);
     }
-
     .radio-chip.selected .radio-dot-inner {
       background: linear-gradient(135deg, #9b5bff, #ff7b5f);
     }
-
     .button-row {
       display: flex;
       justify-content: flex-end;
@@ -397,7 +304,6 @@
       margin-top: 14px;
       flex-wrap: wrap;
     }
-
     .btn {
       border-radius: var(--radius-pill);
       padding: 9px 16px;
@@ -411,51 +317,40 @@
       white-space: nowrap;
       transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), opacity var(--transition-fast);
     }
-
     .btn-primary {
       background: linear-gradient(135deg, #9b5bff, #ff7b5f);
       color: #fff;
       box-shadow: 0 10px 22px rgba(155, 91, 255, 0.8);
     }
-
     .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px);
       box-shadow: 0 16px 28px rgba(155, 91, 255, 0.9);
     }
-
     .btn-primary:active:not(:disabled) {
       transform: translateY(0);
       box-shadow: 0 10px 22px rgba(155, 91, 255, 0.75);
     }
-
     .btn-secondary {
       background: rgba(8, 11, 30, 0.98);
       color: var(--text-sub);
       border: 1px solid rgba(255, 255, 255, 0.18);
     }
-
     .btn-secondary:hover:not(:disabled) {
       background: rgba(13, 17, 40, 0.98);
       color: #fff;
     }
-
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
       box-shadow: none;
       transform: none;
     }
-
-    .btn-icon {
-      font-size: 16px;
-    }
-
+    .btn-icon { font-size: 16px; }
     .tiny-note {
       margin-top: 6px;
       font-size: 10px;
       color: var(--text-muted);
     }
-
     .back-link {
       display: inline-flex;
       align-items: center;
@@ -465,18 +360,13 @@
       cursor: pointer;
       margin-bottom: 6px;
     }
-
-    .back-link:hover {
-      color: #fff;
-    }
-
+    .back-link:hover { color: #fff; }
     .slot-dates-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 6px;
     }
-
     .slot-date-pill {
       min-width: 110px;
       padding: 6px 9px;
@@ -491,42 +381,33 @@
       cursor: pointer;
       transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
     }
-
     .slot-date-pill span:first-child {
       font-weight: 600;
       color: #f5f2ff;
     }
-
     .slot-date-pill span:last-child {
       font-size: 11px;
       color: var(--text-muted);
     }
-
     .slot-date-pill:hover {
       border-color: rgba(167, 139, 250, 1);
       transform: translateY(-0.5px);
     }
-
     .slot-date-pill.active {
       border-color: rgba(155, 91, 255, 1);
       background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
       box-shadow: 0 12px 24px rgba(8, 12, 40, 1);
       color: #fff;
     }
-
     .slot-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
       margin-top: 8px;
     }
-
     @media (min-width: 640px) {
-      .slot-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
+      .slot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
-
     .slot-chip {
       padding: 7px 9px;
       border-radius: 12px;
@@ -541,29 +422,18 @@
       cursor: pointer;
       transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
     }
-
     .slot-chip:hover {
       border-color: rgba(167, 139, 250, 1);
       transform: translateY(-0.5px);
     }
-
     .slot-chip.selected {
       border-color: rgba(155, 91, 255, 1);
       background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
       box-shadow: 0 12px 24px rgba(8, 12, 40, 1);
       color: #fff;
     }
-
-    .slot-time-main {
-      font-weight: 600;
-      font-size: 12px;
-    }
-
-    .slot-time-sub {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
+    .slot-time-main { font-weight: 600; font-size: 12px; }
+    .slot-time-sub { font-size: 10px; color: var(--text-muted); }
     .slot-tag {
       font-size: 10px;
       padding: 2px 6px;
@@ -573,20 +443,17 @@
       color: #ffeec4;
       white-space: nowrap;
     }
-
     .slot-empty {
       font-size: 12px;
       color: var(--text-muted);
       margin-top: 8px;
     }
-
     .lang-pills {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 6px;
     }
-
     .lang-pill {
       border-radius: var(--radius-pill);
       padding: 6px 10px;
@@ -597,12 +464,10 @@
       cursor: pointer;
       transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
     }
-
     .lang-pill:hover {
       border-color: rgba(167, 139, 250, 1);
       transform: translateY(-0.5px);
     }
-
     .lang-pill.active {
       border-color: rgba(155, 91, 255, 1);
       background: radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.32), transparent 60%), rgba(10, 13, 42, 0.98);
@@ -903,9 +768,9 @@
   </div>
 
   <script>
-    // =======================
+    // =========================
     // Supabase Config
-    // =======================
+    // =========================
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
     const DEMO_LEADS_TABLE = "demo_leads";
@@ -913,9 +778,10 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // =======================
+    // =========================
     // Country / Region / Timezone Mapping
-    // =======================
+    // (Only target markets as per Option A)
+    // =========================
     const COUNTRY_OPTIONS = [
       // MEA
       { id: "ae_dubai",   countryName: "United Arab Emirates", label: "🇦🇪 UAE – Dubai (UTC+4)  •  +971", dialCode: "+971", timeZone: "Asia/Dubai",       regionKey: "MEA" },
@@ -923,22 +789,18 @@
       { id: "qa_doha",    countryName: "Qatar",               label: "🇶🇦 Qatar – Doha (UTC+3)  •  +974",  dialCode: "+974", timeZone: "Asia/Qatar",      regionKey: "MEA" },
       { id: "om_muscat",  countryName: "Oman",                label: "🇴🇲 Oman – Muscat (UTC+4)  •  +968", dialCode: "+968", timeZone: "Asia/Muscat",     regionKey: "MEA" },
       { id: "kw_kuwait",  countryName: "Kuwait",              label: "🇰🇼 Kuwait – Kuwait City (UTC+3)  •  +965", dialCode: "+965", timeZone: "Asia/Kuwait",     regionKey: "MEA" },
+      { id: "bh_bahrain", countryName: "Bahrain",             label: "🇧🇭 Bahrain – Manama (UTC+3)  •  +973", dialCode: "+973", timeZone: "Asia/Bahrain",    regionKey: "MEA" },
+      { id: "eg_cairo",   countryName: "Egypt",               label: "🇪🇬 Egypt – Cairo (UTC+2)  •  +20",  dialCode: "+20",  timeZone: "Africa/Cairo",    regionKey: "MEA" },
+      { id: "lb_beirut",  countryName: "Lebanon",             label: "🇱🇧 Lebanon – Beirut (UTC+2)  •  +961", dialCode: "+961", timeZone: "Asia/Beirut",     regionKey: "MEA" },
 
-      // India / ASIA
-      { id: "in_india",   countryName: "India",               label: "🇮🇳 India – All Cities (UTC+5:30)  •  +91", dialCode: "+91", timeZone: "Asia/Kolkata",   regionKey: "ASIA" },
+      // South Asia (ASIA)
+      { id: "in_india",   countryName: "India",               label: "🇮🇳 India – All Cities (UTC+5:30)  •  +91",  dialCode: "+91",  timeZone: "Asia/Kolkata",   regionKey: "ASIA" },
+      { id: "bd_dhaka",   countryName: "Bangladesh",          label: "🇧🇩 Bangladesh – Dhaka (UTC+6)  •  +880",    dialCode: "+880", timeZone: "Asia/Dhaka",     regionKey: "ASIA" },
+      { id: "lk_colombo", countryName: "Sri Lanka",           label: "🇱🇰 Sri Lanka – Colombo (UTC+5:30)  •  +94", dialCode: "+94",  timeZone: "Asia/Colombo",   regionKey: "ASIA" },
+      { id: "pk_karachi", countryName: "Pakistan",            label: "🇵🇰 Pakistan – Karachi (UTC+5)  •  +92",     dialCode: "+92",  timeZone: "Asia/Karachi",   regionKey: "ASIA" },
+      { id: "np_kath",    countryName: "Nepal",               label: "🇳🇵 Nepal – Kathmandu (UTC+5:45)  •  +977",  dialCode: "+977", timeZone: "Asia/Kathmandu", regionKey: "ASIA" },
 
-      // SEA
-      { id: "sg_singapore", countryName: "Singapore",         label: "🇸🇬 Singapore (UTC+8)  •  +65", dialCode: "+65", timeZone: "Asia/Singapore",  regionKey: "SEA" },
-      { id: "my_kuala",     countryName: "Malaysia",          label: "🇲🇾 Malaysia – Kuala Lumpur (UTC+8)  •  +60", dialCode: "+60", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
-      { id: "ph_manila",    countryName: "Philippines",       label: "🇵🇭 Philippines – Manila (UTC+8)  •  +63", dialCode: "+63", timeZone: "Asia/Manila",    regionKey: "SEA" },
-      { id: "id_jakarta",   countryName: "Indonesia",         label: "🇮🇩 Indonesia – Jakarta (UTC+7)  •  +62", dialCode: "+62", timeZone: "Asia/Jakarta",   regionKey: "SEA" },
-      { id: "vn_hanoi",     countryName: "Viet Nam",          label: "🇻🇳 Vietnam – Hanoi (UTC+7)  •  +84", dialCode: "+84", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
-      { id: "th_bangkok",   countryName: "Thailand",          label: "🇹🇭 Thailand – Bangkok (UTC+7)  •  +66", dialCode: "+66", timeZone: "Asia/Bangkok",  regionKey: "SEA" },
-
-      // Europe / ROW
-      { id: "uk_london", countryName: "United Kingdom", label: "🇬🇧 United Kingdom – London (UTC±0/±1)  •  +44", dialCode: "+44", timeZone: "Europe/London", regionKey: "ROW" },
-
-      // USA + Canada
+      // USA & Canada (USA)
       { id: "us_eastern",  countryName: "United States", label: "🇺🇸 USA – Eastern Time (ET)  •  +1", dialCode: "+1", timeZone: "America/New_York",   regionKey: "USA" },
       { id: "us_central",  countryName: "United States", label: "🇺🇸 USA – Central Time (CT)  •  +1", dialCode: "+1", timeZone: "America/Chicago",    regionKey: "USA" },
       { id: "us_mountain", countryName: "United States", label: "🇺🇸 USA – Mountain Time (MT)  •  +1", dialCode: "+1", timeZone: "America/Denver",     regionKey: "USA" },
@@ -946,13 +808,33 @@
       { id: "ca_toronto",  countryName: "Canada",        label: "🇨🇦 Canada – Toronto (ET)  •  +1",   dialCode: "+1", timeZone: "America/Toronto",    regionKey: "USA" },
       { id: "ca_vancouver",countryName: "Canada",        label: "🇨🇦 Canada – Vancouver (PT)  •  +1", dialCode: "+1", timeZone: "America/Vancouver",  regionKey: "USA" },
 
+      // SEA
+      { id: "sg_singapore", countryName: "Singapore",         label: "🇸🇬 Singapore (UTC+8)  •  +65", dialCode: "+65", timeZone: "Asia/Singapore",  regionKey: "SEA" },
+      { id: "my_kuala",     countryName: "Malaysia",          label: "🇲🇾 Malaysia – Kuala Lumpur (UTC+8)  •  +60", dialCode: "+60", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
+      { id: "ph_manila",    countryName: "Philippines",       label: "🇵🇭 Philippines – Manila (UTC+8)  •  +63", dialCode: "+63", timeZone: "Asia/Manila",    regionKey: "SEA" },
+      { id: "id_jakarta",   countryName: "Indonesia",         label: "🇮🇩 Indonesia – Jakarta (UTC+7)  •  +62", dialCode: "+62", timeZone: "Asia/Jakarta",   regionKey: "SEA" },
+      { id: "th_bangkok",   countryName: "Thailand",          label: "🇹🇭 Thailand – Bangkok (UTC+7)  •  +66", dialCode: "+66", timeZone: "Asia/Bangkok",  regionKey: "SEA" },
+      { id: "vn_hcm",       countryName: "Vietnam",           label: "🇻🇳 Vietnam – Ho Chi Minh City (UTC+7)  •  +84", dialCode: "+84", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
+
+      // UK + Europe (ROW)
+      { id: "uk_london", countryName: "United Kingdom", label: "🇬🇧 United Kingdom – London (UTC±0/±1)  •  +44", dialCode: "+44", timeZone: "Europe/London", regionKey: "ROW" },
+      { id: "fr_paris", countryName: "France",         label: "🇫🇷 France – Paris (UTC+1)  •  +33",  dialCode: "+33", timeZone: "Europe/Paris",  regionKey: "ROW" },
+      { id: "de_berlin",countryName: "Germany",        label: "🇩🇪 Germany – Berlin (UTC+1)  •  +49", dialCode: "+49", timeZone: "Europe/Berlin", regionKey: "ROW" },
+      { id: "es_madrid",countryName: "Spain",          label: "🇪🇸 Spain – Madrid (UTC+1)  •  +34",  dialCode: "+34", timeZone: "Europe/Madrid", regionKey: "ROW" },
+      { id: "it_rome",  countryName: "Italy",          label: "🇮🇹 Italy – Rome (UTC+1)  •  +39",    dialCode: "+39", timeZone: "Europe/Rome",   regionKey: "ROW" },
+      { id: "nl_ams",   countryName: "Netherlands",    label: "🇳🇱 Netherlands – Amsterdam (UTC+1)  •  +31", dialCode: "+31", timeZone: "Europe/Amsterdam", regionKey: "ROW" },
+      { id: "ie_dublin",countryName: "Ireland",        label: "🇮🇪 Ireland – Dublin (UTC±0/±1)  •  +353", dialCode: "+353", timeZone: "Europe/Dublin",  regionKey: "ROW" },
+      { id: "ch_zurich",countryName: "Switzerland",    label: "🇨🇭 Switzerland – Zurich (UTC+1)  •  +41", dialCode: "+41", timeZone: "Europe/Zurich", regionKey: "ROW" },
+      { id: "se_stock", countryName: "Sweden",         label: "🇸🇪 Sweden – Stockholm (UTC+1)  •  +46", dialCode: "+46", timeZone: "Europe/Stockholm", regionKey: "ROW" },
+
       // ANZ
-      { id: "au_sydney", countryName: "Australia", label: "🇦🇺 Australia – Sydney (UTC+10)  •  +61", dialCode: "+61", timeZone: "Australia/Sydney", regionKey: "ANZ" }
+      { id: "au_sydney", countryName: "Australia", label: "🇦🇺 Australia – Sydney (UTC+10)  •  +61", dialCode: "+61", timeZone: "Australia/Sydney", regionKey: "ANZ" },
+      { id: "nz_auck",   countryName: "New Zealand",label: "🇳🇿 New Zealand – Auckland (UTC+12)  •  +64", dialCode: "+64", timeZone: "Pacific/Auckland", regionKey: "ANZ" }
     ];
 
-    // =======================
+    // =========================
     // State
-    // =======================
+    // =========================
     const state = {
       currentStep: 1,
       leadId: null,
@@ -962,7 +844,9 @@
       selectedRegionKey: null,
       selectedTimeZone: null,
       ipInfo: null,
-      slotDataByDate: {},
+      localDayKeys: [],    // 6 local date keys YYYY-MM-DD
+      todayLocalKey: null, // today's local date key
+      slotDataByDate: {},  // {dateKey: [{id, displayTime, isStar, sortDate}]}
       selectedDate: null,
       selectedSlotId: null,
       selectedSlotDisplayTime: null,
@@ -970,14 +854,13 @@
       selectedLang: "English"
     };
 
-    // =======================
+    // =========================
     // Helpers
-    // =======================
+    // =========================
     function parseUrlParams() {
       const params = new URLSearchParams(window.location.search);
       const courseIdRaw = params.get("courseId");
       state.courseId = courseIdRaw ? parseInt(courseIdRaw, 10) : null;
-
       state.utm.utm_source   = params.get("utm_source")   || null;
       state.utm.utm_medium   = params.get("utm_medium")   || null;
       state.utm.utm_campaign = params.get("utm_campaign") || null;
@@ -1007,23 +890,28 @@
       return `${y}-${m}-${d}`;
     }
 
-    function formatLocalTimeLabel(utcDateTimeString, timeZone) {
-      try {
-        const d = new Date(utcDateTimeString);
-        const opts = { hour: "2-digit", minute: "2-digit", hour12: true, timeZone };
-        return new Intl.DateTimeFormat("en-US", opts).format(d);
-      } catch (e) {
-        console.error("Time label error", e);
-        return "";
+    function computeLocalDayKeys(timeZone) {
+      const now = new Date();
+      const localString = now.toLocaleString("en-US", { timeZone });
+      const localDate = new Date(localString);
+      const keys = [];
+      for (let i = 0; i < 6; i++) {
+        const d = new Date(localDate.getTime());
+        d.setDate(d.getDate() + i);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        keys.push(`${y}-${m}-${dd}`);
       }
+      return { todayKey: keys[0], keys };
     }
 
-    function formatDatePill(dateStr) {
+    function formatDatePillLocal(dateStr, timeZone) {
       const [y, m, d] = dateStr.split("-").map(x => parseInt(x, 10));
       const dt = new Date(Date.UTC(y, m - 1, d));
-      const weekday = dt.toLocaleDateString("en-US", { weekday: "short" });
+      const weekday = dt.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
       const day = String(d).padStart(2, "0");
-      const month = dt.toLocaleDateString("en-US", { month: "short" });
+      const month = dt.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
       return {
         line1: `${weekday} • ${day} ${month}`,
         line2: `Date: ${dateStr}`
@@ -1037,7 +925,7 @@
       el.classList.add("visible");
       setTimeout(() => {
         el.classList.remove("visible");
-      }, 5000);
+      }, 6000);
     }
 
     function clearGlobalError() {
@@ -1076,9 +964,9 @@
       }
     }
 
-    // =======================
+    // =========================
     // Country selector
-    // =======================
+    // =========================
     function renderCountrySelect(defaultDial) {
       const selectEl = document.getElementById("country-select");
       const dialEl = document.getElementById("country-dial");
@@ -1121,7 +1009,6 @@
         const data = await res.json();
         state.ipInfo = data;
         const countryName = data.country_name || null;
-
         if (countryName) {
           const match = COUNTRY_OPTIONS.find(o => o.countryName === countryName);
           if (match) {
@@ -1141,9 +1028,9 @@
       }
     }
 
-    // =======================
-    // Radio chip groups
-    // =======================
+    // =========================
+    // Radio chip groups & language pills
+    // =========================
     function setupRadioChipGroup(containerId) {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -1177,17 +1064,82 @@
       });
     }
 
-    // =======================
-    // Slots loading + rendering
-    // =======================
+    // =========================
+    // Slots: conversion & rendering
+    // =========================
+    function convertSlotToLocalStruct(slotRow, timeZone, todayLocalKey, nowLocalDateObj, localDayKeysSet) {
+      // slotRow.slot_datetime_ist is timestamptz in IST from DB (ISO string)
+      const base = new Date(slotRow.slot_datetime_ist);
+      // Local time in target timezone
+      const localStr = base.toLocaleString("en-US", { timeZone });
+      const local = new Date(localStr);
+
+      // Display time (hh:mm AM/PM) in target tz
+      const displayTime = new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        timeZone
+      }).format(base);
+
+      // Shift rule: ANY slot where local time < 03:00 -> next day
+      let dateForAssign = new Date(local.getTime());
+      if (local.getHours() < 3) {
+        dateForAssign.setDate(dateForAssign.getDate() + 1);
+      }
+
+      const y = dateForAssign.getFullYear();
+      const m = String(dateForAssign.getMonth() + 1).padStart(2, "0");
+      const d = String(dateForAssign.getDate()).padStart(2, "0");
+      const assignKey = `${y}-${m}-${d}`;
+
+      // Only keep if within our 6-day local window
+      if (!localDayKeysSet.has(assignKey)) {
+        return null;
+      }
+
+      // Sort key = dateForAssign itself
+      const sortDate = dateForAssign;
+
+      // Hide past slots for today
+      let isPast = false;
+      if (assignKey === todayLocalKey && nowLocalDateObj) {
+        if (sortDate <= nowLocalDateObj) {
+          isPast = true;
+        }
+      }
+
+      return {
+        id: slotRow.id,
+        displayTime,
+        isStar: !!slotRow.is_star_teacher,
+        sortDate,
+        assignKey,
+        isPast
+      };
+    }
+
     async function fetchSlotsForNextSixDays() {
       if (!state.selectedRegionKey || !state.courseId) {
         showGlobalError("We couldn't detect your region or course. Please refresh and try again.");
         return;
       }
 
+      const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // Compute 6 local day keys (today + 5)
+      const { todayKey, keys } = computeLocalDayKeys(tz);
+      state.todayLocalKey = todayKey;
+      state.localDayKeys = keys;
+      const localDayKeysSet = new Set(keys);
+
+      // Compute IST range (as required by your backend logic)
       const todayIst = toIstDateString(0);
       const plus5Ist = toIstDateString(5);
+
+      // Prepare "now" in local tz for past-slot filtering
+      const now = new Date();
+      const nowLocalStr = now.toLocaleString("en-US", { timeZone: tz });
+      const nowLocalDateObj = new Date(nowLocalStr);
 
       const { data, error } = await supabaseClient
         .from(DEMO_SLOTS_LIVE)
@@ -1208,10 +1160,19 @@
 
       const byDate = {};
       (data || []).forEach(row => {
-        const dateKey = row.slot_date;
-        if (!byDate[dateKey]) byDate[dateKey] = [];
-        byDate[dateKey].push(row);
+        const converted = convertSlotToLocalStruct(row, tz, todayKey, nowLocalDateObj, localDayKeysSet);
+        if (!converted) return; // Out of local date window
+        if (converted.isPast) return; // past slot for today
+
+        if (!byDate[converted.assignKey]) byDate[converted.assignKey] = [];
+        byDate[converted.assignKey].push(converted);
       });
+
+      // Sort each day's slots
+      Object.keys(byDate).forEach(key => {
+        byDate[key].sort((a, b) => a.sortDate - b.sortDate);
+      });
+
       state.slotDataByDate = byDate;
       renderSlotDates();
     }
@@ -1221,19 +1182,20 @@
       if (!container) return;
       container.innerHTML = "";
 
-      const dates = Object.keys(state.slotDataByDate).sort();
-      if (dates.length === 0) {
-        state.selectedDate = null;
-        renderSlotTimes();
-        return;
+      const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      // Always show 6 local day pills (today + 5)
+      const keys = state.localDayKeys && state.localDayKeys.length
+        ? state.localDayKeys
+        : computeLocalDayKeys(tz).keys;
+
+      // Default selected date
+      if (!state.selectedDate || !keys.includes(state.selectedDate)) {
+        state.selectedDate = keys[0];
       }
 
-      if (!state.selectedDate || !dates.includes(state.selectedDate)) {
-        state.selectedDate = dates[0];
-      }
-
-      dates.forEach(dateStr => {
-        const pillData = formatDatePill(dateStr);
+      keys.forEach(dateStr => {
+        const pillData = formatDatePillLocal(dateStr, tz);
         const pill = document.createElement("button");
         pill.type = "button";
         pill.className = "slot-date-pill";
@@ -1271,10 +1233,7 @@
       }
       emptyEl.style.display = "none";
 
-      const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-
       slots.forEach(slot => {
-        const label = formatLocalTimeLabel(slot.slot_datetime_ist, tz);
         const chip = document.createElement("button");
         chip.type = "button";
         chip.className = "slot-chip";
@@ -1283,7 +1242,7 @@
         const left = document.createElement("div");
         const main = document.createElement("div");
         main.className = "slot-time-main";
-        main.textContent = label;
+        main.textContent = slot.displayTime;
         const sub = document.createElement("div");
         sub.className = "slot-time-sub";
         sub.textContent = "Local time";
@@ -1292,7 +1251,7 @@
 
         chip.appendChild(left);
 
-        if (slot.is_star_teacher) {
+        if (slot.isStar) {
           const tag = document.createElement("div");
           tag.className = "slot-tag";
           tag.textContent = "⭐ Star Teacher";
@@ -1301,8 +1260,8 @@
 
         chip.addEventListener("click", () => {
           state.selectedSlotId = slot.id;
-          state.selectedSlotDisplayTime = label;
-          state.selectedSlotIsStar = !!slot.is_star_teacher;
+          state.selectedSlotDisplayTime = slot.displayTime;
+          state.selectedSlotIsStar = !!slot.isStar;
           renderSlotTimes();
         });
 
@@ -1310,9 +1269,9 @@
       });
     }
 
-    // =======================
+    // =========================
     // STEP 1: Save lead
-    // =======================
+    // =========================
     async function handleStep1Next() {
       clearGlobalError();
 
@@ -1404,6 +1363,7 @@
         state.leadId = data.id;
         state.selectedRegionKey = regionKey;
 
+        // After Step1 success, compute local days & fetch slots
         state.currentStep = 2;
         updateStepUI();
         await fetchSlotsForNextSixDays();
@@ -1415,9 +1375,9 @@
       }
     }
 
-    // =======================
+    // =========================
     // STEP 2: Save slot
-    // =======================
+    // =========================
     async function handleStep2Next() {
       clearGlobalError();
 
@@ -1464,9 +1424,9 @@
       }
     }
 
-    // =======================
+    // =========================
     // STEP 3: Save motivations + redirect
-    // =======================
+    // =========================
     async function handleStep3Submit() {
       clearGlobalError();
       if (!state.leadId) {
@@ -1520,7 +1480,7 @@
           return;
         }
 
-        // ✅ Final redirect
+        // Final redirect
         const bookingUUID = state.leadId;
         const courseIdParam = state.courseId || "";
         const redirectUrl =
@@ -1539,9 +1499,9 @@
       }
     }
 
-    // =======================
+    // =========================
     // Navigation: Back links
-    // =======================
+    // =========================
     function setupBackLinks() {
       document.querySelectorAll("[data-back-step]").forEach(el => {
         el.addEventListener("click", () => {
@@ -1554,9 +1514,9 @@
       });
     }
 
-    // =======================
+    // =========================
     // Init
-    // =======================
+    // =========================
     function initStepEvents() {
       const step1Btn = document.getElementById("step-1-next");
       if (step1Btn) step1Btn.addEventListener("click", handleStep1Next);

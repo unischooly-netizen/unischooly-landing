@@ -222,7 +222,7 @@
     }
     .phone-row {
       display: grid;
-      grid-template-columns: 110px minmax(0, 1fr);
+      grid-template-columns: 140px minmax(0, 1fr);
       gap: 8px;
       align-items: stretch;
     }
@@ -237,7 +237,9 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--text-main);
+      gap: 4px;
     }
+    .country-flag { font-size: 16px; }
     .country-dial { padding: 0 4px; }
     .country-inner-select {
       opacity: 0;
@@ -529,6 +531,7 @@
               <div class="country-select-wrapper">
                 <select id="country-select" class="select country-inner-select"></select>
                 <div class="country-visible">
+                  <span id="country-flag" class="country-flag">🇮🇳</span>
                   <span id="country-dial" class="country-dial">+91</span>
                 </div>
               </div>
@@ -587,8 +590,8 @@
             <label>Do you have a Laptop or Desktop?<span class="required">*</span></label>
           </div>
           <div id="has-laptop-group" class="radio-chip-group">
-            <label class="radio-chip" data-value="Yes">
-              <input type="radio" name="has-laptop" value="Yes" />
+            <label class="radio-chip selected" data-value="Yes">
+              <input type="radio" name="has-laptop" value="Yes" checked />
               <span class="radio-dot"><span class="radio-dot-inner"></span></span>
               <span>Yes</span>
             </label>
@@ -779,57 +782,59 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // =========================
-    // Country / Region / Timezone Mapping
-    // (Only target markets as per Option A)
+    // Country / Region / Timezone Mapping (target markets)
     // =========================
     const COUNTRY_OPTIONS = [
       // MEA
-      { id: "ae_dubai",   countryName: "United Arab Emirates", label: "🇦🇪 UAE – Dubai (UTC+4)  •  +971", dialCode: "+971", timeZone: "Asia/Dubai",       regionKey: "MEA" },
-      { id: "sa_riyadh",  countryName: "Saudi Arabia",        label: "🇸🇦 Saudi Arabia – Riyadh (UTC+3)  •  +966", dialCode: "+966", timeZone: "Asia/Riyadh",     regionKey: "MEA" },
-      { id: "qa_doha",    countryName: "Qatar",               label: "🇶🇦 Qatar – Doha (UTC+3)  •  +974",  dialCode: "+974", timeZone: "Asia/Qatar",      regionKey: "MEA" },
-      { id: "om_muscat",  countryName: "Oman",                label: "🇴🇲 Oman – Muscat (UTC+4)  •  +968", dialCode: "+968", timeZone: "Asia/Muscat",     regionKey: "MEA" },
-      { id: "kw_kuwait",  countryName: "Kuwait",              label: "🇰🇼 Kuwait – Kuwait City (UTC+3)  •  +965", dialCode: "+965", timeZone: "Asia/Kuwait",     regionKey: "MEA" },
-      { id: "bh_bahrain", countryName: "Bahrain",             label: "🇧🇭 Bahrain – Manama (UTC+3)  •  +973", dialCode: "+973", timeZone: "Asia/Bahrain",    regionKey: "MEA" },
-      { id: "eg_cairo",   countryName: "Egypt",               label: "🇪🇬 Egypt – Cairo (UTC+2)  •  +20",  dialCode: "+20",  timeZone: "Africa/Cairo",    regionKey: "MEA" },
-      { id: "lb_beirut",  countryName: "Lebanon",             label: "🇱🇧 Lebanon – Beirut (UTC+2)  •  +961", dialCode: "+961", timeZone: "Asia/Beirut",     regionKey: "MEA" },
+      { id: "ae_dubai",   flag: "🇦🇪", countryName: "United Arab Emirates", cityLabel: "Dubai",    tzLabel: "UTC+4",  dialCode: "+971", timeZone: "Asia/Dubai",       regionKey: "MEA" },
+      { id: "sa_riyadh",  flag: "🇸🇦", countryName: "Saudi Arabia",        cityLabel: "Riyadh",   tzLabel: "UTC+3",  dialCode: "+966", timeZone: "Asia/Riyadh",     regionKey: "MEA" },
+      { id: "qa_doha",    flag: "🇶🇦", countryName: "Qatar",               cityLabel: "Doha",     tzLabel: "UTC+3",  dialCode: "+974", timeZone: "Asia/Qatar",      regionKey: "MEA" },
+      { id: "om_muscat",  flag: "🇴🇲", countryName: "Oman",                cityLabel: "Muscat",   tzLabel: "UTC+4",  dialCode: "+968", timeZone: "Asia/Muscat",     regionKey: "MEA" },
+      { id: "kw_kuwait",  flag: "🇰🇼", countryName: "Kuwait",              cityLabel: "Kuwait",   tzLabel: "UTC+3",  dialCode: "+965", timeZone: "Asia/Kuwait",     regionKey: "MEA" },
+      { id: "bh_bahrain", flag: "🇧🇭", countryName: "Bahrain",             cityLabel: "Manama",   tzLabel: "UTC+3",  dialCode: "+973", timeZone: "Asia/Bahrain",    regionKey: "MEA" },
+      { id: "eg_cairo",   flag: "🇪🇬", countryName: "Egypt",               cityLabel: "Cairo",    tzLabel: "UTC+2",  dialCode: "+20",  timeZone: "Africa/Cairo",    regionKey: "MEA" },
+      { id: "lb_beirut",  flag: "🇱🇧", countryName: "Lebanon",             cityLabel: "Beirut",   tzLabel: "UTC+2",  dialCode: "+961", timeZone: "Asia/Beirut",     regionKey: "MEA" },
 
-      // South Asia (ASIA)
-      { id: "in_india",   countryName: "India",               label: "🇮🇳 India – All Cities (UTC+5:30)  •  +91",  dialCode: "+91",  timeZone: "Asia/Kolkata",   regionKey: "ASIA" },
-      { id: "bd_dhaka",   countryName: "Bangladesh",          label: "🇧🇩 Bangladesh – Dhaka (UTC+6)  •  +880",    dialCode: "+880", timeZone: "Asia/Dhaka",     regionKey: "ASIA" },
-      { id: "lk_colombo", countryName: "Sri Lanka",           label: "🇱🇰 Sri Lanka – Colombo (UTC+5:30)  •  +94", dialCode: "+94",  timeZone: "Asia/Colombo",   regionKey: "ASIA" },
-      { id: "pk_karachi", countryName: "Pakistan",            label: "🇵🇰 Pakistan – Karachi (UTC+5)  •  +92",     dialCode: "+92",  timeZone: "Asia/Karachi",   regionKey: "ASIA" },
-      { id: "np_kath",    countryName: "Nepal",               label: "🇳🇵 Nepal – Kathmandu (UTC+5:45)  •  +977",  dialCode: "+977", timeZone: "Asia/Kathmandu", regionKey: "ASIA" },
+      // ASIA (India + neighbours)
+      { id: "in_india",   flag: "🇮🇳", countryName: "India",               cityLabel: "All Cities", tzLabel: "UTC+5:30", dialCode: "+91",  timeZone: "Asia/Kolkata",   regionKey: "ASIA" },
+      { id: "pk_karachi", flag: "🇵🇰", countryName: "Pakistan",            cityLabel: "Karachi",    tzLabel: "UTC+5",   dialCode: "+92",  timeZone: "Asia/Karachi",   regionKey: "ASIA" },
+      { id: "bd_dhaka",   flag: "🇧🇩", countryName: "Bangladesh",          cityLabel: "Dhaka",      tzLabel: "UTC+6",   dialCode: "+880", timeZone: "Asia/Dhaka",     regionKey: "ASIA" },
+      { id: "lk_colombo", flag: "🇱🇰", countryName: "Sri Lanka",           cityLabel: "Colombo",    tzLabel: "UTC+5:30",dialCode: "+94",  timeZone: "Asia/Colombo",   regionKey: "ASIA" },
+      { id: "np_kath",    flag: "🇳🇵", countryName: "Nepal",               cityLabel: "Kathmandu",  tzLabel: "UTC+5:45",dialCode: "+977", timeZone: "Asia/Kathmandu", regionKey: "ASIA" },
 
-      // USA & Canada (USA)
-      { id: "us_eastern",  countryName: "United States", label: "🇺🇸 USA – Eastern Time (ET)  •  +1", dialCode: "+1", timeZone: "America/New_York",   regionKey: "USA" },
-      { id: "us_central",  countryName: "United States", label: "🇺🇸 USA – Central Time (CT)  •  +1", dialCode: "+1", timeZone: "America/Chicago",    regionKey: "USA" },
-      { id: "us_mountain", countryName: "United States", label: "🇺🇸 USA – Mountain Time (MT)  •  +1", dialCode: "+1", timeZone: "America/Denver",     regionKey: "USA" },
-      { id: "us_pacific",  countryName: "United States", label: "🇺🇸 USA – Pacific Time (PT)  •  +1", dialCode: "+1", timeZone: "America/Los_Angeles", regionKey: "USA" },
-      { id: "ca_toronto",  countryName: "Canada",        label: "🇨🇦 Canada – Toronto (ET)  •  +1",   dialCode: "+1", timeZone: "America/Toronto",    regionKey: "USA" },
-      { id: "ca_vancouver",countryName: "Canada",        label: "🇨🇦 Canada – Vancouver (PT)  •  +1", dialCode: "+1", timeZone: "America/Vancouver",  regionKey: "USA" },
+      // USA + Canada
+      { id: "us_eastern",  flag: "🇺🇸", countryName: "United States", cityLabel: "Eastern Time (ET)",  tzLabel: "UTC-5/-4", dialCode: "+1", timeZone: "America/New_York",   regionKey: "USA" },
+      { id: "us_central",  flag: "🇺🇸", countryName: "United States", cityLabel: "Central Time (CT)",  tzLabel: "UTC-6/-5", dialCode: "+1", timeZone: "America/Chicago",    regionKey: "USA" },
+      { id: "us_mountain", flag: "🇺🇸", countryName: "United States", cityLabel: "Mountain Time (MT)", tzLabel: "UTC-7/-6", dialCode: "+1", timeZone: "America/Denver",     regionKey: "USA" },
+      { id: "us_pacific",  flag: "🇺🇸", countryName: "United States", cityLabel: "Pacific Time (PT)",  tzLabel: "UTC-8/-7", dialCode: "+1", timeZone: "America/Los_Angeles", regionKey: "USA" },
+      { id: "ca_toronto",  flag: "🇨🇦", countryName: "Canada",        cityLabel: "Toronto (ET)",       tzLabel: "UTC-5/-4", dialCode: "+1", timeZone: "America/Toronto",    regionKey: "USA" },
+      { id: "ca_vancouver",flag: "🇨🇦", countryName: "Canada",        cityLabel: "Vancouver (PT)",     tzLabel: "UTC-8/-7", dialCode: "+1", timeZone: "America/Vancouver",  regionKey: "USA" },
 
       // SEA
-      { id: "sg_singapore", countryName: "Singapore",         label: "🇸🇬 Singapore (UTC+8)  •  +65", dialCode: "+65", timeZone: "Asia/Singapore",  regionKey: "SEA" },
-      { id: "my_kuala",     countryName: "Malaysia",          label: "🇲🇾 Malaysia – Kuala Lumpur (UTC+8)  •  +60", dialCode: "+60", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
-      { id: "ph_manila",    countryName: "Philippines",       label: "🇵🇭 Philippines – Manila (UTC+8)  •  +63", dialCode: "+63", timeZone: "Asia/Manila",    regionKey: "SEA" },
-      { id: "id_jakarta",   countryName: "Indonesia",         label: "🇮🇩 Indonesia – Jakarta (UTC+7)  •  +62", dialCode: "+62", timeZone: "Asia/Jakarta",   regionKey: "SEA" },
-      { id: "th_bangkok",   countryName: "Thailand",          label: "🇹🇭 Thailand – Bangkok (UTC+7)  •  +66", dialCode: "+66", timeZone: "Asia/Bangkok",  regionKey: "SEA" },
-      { id: "vn_hcm",       countryName: "Vietnam",           label: "🇻🇳 Vietnam – Ho Chi Minh City (UTC+7)  •  +84", dialCode: "+84", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
-
-      // UK + Europe (ROW)
-      { id: "uk_london", countryName: "United Kingdom", label: "🇬🇧 United Kingdom – London (UTC±0/±1)  •  +44", dialCode: "+44", timeZone: "Europe/London", regionKey: "ROW" },
-      { id: "fr_paris", countryName: "France",         label: "🇫🇷 France – Paris (UTC+1)  •  +33",  dialCode: "+33", timeZone: "Europe/Paris",  regionKey: "ROW" },
-      { id: "de_berlin",countryName: "Germany",        label: "🇩🇪 Germany – Berlin (UTC+1)  •  +49", dialCode: "+49", timeZone: "Europe/Berlin", regionKey: "ROW" },
-      { id: "es_madrid",countryName: "Spain",          label: "🇪🇸 Spain – Madrid (UTC+1)  •  +34",  dialCode: "+34", timeZone: "Europe/Madrid", regionKey: "ROW" },
-      { id: "it_rome",  countryName: "Italy",          label: "🇮🇹 Italy – Rome (UTC+1)  •  +39",    dialCode: "+39", timeZone: "Europe/Rome",   regionKey: "ROW" },
-      { id: "nl_ams",   countryName: "Netherlands",    label: "🇳🇱 Netherlands – Amsterdam (UTC+1)  •  +31", dialCode: "+31", timeZone: "Europe/Amsterdam", regionKey: "ROW" },
-      { id: "ie_dublin",countryName: "Ireland",        label: "🇮🇪 Ireland – Dublin (UTC±0/±1)  •  +353", dialCode: "+353", timeZone: "Europe/Dublin",  regionKey: "ROW" },
-      { id: "ch_zurich",countryName: "Switzerland",    label: "🇨🇭 Switzerland – Zurich (UTC+1)  •  +41", dialCode: "+41", timeZone: "Europe/Zurich", regionKey: "ROW" },
-      { id: "se_stock", countryName: "Sweden",         label: "🇸🇪 Sweden – Stockholm (UTC+1)  •  +46", dialCode: "+46", timeZone: "Europe/Stockholm", regionKey: "ROW" },
+      { id: "sg_singapore", flag: "🇸🇬", countryName: "Singapore",         cityLabel: "Singapore",       tzLabel: "UTC+8",   dialCode: "+65", timeZone: "Asia/Singapore",  regionKey: "SEA" },
+      { id: "my_kuala",     flag: "🇲🇾", countryName: "Malaysia",          cityLabel: "Kuala Lumpur",    tzLabel: "UTC+8",   dialCode: "+60", timeZone: "Asia/Kuala_Lumpur", regionKey: "SEA" },
+      { id: "ph_manila",    flag: "🇵🇭", countryName: "Philippines",       cityLabel: "Manila",          tzLabel: "UTC+8",   dialCode: "+63", timeZone: "Asia/Manila",    regionKey: "SEA" },
+      { id: "id_jakarta",   flag: "🇮🇩", countryName: "Indonesia",         cityLabel: "Jakarta",         tzLabel: "UTC+7",   dialCode: "+62", timeZone: "Asia/Jakarta",   regionKey: "SEA" },
+      { id: "th_bangkok",   flag: "🇹🇭", countryName: "Thailand",          cityLabel: "Bangkok",         tzLabel: "UTC+7",   dialCode: "+66", timeZone: "Asia/Bangkok",  regionKey: "SEA" },
+      { id: "vn_hcm",       flag: "🇻🇳", countryName: "Vietnam",           cityLabel: "Ho Chi Minh City",tzLabel: "UTC+7",   dialCode: "+84", timeZone: "Asia/Ho_Chi_Minh", regionKey: "SEA" },
 
       // ANZ
-      { id: "au_sydney", countryName: "Australia", label: "🇦🇺 Australia – Sydney (UTC+10)  •  +61", dialCode: "+61", timeZone: "Australia/Sydney", regionKey: "ANZ" },
-      { id: "nz_auck",   countryName: "New Zealand",label: "🇳🇿 New Zealand – Auckland (UTC+12)  •  +64", dialCode: "+64", timeZone: "Pacific/Auckland", regionKey: "ANZ" }
+      { id: "au_sydney", flag: "🇦🇺", countryName: "Australia",  cityLabel: "Sydney",   tzLabel: "UTC+10", dialCode: "+61", timeZone: "Australia/Sydney",   regionKey: "ANZ" },
+      { id: "nz_auck",   flag: "🇳🇿", countryName: "New Zealand",cityLabel: "Auckland", tzLabel: "UTC+12", dialCode: "+64", timeZone: "Pacific/Auckland",   regionKey: "ANZ" },
+
+      // EUROPE
+      { id: "uk_london", flag: "🇬🇧", countryName: "United Kingdom", cityLabel: "London",   tzLabel: "UTC±0/±1", dialCode: "+44", timeZone: "Europe/London",   regionKey: "EUROPE" },
+      { id: "ie_dublin", flag: "🇮🇪", countryName: "Ireland",        cityLabel: "Dublin",   tzLabel: "UTC±0/±1", dialCode: "+353",timeZone: "Europe/Dublin",   regionKey: "EUROPE" },
+      { id: "fr_paris",  flag: "🇫🇷", countryName: "France",         cityLabel: "Paris",    tzLabel: "UTC+1",     dialCode: "+33", timeZone: "Europe/Paris",    regionKey: "EUROPE" },
+      { id: "de_berlin", flag: "🇩🇪", countryName: "Germany",        cityLabel: "Berlin",   tzLabel: "UTC+1",     dialCode: "+49", timeZone: "Europe/Berlin",   regionKey: "EUROPE" },
+      { id: "es_madrid", flag: "🇪🇸", countryName: "Spain",          cityLabel: "Madrid",   tzLabel: "UTC+1",     dialCode: "+34", timeZone: "Europe/Madrid",   regionKey: "EUROPE" },
+      { id: "it_rome",   flag: "🇮🇹", countryName: "Italy",          cityLabel: "Rome",     tzLabel: "UTC+1",     dialCode: "+39", timeZone: "Europe/Rome",     regionKey: "EUROPE" },
+      { id: "nl_ams",    flag: "🇳🇱", countryName: "Netherlands",    cityLabel: "Amsterdam",tzLabel: "UTC+1",     dialCode: "+31", timeZone: "Europe/Amsterdam",regionKey: "EUROPE" },
+      { id: "ch_zurich", flag: "🇨🇭", countryName: "Switzerland",    cityLabel: "Zurich",   tzLabel: "UTC+1",     dialCode: "+41", timeZone: "Europe/Zurich",   regionKey: "EUROPE" },
+      { id: "se_stock",  flag: "🇸🇪", countryName: "Sweden",         cityLabel: "Stockholm",tzLabel: "UTC+1",     dialCode: "+46", timeZone: "Europe/Stockholm", regionKey: "EUROPE" },
+
+      // ROW (placeholder example)
+      { id: "row_default", flag: "🌍", countryName: "Other Country", cityLabel: "Global", tzLabel: "UTC", dialCode: "+0", timeZone: "UTC", regionKey: "ROW" }
     ];
 
     // =========================
@@ -844,14 +849,15 @@
       selectedRegionKey: null,
       selectedTimeZone: null,
       ipInfo: null,
-      localDayKeys: [],    // 6 local date keys YYYY-MM-DD
-      todayLocalKey: null, // today's local date key
-      slotDataByDate: {},  // {dateKey: [{id, displayTime, isStar, sortDate}]}
+      localDayKeys: [],
+      todayLocalKey: null,
+      slotDataByDate: {},
       selectedDate: null,
       selectedSlotId: null,
       selectedSlotDisplayTime: null,
       selectedSlotIsStar: false,
-      selectedLang: "English"
+      selectedLang: "English",
+      internetSpeedMbps: 0
     };
 
     // =========================
@@ -877,6 +883,19 @@
 
     function getBrowserInfo() {
       return navigator.userAgent || "";
+    }
+
+    function detectInternetSpeed() {
+      try {
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (conn && typeof conn.downlink === "number") {
+          state.internetSpeedMbps = conn.downlink;
+        } else {
+          state.internetSpeedMbps = 0;
+        }
+      } catch (e) {
+        state.internetSpeedMbps = 0;
+      }
     }
 
     function toIstDateString(offsetDays) {
@@ -906,7 +925,7 @@
       return { todayKey: keys[0], keys };
     }
 
-    function formatDatePillLocal(dateStr, timeZone) {
+    function formatDatePillLocal(dateStr) {
       const [y, m, d] = dateStr.split("-").map(x => parseInt(x, 10));
       const dt = new Date(Date.UTC(y, m - 1, d));
       const weekday = dt.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" });
@@ -970,13 +989,14 @@
     function renderCountrySelect(defaultDial) {
       const selectEl = document.getElementById("country-select");
       const dialEl = document.getElementById("country-dial");
-      if (!selectEl || !dialEl) return;
+      const flagEl = document.getElementById("country-flag");
+      if (!selectEl || !dialEl || !flagEl) return;
 
       selectEl.innerHTML = "";
       COUNTRY_OPTIONS.forEach(opt => {
         const optionEl = document.createElement("option");
         optionEl.value = opt.id;
-        optionEl.textContent = opt.label;
+        optionEl.textContent = `${opt.flag} ${opt.countryName} – ${opt.cityLabel} (${opt.tzLabel})  ${opt.dialCode}`;
         selectEl.appendChild(optionEl);
       });
 
@@ -987,12 +1007,14 @@
 
       selectEl.value = selectedOpt.id;
       dialEl.textContent = selectedOpt.dialCode;
+      flagEl.textContent = selectedOpt.flag;
     }
 
     function handleCountryChange() {
       const selectEl = document.getElementById("country-select");
       const dialEl = document.getElementById("country-dial");
-      if (!selectEl || !dialEl) return;
+      const flagEl = document.getElementById("country-flag");
+      if (!selectEl || !dialEl || !flagEl) return;
       const selectedId = selectEl.value;
       const opt = COUNTRY_OPTIONS.find(o => o.id === selectedId);
       if (!opt) return;
@@ -1000,6 +1022,7 @@
       state.selectedTimeZone = opt.timeZone;
       state.selectedRegionKey = opt.regionKey;
       dialEl.textContent = opt.dialCode;
+      flagEl.textContent = opt.flag;
     }
 
     async function detectIpAndSetCountry() {
@@ -1014,9 +1037,11 @@
           if (match) {
             const selectEl = document.getElementById("country-select");
             const dialEl = document.getElementById("country-dial");
-            if (selectEl && dialEl) {
+            const flagEl = document.getElementById("country-flag");
+            if (selectEl && dialEl && flagEl) {
               selectEl.value = match.id;
               dialEl.textContent = match.dialCode;
+              flagEl.textContent = match.flag;
             }
             state.selectedCountry = match;
             state.selectedTimeZone = match.timeZone;
@@ -1067,55 +1092,55 @@
     // =========================
     // Slots: conversion & rendering
     // =========================
-    function convertSlotToLocalStruct(slotRow, timeZone, todayLocalKey, nowLocalDateObj, localDayKeysSet) {
-      // slotRow.slot_datetime_ist is timestamptz in IST from DB (ISO string)
-      const base = new Date(slotRow.slot_datetime_ist);
-      // Local time in target timezone
-      const localStr = base.toLocaleString("en-US", { timeZone });
+    function convertSlotToLocalStruct(slotRow, timeZone, todayLocalKey, nowLocalDateObj, localDayKeysSet, regionKey) {
+      // slot_datetime_ist is timestamptz stored as IST
+      const istBase = new Date(slotRow.slot_datetime_ist);
+      let istForDisplay = new Date(istBase.getTime());
+
+      // Region-aware IST shift rule:
+      // Only for MEA + ASIA: if IST time < 03:00, shift to next day
+      if (regionKey === "MEA" || regionKey === "ASIA") {
+        if (slotRow.slot_time_ist) {
+          const parts = String(slotRow.slot_time_ist).split(":");
+          const hh = parseInt(parts[0], 10);
+          if (!Number.isNaN(hh) && hh < 3) {
+            istForDisplay.setDate(istForDisplay.getDate() + 1);
+          }
+        }
+      }
+
+      // Convert this IST datetime to target local timezone
+      const localStr = istForDisplay.toLocaleString("en-US", { timeZone });
       const local = new Date(localStr);
 
-      // Display time (hh:mm AM/PM) in target tz
+      const y = local.getFullYear();
+      const m = String(local.getMonth() + 1).padStart(2, "0");
+      const d = String(local.getDate()).padStart(2, "0");
+      const assignKey = `${y}-${m}-${d}`;
+
+      // Only keep if within 6-day local window
+      if (!localDayKeysSet.has(assignKey)) return null;
+
+      // Hide past slots for "today" (local)
+      let isPast = false;
+      if (assignKey === todayLocalKey && nowLocalDateObj) {
+        if (local <= nowLocalDateObj) isPast = true;
+      }
+      if (isPast) return null;
+
       const displayTime = new Intl.DateTimeFormat("en-US", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: true,
         timeZone
-      }).format(base);
-
-      // Shift rule: ANY slot where local time < 03:00 -> next day
-      let dateForAssign = new Date(local.getTime());
-      if (local.getHours() < 3) {
-        dateForAssign.setDate(dateForAssign.getDate() + 1);
-      }
-
-      const y = dateForAssign.getFullYear();
-      const m = String(dateForAssign.getMonth() + 1).padStart(2, "0");
-      const d = String(dateForAssign.getDate()).padStart(2, "0");
-      const assignKey = `${y}-${m}-${d}`;
-
-      // Only keep if within our 6-day local window
-      if (!localDayKeysSet.has(assignKey)) {
-        return null;
-      }
-
-      // Sort key = dateForAssign itself
-      const sortDate = dateForAssign;
-
-      // Hide past slots for today
-      let isPast = false;
-      if (assignKey === todayLocalKey && nowLocalDateObj) {
-        if (sortDate <= nowLocalDateObj) {
-          isPast = true;
-        }
-      }
+      }).format(istForDisplay);
 
       return {
         id: slotRow.id,
         displayTime,
         isStar: !!slotRow.is_star_teacher,
-        sortDate,
-        assignKey,
-        isPast
+        sortDate: local,
+        assignKey
       };
     }
 
@@ -1126,17 +1151,14 @@
       }
 
       const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      // Compute 6 local day keys (today + 5)
       const { todayKey, keys } = computeLocalDayKeys(tz);
       state.todayLocalKey = todayKey;
       state.localDayKeys = keys;
       const localDayKeysSet = new Set(keys);
 
-      // Compute IST range (as required by your backend logic)
       const todayIst = toIstDateString(0);
       const plus5Ist = toIstDateString(5);
 
-      // Prepare "now" in local tz for past-slot filtering
       const now = new Date();
       const nowLocalStr = now.toLocaleString("en-US", { timeZone: tz });
       const nowLocalDateObj = new Date(nowLocalStr);
@@ -1160,15 +1182,12 @@
 
       const byDate = {};
       (data || []).forEach(row => {
-        const converted = convertSlotToLocalStruct(row, tz, todayKey, nowLocalDateObj, localDayKeysSet);
-        if (!converted) return; // Out of local date window
-        if (converted.isPast) return; // past slot for today
-
+        const converted = convertSlotToLocalStruct(row, tz, todayKey, nowLocalDateObj, localDayKeysSet, state.selectedRegionKey);
+        if (!converted) return;
         if (!byDate[converted.assignKey]) byDate[converted.assignKey] = [];
         byDate[converted.assignKey].push(converted);
       });
 
-      // Sort each day's slots
       Object.keys(byDate).forEach(key => {
         byDate[key].sort((a, b) => a.sortDate - b.sortDate);
       });
@@ -1183,19 +1202,16 @@
       container.innerHTML = "";
 
       const tz = state.selectedTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      // Always show 6 local day pills (today + 5)
       const keys = state.localDayKeys && state.localDayKeys.length
         ? state.localDayKeys
         : computeLocalDayKeys(tz).keys;
 
-      // Default selected date
       if (!state.selectedDate || !keys.includes(state.selectedDate)) {
         state.selectedDate = keys[0];
       }
 
       keys.forEach(dateStr => {
-        const pillData = formatDatePillLocal(dateStr, tz);
+        const pillData = formatDatePillLocal(dateStr);
         const pill = document.createElement("button");
         pill.type = "button";
         pill.className = "slot-date-pill";
@@ -1341,6 +1357,7 @@
         device_type: deviceType,
         browser: browserInfo,
         timezone: timezone,
+        internet_speed_mbps: state.internetSpeedMbps,
         page_completed: 1
       };
 
@@ -1363,7 +1380,6 @@
         state.leadId = data.id;
         state.selectedRegionKey = regionKey;
 
-        // After Step1 success, compute local days & fetch slots
         state.currentStep = 2;
         updateStepUI();
         await fetchSlotsForNextSixDays();
@@ -1480,7 +1496,6 @@
           return;
         }
 
-        // Final redirect
         const bookingUUID = state.leadId;
         const courseIdParam = state.courseId || "";
         const redirectUrl =
@@ -1546,6 +1561,7 @@
 
     function init() {
       parseUrlParams();
+      detectInternetSpeed();
       initCountrySelector();
       initRadioGroups();
       setupLangPills();

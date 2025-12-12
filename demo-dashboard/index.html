@@ -6,7 +6,7 @@
   <title>Unischooly Demo Dashboard</title>
 
   <!-- Supabase (browser) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
     :root{
@@ -542,6 +542,59 @@
 .section-label{
   display:none !important;
 }
+
+/* ===== Unischooly Dark Theme Overrides for embedded sections ===== */
+#projects-section, #testimonials-section, #instructors-section, #faq-section, footer, .footer, #footer, #site-footer{
+  background: transparent !important;
+  color: #EAF0FF !important;
+}
+#projects-section *, #testimonials-section *, #instructors-section *, #faq-section *{
+  color: inherit;
+}
+#projects-section .section-title, #testimonials-section .section-title, #instructors-section .section-title, #faq-section .section-title,
+#projects-section h1, #projects-section h2, #projects-section h3,
+#testimonials-section h1, #testimonials-section h2, #testimonials-section h3,
+#instructors-section h1, #instructors-section h2, #instructors-section h3,
+#faq-section h1, #faq-section h2, #faq-section h3{
+  color:#F6F8FF !important;
+}
+#projects-section .container, #testimonials-section .container, #instructors-section .container, #faq-section .container{
+  max-width: 1200px;
+  margin: 0 auto;
+}
+#projects-section [style*="background: #fff"], #testimonials-section [style*="background: #fff"],
+#instructors-section [style*="background: #fff"], #faq-section [style*="background: #fff"]{
+  background: rgba(255,255,255,0.06) !important;
+}
+
+
+/* Footer should be full-bleed */
+footer, .footer, #site-footer, #footer {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+
+/* Pass look improvements */
+.pass-card{
+  position: relative;
+  overflow: hidden;
+}
+.pass-card .pass-footer{
+  position:absolute;
+  left:0; right:0; bottom:16px;
+  text-align:center;
+  opacity:.9;
+}
+.pass-card .stamp{
+  transform: rotate(-12deg);
+  border: 3px solid rgba(255,215,120,0.9);
+  background: rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
 </style>
 
   <!-- ===== Merge user sections CSS ===== -->
@@ -1955,9 +2008,6 @@
 </section>
 
     <!-- SECTION 4 - Testimonials (merged) -->
-    ﻿HTML
-
-
 <section id="testimonials-section">
     <div class="container">
         <h2 class="section-title">Hear From Our Happy Learners & Parents</h2>
@@ -2999,8 +3049,6 @@
 </section>
 
     <!-- SECTION 5 - Instructors (merged) -->
-    ﻿HTML
-
 <section class="unischooly-section-11">
     <!-- Background Lottie Container (Stars Animation) -->
     <div id="section-11-lottie-bg"></div>
@@ -3580,8 +3628,7 @@
 <!-- Lottie JS (Bodymovin) + Init for Background Animation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js" integrity="sha512-vuXyJ3kB8fX2j0drUXM32B3sXrIojt1zKp7kKI8LxCZrK3w7WveBz7uwqZCF1kJ1W28xV7UiVdz28kNvNVnovA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var container = document.getElementById("section-11-lottie-bg");
+    document.addEventListener("DOMContentLoaded", init);
         if (container && window.lottie) {
             lottie.loadAnimation({
                 container: container,
@@ -3595,8 +3642,6 @@
 </script>
 
     <!-- SECTION 6 - Animation (already merged) -->
-    ﻿HTML & CSS
-
 <section class="unischooly-mario-center-section">
     <div class="mario-animation-wrapper">
         <!-- The Left Brick -->
@@ -3952,8 +3997,6 @@
 </section>
 
     <!-- SECTION 7 - FAQs (merged) -->
-    ﻿HTML
-
 <section class="unischooly-tabbed-faq-section">
     <div class="faq-container-tabs">
         <h2 class="faq-heading-tabs">Frequently Asked Questions</h2>

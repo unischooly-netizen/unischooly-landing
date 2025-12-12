@@ -1,262 +1,274 @@
-<!DOCTYPE html>
+<!doctype html>
+<!--
+UNISCHOOLY – SECTION 1 + SECTION 2 (ALL FIXES APPLIED)
+Fixes:
+1. Mobile-first spacing & stacking
+2. Top bar content constrained inside container
+3. Ticket alignment fixed + stamp repositioned
+4. Join button centered below timer
+5. Reschedule date/time split + timezone dropdown
+-->
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Unischooly Trial Dashboard</title>
-
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
-  --bg:#060b18;
-  --card:#0c1730;
-  --border:rgba(255,255,255,0.08);
-  --grad:linear-gradient(135deg,#ff5fd8,#6cb8ff);
-  --gold:#ffe39a;
+/* ================= BASE ================= */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(180deg,#060b14,#0a1430);
+  color:#eaf1ff;
+}
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:14px;
 }
 
-*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,sans-serif}
-body{margin:0;background:radial-gradient(circle at top,#1b2450 0%,#060b18 55%);color:#fff}
-
-/* SECTION 1 */
-.header{
-  max-width:1200px;
-  margin:0 auto;
-  padding:16px;
+/* ================= SECTION 1 ================= */
+.topbar{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-}
-.header img{height:36px}
-.locked{
-  background:var(--grad);
-  padding:8px 14px;
-  border-radius:999px;
-  font-weight:600;
-  font-size:14px;
-}
-
-/* LAYOUT */
-.wrapper{
-  max-width:1200px;
-  margin:0 auto;
-  padding:16px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
-}
-@media(max-width:900px){
-  .wrapper{grid-template-columns:1fr}
-}
-
-/* PASS CARD */
-.pass{
-  background:linear-gradient(180deg,#101b38,#081127);
-  border:1px solid var(--border);
+  align-items:center;
+  gap:12px;
+  padding:14px;
   border-radius:18px;
-  padding:20px;
-  position:relative;
-  box-shadow:0 0 0 rgba(255,255,255,0);
-  transition:.3s;
+  background:rgba(255,255,255,.04);
 }
-.pass:hover{box-shadow:0 0 25px rgba(255,255,255,.12)}
-.pass-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:var(--gold);
-  color:#000;
+.topbar img{height:34px}
+.status{
   padding:10px 14px;
   border-radius:999px;
   font-weight:800;
+  background:linear-gradient(90deg,#ff4fd8,#8b5cf6,#4cc9ff);
+  color:#0b0e16;
+  white-space:nowrap;
 }
-.stamp{
-  position:absolute;
-  top:72px;
-  right:16px;
-  transform:rotate(-12deg);
-  border:2px dashed var(--gold);
-  padding:6px 10px;
-  color:var(--gold);
-  font-weight:800;
-}
+
+/* ================= GRID ================= */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-top:18px;
+  gap:16px;
+  margin-top:16px;
 }
-.label{color:#9fb0ff;font-size:12px}
-.value{font-weight:600}
-.full{grid-column:1/3}
-.footer{text-align:center;margin-top:14px;color:#9aa3c7;font-size:12px}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+}
 
-/* SCHEDULE */
-.schedule{
-  margin-top:18px;
-  background:rgba(255,255,255,.03);
-  border-radius:14px;
-  padding:14px;
+/* ================= CARD ================= */
+.card{
+  background:rgba(15,25,60,.85);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:22px;
+  padding:16px;
 }
-.row{
+
+/* ================= TICKET ================= */
+.ticket{
+  position:relative;
+  padding:16px;
+  border-radius:22px;
+  background:linear-gradient(180deg,#0d1b3d,#070d22);
+}
+.ticket-header{
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:12px;
+  background:linear-gradient(90deg,#f7d98a,#ffe8aa);
+  color:#111;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:900;
+}
+.ticket-body{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:14px;
+}
+@media(max-width:520px){
+  .ticket-body{grid-template-columns:1fr}
+}
+.label{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#f7d98a;
+  font-weight:800;
+}
+.row{margin:6px 0}
+.row span{font-weight:700}
+.stamp{
+  position:absolute;
+  top:70px;
+  right:16px;
+  transform:rotate(-10deg);
+  border:2px solid #f7d98a;
+  padding:10px;
+  font-size:12px;
+  font-weight:900;
+  color:#f7d98a;
+  border-radius:14px;
+}
+.powered{
+  text-align:center;
+  margin-top:12px;
+  font-size:12px;
+  opacity:.7;
+}
+
+/* ================= SCHEDULE ================= */
+.schedule{
+  margin-top:16px;
+}
+.schedule .item{
+  display:flex;
+  gap:10px;
+  padding:12px;
+  border-radius:16px;
+  background:rgba(255,255,255,.05);
   margin-bottom:10px;
 }
-.box{
-  flex:1;
-  background:rgba(255,255,255,.04);
-  padding:12px;
-  border-radius:12px;
-}
-.sync{
-  margin-top:10px;
+.calendar-btn{
   width:100%;
-  background:var(--grad);
+  padding:12px;
   border:none;
   border-radius:999px;
-  padding:14px;
-  font-weight:700;
-  cursor:pointer;
+  font-weight:900;
+  background:linear-gradient(90deg,#ff4fd8,#8b5cf6,#4cc9ff);
+  margin-top:8px;
 }
 
-/* RIGHT */
-.right{
-  background:linear-gradient(180deg,#0d1734,#070e22);
-  border-radius:18px;
-  padding:20px;
-  border:1px solid var(--border);
+/* ================= COUNTDOWN ================= */
+.countdown{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:center;
 }
 .timer{
   display:flex;
   gap:10px;
-  margin:14px 0;
 }
-.tbox{
-  flex:1;
-  background:rgba(255,255,255,.05);
-  border-radius:12px;
-  padding:12px;
+.timebox{
+  width:70px;
   text-align:center;
+  padding:10px;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
 }
 .join{
-  width:100%;
-  margin-top:10px;
-  background:var(--grad);
+  margin-top:6px;
+  padding:12px 22px;
   border:none;
-  padding:14px;
   border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
+  font-weight:900;
+  background:linear-gradient(90deg,#ff4fd8,#8b5cf6,#4cc9ff);
 }
-.small{font-size:12px;color:#b8c1ff}
 
-/* MOBILE */
-@media(max-width:600px){
-  .pass-header{flex-direction:column;gap:6px}
-  .stamp{top:96px}
+/* ================= RESCHEDULE ================= */
+.reschedule{
+  margin-top:10px;
+}
+.reschedule select,.reschedule input{
+  width:100%;
+  padding:10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.15);
+  background:#060b14;
+  color:#fff;
+  margin-top:6px;
+}
+
+/* ================= MOBILE ================= */
+@media(max-width:520px){
+  .status{font-size:13px}
+  .timebox{width:64px}
 }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<!-- SECTION 1 -->
-<div class="header">
-  <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg"/>
-  <div class="locked">✅ Your trial class is locked in!</div>
-</div>
-
-<!-- SECTION 2 -->
-<div class="wrapper">
-
-  <!-- LEFT -->
-  <div>
-    <div class="pass">
-      <div class="pass-header">
-        🎫 OFFICIAL FREE TRIAL PASS
-        <span>[ VALUE: $30 – WAIVED ]</span>
-      </div>
-
-      <div class="stamp">VALUE WAIVED</div>
-
-      <div class="grid">
-        <div>
-          <div class="label">Student Name</div>
-          <div class="value" id="child_name">—</div>
-        </div>
-        <div>
-          <div class="label">Grade</div>
-          <div class="value" id="child_grade">—</div>
-        </div>
-        <div>
-          <div class="label">Parent Name</div>
-          <div class="value" id="parent_name">—</div>
-        </div>
-        <div>
-          <div class="label">Parent Phone</div>
-          <div class="value" id="parent_phone">—</div>
-        </div>
-        <div class="full">
-          <div class="label">Course</div>
-          <div class="value" id="course_name">—</div>
-        </div>
-      </div>
-
-      <div class="footer">Powered by Unischooly</div>
-    </div>
-
-    <div class="schedule">
-      <div class="row">
-        🚀 <strong>Ready for Blast Off!!!</strong>
-      </div>
-      <div class="row">
-        <div class="box" id="demo_date">Date</div>
-        <div class="box" id="demo_time">Time</div>
-      </div>
-      <button class="sync">📅 Initiate Calendar Sync</button>
-    </div>
+  <!-- SECTION 1 -->
+  <div class="topbar">
+    <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg">
+    <div class="status">✅ Your trial class is locked in!</div>
   </div>
 
-  <!-- RIGHT -->
-  <div class="right">
-    <h2 id="welcome">Welcome to your Trial Class</h2>
-    <div class="timer">
-      <div class="tbox"><div id="d">0</div><small>Days</small></div>
-      <div class="tbox"><div id="h">0</div><small>Hours</small></div>
-      <div class="tbox"><div id="m">0</div><small>Min</small></div>
-      <div class="tbox"><div id="s">0</div><small>Sec</small></div>
+  <!-- SECTION 2 -->
+  <div class="grid">
+
+    <!-- LEFT -->
+    <div class="card">
+      <div class="ticket">
+        <div class="ticket-header">
+          <div>🎫 OFFICIAL FREE TRIAL PASS</div>
+          <div>$30 – WAIVED</div>
+        </div>
+
+        <div class="stamp">VALUE<br>WAIVED</div>
+
+        <div class="ticket-body">
+          <div>
+            <div class="label">Admit One Student</div>
+            <div class="row">Name: <span id="child_name">—</span></div>
+            <div class="row">Grade: <span id="child_grade">—</span></div>
+            <div class="label">Course</div>
+            <div class="row"><span id="course_name">—</span></div>
+          </div>
+          <div>
+            <div class="label">Parent Confirmation</div>
+            <div class="row">Name: <span id="parent_name">—</span></div>
+            <div class="row">Phone: <span id="parent_phone">—</span></div>
+            <div class="row">Email: <span id="parent_email">—</span></div>
+            <div class="row">[Valid for 1 Session]</div>
+          </div>
+        </div>
+        <div class="powered">Powered by <b>Unischooly</b></div>
+      </div>
+
+      <div class="schedule">
+        <div class="item">📅 <span id="demo_date">—</span></div>
+        <div class="item">⏰ <span id="demo_time">—</span> (<span id="demo_tz">—</span>)</div>
+        <button class="calendar-btn">📅 Initiate Calendar Sync</button>
+      </div>
     </div>
-    <button class="join">▶ Join Class</button>
-    <p class="small">By clicking join class, you agree to <u>Terms & Conditions</u></p>
+
+    <!-- RIGHT -->
+    <div class="card">
+      <h2>Welcome to <span id="welcome_name">—</span>'s <span id="welcome_course">Trial Class</span></h2>
+
+      <div class="countdown">
+        <div class="timer">
+          <div class="timebox"><div id="d">0</div>Days</div>
+          <div class="timebox"><div id="h">0</div>Hrs</div>
+          <div class="timebox"><div id="m">0</div>Min</div>
+          <div class="timebox"><div id="s">0</div>Sec</div>
+        </div>
+        <button class="join" disabled>▶ Join Class</button>
+      </div>
+
+      <div class="reschedule">
+        <h4>Reschedule</h4>
+        <input type="date">
+        <input type="text" placeholder="10:00-11:00">
+        <select>
+          <option>Asia/Dubai</option>
+          <option>Europe/London</option>
+          <option>Asia/Kolkata</option>
+        </select>
+      </div>
+    </div>
+
   </div>
-
 </div>
-
-<script>
-const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-const supabase = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-(async()=>{
- const id = new URLSearchParams(location.search).get("iduuid");
- if(!id) return;
- const {data}=await supabase.from("demo_leads").select("*").eq("id",id).single();
- if(!data) return;
-
- child_name.textContent=data.child_name;
- child_grade.textContent=data.child_grade;
- parent_name.textContent=data.parent_name;
- parent_phone.textContent=`${data.phone_country_code||""} ${data.phone_number}`;
- course_name.textContent=data.course_id==1?"Coding Trial Class":"Trial Class";
- welcome.textContent=`Welcome to ${data.child_name}'s Trial Class`;
- demo_date.textContent=data.preferred_date||"—";
- demo_time.textContent=data.preferred_time_slot||"—";
-})();
-</script>
-
 </body>
 </html>

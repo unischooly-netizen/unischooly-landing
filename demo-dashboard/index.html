@@ -465,7 +465,84 @@
       font-size:14px;
     }
 
-  </style>
+  
+
+/* =========================================================
+   Dark-theme overrides for imported sections (3-8)
+   (Prevents white blocks and keeps everything on-brand)
+========================================================= */
+#student-projects-section,
+#testimonials-section,
+.unischooly-tabbed-faq-section{
+  background: transparent !important;
+}
+
+#student-projects-section .projects-wrapper,
+#testimonials-section .testimonials-container,
+.unischooly-tabbed-faq-section .container{
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,.45) !important;
+}
+
+#student-projects-section h2,
+#student-projects-section h3,
+#testimonials-section h2,
+#testimonials-section h3,
+.unischooly-tabbed-faq-section h2,
+.unischooly-tabbed-faq-section h3{
+  color: #eaf0ff !important;
+}
+
+#student-projects-section p,
+#testimonials-section p,
+.unischooly-tabbed-faq-section p,
+.unischooly-tabbed-faq-section .tabbed-faq-subtitle{
+  color: rgba(234,240,255,.78) !important;
+}
+
+#student-projects-section .project-card,
+#testimonials-section .testimonial-card,
+.instructor-card,
+.unischooly-tabbed-faq-section .faq-item,
+.unischooly-tabbed-faq-section .tabbed-faq-item{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  color: rgba(234,240,255,.86) !important;
+}
+
+#student-projects-section .project-card * ,
+#testimonials-section .testimonial-card *{
+  color: inherit;
+}
+
+#student-projects-section .projects-btn,
+#student-projects-section .projects-secondary-btn{
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  color: rgba(234,240,255,.9) !important;
+}
+
+#student-projects-section .projects-secondary-btn:hover{
+  background: rgba(255,255,255,.10) !important;
+}
+
+#testimonials-section .testimonial-name,
+#testimonials-section .testimonial-role{
+  color: rgba(234,240,255,.88) !important;
+}
+
+#testimonials-section .testimonial-text{
+  color: rgba(234,240,255,.75) !important;
+}
+
+/* Remove any stray “HTML” label blocks if present */
+.html-label,
+.section-label{
+  display:none !important;
+}
+</style>
 
   <!-- ===== Merge user sections CSS ===== -->
   <style>
@@ -1719,7 +1796,6 @@
     </div>
 
     <!-- SECTION 3 - Projects by Kids (merged) -->
-    HTML
 
 <!-- Load Lottie (only needed once on the page; safe to include again) -->
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -5270,36 +5346,48 @@ END:VCALENDAR`;
     }
 
     async function fetchBooking(){
-      if(!bookingUUID){ showMissing(); return null; }
-      if(!supabase){
-        // dev mode
-        return {
-          child_name:"Student Name",
-          grade:"4th",
-          parent_name:"Parent Name",
-          parent_phone:"+1 555-222-3344",
-          parent_email:"parent@mail.com",
-          course_id: courseId,
-          demo_start_at: new Date(Date.now()+1000*60*60*5).toISOString(),
-          demo_end_at: new Date(Date.now()+1000*60*60*6).toISOString(),
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          meet_link:"https://meet.google.com/"
-        };
+  try{
+    const q1 = await supabase
+      .from("demo_leads")
+      .select("*")
+      .eq("booking_uuid", bookingUUID)
+      .maybeSingle();
+
+    if(q1.error){
+      console.error("Supabase error (demo_leads booking_uuid):", q1.error);
+      return {__error: q1.error};
+    }
+    if(q1.data) return q1.data;
+
+    // Fallbacks (in case your column differs)
+    const q2 = await supabase
+      .from("demo_leads")
+      .select("*")
+      .eq("bookingUUID", bookingUUID)
+      .maybeSingle();
+
+    if(q2 && q2.data) return q2.data;
+
+    return null;
+  }catch(e){
+    console.error("fetchBooking exception:", e);
+    return {__error: e};
+  }
+};
       }
 
       // Update this table/columns to match your schema if needed.
       const { data, error } = await supabase
-  .from("demo_leads")
-  .select("*")
-  .eq("booking_uuid", bookingUUID)
-  .single();
+        .from("demo_leads")
+        .select("*")
+        .eq("booking_uuid", bookingUUID)
+        .maybeSingle();
 
-if (error || !data) {
-  console.error("Booking not found", error);
-  showBookingNotFound(); // <-- make sure this exists
-  return;
-}
-return data;
+      if(error || !data){
+        console.error(error);
+        return null;
+      }
+      return data;
     }
 
     /*******************************
@@ -5759,15 +5847,30 @@ return data;
     (async function init(){
       setSkeleton(true);
       booking = await fetchBooking();
-      if(!booking){
-        setSkeleton(false);
-        document.querySelector(".grid").innerHTML = `
-          <div class="panel pad">
-            <h2 style="margin:0 0 10px">Booking not found</h2>
-            <div class="warn">We couldn't find a booking for this bookingUUID. Please double-check the link.</div>
-          </div>`;
-        return;
-      }
+
+  // If we hit a Supabase/RLS/config error, show it clearly (so you don't think booking is missing)
+  if(booking && booking.__error){
+    setSkeleton(false);
+    const errMsg = (booking.__error && (booking.__error.message || booking.__error.error_description || booking.__error.toString())) || "Unknown error";
+    document.querySelector(".grid").innerHTML = `
+      <div class="card booking-not-found" style="grid-column:1/-1">
+        <h2 style="margin:0 0 10px 0">Data load failed</h2>
+        <p style="margin:0;color:rgba(255,255,255,.82)">We couldn't read your booking from Supabase. This is usually caused by <b>RLS policy</b> or a <b>wrong anon key / project URL</b>.</p>
+        <div style="margin-top:12px;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px; color:rgba(255,255,255,.85); white-space:pre-wrap">${errMsg}</div>
+        <p style="margin:12px 0 0 0;color:rgba(255,255,255,.7);font-size:13px">If you want, send me a screenshot of your Supabase RLS policy for <b>demo_leads</b> and I'll tell you exactly what to change.</p>
+      </div>`;
+    return;
+  }
+
+  if(!booking){
+    setSkeleton(false);
+    document.querySelector(".grid").innerHTML = `
+      <div class="card booking-not-found" style="grid-column:1/-1">
+        <h2 style="margin:0 0 10px 0">Booking not found</h2>
+        <p style="margin:0;color:rgba(255,255,255,.82)">We couldn't find a booking for this bookingUUID. Please double-check the link.</p>
+      </div>`;
+    return;
+  }
       setSkeleton(false);
       renderBooking();
     })();

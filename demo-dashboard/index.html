@@ -1,281 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Unischooly Demo Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<title>Unischooly Trial Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Supabase CDN (REQUIRED) -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, -apple-system, sans-serif;
-      background: radial-gradient(1200px 600px at top, #0b1c35, #05080f);
-      color: #fff;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(1200px 600px at top, #0b1d39, #050914);
+  color: #fff;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+/* ---------- HEADER ---------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 48px;
+}
 
-    .badge {
-      background: #1fbf75;
-      padding: 10px 18px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
+.header img {
+  height: 36px;
+}
 
-    .card {
-      background: linear-gradient(180deg, #0f1e3a, #091425);
-      border-radius: 20px;
-      padding: 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
+.locked {
+  background: #22c55e;
+  color: #022c16;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+}
 
-    /* SECTION 1 */
-    .pass-header {
-      background: #ffe08a;
-      color: #111;
-      padding: 12px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
+/* ---------- LAYOUT ---------- */
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px 48px 80px;
+}
 
-    .pass-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px 40px;
-    }
+.section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
 
-    .label {
-      opacity: 0.7;
-      font-size: 14px;
-    }
+/* ---------- PASS CARD ---------- */
+.pass-card {
+  background: linear-gradient(180deg, #0c1e3c, #060b16);
+  border-radius: 18px;
+  padding: 26px;
+  border: 1px solid rgba(255,215,128,0.35);
+  box-shadow: 0 0 40px rgba(255,215,128,0.12);
+  transition: box-shadow 0.3s ease;
+}
 
-    .value {
-      font-size: 16px;
-      margin-top: 4px;
-    }
+.pass-card:hover {
+  box-shadow: 0 0 60px rgba(255,215,128,0.25);
+}
 
-    .powered {
-      text-align: center;
-      opacity: 0.6;
-      margin-top: 20px;
-      font-size: 13px;
-    }
+.pass-header {
+  background: linear-gradient(90deg, #ffe29a, #ffd36a);
+  color: #1a1200;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-    /* SECTION 2 */
-    .schedule-header {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
+.pass-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  font-size: 14px;
+}
 
-    .countdown {
-      display: flex;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
+.label {
+  color: #9fb3d9;
+  font-size: 12px;
+}
 
-    .time-box {
-      background: #0d1a33;
-      border-radius: 14px;
-      padding: 14px 16px;
-      text-align: center;
-      min-width: 80px;
-    }
+.value {
+  font-weight: 600;
+  margin-top: 4px;
+}
 
-    .time-box strong {
-      font-size: 20px;
-      display: block;
-    }
+.footer-note {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 12px;
+  opacity: 0.7;
+}
 
-    .join-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
+/* ---------- SCHEDULE ---------- */
+.schedule {
+  margin-top: 28px;
+  background: linear-gradient(180deg, #0c1e3c, #060b16);
+  border-radius: 18px;
+  padding: 24px;
+}
 
-    .join-btn {
-      background: linear-gradient(90deg, #ff5aa5, #ff8c5a);
-      border: none;
-      color: #111;
-      padding: 14px 28px;
-      border-radius: 999px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+.timer {
+  display: flex;
+  gap: 18px;
+  margin: 18px 0;
+}
 
-    .disclaimer {
-      font-size: 12px;
-      opacity: 0.6;
-      margin-top: 10px;
-    }
+.time-box {
+  background: rgba(255,255,255,0.06);
+  padding: 14px 18px;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 80px;
+}
 
-    .link {
-      color: #6aa8ff;
-      text-decoration: none;
-      font-size: 14px;
-    }
-  </style>
+.time-box span {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.join-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.join-btn {
+  background: linear-gradient(90deg, #ff6aa2, #ff956a);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.join-btn.enabled {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.disclaimer {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+/* ---------- RIGHT PANEL ---------- */
+.right-panel {
+  background: linear-gradient(180deg, #0c1e3c, #060b16);
+  border-radius: 18px;
+  padding: 28px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 26px;
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
 
-    <div class="badge">✅ Your trial class is locked in!</div>
+<!-- HEADER -->
+<div class="header">
+  <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg">
+  <div class="locked">✅ Your trial class is locked in!</div>
+</div>
 
-    <!-- SECTION 1: OFFICIAL FREE TRIAL PASS -->
-    <div class="card">
-      <div class="pass-header">
-        <span>OFFICIAL FREE TRIAL PASS</span>
-        <span>[ VALUE: $30 – WAIVED ]</span>
+<div class="container">
+  <div class="section">
+
+    <!-- LEFT -->
+    <div>
+      <div class="pass-card">
+        <div class="pass-header">
+          🎫 OFFICIAL FREE TRIAL PASS
+          <span>[ VALUE: $30 – WAIVED ]</span>
+        </div>
+
+        <div class="pass-grid">
+          <div>
+            <div class="label">Student Name</div>
+            <div class="value" id="childName">—</div>
+          </div>
+          <div>
+            <div class="label">Grade</div>
+            <div class="value" id="childGrade">—</div>
+          </div>
+
+          <div>
+            <div class="label">Course</div>
+            <div class="value" id="courseName">—</div>
+          </div>
+          <div>
+            <div class="label">Parent Name</div>
+            <div class="value" id="parentName">—</div>
+          </div>
+
+          <div>
+            <div class="label">Parent Email</div>
+            <div class="value" id="parentEmail">—</div>
+          </div>
+          <div>
+            <div class="label">Parent Phone</div>
+            <div class="value" id="parentPhone">—</div>
+          </div>
+        </div>
+
+        <div class="footer-note">Powered by <strong>Unischooly</strong></div>
       </div>
 
-      <div class="pass-grid">
-        <div>
-          <div class="label">Student Name</div>
-          <div class="value" id="studentName">—</div>
-        </div>
-        <div>
-          <div class="label">Grade</div>
-          <div class="value" id="grade">—</div>
+      <div class="schedule">
+        🚀 <strong>Ready for Blast Off!!!</strong>
+
+        <div class="timer">
+          <div class="time-box"><span id="d">0</span>Days</div>
+          <div class="time-box"><span id="h">0</span>Hours</div>
+          <div class="time-box"><span id="m">0</span>Min</div>
+          <div class="time-box"><span id="s">0</span>Sec</div>
         </div>
 
-        <div>
-          <div class="label">Course</div>
-          <div class="value" id="course">—</div>
-        </div>
-        <div>
-          <div class="label">Parent Name</div>
-          <div class="value" id="parentName">—</div>
+        <div class="join-row">
+          <a href="#" style="color:#60a5fa;font-size:14px">Reschedule Class</a>
+          <button id="joinBtn" class="join-btn">Join Class</button>
         </div>
 
-        <div>
-          <div class="label">Parent Email</div>
-          <div class="value" id="parentEmail">—</div>
-        </div>
-        <div>
-          <div class="label">Parent Phone</div>
-          <div class="value" id="parentPhone">—</div>
+        <div class="disclaimer">
+          By clicking Join Class, you agree to <u>Terms & Conditions</u>.
         </div>
       </div>
-
-      <div class="powered">Powered by <strong>Unischooly</strong></div>
     </div>
 
-    <!-- SECTION 2: CLASS SCHEDULE -->
-    <div class="card">
-      <div class="schedule-header">Class Schedule</div>
-
-      <div class="countdown">
-        <div class="time-box"><strong id="d">0</strong>Days</div>
-        <div class="time-box"><strong id="h">0</strong>Hours</div>
-        <div class="time-box"><strong id="m">0</strong>Min</div>
-        <div class="time-box"><strong id="s">0</strong>Sec</div>
-      </div>
-
-      <div class="join-row">
-        <a class="link" href="#">Reschedule Class</a>
-        <button class="join-btn">Join Class</button>
-      </div>
-
-      <div class="disclaimer">
-        By clicking Join Class, you agree to <a class="link" href="#">Terms & Conditions</a>.
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <h2 id="welcomeText">Welcome to your Trial Class</h2>
+      <p>Join class in:</p>
+      <div class="timer">
+        <div class="time-box"><span id="rd">0</span>Days</div>
+        <div class="time-box"><span id="rh">0</span>Hours</div>
+        <div class="time-box"><span id="rm">0</span>Min</div>
+        <div class="time-box"><span id="rs">0</span>Sec</div>
       </div>
     </div>
 
   </div>
+</div>
 
-  <script>
-    // --- CONFIG ---
-    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+<script>
+const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const supabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+const params = new URLSearchParams(window.location.search);
+const iduuid = params.get("iduuid");
 
-    // --- HELPERS ---
-    function getIdUUID() {
-      return new URLSearchParams(window.location.search).get("iduuid");
+if (!iduuid) {
+  alert("Booking UUID missing");
+  throw new Error("Missing UUID");
+}
+
+async function loadData() {
+  const { data, error } = await supabase
+    .from("demo_leads")
+    .select("*")
+    .eq("id", iduuid)
+    .single();
+
+  if (error || !data) {
+    alert("Booking not found");
+    return;
+  }
+
+  document.getElementById("childName").innerText = data.child_name;
+  document.getElementById("childGrade").innerText = data.child_grade;
+  document.getElementById("parentName").innerText = data.parent_name;
+  document.getElementById("parentEmail").innerText = data.parent_email;
+  document.getElementById("parentPhone").innerText =
+    (data.phone_country_code || "") + " " + data.phone_number;
+
+  const courseMap = {
+    1: "Coding",
+    2: "Python",
+    3: "Website Development",
+    4: "Generative AI",
+    5: "Roblox",
+    6: "Chess",
+    7: "Mathematics"
+  };
+
+  document.getElementById("courseName").innerText =
+    courseMap[data.course_id] || "Course";
+
+  document.getElementById("welcomeText").innerText =
+    `Welcome to ${data.child_name}'s ${courseMap[data.course_id] || ""} Trial Class`;
+
+  startTimer(new Date(data.preferred_date + "T" + data.preferred_time_slot));
+}
+
+function startTimer(target) {
+  setInterval(() => {
+    const diff = target - new Date();
+    if (diff <= 0) return;
+
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor(diff / 3600000) % 24;
+    const m = Math.floor(diff / 60000) % 60;
+    const s = Math.floor(diff / 1000) % 60;
+
+    ["d","rd"].forEach(id=>document.getElementById(id).innerText=d);
+    ["h","rh"].forEach(id=>document.getElementById(id).innerText=h);
+    ["m","rm"].forEach(id=>document.getElementById(id).innerText=m);
+    ["s","rs"].forEach(id=>document.getElementById(id).innerText=s);
+
+    if (diff <= 300000) {
+      document.getElementById("joinBtn").classList.add("enabled");
     }
+  }, 1000);
+}
 
-    function setText(id, value) {
-      document.getElementById(id).textContent = value || "—";
-    }
+loadData();
+</script>
 
-    // --- MAIN ---
-    async function loadDashboard() {
-      const iduuid = getIdUUID();
-      if (!iduuid) {
-        alert("Booking UUID missing");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("demo_leads")
-        .select("*")
-        .eq("id", iduuid)
-        .single();
-
-      if (error || !data) {
-        alert("Booking not found");
-        console.error(error);
-        return;
-      }
-
-      // SECTION 1
-      setText("studentName", data.child_name);
-      setText("grade", data.child_grade);
-      setText("course", data.course_id ? `Course ID ${data.course_id}` : "");
-      setText("parentName", data.parent_name);
-      setText("parentEmail", data.parent_email);
-      setText(
-        "parentPhone",
-        `${data.phone_country_code || ""} ${data.phone_number || ""}`
-      );
-
-      // SECTION 2 – Countdown
-      if (data.preferred_date && data.preferred_time_slot) {
-        startCountdown(
-          new Date(`${data.preferred_date} ${data.preferred_time_slot}`)
-        );
-      }
-    }
-
-    function startCountdown(targetDate) {
-      function tick() {
-        const diff = targetDate - new Date();
-        if (diff <= 0) return;
-
-        document.getElementById("d").textContent = Math.floor(diff / 86400000);
-        document.getElementById("h").textContent = Math.floor(diff / 3600000) % 24;
-        document.getElementById("m").textContent = Math.floor(diff / 60000) % 60;
-        document.getElementById("s").textContent = Math.floor(diff / 1000) % 60;
-      }
-      tick();
-      setInterval(tick, 1000);
-    }
-
-    loadDashboard();
-  </script>
 </body>
 </html>

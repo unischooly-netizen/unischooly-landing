@@ -5289,16 +5289,17 @@ END:VCALENDAR`;
 
       // Update this table/columns to match your schema if needed.
       const { data, error } = await supabase
-        .from("demo_leads")
-        .select("*")
-        .eq("booking_uuid", bookingUUID)
-        .maybeSingle();
+  .from("demo_leads")
+  .select("*")
+  .eq("booking_uuid", bookingUUID)
+  .single();
 
-      if(error || !data){
-        console.error(error);
-        return null;
-      }
-      return data;
+if (error || !data) {
+  console.error("Booking not found", error);
+  showBookingNotFound(); // <-- make sure this exists
+  return;
+}
+return data;
     }
 
     /*******************************

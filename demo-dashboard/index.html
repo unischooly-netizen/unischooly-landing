@@ -9,6 +9,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
+/* v4 patch: disclaimer smaller */
+.disclaimer, .join-disclaimer, .terms-disclaimer{font-size:12px;line-height:1.4;opacity:.85}
+
+/* v4 patch: footer full width */
+footer, .footer, .site-footer{width:100vw;max-width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw)}
+
     :root{
       --bg0:#070A12;
       --bg1:#0B1222;
@@ -602,7 +608,6 @@ footer, .footer, #site-footer, #footer {
   /* Section 3 - Projects */
   /* --- SECTION 8: STUDENT PROJECTS --- */
 #student-projects-section {
-    position: relative; /* For absolutely positioned Lottie */
     padding: 80px 20px;
     font-family: 'Poppins', sans-serif;
     background-color: #ffffff;
@@ -610,28 +615,9 @@ footer, .footer, #site-footer, #footer {
 }
 
 
-/* Confetti Lottie – ABOVE content but very light */
-.projects-lottie-bg {
-    position: absolute;
-    top: 80px;              /* sits around the title / top of grid */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1100px;
-    height: auto;
-    opacity: 0.35;          /* visible but not overpowering */
-    pointer-events: none;   /* so it doesn't block clicks */
-    z-index: 60;            /* ABOVE cards and title */
-}
-
-
 /* MOBILE CONFETTI */
 @media (max-width: 768px) {
-    .projects-lottie-bg {
-        top: 95px;
-        width: 700px;
-        opacity: 0.40;
     }
-}
 
 
 /* Section Header Styles */
@@ -1460,17 +1446,9 @@ footer, .footer, #site-footer, #footer {
     }
 
 
-    /* MOBILE: Adjust Lottie background so stars sit over heading & top of cards */
-    #section-11-lottie-bg {
-        top: -60px;       /* move animation upward so it covers heading area */
-        height: 220%;     /* extend down so stars appear over heading + cards */
-        width: 180%;      /* a bit wider so edges aren’t visible on swipe */
-        opacity: 0.28;    /* slightly stronger on mobile for visibility */
     }
-}
 
 
-/* --- SECTION 11 LOTTIE BACKGROUND (COMMON) --- */
 
 
 .unischooly-section-11 {
@@ -1479,21 +1457,7 @@ footer, .footer, #site-footer, #footer {
 }
 
 
-#section-11-lottie-bg {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140%;               /* desktop/base */
-    height: 140%;
-    z-index: 0;
-    pointer-events: none;      /* keep cards fully clickable */
-    opacity: 0.22;             /* subtle star effect */
-}
-
-
 /* keep existing content above the animated background */
-.unischooly-section-11 > *:not(#section-11-lottie-bg) {
     position: relative;
     z-index: 1;
 }
@@ -1850,25 +1814,10 @@ footer, .footer, #site-footer, #footer {
 
     <!-- SECTION 3 - Projects by Kids (merged) -->
 
-<!-- Load Lottie (only needed once on the page; safe to include again) -->
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-
 <!-- SECTION 8: STUDENT PROJECTS -->
 <section id="student-projects-section">
     
     <!-- Confetti Animation ABOVE the boxes & visible on content -->
-    <lottie-player
-        id="projects-lottie-bg"
-        class="projects-lottie-bg"
-        src="https://res.cloudinary.com/dpapyknn4/raw/upload/v1764002943/Confetti_ojbghq.json"
-        background="transparent"
-        speed="1"
-        loop
-        autoplay>
-    </lottie-player>
-
-
     <div class="container">
         <h2 class="projects-title">See amazing projects created by our students</h2>
 
@@ -2000,8 +1949,7 @@ footer, .footer, #site-footer, #footer {
         <!-- CTA Buttons -->
         <div class="projects-cta-container">
             <a href="https://www.unischooly.com/s/pages/projects" class="cta-button projects-more-btn">See more projects</a>
-            <a href="https://www.unischooly.com/signup" class="cta-button projects-trial-btn">Book a Free Trial Class</a>
-        </div>
+</div>
 
 
     </div>
@@ -3050,10 +2998,6 @@ footer, .footer, #site-footer, #footer {
 
     <!-- SECTION 5 - Instructors (merged) -->
 <section class="unischooly-section-11">
-    <!-- Background Lottie Container (Stars Animation) -->
-    <div id="section-11-lottie-bg"></div>
-
-
     <header class="section-header">
         <h2>Our Global Team of Instructors</h2>
         <p>Guiding stars committed to student success across all key subjects</p>
@@ -3083,8 +3027,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Coding**, Algorithms, C++, Java</div>
                         
                         <p class="bio-text">Expert in teaching logical thinking through code. Ready to start your journey into programming... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3106,8 +3049,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Python**, Data Science, Pandas, Numpy</div>
                         
                         <p class="bio-text">Making complex Python concepts simple and fun for all ages. Specializing in data analysis... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3128,8 +3070,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Web Dev**, HTML, CSS, JavaScript, React</div>
                         
                         <p class="bio-text">From wireframes to live sites, I guide students in building the web. Focus on modern design... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3150,8 +3091,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Mathematics**, Algebra, Calculus, Geometry</div>
                         
                         <p class="bio-text">Passionate about demystifying math and building strong foundations for college readiness... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3173,8 +3113,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Generative AI**, Stable Diffusion, Prompt Engineering</div>
                         
                         <p class="bio-text">Exploring the future of creativity and innovation with cutting-edge AI tools and concepts... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3196,8 +3135,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Roblox Studio**, Lua Programming, Game Design</div>
                         
                         <p class="bio-text">I help students turn their wildest ideas into playable worlds on Roblox using Lua scripting... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3219,8 +3157,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Chess**, Opening Theory, Endgames, Strategy</div>
                         
                         <p class="bio-text">Teaching the beautiful game of chess, from beginner moves to master strategy and tactics... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3241,8 +3178,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Coding**, Mobile App Development, Swift</div>
                         
                         <p class="bio-text">I focus on project-based learning to build real applications from scratch. Start innovating... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3264,8 +3200,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Python**, Web Scraping, Django/Flask</div>
                         
                         <p class="bio-text">Expert in teaching Python for backend development and data extraction... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3287,8 +3222,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Web Dev**, Responsive Design, Bootstrap, UI/UX</div>
                         
                         <p class="bio-text">Creating beautiful, user-friendly websites is my specialty. Learn design principles... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3310,8 +3244,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Mathematics**, Trigonometry, Statistics, Logic</div>
                         
                         <p class="bio-text">Making abstract math concepts intuitive and relatable for students of all levels... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3332,8 +3265,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Generative AI**, AI Ethics, Large Language Models</div>
                         
                         <p class="bio-text">Focusing on the responsible and creative application of AI technology... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3355,8 +3287,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Roblox Studio**, Scripting, monetization</div>
                         
                         <p class="bio-text">Turning young gamers into game creators with practical Roblox lessons... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3378,8 +3309,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Chess**, Tactics, Positional Play, Strategy</div>
                         
                         <p class="bio-text">Helping students improve concentration and strategic thinking through chess... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3400,8 +3330,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Coding**, Scratch, Game Development basics</div>
                         
                         <p class="bio-text">Fun, interactive coding lessons designed for absolute beginners and young learners... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3423,8 +3352,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Python**, Scientific Computing, Data Viz</div>
                         
                         <p class="bio-text">Bridging the gap between theory and practical application in data science... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3446,8 +3374,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Web Dev**, Full Stack, Node.js, Databases</div>
                         
                         <p class="bio-text">Teaching the complete journey of building and deploying a modern website... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3469,8 +3396,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Mathematics**, Aptitude, Quantitative Reasoning</div>
                         
                         <p class="bio-text">Specializing in preparing students for competitive exams using advanced math concepts... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3492,8 +3418,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Coding**, Block-based programming, Game Design</div>
                         
                         <p class="bio-text">I introduce the joy of creation through simple and engaging visual coding methods... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3515,8 +3440,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Python**, Scientific Libraries, Backend systems</div>
                         
                         <p class="bio-text">Advanced Python instruction focusing on performance and software engineering principles... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3537,8 +3461,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Web Dev**, Security, Cloud Deployment, AWS</div>
                         
                         <p class="bio-text">Building robust and scalable web applications with a focus on cloud architecture... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3560,8 +3483,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Mathematics**, Discrete Math, Logic, Problem Solving</div>
                         
                         <p class="bio-text">Encouraging critical thinking through challenging and engaging mathematical puzzles... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="instructor-card" onclick="window.location.href='https://www.unischooly.com/s/pages/teachers'">
@@ -3582,8 +3504,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Chess**, Middlegames, Calculation, Mind Training</div>
                         
                         <p class="bio-text">I focus on improving concentration and calculation skills through intense game analysis... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
 
 
@@ -3605,8 +3526,7 @@ footer, .footer, #site-footer, #footer {
                         <div class="info-line subject"><span class="icon">📚</span> **Coding**, Object-Oriented Programming, C#</div>
                         
                         <p class="bio-text">Dedicated to providing a strong foundation in core software development principles... <a href="https://www.unischooly.com/s/pages/teachers">Read More</a></p>
-                        <a href="https://www.unischooly.com/signup" class="btn-trial-class">Book a Free Trial Class</a>
-                    </div>
+</div>
                 </div>
                 
                 <div class="scroll-end-spacer"></div>
@@ -3625,23 +3545,7 @@ footer, .footer, #site-footer, #footer {
 </section>
 
 
-<!-- Lottie JS (Bodymovin) + Init for Background Animation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js" integrity="sha512-vuXyJ3kB8fX2j0drUXM32B3sXrIojt1zKp7kKI8LxCZrK3w7WveBz7uwqZCF1kJ1W28xV7UiVdz28kNvNVnovA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", init);
-        if (container && window.lottie) {
-            lottie.loadAnimation({
-                container: container,
-                renderer: "svg",
-                loop: true,
-                autoplay: true,
-                path: "https://res.cloudinary.com/dpapyknn4/raw/upload/v1764254118/Stars_-_winner_tyy29e.json"
-            });
-        }
-    });
-</script>
-
-    <!-- SECTION 6 - Animation (already merged) -->
+<!-- SECTION 6 - Animation (already merged) -->
 <section class="unischooly-mario-center-section">
     <div class="mario-animation-wrapper">
         <!-- The Left Brick -->
@@ -4281,18 +4185,6 @@ footer, .footer, #site-footer, #footer {
     position: relative;
 }
 
-/* Lottie overlay container (30% bigger, transparent) */
-.footer-lottie-robot {
-    position: absolute;
-    top: -80px;          /* spans white + top box + gradient */
-    right: 5%;
-    width: 420px;
-    height: 420px;
-    pointer-events: none;
-    z-index: 5;          /* above boxes and background */
-    background: transparent;
-}
-
 /* Common container */
 .unischooly-footer-step1 .footer-container {
     max-width: 1240px;
@@ -4774,13 +4666,6 @@ footer, .footer, #site-footer, #footer {
         row-gap: 24px;
     }
 
-    .footer-lottie-robot {
-        right: 4%;
-        width: 300px;
-        height: 300px;
-        top: -70px;
-    }
-
     .footer-mission-card {
         flex-direction: row;
     }
@@ -4833,14 +4718,6 @@ footer, .footer, #site-footer, #footer {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .footer-lottie-robot {
-        top: -40px;
-        right: 50%;
-        width: 260px;
-        height: 260px;
-        transform: translateX(50%);
-    }
-
     .footer-mission-card {
         flex-direction: column;
         align-items: flex-start;
@@ -4867,9 +4744,6 @@ footer, .footer, #site-footer, #footer {
 }
 </style><section class="unischooly-footer-step1">
 
-    <!-- LOTTIE OVERLAY -->
-    <div id="footer-lottie-robot" class="footer-lottie-robot"></div>
-
     <!-- TOP WHITE AREA WITH SKY-BLUE BOX -->
     <div class="footer-cta-top">
         <div class="footer-container">
@@ -4879,10 +4753,7 @@ footer, .footer, #site-footer, #footer {
                     <h2 class="footer-cta-heading">
                         Take your first step into the magical world of Education
                     </h2>
-                    <a href="https://www.unischooly.com/signup" class="footer-cta-btn">
-                        Book a Free Trial Class
-                    </a>
-                </div>
+</div>
 
                 <!-- kept just for structure; no image -->
                 <div class="footer-cta-image-wrap"></div>
@@ -5083,28 +4954,7 @@ footer, .footer, #site-footer, #footer {
         </div>
     </div>
 
-</section><script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script><script>
-  // Robust initialization – runs after everything is loaded
-  window.addEventListener('load', function () {
-    var container = document.getElementById('footer-lottie-robot');
-    if (!container || !window.lottie) return;
-
-    if (window.footerLottieInstance) {
-      try { window.footerLottieInstance.destroy(); } catch (e) {}
-      window.footerLottieInstance = null;
-    }
-
-    window.footerLottieInstance = window.lottie.loadAnimation({
-      container: container,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: 'https://res.cloudinary.com/dpapyknn4/raw/upload/v1764338205/Footer_jymcz1.json'
-    });
-  });
-</script>
-
-  </div>
+</section></div>
 
   <!-- Terms Modal -->
   <div class="modal-backdrop" id="tcModal">

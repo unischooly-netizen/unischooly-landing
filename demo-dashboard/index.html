@@ -2,269 +2,263 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Unischooly – Demo Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unischooly – Trial Dashboard</title>
 
-  <!-- Supabase -->
+  <!-- SUPABASE CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     body {
       margin: 0;
+      background: radial-gradient(circle at top, #0b1a2d, #05080f);
       font-family: Inter, system-ui, sans-serif;
-      background: radial-gradient(ellipse at top, #10182f 0%, #05070d 60%);
       color: #fff;
     }
 
     .container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 24px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .badge {
-      background: #1c3;
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-weight: 600;
-      color: #022;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
     }
 
     .card {
-      background: linear-gradient(160deg, #151a2d, #0b1020);
-      border-radius: 20px;
+      background: linear-gradient(180deg, #0e1b2e, #0a1220);
+      border-radius: 18px;
       padding: 24px;
-      position: relative;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+      margin-bottom: 28px;
     }
 
     .pass-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #ffdc8a;
-      color: #222;
+      background: #ffe08a;
+      color: #000;
       padding: 10px 16px;
       border-radius: 12px;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
-    .stamp {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      border: 2px dashed #ffdc8a;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #ffdc8a;
-      transform: rotate(-8deg);
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
     }
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      opacity: 0.95;
-    }
-
-    .muted {
-      opacity: 0.6;
+    .label {
+      opacity: 0.7;
       font-size: 13px;
+    }
+
+    .value {
+      font-size: 15px;
+      margin-top: 2px;
     }
 
     .center {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 13px;
-      opacity: 0.7;
+      opacity: 0.6;
     }
 
+    /* Section 2 */
     .schedule {
       display: flex;
-      gap: 12px;
-      margin: 16px 0;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
       flex-wrap: wrap;
-    }
-
-    .pill {
-      background: rgba(255,255,255,0.08);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-weight: 600;
     }
 
     .timer {
       display: flex;
       gap: 10px;
-      margin: 16px 0;
-      align-items: center;
     }
 
     .time-box {
-      background: rgba(255,255,255,0.08);
-      padding: 12px;
-      border-radius: 12px;
-      min-width: 70px;
+      background: #141f33;
+      padding: 10px 14px;
+      border-radius: 10px;
       text-align: center;
+      min-width: 60px;
+    }
+
+    .time-box strong {
+      display: block;
+      font-size: 18px;
     }
 
     .join-btn {
-      background: linear-gradient(135deg, #ff5ca8, #ff8a5c);
+      background: linear-gradient(90deg,#ff6aa2,#ff9f68);
       border: none;
-      padding: 14px 20px;
-      border-radius: 16px;
-      color: #fff;
-      font-weight: 700;
+      padding: 14px 26px;
+      border-radius: 30px;
+      font-size: 15px;
+      color: #000;
       cursor: pointer;
-      margin-left: auto;
+      font-weight: 600;
+    }
+
+    .disclaimer {
+      font-size: 12px;
+      opacity: 0.6;
+      margin-top: 10px;
     }
 
     .link {
-      color: #7da6ff;
+      color: #7ab7ff;
       cursor: pointer;
-      text-decoration: underline;
-      font-size: 14px;
-    }
-
-    @media (max-width: 900px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-      .join-btn {
-        width: 100%;
-        margin-top: 12px;
-      }
+      font-size: 13px;
+      margin-top: 8px;
+      display: inline-block;
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <header>
-    <h2>Unischooly</h2>
-    <div class="badge">✔ Your trial class is locked in!</div>
-  </header>
-
-  <div class="grid">
-
-    <!-- SECTION 1: FREE TRIAL PASS -->
-    <div class="card">
-      <div class="pass-header">
-        OFFICIAL FREE TRIAL PASS
-        <span>[ VALUE: $30 – WAIVED ]</span>
-      </div>
-
-      <div class="stamp">VALUE WAIVED</div>
-
-      <div class="row"><strong>Name:</strong> <span id="childName">—</span></div>
-      <div class="row"><strong>Grade:</strong> <span id="grade">—</span></div>
-      <div class="row"><strong>Course:</strong> <span id="course">—</span></div>
-
-      <hr style="opacity:.15;margin:16px 0">
-
-      <div class="row"><strong>Parent:</strong> <span id="parentName">—</span></div>
-      <div class="row"><strong>Email:</strong> <span id="email">—</span></div>
-      <div class="row"><strong>Phone:</strong> <span id="phone">—</span></div>
-
-      <div class="center">Powered by <strong>Unischooly</strong></div>
+  <!-- ================= SECTION 1 ================= -->
+  <div class="card">
+    <div class="pass-header">
+      <span>OFFICIAL FREE TRIAL PASS</span>
+      <span>[ VALUE: $30 – WAIVED ]</span>
     </div>
 
-    <!-- SECTION 2: CLASS SCHEDULE -->
-    <div class="card">
-      <h3>Class Schedule</h3>
-
-      <div class="schedule">
-        <div class="pill" id="classDate">—</div>
-        <div class="pill" id="classTime">—</div>
-        <div class="pill" id="classTZ">—</div>
+    <div class="grid">
+      <div>
+        <div class="label">Student Name</div>
+        <div class="value" id="studentName">—</div>
+      </div>
+      <div>
+        <div class="label">Grade</div>
+        <div class="value" id="grade">—</div>
       </div>
 
-      <div class="timer">
-        <div class="time-box"><div id="d">0</div><div class="muted">Days</div></div>
-        <div class="time-box"><div id="h">0</div><div class="muted">Hours</div></div>
-        <div class="time-box"><div id="m">0</div><div class="muted">Min</div></div>
-        <div class="time-box"><div id="s">0</div><div class="muted">Sec</div></div>
-
-        <button class="join-btn">Join Class</button>
+      <div>
+        <div class="label">Course</div>
+        <div class="value" id="course">—</div>
+      </div>
+      <div>
+        <div class="label">Parent Name</div>
+        <div class="value" id="parentName">—</div>
       </div>
 
-      <div class="muted">
-        By clicking join class, you agree to <span class="link">Terms & Conditions</span>.
+      <div>
+        <div class="label">Parent Email</div>
+        <div class="value" id="parentEmail">—</div>
       </div>
-
-      <div class="link" style="margin-top:10px" onclick="alert('Reschedule flow will open')">
-        Reschedule Class
+      <div>
+        <div class="label">Parent Phone</div>
+        <div class="value" id="parentPhone">—</div>
       </div>
     </div>
 
+    <div class="center">Powered by <strong>Unischooly</strong></div>
   </div>
+
+  <!-- ================= SECTION 2 ================= -->
+  <div class="card">
+    <h3>Class Schedule</h3>
+
+    <div class="schedule">
+      <div class="timer">
+        <div class="time-box">
+          <strong id="days">0</strong>Days
+        </div>
+        <div class="time-box">
+          <strong id="hours">0</strong>Hours
+        </div>
+        <div class="time-box">
+          <strong id="minutes">0</strong>Min
+        </div>
+        <div class="time-box">
+          <strong id="seconds">0</strong>Sec
+        </div>
+      </div>
+
+      <button class="join-btn">Join Class</button>
+    </div>
+
+    <div class="disclaimer">
+      By clicking Join Class, you agree to Terms & Conditions.
+    </div>
+
+    <div class="link">Reschedule Class</div>
+  </div>
+
 </div>
 
 <script>
-  const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-  const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-  const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON);
+/* ================= SUPABASE INIT ================= */
+const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
-  const params = new URLSearchParams(window.location.search);
-  const bookingUUID = params.get("bookingUUID");
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-  async function loadBooking() {
-    const { data, error } = await supabase
-      .from("demo_leads")
-      .select("*")
-      .eq("booking_uuid", bookingUUID)
-      .single();
+/* ================= FETCH DATA ================= */
+const params = new URLSearchParams(window.location.search);
+const bookingUUID = params.get("booking_uuid");
 
-    if (error || !data) {
-      console.error("Booking not found", error);
-      return;
-    }
+if (!bookingUUID) {
+  alert("Booking UUID missing");
+}
 
-    document.getElementById("childName").textContent = data.child_name;
-    document.getElementById("grade").textContent = data.child_grade;
-    document.getElementById("course").textContent = data.course_name || "Trial Class";
-    document.getElementById("parentName").textContent = data.parent_name;
-    document.getElementById("email").textContent = data.parent_email;
-    document.getElementById("phone").textContent = data.parent_phone;
+/* ================= MAIN ================= */
+(async function init() {
+  const { data, error } = await supabase
+    .from("demo_leads")
+    .select("*")
+    .eq("booking_uuid", bookingUUID)
+    .single();
 
-    const start = new Date(data.preferred_date + " " + data.preferred_time);
-    document.getElementById("classDate").textContent = start.toDateString();
-    document.getElementById("classTime").textContent = start.toLocaleTimeString();
-    document.getElementById("classTZ").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    startCountdown(start);
+  if (error || !data) {
+    console.error(error);
+    alert("Booking not found");
+    return;
   }
 
-  function startCountdown(target) {
-    setInterval(() => {
-      const diff = target - new Date();
-      if (diff <= 0) return;
+  // Section 1
+  document.getElementById("studentName").textContent = data.child_name;
+  document.getElementById("grade").textContent = data.grade;
+  document.getElementById("course").textContent = data.course;
+  document.getElementById("parentName").textContent = data.parent_name;
+  document.getElementById("parentEmail").textContent = data.parent_email;
+  document.getElementById("parentPhone").textContent = data.parent_phone;
 
-      document.getElementById("d").textContent = Math.floor(diff / 86400000);
-      document.getElementById("h").textContent = Math.floor(diff / 3600000) % 24;
-      document.getElementById("m").textContent = Math.floor(diff / 60000) % 60;
-      document.getElementById("s").textContent = Math.floor(diff / 1000) % 60;
-    }, 1000);
+  // Section 2 – Countdown
+  startCountdown(new Date(data.demo_start_time));
+})();
+
+/* ================= COUNTDOWN ================= */
+function startCountdown(targetDate) {
+  function tick() {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) return;
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor(diff / (1000 * 60 * 60)) % 24;
+    const m = Math.floor(diff / (1000 * 60)) % 60;
+    const s = Math.floor(diff / 1000) % 60;
+
+    days.textContent = d;
+    hours.textContent = h;
+    minutes.textContent = m;
+    seconds.textContent = s;
   }
 
-  if (bookingUUID) loadBooking();
+  tick();
+  setInterval(tick, 1000);
+}
 </script>
 
 </body>

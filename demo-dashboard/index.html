@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Unischooly – Trial Dashboard</title>
+  <title>Unischooly Demo Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- SUPABASE CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase CDN (REQUIRED) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <style>
     body {
       margin: 0;
-      background: radial-gradient(circle at top, #0b1a2d, #05080f);
-      font-family: Inter, system-ui, sans-serif;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: radial-gradient(1200px 600px at top, #0b1c35, #05080f);
       color: #fff;
     }
 
@@ -21,85 +22,104 @@
       padding: 0 20px;
     }
 
-    .card {
-      background: linear-gradient(180deg, #0e1b2e, #0a1220);
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
-      margin-bottom: 28px;
+    .badge {
+      background: #1fbf75;
+      padding: 10px 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 20px;
     }
 
+    .card {
+      background: linear-gradient(180deg, #0f1e3a, #091425);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    /* SECTION 1 */
     .pass-header {
+      background: #ffe08a;
+      color: #111;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 700;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #ffe08a;
-      color: #000;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 24px;
     }
 
-    .grid {
+    .pass-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 20px 40px;
     }
 
     .label {
       opacity: 0.7;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     .value {
-      font-size: 15px;
-      margin-top: 2px;
+      font-size: 16px;
+      margin-top: 4px;
     }
 
-    .center {
+    .powered {
       text-align: center;
-      margin-top: 18px;
-      font-size: 13px;
       opacity: 0.6;
+      margin-top: 20px;
+      font-size: 13px;
     }
 
-    /* Section 2 */
-    .schedule {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
+    /* SECTION 2 */
+    .schedule-header {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
     }
 
-    .timer {
+    .countdown {
       display: flex;
-      gap: 10px;
+      gap: 14px;
+      margin-bottom: 20px;
     }
 
     .time-box {
-      background: #141f33;
-      padding: 10px 14px;
-      border-radius: 10px;
+      background: #0d1a33;
+      border-radius: 14px;
+      padding: 14px 16px;
       text-align: center;
-      min-width: 60px;
+      min-width: 80px;
     }
 
     .time-box strong {
+      font-size: 20px;
       display: block;
-      font-size: 18px;
+    }
+
+    .join-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
     .join-btn {
-      background: linear-gradient(90deg,#ff6aa2,#ff9f68);
+      background: linear-gradient(90deg, #ff5aa5, #ff8c5a);
       border: none;
-      padding: 14px 26px;
-      border-radius: 30px;
-      font-size: 15px;
-      color: #000;
+      color: #111;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
-      font-weight: 600;
     }
 
     .disclaimer {
@@ -109,157 +129,153 @@
     }
 
     .link {
-      color: #7ab7ff;
-      cursor: pointer;
-      font-size: 13px;
-      margin-top: 8px;
-      display: inline-block;
+      color: #6aa8ff;
+      text-decoration: none;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
+  <div class="container">
 
-<div class="container">
+    <div class="badge">✅ Your trial class is locked in!</div>
 
-  <!-- ================= SECTION 1 ================= -->
-  <div class="card">
-    <div class="pass-header">
-      <span>OFFICIAL FREE TRIAL PASS</span>
-      <span>[ VALUE: $30 – WAIVED ]</span>
+    <!-- SECTION 1: OFFICIAL FREE TRIAL PASS -->
+    <div class="card">
+      <div class="pass-header">
+        <span>OFFICIAL FREE TRIAL PASS</span>
+        <span>[ VALUE: $30 – WAIVED ]</span>
+      </div>
+
+      <div class="pass-grid">
+        <div>
+          <div class="label">Student Name</div>
+          <div class="value" id="studentName">—</div>
+        </div>
+        <div>
+          <div class="label">Grade</div>
+          <div class="value" id="grade">—</div>
+        </div>
+
+        <div>
+          <div class="label">Course</div>
+          <div class="value" id="course">—</div>
+        </div>
+        <div>
+          <div class="label">Parent Name</div>
+          <div class="value" id="parentName">—</div>
+        </div>
+
+        <div>
+          <div class="label">Parent Email</div>
+          <div class="value" id="parentEmail">—</div>
+        </div>
+        <div>
+          <div class="label">Parent Phone</div>
+          <div class="value" id="parentPhone">—</div>
+        </div>
+      </div>
+
+      <div class="powered">Powered by <strong>Unischooly</strong></div>
     </div>
 
-    <div class="grid">
-      <div>
-        <div class="label">Student Name</div>
-        <div class="value" id="studentName">—</div>
-      </div>
-      <div>
-        <div class="label">Grade</div>
-        <div class="value" id="grade">—</div>
+    <!-- SECTION 2: CLASS SCHEDULE -->
+    <div class="card">
+      <div class="schedule-header">Class Schedule</div>
+
+      <div class="countdown">
+        <div class="time-box"><strong id="d">0</strong>Days</div>
+        <div class="time-box"><strong id="h">0</strong>Hours</div>
+        <div class="time-box"><strong id="m">0</strong>Min</div>
+        <div class="time-box"><strong id="s">0</strong>Sec</div>
       </div>
 
-      <div>
-        <div class="label">Course</div>
-        <div class="value" id="course">—</div>
-      </div>
-      <div>
-        <div class="label">Parent Name</div>
-        <div class="value" id="parentName">—</div>
+      <div class="join-row">
+        <a class="link" href="#">Reschedule Class</a>
+        <button class="join-btn">Join Class</button>
       </div>
 
-      <div>
-        <div class="label">Parent Email</div>
-        <div class="value" id="parentEmail">—</div>
-      </div>
-      <div>
-        <div class="label">Parent Phone</div>
-        <div class="value" id="parentPhone">—</div>
+      <div class="disclaimer">
+        By clicking Join Class, you agree to <a class="link" href="#">Terms & Conditions</a>.
       </div>
     </div>
 
-    <div class="center">Powered by <strong>Unischooly</strong></div>
   </div>
 
-  <!-- ================= SECTION 2 ================= -->
-  <div class="card">
-    <h3>Class Schedule</h3>
+  <script>
+    // --- CONFIG ---
+    const SUPABASE_URL = "YOUR_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
 
-    <div class="schedule">
-      <div class="timer">
-        <div class="time-box">
-          <strong id="days">0</strong>Days
-        </div>
-        <div class="time-box">
-          <strong id="hours">0</strong>Hours
-        </div>
-        <div class="time-box">
-          <strong id="minutes">0</strong>Min
-        </div>
-        <div class="time-box">
-          <strong id="seconds">0</strong>Sec
-        </div>
-      </div>
+    const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
-      <button class="join-btn">Join Class</button>
-    </div>
+    // --- HELPERS ---
+    function getIdUUID() {
+      return new URLSearchParams(window.location.search).get("iduuid");
+    }
 
-    <div class="disclaimer">
-      By clicking Join Class, you agree to Terms & Conditions.
-    </div>
+    function setText(id, value) {
+      document.getElementById(id).textContent = value || "—";
+    }
 
-    <div class="link">Reschedule Class</div>
-  </div>
+    // --- MAIN ---
+    async function loadDashboard() {
+      const iduuid = getIdUUID();
+      if (!iduuid) {
+        alert("Booking UUID missing");
+        return;
+      }
 
-</div>
+      const { data, error } = await supabase
+        .from("demo_leads")
+        .select("*")
+        .eq("id", iduuid)
+        .single();
 
-<script>
-/* ================= SUPABASE INIT ================= */
-const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+      if (error || !data) {
+        alert("Booking not found");
+        console.error(error);
+        return;
+      }
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+      // SECTION 1
+      setText("studentName", data.child_name);
+      setText("grade", data.child_grade);
+      setText("course", data.course_id ? `Course ID ${data.course_id}` : "");
+      setText("parentName", data.parent_name);
+      setText("parentEmail", data.parent_email);
+      setText(
+        "parentPhone",
+        `${data.phone_country_code || ""} ${data.phone_number || ""}`
+      );
 
-/* ================= FETCH DATA ================= */
-const params = new URLSearchParams(window.location.search);
-const bookingUUID = params.get("booking_uuid");
+      // SECTION 2 – Countdown
+      if (data.preferred_date && data.preferred_time_slot) {
+        startCountdown(
+          new Date(`${data.preferred_date} ${data.preferred_time_slot}`)
+        );
+      }
+    }
 
-if (!bookingUUID) {
-  alert("Booking UUID missing");
-}
+    function startCountdown(targetDate) {
+      function tick() {
+        const diff = targetDate - new Date();
+        if (diff <= 0) return;
 
-/* ================= MAIN ================= */
-(async function init() {
-  const { data, error } = await supabase
-    .from("demo_leads")
-    .select("*")
-    .eq("booking_uuid", bookingUUID)
-    .single();
+        document.getElementById("d").textContent = Math.floor(diff / 86400000);
+        document.getElementById("h").textContent = Math.floor(diff / 3600000) % 24;
+        document.getElementById("m").textContent = Math.floor(diff / 60000) % 60;
+        document.getElementById("s").textContent = Math.floor(diff / 1000) % 60;
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
 
-  if (error || !data) {
-    console.error(error);
-    alert("Booking not found");
-    return;
-  }
-
-  // Section 1
-  document.getElementById("studentName").textContent = data.child_name;
-  document.getElementById("grade").textContent = data.grade;
-  document.getElementById("course").textContent = data.course;
-  document.getElementById("parentName").textContent = data.parent_name;
-  document.getElementById("parentEmail").textContent = data.parent_email;
-  document.getElementById("parentPhone").textContent = data.parent_phone;
-
-  // Section 2 – Countdown
-  startCountdown(new Date(data.demo_start_time));
-})();
-
-/* ================= COUNTDOWN ================= */
-function startCountdown(targetDate) {
-  function tick() {
-    const now = new Date();
-    const diff = targetDate - now;
-
-    if (diff <= 0) return;
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor(diff / (1000 * 60 * 60)) % 24;
-    const m = Math.floor(diff / (1000 * 60)) % 60;
-    const s = Math.floor(diff / 1000) % 60;
-
-    days.textContent = d;
-    hours.textContent = h;
-    minutes.textContent = m;
-    seconds.textContent = s;
-  }
-
-  tick();
-  setInterval(tick, 1000);
-}
-</script>
-
+    loadDashboard();
+  </script>
 </body>
 </html>

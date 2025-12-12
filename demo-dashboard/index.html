@@ -1,260 +1,1780 @@
-
-<!--
-UNISCHOOLY DEMO DASHBOARD
-SECTION 1 + SECTION 2 (ALL PHASES)
-NO LOTTIE | SUPABASE CONNECTED | PRODUCTION READY
--->
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Unischooly Trial Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Unischooly • Trial Dashboard</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase JS (no Lottie anywhere) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-:root{
-  --bg:#050b1a;
-  --card:#0b1530;
-  --gold:#f5d07c;
-  --grad:linear-gradient(90deg,#d16ba5,#86a8e7,#5ffbf1);
-}
+  <style>
+    :root{
+      --bg0:#060b14;
+      --bg1:#091327;
+      --card:#0d1833cc;
+      --card2:#0b142bdd;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#eaf1ff;
+      --muted:rgba(234,241,255,.70);
+      --muted2:rgba(234,241,255,.55);
+      --gold:#f7d98a;
+      --gold2:#caa24c;
+      --pink:#ff4fd8;
+      --purple:#8b5cf6;
+      --blue:#4cc9ff;
+      --teal:#2dd4bf;
+      --ok:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 20px 70px rgba(0,0,0,.45);
+      --r24:24px;
+      --r18:18px;
+      --r14:14px;
+    }
 
-*{box-sizing:border-box;font-family:Inter,system-ui;}
-body{
-  margin:0;
-  background:radial-gradient(circle at top,#0b1a3a,#020617);
-  color:#fff;
-}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 15%, rgba(139,92,246,.22) 0%, rgba(139,92,246,0) 55%),
+        radial-gradient(900px 600px at 82% 35%, rgba(76,201,255,.18) 0%, rgba(76,201,255,0) 50%),
+        radial-gradient(900px 600px at 35% 85%, rgba(45,212,191,.12) 0%, rgba(45,212,191,0) 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
 
-/* SECTION 1 */
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 32px;
-}
-.topbar img{height:42px}
-.locked{
-  background:var(--grad);
-  padding:10px 18px;
-  border-radius:999px;
-  font-weight:600;
-}
+    /* ====== SECTION 1 (Top bar) ====== */
+    .topbar{
+      width:100%;
+      padding:18px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:220px;
+    }
+    .brand img{
+      height:34px;
+      width:auto;
+      display:block;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+    }
+    .status-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(90deg, rgba(255,79,216,.22), rgba(139,92,246,.22), rgba(76,201,255,.22));
+      box-shadow: 0 12px 40px rgba(0,0,0,.30);
+      backdrop-filter: blur(10px);
+      font-weight:800;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .status-pill .check{
+      width:22px;height:22px;border-radius:999px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(16,185,129,.95));
+      box-shadow: 0 10px 20px rgba(34,197,94,.22);
+      color:#04110b;
+      font-weight:900;
+    }
 
-/* SECTION 2 LAYOUT */
-.section2{
-  display:grid;
-  grid-template-columns:1.2fr 1fr;
-  gap:28px;
-  padding:40px 32px;
-}
+    /* ====== SECTION 2 (Main layout) ====== */
+    .wrap{
+      width:min(1200px, 100%);
+      margin:0 auto;
+      padding:12px 22px 28px;
+    }
 
-/* PASS CARD */
-.pass{
-  background:linear-gradient(180deg,#111b3f,#070c1f);
-  border-radius:22px;
-  padding:28px;
-  border:2px solid rgba(255,215,140,.25);
-  box-shadow:0 0 40px rgba(245,208,124,.12);
-  transition:.3s;
-}
-.pass:hover{box-shadow:0 0 60px rgba(245,208,124,.35)}
-.pass-header{
-  display:flex;justify-content:space-between;
-  background:var(--gold);
-  color:#000;
-  padding:14px 20px;
-  border-radius:999px;
-  font-weight:800;
-}
-.pass-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:24px;
-}
-.label{opacity:.6;font-size:13px}
-.value{font-weight:600;margin-top:4px}
-.powered{text-align:center;opacity:.6;margin-top:20px}
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      align-items:start;
+    }
 
-/* SCHEDULE */
-.schedule{
-  background:linear-gradient(180deg,#0a1430,#050b1a);
-  border-radius:20px;
-  padding:26px;
-  margin-top:24px;
-}
-.timer{
-  display:flex;gap:14px;margin-top:16px
-}
-.tbox{
-  background:#0e1a3d;
-  padding:14px 18px;
-  border-radius:14px;
-  text-align:center;
-  min-width:80px;
-}
-.join{
-  background:linear-gradient(90deg,#ff758c,#ff9f68);
-  border:none;color:#000;
-  font-weight:700;
-  padding:14px 28px;
-  border-radius:999px;
-  cursor:not-allowed;
-  opacity:.5;
-}
-.join.active{cursor:pointer;opacity:1}
+    @media (max-width: 980px){
+      .grid2{grid-template-columns: 1fr;}
+      .topbar{padding:16px}
+      .wrap{padding:10px 16px 26px}
+      .brand img{height:30px}
+      .status-pill{font-size:14px}
+    }
 
-/* RIGHT PANEL */
-.right{
-  background:linear-gradient(180deg,#0b1638,#070b1c);
-  border-radius:22px;
-  padding:28px;
-}
-.funfacts{
-  margin-top:18px;
-  background:#0c1738;
-  border-radius:14px;
-  padding:16px;
-}
-.fact-nav{display:flex;justify-content:space-between;margin-top:8px}
+    .card{
+      background: linear-gradient(180deg, rgba(13,24,51,.88), rgba(8,14,28,.88));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r24);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow:hidden;
+      position:relative;
+    }
+    .card.pad{padding:18px}
+    .card h3{
+      margin:0 0 10px;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      margin:14px 0;
+    }
 
-/* MODAL */
-.modal{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.6);
-  display:none;align-items:center;justify-content:center;
-}
-.modal-content{
-  background:#0b1530;
-  padding:26px;
-  border-radius:18px;
-  max-width:520px;
-}
-</style>
+    /* ====== Ticket/Pass Card ====== */
+    .ticket{
+      padding:18px;
+      position:relative;
+      border-radius: var(--r24);
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 420px at 10% 10%, rgba(139,92,246,.20), rgba(139,92,246,0) 55%),
+        radial-gradient(900px 420px at 90% 30%, rgba(76,201,255,.18), rgba(76,201,255,0) 55%),
+        linear-gradient(180deg, rgba(9,16,34,.92), rgba(5,10,22,.92));
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      overflow:hidden;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+    .ticket:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 36px 120px rgba(0,0,0,.62);
+    }
+    .ticket::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(380px 240px at 14% 22%, rgba(255,79,216,.18), rgba(255,79,216,0) 60%),
+        radial-gradient(380px 240px at 88% 34%, rgba(45,212,191,.14), rgba(45,212,191,0) 65%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .perforation{
+      position:absolute;
+      top:70px;
+      left:50%;
+      transform:translateX(-50%);
+      width:1px;
+      height: calc(100% - 110px);
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(247,217,138,.8) 0 7px,
+        rgba(247,217,138,0) 7px 14px
+      );
+      opacity:.55;
+    }
+    .notch{
+      position:absolute;
+      top:50%;
+      width:26px;height:26px;
+      border-radius:999px;
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 10px 18px rgba(0,0,0,.55);
+    }
+    .notch.left{left:-13px}
+    .notch.right{right:-13px}
+
+    .ticketHeader{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f7d98a, #ffe6a3);
+      color:#10121a;
+      font-weight:900;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      box-shadow: 0 18px 40px rgba(0,0,0,.30);
+      z-index:2;
+    }
+    .ticketHeader .left{
+      display:flex; align-items:center; gap:10px;
+      font-size:14px;
+    }
+    .ticketHeader .right{
+      font-size:14px;
+      opacity:.95;
+    }
+
+    .ticketBody{
+      position:relative;
+      z-index:2;
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      padding:4px 6px 0;
+    }
+    @media (max-width: 520px){
+      .ticketBody{grid-template-columns:1fr}
+      .perforation{display:none}
+    }
+
+    .blockTitle{
+      font-size:12px;
+      letter-spacing:1.6px;
+      text-transform:uppercase;
+      color: rgba(247,217,138,.95);
+      font-weight:800;
+      margin:0 0 10px;
+    }
+
+    .field{
+      display:flex;
+      gap:10px;
+      align-items:baseline;
+      margin:8px 0;
+      line-height:1.1;
+    }
+    .field .k{color:rgba(234,241,255,.70); font-size:13px; width:120px; flex:0 0 120px;}
+    .field .v{font-weight:800; font-size:15px; color:var(--text); word-break:break-word;}
+    .courseLine{margin-top:14px}
+    .courseLabel{
+      color: rgba(247,217,138,.95);
+      font-weight:900;
+      letter-spacing:1.6px;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-bottom:8px;
+    }
+    .courseValue{
+      font-weight:900;
+      font-size:16px;
+    }
+
+    .validBadge{
+      margin-top:16px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px dashed rgba(247,217,138,.55);
+      color: rgba(234,241,255,.85);
+      background: rgba(247,217,138,.06);
+      font-weight:800;
+      font-size:13px;
+    }
+
+    .stamp{
+      position:absolute;
+      right:18px;
+      top:92px;
+      transform: rotate(-12deg);
+      width:110px;height:78px;
+      border-radius:16px;
+      border:2px solid rgba(247,217,138,.9);
+      background: rgba(0,0,0,.10);
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      display:grid;
+      place-items:center;
+      z-index:3;
+    }
+    .stamp span{
+      text-transform:uppercase;
+      font-weight:1000;
+      letter-spacing:2px;
+      font-size:12px;
+      color: rgba(247,217,138,.95);
+      text-align:center;
+      line-height:1.05;
+    }
+    .powered{
+      margin-top:16px;
+      text-align:center;
+      font-weight:700;
+      color: rgba(234,241,255,.60);
+      font-size:12px;
+      position:relative;
+      z-index:2;
+    }
+    .powered b{color: rgba(234,241,255,.84)}
+
+    /* ====== Schedule Card ====== */
+    .scheduleTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-weight:900;
+    }
+    .badge .emo{filter: drop-shadow(0 10px 20px rgba(0,0,0,.35))}
+    .scheduleGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    @media (max-width:520px){ .scheduleGrid{grid-template-columns:1fr} }
+
+    .mini{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r18);
+      padding:12px;
+      background: rgba(255,255,255,.04);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .mini .ico{
+      width:36px;height:36px;border-radius:12px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      display:grid;place-items:center;
+      flex:0 0 36px;
+    }
+    .mini .t{font-weight:900}
+    .mini .s{font-size:12px; color:var(--muted2); margin-top:2px}
+
+    .calendarBtn{
+      margin-top:12px;
+      width:100%;
+      border:none;
+      border-radius: 999px;
+      padding:12px 14px;
+      font-weight:1000;
+      font-size:14px;
+      cursor:pointer;
+      color:#0b0e16;
+      background: linear-gradient(90deg, #ff4fd8, #8b5cf6, #4cc9ff);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+      transform: translateZ(0);
+      animation: floaty 2.2s ease-in-out infinite;
+    }
+    @keyframes floaty{
+      0%,100%{transform: translateY(0)}
+      50%{transform: translateY(-2px)}
+    }
+    .calendarBtn:active{transform: translateY(0)}
+    .providers{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(234,241,255,.92);
+      font-weight:800;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip:hover{border-color: rgba(255,255,255,.18)}
+    .funfacts{
+      margin-top:14px;
+      border-top:1px dashed rgba(255,255,255,.12);
+      padding-top:12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .factsNav{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .navBtn{
+      width:34px;height:34px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(234,241,255,.9);
+      cursor:pointer;
+    }
+    .navBtn:hover{border-color: rgba(255,255,255,.18)}
+    .factBox{
+      flex:1;
+    }
+    .factTitle{
+      font-weight:1000;
+      margin-bottom:6px;
+    }
+    .factText{
+      color: rgba(234,241,255,.75);
+      font-size:13px;
+      line-height:1.35;
+      min-height:38px;
+    }
+
+    /* ====== Welcome + Countdown ====== */
+    .welcomeTitle{
+      font-size:22px;
+      margin:0 0 6px;
+      font-weight:1000;
+      letter-spacing:.2px;
+    }
+    .welcomeTitle .accent{
+      background: linear-gradient(90deg, #ff4fd8, #8b5cf6, #4cc9ff);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .subline{margin:0 0 12px; color:var(--muted)}
+
+    .countRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px;
+      border-radius: var(--r18);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .countLeft{min-width:200px}
+    .countLabel{font-size:12px; color:var(--muted2); margin-bottom:8px}
+    .timeBoxes{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .tb{
+      width:74px;
+      padding:10px 8px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      text-align:center;
+    }
+    .tb .n{font-weight:1000; font-size:18px}
+    .tb .l{font-size:10px; letter-spacing:1.2px; text-transform:uppercase; color:var(--muted2)}
+
+    .joinBtn{
+      border:none;
+      border-radius: 999px;
+      padding:12px 18px;
+      font-weight:1000;
+      font-size:14px;
+      cursor:pointer;
+      color:#0b0e16;
+      background: linear-gradient(90deg, #ff4fd8, #8b5cf6, #4cc9ff);
+      box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      min-width:170px;
+      justify-content:center;
+    }
+    .joinBtn[disabled]{
+      opacity:.50;
+      cursor:not-allowed;
+      filter: grayscale(.1);
+      box-shadow:none;
+    }
+    .disclaimer{
+      margin-top:10px;
+      font-size:12px;
+      color: rgba(234,241,255,.55);
+      line-height:1.35;
+    }
+    .disclaimer a{
+      color: rgba(247,217,138,.95);
+      font-weight:900;
+      text-decoration:underline;
+      cursor:pointer;
+    }
+
+    /* ====== Sharpen Brain ====== */
+    .brainHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .brainHeader h3{margin:0;font-size:16px;font-weight:1000}
+    .tabs{
+      display:flex;
+      gap:10px;
+      padding:8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+    .tab{
+      border:none;
+      cursor:pointer;
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:1000;
+      color: rgba(234,241,255,.85);
+      background: transparent;
+    }
+    .tab.active{
+      color:#0b0e16;
+      background: linear-gradient(90deg, #ff4fd8, #8b5cf6, #4cc9ff);
+      box-shadow: 0 14px 30px rgba(0,0,0,.28);
+    }
+
+    .panel{
+      border:1px dashed rgba(255,255,255,.14);
+      border-radius: var(--r18);
+      padding:14px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .puzzleQ{
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .puzzleMeta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .smallBtn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(234,241,255,.92);
+      padding:9px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-weight:900;
+    }
+    .smallBtn:hover{border-color: rgba(255,255,255,.18)}
+    .input{
+      width:100%;
+      border-radius: 999px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(234,241,255,.92);
+      outline:none;
+    }
+    .score{
+      font-weight:1000;
+      color: rgba(247,217,138,.95);
+    }
+
+    /* Memory */
+    .memGrid{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width:520px){ .memGrid{grid-template-columns:repeat(4, 1fr)} }
+    .memCard{
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      font-size:22px;
+      user-select:none;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .memCard:hover{border-color: rgba(255,255,255,.18); transform: translateY(-1px)}
+    .memCard.revealed{background: rgba(247,217,138,.10); border-color: rgba(247,217,138,.35)}
+    .memCard.matched{background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.35); cursor:default}
+
+    /* Sprint */
+    .sprintRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .sprintTimer{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-weight:1000;
+    }
+    .choices{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width:520px){ .choices{grid-template-columns:1fr} }
+    .choice{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      cursor:pointer;
+      font-weight:1000;
+      text-align:center;
+      user-select:none;
+    }
+    .choice:hover{border-color: rgba(255,255,255,.18)}
+    .choice.correct{border-color: rgba(34,197,94,.40); background: rgba(34,197,94,.10)}
+    .choice.wrong{border-color: rgba(239,68,68,.40); background: rgba(239,68,68,.10)}
+
+    /* Slide-over modals */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:stretch;
+      justify-content:flex-end;
+      z-index:50;
+    }
+    .overlay.open{display:flex}
+    .sheet{
+      width:min(520px, 92vw);
+      height:100%;
+      background: linear-gradient(180deg, rgba(13,24,51,.98), rgba(7,12,24,.98));
+      border-left:1px solid rgba(255,255,255,.10);
+      box-shadow: -40px 0 120px rgba(0,0,0,.55);
+      padding:18px;
+      overflow:auto;
+    }
+    .sheetHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .sheetHead h2{
+      margin:0;
+      font-size:18px;
+      font-weight:1000;
+    }
+    .closeX{
+      width:38px;height:38px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(234,241,255,.92);
+      cursor:pointer;
+      font-weight:1000;
+    }
+    .closeX:hover{border-color: rgba(255,255,255,.18)}
+    .list{
+      margin:0; padding-left:18px; color: rgba(234,241,255,.80);
+    }
+    .list li{margin:10px 0; line-height:1.35}
+    .sheet .sub{color: rgba(234,241,255,.65); margin:0 0 14px}
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:520px){ .row2{grid-template-columns:1fr} }
+
+    .label{font-size:12px; color: rgba(234,241,255,.62); margin:10px 0 6px}
+    .toast{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      background: rgba(13,24,51,.96);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      padding:12px 14px;
+      display:none;
+      box-shadow: var(--shadow);
+      z-index:80;
+      max-width:min(420px, calc(100vw - 32px));
+    }
+    .toast.show{display:block}
+    .toast .t{font-weight:1000; margin-bottom:4px}
+    .toast .s{color: rgba(234,241,255,.72); font-size:12px}
+
+    /* tiny helper */
+    .rowBetween{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+    .link{
+      color: rgba(247,217,138,.95);
+      font-weight:900;
+      text-decoration:underline;
+      cursor:pointer;
+    }
+  </style>
 </head>
 
 <body>
-
-<!-- SECTION 1 -->
-<div class="topbar">
-  <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg">
-  <div class="locked">✅ Your trial class is locked in!</div>
-</div>
-
-<!-- SECTION 2 -->
-<div class="section2">
-
-<!-- LEFT -->
-<div>
-  <div class="pass">
-    <div class="pass-header">
-      🎫 OFFICIAL FREE TRIAL PASS
-      <span>[ VALUE: $30 – WAIVED ]</span>
+  <!-- SECTION 1 -->
+  <header class="topbar">
+    <div class="brand">
+      <!-- Keep logo color exactly as brand. SVG is already brand-colored and will sit on dark bg well. -->
+      <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
     </div>
 
-    <div class="pass-grid">
-      <div>
-        <div class="label">Student Name</div>
-        <div class="value" id="childName">—</div>
+    <div class="status-pill" id="lockedPill" title="Status">
+      <div class="check">✓</div>
+      <div>✅ Your trial class is locked in!</div>
+    </div>
+  </header>
 
-        <div class="label">Course</div>
-        <div class="value" id="courseName">—</div>
+  <!-- SECTION 2 -->
+  <main class="wrap">
+    <div class="grid2">
+      <!-- LEFT: Pass + Schedule + Fun Facts -->
+      <section class="card pad">
+        <div class="ticket" id="ticketCard">
+          <div class="notch left"></div>
+          <div class="notch right"></div>
+          <div class="perforation"></div>
 
-        <div class="label">Parent Email</div>
-        <div class="value" id="parentEmail">—</div>
+          <div class="ticketHeader">
+            <div class="left">
+              <span>🎫</span>
+              <span>OFFICIAL FREE TRIAL PASS</span>
+            </div>
+            <div class="right">[Value: $30 – WAIVED]</div>
+          </div>
+
+          <div class="stamp" aria-hidden="true"><span>VALUE<br>WAIVED</span></div>
+
+          <div class="ticketBody">
+            <div>
+              <div class="blockTitle">ADMIT ONE STUDENT:</div>
+              <div class="field"><div class="k">Name:</div><div class="v" id="v_child_name">—</div></div>
+              <div class="field"><div class="k">Current Grade:</div><div class="v" id="v_child_grade">—</div></div>
+
+              <div class="courseLine">
+                <div class="courseLabel">Course:</div>
+                <div class="courseValue" id="v_course_name">—</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="blockTitle">PARENT CONFIRMATION:</div>
+              <div class="field"><div class="k">Sent to:</div><div class="v" id="v_parent_name">—</div></div>
+              <div class="field"><div class="k">Cell:</div><div class="v" id="v_parent_phone">—</div></div>
+              <div class="field"><div class="k">Email:</div><div class="v" id="v_parent_email">—</div></div>
+
+              <div class="validBadge">[Valid for 1 Session]</div>
+            </div>
+          </div>
+
+          <div class="powered">Powered by <b>Unischooly</b></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="scheduleTop">
+          <div class="badge"><span class="emo">🚀</span> Ready for Blast Off!!!</div>
+          <div class="muted2" style="font-weight:900">Class Schedule</div>
+        </div>
+
+        <div class="scheduleGrid">
+          <div class="mini">
+            <div class="ico">📅</div>
+            <div>
+              <div class="t" id="v_demo_date">—</div>
+              <div class="s">Local date</div>
+            </div>
+          </div>
+
+          <div class="mini">
+            <div class="ico">⏰</div>
+            <div>
+              <div class="t" id="v_demo_time">—</div>
+              <div class="s" id="v_demo_tz">—</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="calendarBtn" id="calendarSyncBtn">📅 Initiate Calendar Sync</button>
+        <div class="providers" id="calendarProviders" style="display:none">
+          <div class="chip" data-cal="google">Google Calendar</div>
+          <div class="chip" data-cal="apple">Apple Calendar</div>
+          <div class="chip" data-cal="outlook">Outlook.com</div>
+          <div class="chip" data-cal="yahoo">Yahoo</div>
+          <div class="chip" data-cal="ics">Download .ics</div>
+        </div>
+
+        <div class="funfacts">
+          <div class="factBox">
+            <div class="factTitle">Did you know? <span class="accent" id="factsCourseTag" style="background:linear-gradient(90deg,#ff4fd8,#8b5cf6,#4cc9ff);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:1000">Fun fact</span></div>
+            <div class="factText" id="factText">—</div>
+          </div>
+          <div class="factsNav">
+            <button class="navBtn" id="factPrev" title="Previous">‹</button>
+            <button class="navBtn" id="factNext" title="Next">›</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Welcome + Timer + Terms + Sharpen Brain -->
+      <section class="card pad">
+        <h1 class="welcomeTitle">Welcome to <span class="accent" id="welcomeName">your</span> <span class="accent" id="welcomeCourse">Trial Class</span></h1>
+        <p class="subline">Keep this page open — everything you need before class is right here.</p>
+
+        <div class="countRow" id="countRow">
+          <div class="countLeft">
+            <div class="countLabel" id="countLabel">Join class in</div>
+            <div class="timeBoxes">
+              <div class="tb"><div class="n" id="t_days">0</div><div class="l">Days</div></div>
+              <div class="tb"><div class="n" id="t_hours">0</div><div class="l">Hours</div></div>
+              <div class="tb"><div class="n" id="t_mins">0</div><div class="l">Min</div></div>
+              <div class="tb"><div class="n" id="t_secs">0</div><div class="l">Sec</div></div>
+            </div>
+          </div>
+
+          <button class="joinBtn" id="joinBtn" disabled>
+            ▶ Join Class
+          </button>
+        </div>
+
+        <div class="disclaimer">
+          By clicking join class, you are confirming that you have read, understood and agree to
+          <a id="openTerms">Terms &amp; Conditions</a>.
+          <div style="margin-top:8px">
+            <span class="link" id="openReschedule">Reschedule Class</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="brainHeader">
+          <h3>Sharpen Your Brain 🧠</h3>
+          <div class="tabs" role="tablist" aria-label="Sharpen tabs">
+            <button class="tab active" data-tab="puzzle">Puzzle</button>
+            <button class="tab" data-tab="memory">Memory</button>
+            <button class="tab" data-tab="sprint">Sprint</button>
+          </div>
+        </div>
+
+        <div class="panel" id="panelPuzzle">
+          <div class="rowBetween">
+            <div class="puzzleQ" id="puzzleQ">—</div>
+            <div class="score">Score: <span id="puzzleScore">0</span></div>
+          </div>
+          <div class="muted2" id="puzzleHint" style="font-size:13px;margin:6px 0 10px">—</div>
+
+          <input class="input" id="puzzleInput" placeholder="Type your answer (or pick below when prompted)" />
+          <div class="puzzleMeta">
+            <div class="muted2" style="font-size:12px">Question <b id="puzzleIndex">1</b>/<b id="puzzleTotal">10</b></div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="smallBtn" id="puzzleCheck">Check</button>
+              <button class="smallBtn" id="puzzlePrev">Prev</button>
+              <button class="smallBtn" id="puzzleNext">Next</button>
+              <button class="smallBtn" id="puzzleAnother">Try another</button>
+            </div>
+          </div>
+          <div class="muted2" id="puzzleFeedback" style="margin-top:10px;font-size:12px"></div>
+        </div>
+
+        <div class="panel" id="panelMemory" style="display:none">
+          <div class="rowBetween">
+            <div class="puzzleQ">Memory Match (emoji cards)</div>
+            <div class="score">Matches: <span id="memMatches">0</span>/8</div>
+          </div>
+          <div class="muted2" style="font-size:13px;margin-top:6px">Tap two cards to find a pair. Lightweight & mobile-friendly.</div>
+          <div class="memGrid" id="memGrid"></div>
+          <div class="puzzleMeta">
+            <button class="smallBtn" id="memReset">New Game</button>
+          </div>
+        </div>
+
+        <div class="panel" id="panelSprint" style="display:none">
+          <div class="sprintRow">
+            <div>
+              <div class="puzzleQ">Quick Math Sprint (60s)</div>
+              <div class="muted2" style="font-size:13px;margin-top:6px">Answer fast — tap the correct option.</div>
+            </div>
+            <div class="sprintTimer">⏱ <span id="sprintTime">60</span>s • Score <span id="sprintScore">0</span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="puzzleQ" id="sprintQ">Press “Start Sprint”</div>
+          <div class="choices" id="sprintChoices"></div>
+
+          <div class="puzzleMeta">
+            <button class="smallBtn" id="sprintStart">Start Sprint</button>
+            <button class="smallBtn" id="sprintStop">Stop</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- TERMS SHEET -->
+  <div class="overlay" id="termsOverlay" role="dialog" aria-modal="true" aria-label="Terms and Conditions">
+    <div class="sheet">
+      <div class="sheetHead">
+        <div>
+          <h2>Terms &amp; Conditions</h2>
+          <p class="sub">Please keep these video conferencing etiquette tips in mind so you know what <b>NOT</b> to do during your demo/trial class:</p>
+        </div>
+        <button class="closeX" data-close="terms">✕</button>
       </div>
 
-      <div>
-        <div class="label">Grade</div>
-        <div class="value" id="childGrade">—</div>
+      <ol class="list">
+        <li>By taking this demo/trial session, you consent to Unischooly/Company recording this session.</li>
+        <li>This demo/trial session or class will be recorded for the whole duration for training, constant process improvement, and audit purposes.</li>
+        <li>Unischooly/Company adheres to zero tolerance towards sexual, non-sexual, verbal and visual abuse. Inappropriate hand gestures, threats, or any other indecent behaviour captured or reported during the session shall also be considered a violation of the Company’s internal policies.</li>
+        <li>While taking the demo/trial session, kindly avoid clothing with controversial messages, including but not limited to racial and/or religious slurs or any type of sexual or non-sexual abuse.</li>
+      </ol>
+    </div>
+  </div>
 
-        <div class="label">Parent Name</div>
-        <div class="value" id="parentName">—</div>
+  <!-- RESCHEDULE SHEET -->
+  <div class="overlay" id="resOverlay" role="dialog" aria-modal="true" aria-label="Reschedule">
+    <div class="sheet">
+      <div class="sheetHead">
+        <div>
+          <h2>Reschedule Class</h2>
+          <p class="sub">Pick a new date/time. This will update your booking in Supabase.</p>
+        </div>
+        <button class="closeX" data-close="res">✕</button>
+      </div>
 
-        <div class="label">Parent Phone</div>
-        <div class="value" id="parentPhone">—</div>
+      <div class="row2">
+        <div>
+          <div class="label">Preferred Date</div>
+          <input class="input" type="date" id="resDate" />
+        </div>
+        <div>
+          <div class="label">Preferred Time Slot</div>
+          <input class="input" type="text" id="resTime" placeholder="e.g., 10:00-11:00" />
+        </div>
+      </div>
+
+      <div class="label">Timezone</div>
+      <input class="input" type="text" id="resTz" placeholder="e.g., Asia/Dubai" />
+
+      <div class="puzzleMeta" style="margin-top:14px">
+        <button class="smallBtn" id="resSave">Save & Refresh</button>
+      </div>
+
+      <div class="muted2" style="font-size:12px;margin-top:10px">
+        Note: This is the lightweight reschedule flow (Brightchamps-style slide-over). Slot validation can be added next.
       </div>
     </div>
-
-    <div class="powered">Powered by <b>Unischooly</b></div>
   </div>
 
-  <div class="schedule">
-    🚀 <b>Ready for Blast Off!!!</b>
-    <h3>Class Schedule</h3>
-
-    <div class="timer">
-      <div class="tbox"><div id="d">0</div>Days</div>
-      <div class="tbox"><div id="h">0</div>Hours</div>
-      <div class="tbox"><div id="m">0</div>Min</div>
-      <div class="tbox"><div id="s">0</div>Sec</div>
-      <button class="join" id="joinBtn">Join Class</button>
-    </div>
-
-    <a href="#" onclick="openModal()">Terms & Conditions</a>
+  <div class="toast" id="toast">
+    <div class="t" id="toastT">—</div>
+    <div class="s" id="toastS">—</div>
   </div>
-</div>
-
-<!-- RIGHT -->
-<div class="right">
-  <h2 id="welcome">Welcome to your Trial Class</h2>
-  <div class="funfacts">
-    <div id="fact">Loading fun facts…</div>
-    <div class="fact-nav">
-      <button onclick="prevFact()">◀</button>
-      <button onclick="nextFact()">▶</button>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<!-- MODAL -->
-<div class="modal" id="tcModal" onclick="closeModal()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <h2>Terms & Conditions</h2>
-    <p>Session will be recorded. Zero tolerance for abuse.</p>
-    <button onclick="closeModal()">Close</button>
-  </div>
-</div>
 
 <script>
+/* =========================
+   CONFIG (YOUR KEYS)
+========================= */
 const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get("iduuid");
+/* =========================
+   HELPERS
+========================= */
+const $ = (id)=>document.getElementById(id);
+const qs = new URLSearchParams(location.search);
 
-async function load(){
-  const {data} = await sb.from("demo_leads").select("*").eq("id",id).single();
-  if(!data) return alert("Booking not found");
-
-  childName.textContent=data.child_name;
-  childGrade.textContent=data.child_grade;
-  parentName.textContent=data.parent_name;
-  parentEmail.textContent=data.parent_email;
-  parentPhone.textContent=data.phone_country_code+" "+data.phone_number;
-  courseName.textContent="Course ID "+data.course_id;
-
-  welcome.textContent=`Welcome to ${data.child_name}'s Trial Class`;
+function toast(title, msg){
+  $("toastT").textContent = title;
+  $("toastS").textContent = msg;
+  const t = $("toast");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2600);
 }
-load();
 
-function openModal(){tcModal.style.display="flex"}
-function closeModal(){tcModal.style.display="none"}
+function courseNameFromId(courseId){
+  const map = {
+    1: "Coding",
+    2: "Python",
+    3: "Website Development",
+    4: "Generative AI",
+    5: "Roblox",
+    6: "Chess",
+    7: "Mathematics"
+  };
+  return map[Number(courseId)] || `Course ID ${courseId || ""}`.trim();
+}
 
-const facts=["Coding is problem solving","Python powers AI","Websites run on HTML","AI learns from data","Roblox teaches logic","Chess boosts IQ","Math sharpens mind"];
-let fi=0;
-function nextFact(){fi=(fi+1)%facts.length;fact.textContent=facts[fi]}
-function prevFact(){fi=(fi-1+facts.length)%facts.length;fact.textContent=facts[fi]}
-setInterval(nextFact,5000);
+function formatDatePretty(dateStr){
+  if(!dateStr) return "—";
+  // dateStr is YYYY-MM-DD
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m-1, d));
+  return dt.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric" });
+}
+
+function parseSlotStart(timeSlot){
+  // expects like "10:00-11:00" or "10:00 AM - 11:00 AM"
+  if(!timeSlot) return null;
+  const t = timeSlot.split("-")[0].trim();
+  // normalize "5:30 PM" or "17:30"
+  return t;
+}
+
+function parseTimeTo24h(t){
+  if(!t) return null;
+  // handle "5:30 PM" or "5 PM"
+  const m = t.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+  if(!m) return null;
+  let hh = Number(m[1]);
+  let mm = Number(m[2] || "0");
+  const ap = (m[3]||"").toUpperCase();
+  if(ap==="PM" && hh<12) hh += 12;
+  if(ap==="AM" && hh===12) hh = 0;
+  return {hh, mm};
+}
+
+// Convert a date + local time in a specific IANA timezone into a UTC Date.
+// This uses Intl to compute the correct offset.
+function zonedDateTimeToUtc(dateStr, timeStr, tz){
+  const t24 = parseTimeTo24h(timeStr);
+  if(!dateStr || !t24 || !tz) return null;
+  const [y,m,d] = dateStr.split("-").map(Number);
+
+  // initial guess as if it were UTC
+  const guess = new Date(Date.UTC(y, m-1, d, t24.hh, t24.mm, 0));
+
+  // get what "guess" looks like in target tz
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    hour12: false,
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
+  }).formatToParts(guess).reduce((acc,p)=>{ acc[p.type]=p.value; return acc; }, {});
+
+  // parts represent local time in tz for the guess UTC time.
+  const asLocal = Date.UTC(Number(parts.year), Number(parts.month)-1, Number(parts.day), Number(parts.hour), Number(parts.minute), Number(parts.second));
+
+  // desired local time in tz
+  const desiredLocal = Date.UTC(y, m-1, d, t24.hh, t24.mm, 0);
+
+  // difference between desired local and actual local => adjust UTC
+  const diffMs = desiredLocal - asLocal;
+  return new Date(guess.getTime() + diffMs);
+}
+
+function safeText(el, v){
+  el.textContent = (v === null || v === undefined || v === "") ? "—" : String(v);
+}
+
+function phonePretty(cc, num){
+  if(!num) return "—";
+  const p = `${cc || ""}`.trim();
+  return `${p}${p && !p.endsWith(" ") ? " " : ""}${num}`.trim();
+}
+
+/* =========================
+   FUN FACTS (10 each)
+========================= */
+const FUNFACTS = {
+  1: [
+    "Coding is like giving instructions to a super-fast robot — computers only do exactly what you tell them.",
+    "Scratch was made so kids can learn programming by snapping blocks like LEGO.",
+    "The first computer bug was literally a moth found in a machine in 1947!",
+    "Debugging means finding and fixing mistakes — even top engineers debug every day.",
+    "‘Algorithm’ is just a fancy word for a step-by-step plan.",
+    "Your favorite games use loops to repeat actions 60 times every second.",
+    "Pixels are tiny squares — games draw thousands of them to make images.",
+    "If you can solve puzzles, you can code — both need logic and patterns.",
+    "Typing isn’t the most important skill — thinking clearly is.",
+    "You can make a game in fewer than 20 lines of code with the right tools."
+  ],
+  2: [
+    "Python is named after the comedy show ‘Monty Python’ — not the snake!",
+    "Python is loved because it reads almost like English.",
+    "Many YouTube and Instagram features use Python behind the scenes.",
+    "In Python, indentation (spaces) matters — it’s part of the rules.",
+    "Python can control robots, analyze data, and build websites too.",
+    "A ‘list’ in Python is like a backpack that can carry many items.",
+    "Python’s ‘turtle’ module can draw cool shapes and art.",
+    "If you learn Python, learning other languages gets easier.",
+    "Python is used in AI, gaming, finance, science — everywhere.",
+    "One good Python script can save hours of work."
+  ],
+  3: [
+    "Every website is made from 3 basics: HTML (structure), CSS (style), JS (magic).",
+    "CSS can animate buttons without any video or images.",
+    "Websites are responsive when they look good on phone + laptop.",
+    "Your browser is like a mini-computer that runs websites instantly.",
+    "Links are called ‘anchors’ in HTML.",
+    "A favicon is the tiny icon next to a website tab.",
+    "Websites can store small data in your browser (localStorage).",
+    "Good design uses spacing — empty space makes things clearer.",
+    "Forms are how websites collect info (like bookings).",
+    "Even big sites start as simple pages — then grow step by step."
+  ],
+  4: [
+    "Generative AI can create text, images, and even music from prompts.",
+    "AI learns patterns from examples — like how kids learn from practice.",
+    "A prompt is like giving instructions to AI (just like code instructions).",
+    "AI is great at ideas, but humans decide what is correct and safe.",
+    "Many AI apps use ‘models’ trained on lots of data.",
+    "AI can help make quizzes, stories, and game ideas quickly.",
+    "The best AI results come from clear, specific prompts.",
+    "AI can summarize long text into short points.",
+    "AI can translate languages in seconds.",
+    "Learning AI now is like learning computers early in the 2000s."
+  ],
+  5: [
+    "Roblox games are made with Lua — a lightweight programming language.",
+    "In Roblox Studio you build worlds and then script how things behave.",
+    "A ‘spawn’ is where your character appears in a game.",
+    "You can create obstacles (obbies) and add timers and rewards.",
+    "Good Roblox games use checkpoints so players don’t restart from zero.",
+    "Scripting lets you make doors open, coins collect, and scores update.",
+    "UI in games is like website design — clarity matters.",
+    "Many Roblox creators earn real money from popular games.",
+    "Physics makes jumps, falls, and collisions feel real.",
+    "Testing is key — creators play their own game a lot to fix bugs."
+  ],
+  6: [
+    "Chess is coding with your brain — every move is a decision tree.",
+    "The best chess players look for patterns, not just single moves.",
+    "Forks attack two pieces at once — like a smart double move.",
+    "Pins stop pieces from moving because something important is behind them.",
+    "Endgames teach planning — like solving a puzzle slowly.",
+    "Good players ask: ‘What is my opponent threatening?’",
+    "Controlling the center gives your pieces more power.",
+    "A check doesn’t mean you’re winning — it’s just a question.",
+    "Chess improves focus and memory over time.",
+    "Reviewing your mistakes is how you level up fastest."
+  ],
+  7: [
+    "Math is the language of patterns — coding uses patterns too.",
+    "Multiplication is repeated addition (loops!).",
+    "Fractions are just division written another way.",
+    "Percent means ‘per 100’ — like a score out of 100.",
+    "Geometry helps in game design and graphics.",
+    "Algebra is like solving a mystery with clues.",
+    "Estimating quickly is a superpower in real life.",
+    "Graphs show stories using numbers.",
+    "Prime numbers are like special building blocks.",
+    "Fast math comes from practice — not magic."
+  ]
+};
+
+let factIndex = 0;
+let factTimer = null;
+
+/* =========================
+   PUZZLES (10-20, course-aware)
+========================= */
+function puzzlesForCourse(courseId){
+  const c = Number(courseId)||1;
+  const base = [
+    {q:"A robot starts at 0 and can move +2 or -1 each step. What is the minimum number of steps to reach 7?", a:"4", hint:"Try: 0→2→4→6→7"},
+    {q:"What number comes next: 2, 4, 8, 16, ?", a:"32", hint:"Each time it doubles."},
+    {q:"If you have 3 boxes and each box has 5 balls, how many balls?", a:"15", hint:"Multiply 3×5."},
+    {q:"Which is bigger: 3/4 or 2/3 ?", a:"3/4", hint:"Convert to decimals: 0.75 vs 0.66"},
+    {q:"Find the odd one out: Circle, Square, Triangle, Apple", a:"Apple", hint:"Three are shapes."},
+    {q:"A code has 3 digits. It is even, greater than 400, and the last digit is 2. One possible code?", a:"412", hint:"Many answers work. Example: 412."},
+    {q:"If today is Monday, what day will it be after 10 days?", a:"Thursday", hint:"10 mod 7 = 3 days ahead."},
+    {q:"Pattern: A1, B2, C3, D4, ?", a:"E5", hint:"Letters go up and numbers go up."},
+    {q:"What is 9 + (6 ÷ 2)?", a:"12", hint:"Do division first: 6÷2=3."},
+    {q:"If you reverse ‘CODE’, you get?", a:"EDOC", hint:"Read it backwards."}
+  ];
+
+  // small tweaks per course
+  const add = {
+    1: [{q:"In Scratch, what do we call a repeated set of steps?", a:"Loop", hint:"It repeats again and again."}],
+    2: [{q:"In Python, what keyword starts a loop over a range?", a:"for", hint:"for i in range(...)"}],
+    3: [{q:"In HTML, which tag makes the biggest heading by default?", a:"h1", hint:"Starts with h."}],
+    4: [{q:"AI prompts should be… (one word)", a:"Specific", hint:"Clear & detailed prompts work best."}],
+    5: [{q:"Roblox scripting uses which language?", a:"Lua", hint:"3 letters."}],
+    6: [{q:"In chess, a move that attacks two pieces at once is called?", a:"Fork", hint:"Like a utensil."}],
+    7: [{q:"What is the perimeter of a square with side 5?", a:"20", hint:"4×side."}]
+  };
+
+  const combined = base.slice(0,9).concat(add[c] || [], base.slice(9,10));
+  // ensure 10
+  return combined.slice(0,10);
+}
+
+/* =========================
+   MEMORY MATCH
+========================= */
+const EMOJIS = ["🚀","🧠","🎮","🎲","⭐","🐍","🧩","🎯"];
+let memState = {
+  deck: [],
+  revealed: [],
+  matched: new Set(),
+  matches: 0
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startMemory(){
+  memState.deck = shuffle([...EMOJIS, ...EMOJIS]).map((e, idx)=>({e, idx}));
+  memState.revealed = [];
+  memState.matched = new Set();
+  memState.matches = 0;
+  $("memMatches").textContent = "0";
+  renderMemory();
+}
+
+function renderMemory(){
+  const g = $("memGrid");
+  g.innerHTML = "";
+  memState.deck.forEach((c, i)=>{
+    const btn = document.createElement("div");
+    btn.className = "memCard";
+    const isRevealed = memState.revealed.includes(i);
+    const isMatched = memState.matched.has(i);
+    if(isRevealed) btn.classList.add("revealed");
+    if(isMatched) btn.classList.add("matched");
+    btn.textContent = (isRevealed || isMatched) ? c.e : "•";
+    btn.onclick = ()=>flipMem(i);
+    g.appendChild(btn);
+  });
+}
+
+let memLock = false;
+function flipMem(i){
+  if(memLock) return;
+  if(memState.matched.has(i)) return;
+  if(memState.revealed.includes(i)) return;
+  if(memState.revealed.length===2) return;
+
+  memState.revealed.push(i);
+  renderMemory();
+
+  if(memState.revealed.length===2){
+    const [a,b] = memState.revealed;
+    const ea = memState.deck[a].e;
+    const eb = memState.deck[b].e;
+    memLock = true;
+    setTimeout(()=>{
+      if(ea===eb){
+        memState.matched.add(a);
+        memState.matched.add(b);
+        memState.matches++;
+        $("memMatches").textContent = String(memState.matches);
+        toast("Nice!", "You found a match ✅");
+      }
+      memState.revealed = [];
+      memLock = false;
+      renderMemory();
+    }, 520);
+  }
+}
+
+/* =========================
+   SPRINT
+========================= */
+let sprint = {
+  running:false,
+  time:60,
+  score:0,
+  q:null,
+  timerId:null
+};
+
+function newSprintQ(){
+  const a = Math.floor(2+Math.random()*12);
+  const b = Math.floor(2+Math.random()*12);
+  const ops = ["+","-","×"];
+  const op = ops[Math.floor(Math.random()*ops.length)];
+  let ans = 0;
+  if(op==="+") ans = a+b;
+  if(op==="-" ) ans = a-b;
+  if(op==="×") ans = a*b;
+  const wrong1 = ans + (Math.random()>.5? 1: -1) * (2+Math.floor(Math.random()*5));
+  const wrong2 = ans + (Math.random()>.5? 1: -1) * (2+Math.floor(Math.random()*5));
+  const wrong3 = ans + (Math.random()>.5? 1: -1) * (2+Math.floor(Math.random()*5));
+  const choices = shuffle([ans, wrong1, wrong2, wrong3]).slice(0,4);
+  sprint.q = {a,b,op,ans,choices};
+  $("sprintQ").textContent = `What is ${a} ${op} ${b}?`;
+  const box = $("sprintChoices");
+  box.innerHTML = "";
+  choices.forEach(v=>{
+    const c = document.createElement("div");
+    c.className = "choice";
+    c.textContent = v;
+    c.onclick = ()=>chooseSprint(v, c);
+    box.appendChild(c);
+  });
+}
+
+function chooseSprint(v, el){
+  if(!sprint.running) return;
+  const correct = (v === sprint.q.ans);
+  el.classList.add(correct ? "correct" : "wrong");
+  setTimeout(()=>{ newSprintQ(); }, 200);
+  if(correct){
+    sprint.score += 1;
+    $("sprintScore").textContent = String(sprint.score);
+  }
+}
+
+function startSprint(){
+  if(sprint.running) return;
+  sprint.running = true;
+  sprint.time = 60;
+  sprint.score = 0;
+  $("sprintTime").textContent = "60";
+  $("sprintScore").textContent = "0";
+  newSprintQ();
+  sprint.timerId = setInterval(()=>{
+    sprint.time -= 1;
+    $("sprintTime").textContent = String(sprint.time);
+    if(sprint.time <= 0){
+      stopSprint(true);
+    }
+  }, 1000);
+}
+
+function stopSprint(auto=false){
+  if(!sprint.running) return;
+  sprint.running = false;
+  clearInterval(sprint.timerId);
+  sprint.timerId = null;
+  $("sprintQ").textContent = auto ? `Time! Your score: ${sprint.score}` : `Stopped. Your score: ${sprint.score}`;
+  $("sprintChoices").innerHTML = "";
+}
+
+/* =========================
+   TERMS / RESCHEDULE UI
+========================= */
+function openOverlay(which){
+  const el = which==="terms" ? $("termsOverlay") : $("resOverlay");
+  el.classList.add("open");
+}
+function closeOverlay(which){
+  const el = which==="terms" ? $("termsOverlay") : $("resOverlay");
+  el.classList.remove("open");
+}
+document.addEventListener("click",(e)=>{
+  const close = e.target?.dataset?.close;
+  if(close==="terms") closeOverlay("terms");
+  if(close==="res") closeOverlay("res");
+});
+
+/* =========================
+   DATA LOAD
+========================= */
+let lead = null;
+let classUtc = null;
+let countdownId = null;
+
+async function loadLead(){
+  // iduuid is the demo_leads.id uuid
+  const iduuid = qs.get("iduuid");
+  const courseId = qs.get("courseId") || "";
+  const courseName = courseNameFromId(courseId);
+
+  $("welcomeCourse").textContent = `${courseName} Trial Class`;
+  $("factsCourseTag").textContent = `${courseName} fun fact`;
+
+  if(!iduuid){
+    toast("Booking UUID missing", "URL must have ?iduuid=<uuid>");
+    return;
+  }
+
+  const { data, error } = await sb
+    .from("demo_leads")
+    .select("*")
+    .eq("id", iduuid)
+    .maybeSingle();
+
+  if(error){
+    console.error(error);
+    toast("Supabase error", error.message || "Failed to load booking");
+    return;
+  }
+  if(!data){
+    toast("Booking not found", "No record found for this iduuid.");
+    return;
+  }
+
+  lead = data;
+
+  // Fill Pass
+  safeText($("v_child_name"), lead.child_name);
+  safeText($("v_child_grade"), lead.child_grade);
+  safeText($("v_parent_name"), lead.parent_name);
+  safeText($("v_parent_email"), lead.parent_email);
+  safeText($("v_parent_phone"), phonePretty(lead.phone_country_code, lead.phone_number));
+
+  // course label: prefer course name from courseId param; fallback to lead.course_id
+  const effectiveCourseId = Number(courseId || lead.course_id || 0);
+  safeText($("v_course_name"), courseNameFromId(effectiveCourseId) + " Trial Class");
+
+  $("welcomeName").textContent = lead.child_name ? `${lead.child_name}’s` : "your";
+
+  // Schedule
+  const tz = lead.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Local time";
+  $("v_demo_tz").textContent = tz;
+
+  const demoDate = lead.preferred_date;         // YYYY-MM-DD
+  const demoSlot = lead.preferred_time_slot;    // "10:00-11:00" etc.
+  const startLabel = parseSlotStart(demoSlot) || demoSlot || "—";
+
+  $("v_demo_date").textContent = formatDatePretty(demoDate);
+  $("v_demo_time").textContent = startLabel;
+
+  // Pre-fill reschedule form
+  $("resDate").value = demoDate || "";
+  $("resTime").value = demoSlot || "";
+  $("resTz").value = tz || "";
+
+  // Countdown target (join enable at T-5 mins)
+  classUtc = zonedDateTimeToUtc(demoDate, startLabel, tz);
+  if(!classUtc){
+    $("countLabel").textContent = "Join class in";
+    $("joinBtn").disabled = true;
+    toast("Missing schedule", "preferred_date / preferred_time_slot / timezone is required for countdown.");
+  } else {
+    startCountdown();
+  }
+
+  // Fun facts
+  setupFacts(effectiveCourseId);
+
+  // Puzzles
+  setupPuzzles(effectiveCourseId);
+
+  // Memory game
+  startMemory();
+}
+
+/* =========================
+   COUNTDOWN / JOIN LOGIC
+========================= */
+function startCountdown(){
+  if(countdownId) clearInterval(countdownId);
+
+  const joinBtn = $("joinBtn");
+  const label = $("countLabel");
+
+  countdownId = setInterval(()=>{
+    const now = new Date();
+    const diffMs = classUtc - now;
+
+    // If class already ended (assume 60 minutes duration)
+    const endMs = classUtc.getTime() + 60*60*1000;
+    if(now.getTime() > endMs){
+      $("countRow").style.display = "none";
+      joinBtn.disabled = true;
+      return;
+    }
+
+    const total = Math.max(0, diffMs);
+    const sec = Math.floor(total/1000);
+    const days = Math.floor(sec / (3600*24));
+    const hours = Math.floor((sec % (3600*24)) / 3600);
+    const mins = Math.floor((sec % 3600) / 60);
+    const secs = sec % 60;
+
+    $("t_days").textContent = String(days);
+    $("t_hours").textContent = String(hours);
+    $("t_mins").textContent = String(mins);
+    $("t_secs").textContent = String(secs);
+
+    // Enable join at T-5 minutes
+    const enableMs = 5 * 60 * 1000;
+    if(diffMs <= enableMs){
+      joinBtn.disabled = false;
+      label.textContent = "Join class now";
+    } else {
+      joinBtn.disabled = true;
+      label.textContent = "Join class in";
+    }
+  }, 250);
+
+  // click join
+  $("joinBtn").onclick = ()=>{
+    // You can later replace this with the actual meeting link logic
+    toast("Join Class", "Join link integration will be connected next.");
+  };
+}
+
+/* =========================
+   FUN FACTS
+========================= */
+function setupFacts(courseId){
+  const list = FUNFACTS[courseId] || FUNFACTS[1];
+  factIndex = 0;
+
+  function render(){
+    $("factText").textContent = list[factIndex] || "—";
+  }
+
+  $("factPrev").onclick = ()=>{
+    factIndex = (factIndex - 1 + list.length) % list.length;
+    render();
+  };
+  $("factNext").onclick = ()=>{
+    factIndex = (factIndex + 1) % list.length;
+    render();
+  };
+
+  render();
+
+  if(factTimer) clearInterval(factTimer);
+  factTimer = setInterval(()=>{
+    factIndex = (factIndex + 1) % list.length;
+    render();
+  }, 5500);
+}
+
+/* =========================
+   PUZZLES
+========================= */
+let puzzles = [];
+let pIndex = 0;
+let pScore = 0;
+
+function setupPuzzles(courseId){
+  puzzles = puzzlesForCourse(courseId);
+  pIndex = 0;
+  pScore = 0;
+  $("puzzleTotal").textContent = String(puzzles.length);
+  $("puzzleScore").textContent = "0";
+  renderPuzzle();
+}
+
+function renderPuzzle(){
+  const p = puzzles[pIndex];
+  $("puzzleQ").textContent = p.q;
+  $("puzzleHint").textContent = p.hint || "";
+  $("puzzleIndex").textContent = String(pIndex + 1);
+  $("puzzleInput").value = "";
+  $("puzzleFeedback").textContent = "";
+}
+
+$("puzzleCheck").onclick = ()=>{
+  const p = puzzles[pIndex];
+  const ans = $("puzzleInput").value.trim();
+  const ok = ans.length && ans.toLowerCase() === String(p.a).trim().toLowerCase();
+  if(ok){
+    pScore += 1;
+    $("puzzleScore").textContent = String(pScore);
+    $("puzzleFeedback").textContent = "✅ Correct!";
+    toast("Correct ✅", "Nice job!");
+  } else {
+    $("puzzleFeedback").textContent = `❌ Not quite. Hint: ${p.hint || "Try again."}`;
+  }
+};
+
+$("puzzlePrev").onclick = ()=>{
+  pIndex = (pIndex - 1 + puzzles.length) % puzzles.length;
+  renderPuzzle();
+};
+$("puzzleNext").onclick = ()=>{
+  pIndex = (pIndex + 1) % puzzles.length;
+  renderPuzzle();
+};
+$("puzzleAnother").onclick = ()=>{
+  pIndex = Math.floor(Math.random()*puzzles.length);
+  renderPuzzle();
+};
+
+$("puzzleInput").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter") $("puzzleCheck").click();
+});
+
+/* =========================
+   TABS
+========================= */
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const t = btn.dataset.tab;
+    $("panelPuzzle").style.display = (t==="puzzle") ? "block" : "none";
+    $("panelMemory").style.display = (t==="memory") ? "block" : "none";
+    $("panelSprint").style.display = (t==="sprint") ? "block" : "none";
+  });
+});
+
+$("memReset").onclick = startMemory;
+$("sprintStart").onclick = startSprint;
+$("sprintStop").onclick = ()=>stopSprint(false);
+
+/* =========================
+   TERMS / RESCHEDULE WIRING
+========================= */
+$("openTerms").onclick = ()=>openOverlay("terms");
+$("openReschedule").onclick = ()=>openOverlay("res");
+
+// overlay click outside closes
+["termsOverlay","resOverlay"].forEach(id=>{
+  const el = $(id);
+  el.addEventListener("click",(e)=>{
+    if(e.target === el){
+      el.classList.remove("open");
+    }
+  });
+});
+
+$("resSave").onclick = async ()=>{
+  if(!lead?.id){
+    toast("No booking loaded", "Can't reschedule without lead.");
+    return;
+  }
+  const newDate = $("resDate").value || null;
+  const newTime = $("resTime").value.trim() || null;
+  const newTz = $("resTz").value.trim() || null;
+
+  const { error } = await sb
+    .from("demo_leads")
+    .update({
+      preferred_date: newDate,
+      preferred_time_slot: newTime,
+      timezone: newTz,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", lead.id);
+
+  if(error){
+    console.error(error);
+    toast("Reschedule failed", error.message || "Update failed");
+    return;
+  }
+
+  toast("Updated ✅", "Reschedule saved. Refreshing…");
+  closeOverlay("res");
+  setTimeout(()=>location.reload(), 650);
+};
+
+/* =========================
+   CALENDAR SYNC (Lightweight)
+   - Shows provider chips
+   - Generates basic ICS for Apple/Download
+   - Google/Outlook/Yahoo deep links
+========================= */
+$("calendarSyncBtn").onclick = ()=>{
+  const p = $("calendarProviders");
+  p.style.display = (p.style.display==="none" || !p.style.display) ? "flex" : "none";
+};
+
+function buildTitle(){
+  const courseId = Number(qs.get("courseId") || lead?.course_id || 0);
+  return `Unischooly ${courseNameFromId(courseId)} Trial Class`;
+}
+
+function pad2(n){ return String(n).padStart(2,"0"); }
+function toIcsDate(d){
+  // UTC format: YYYYMMDDTHHMMSSZ
+  return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
+}
+function download(filename, text){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type:"text/plain"}));
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+
+function buildIcs(){
+  if(!classUtc) return null;
+  const start = classUtc;
+  const end = new Date(classUtc.getTime() + 60*60*1000);
+  const uid = lead?.id || crypto.randomUUID();
+  const title = buildTitle();
+  const desc = "Your Unischooly trial class. Keep this page open for instructions.";
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Unischooly//Trial//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${uid}`,
+    `DTSTAMP:${toIcsDate(new Date())}`,
+    `DTSTART:${toIcsDate(start)}`,
+    `DTEND:${toIcsDate(end)}`,
+    `SUMMARY:${title}`,
+    `DESCRIPTION:${desc}`,
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].join("\r\n");
+}
+
+function encode(s){ return encodeURIComponent(s); }
+
+function openCalendar(kind){
+  if(!classUtc){
+    toast("Missing schedule", "Set preferred_date & preferred_time_slot first.");
+    return;
+  }
+  const start = classUtc;
+  const end = new Date(start.getTime() + 60*60*1000);
+  const title = buildTitle();
+  const details = "Unischooly Trial Class";
+  const dates = `${toIcsDate(start)}/${toIcsDate(end)}`;
+
+  if(kind==="ics" || kind==="apple"){
+    const ics = buildIcs();
+    download("unischooly_trial.ics", ics);
+    return;
+  }
+  if(kind==="google"){
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encode(title)}&details=${encode(details)}&dates=${encode(dates)}`;
+    window.open(url, "_blank");
+    return;
+  }
+  if(kind==="outlook"){
+    const url = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encode(title)}&body=${encode(details)}&startdt=${encode(start.toISOString())}&enddt=${encode(end.toISOString())}`;
+    window.open(url, "_blank");
+    return;
+  }
+  if(kind==="yahoo"){
+    // Yahoo expects local-ish; use ISO
+    const url = `https://calendar.yahoo.com/?v=60&title=${encode(title)}&st=${encode(start.toISOString())}&et=${encode(end.toISOString())}&desc=${encode(details)}`;
+    window.open(url, "_blank");
+    return;
+  }
+}
+
+document.querySelectorAll(".chip").forEach(c=>{
+  c.addEventListener("click", ()=>openCalendar(c.dataset.cal));
+});
+
+/* =========================
+   INIT
+========================= */
+(function init(){
+  // Logo color question: keep brand colors. It reads well on dark BG; no need to recolor.
+  loadLead();
+})();
 </script>
-
 </body>
 </html>

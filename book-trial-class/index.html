@@ -1523,7 +1523,7 @@ async function handleStep3Submit() {
   }
 
   setTimeout(() => {
-    const url = `https://portal.unischooly.com/demo-dashboard/?bookingUUID=${state.leadId}&medium=dashboard&courseId=${state.courseId}&post_booking=true`;
+    const url = `https://portal.unischooly.com/demo-dashboard/?iduuid=${state.leadId}&medium=dashboard&courseId=${state.courseId}&post_booking=true`;
     window.location.href = url;
   }, 2000);
 }

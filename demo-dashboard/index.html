@@ -1,1 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Unischooly | Demo Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Supabase JS v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Luxon for timezone-safe countdown -->
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+  <style>
+    :root {
+      --bg: #020015;
+      --bg-card: #0b0f24;
+      --bg-soft: #11152b;
+      --accent-1: #ff7b5f;
+      --accent-2: #ffb86c;
+      --primary: #9b5bff;
+      --primary-strong: #7b3ffc;
+      --text-main: #f8f5ff;
+      --text-sub: #a6aad3;
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.55);
+      --success: #22c55e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, #261b5a 0, transparent 40%),
+        radial-gradient(circle at bottom right, #1e153f 0, transparent 40%),
+        #020015;
+      padding: 20px 12px 32px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page-shell {
+      width: 100%;
+      max-width: 1120px;
+      border-radius: 32px;
+      padding: 22px 18px 24px;
+      background:
+        radial-gradient(circle at 0 0, rgba(155, 91, 255, 0.22), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(255, 123, 95, 0.22), transparent 60%),
+        rgba(5, 7, 26, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: var(--shadow-soft);
+    }
+    @media (min-width: 900px) {
+      .page-shell { padding: 26px 26px 28px; }
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 0 0, #ffd36b, #ff7b5f);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #1b1025;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+    }
+    .brand-text-main {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+    .brand-text-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .top-right-chip {
+      padding: 6px 11px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 185, 129, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.65);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #bbf7d0;
+    }
+    .top-right-chip span.icon { font-size: 14px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 18px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, #0c0f26, #050618);
+      border: 1px solid var(--border-soft);
+      padding: 16px 16px 18px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(155, 91, 255, 0.18), transparent 55%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .card-inner { position: relative; z-index: 1; }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .card-title { font-size: 16px; font-weight: 600; }
+    .card-sub { font-size: 12px; color: var(--text-sub); }
+
+    /* PROFILE CARD */
+    .profile-main {
+      border-radius: 28px;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.08), transparent 60%),
+                  #f8f5ff;
+      color: #1b1633;
+      padding: 18px 18px 16px;
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(223,214,255,0.9);
+    }
+    .profile-top-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      background: linear-gradient(145deg, #f97373, #facc15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1b1025;
+      font-size: 32px;
+      font-weight: 700;
+    }
+    .profile-name { font-size: 20px; font-weight: 700; }
+    .profile-grade { font-size: 13px; color: #6b21a8; font-weight: 600; margin-top: 2px; }
+
+    .profile-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .profile-chip {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 11px;
+      background: rgba(79,70,229,0.08);
+      border: 1px solid rgba(79,70,229,0.4);
+      color: #4338ca;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .profile-chip span.icon { font-size: 14px; }
+
+    .profile-fields { margin-top: 6px; }
+    .profile-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      padding: 5px 0;
+      border-bottom: 1px dashed rgba(148,163,184,0.5);
+    }
+    .profile-row:last-child { border-bottom: none; }
+    .profile-label { color: #94a3b8; font-weight: 500; min-width: 85px; }
+    .profile-value { font-weight: 500; text-align: right; }
+
+    .profile-footer {
+      margin-top: 10px;
+      text-align: right;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .profile-footer span.brand { font-weight: 700; color: #4f46e5; }
+
+    /* SCHEDULE + COUNTDOWN */
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 768px) {
+      .schedule-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .schedule-card {
+      border-radius: 18px;
+      background: #0f1228;
+      border: 1px solid rgba(148,163,255,0.3);
+      padding: 12px 13px 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .schedule-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(96,165,250,0.25), transparent 60%);
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .schedule-card-inner { position: relative; z-index: 1; }
+
+    .sched-title {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .sched-title span.icon { font-size: 16px; }
+    .sched-main-time { font-size: 18px; font-weight: 700; }
+    .sched-sub-line { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+
+    .sched-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .sched-tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      color: #e5e7eb;
+      background: rgba(15,23,42,0.8);
+    }
+
+    .calendar-row {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-cal {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(148,163,255,0.6);
+      background: rgba(15,23,42,0.9);
+      font-size: 11px;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 10px 22px rgba(15,23,42,0.9);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.15s;
+    }
+    .btn-cal:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 26px rgba(15,23,42,0.95);
+      background: radial-gradient(circle at 0 0, rgba(148,163,255,0.16), #020617);
+    }
+
+    .countdown-card {
+      border-radius: 18px;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.05), transparent 60%),
+                  #050816;
+      border: 1px solid rgba(148,163,255,0.45);
+      padding: 12px 13px;
+    }
+    .countdown-label {
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .countdown-label span.status-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      border: 1px solid rgba(22,163,74,0.8);
+      color: #bbf7d0;
+      background: rgba(22,163,74,0.12);
+    }
+
+    .countdown-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .count-box {
+      flex: 1 1 70px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 0 0, rgba(155,91,255,0.22), transparent 60%),
+                  #020617;
+      border: 1px solid rgba(148,163,255,0.35);
+      text-align: center;
+      padding: 8px 6px 7px;
+      min-width: 76px;
+    }
+    .count-value {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .count-label {
+      font-size: 10px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    /* RIGHT COLUMN HERO + MINI GAME */
+    .mini-hero {
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 13px;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.12), transparent 55%),
+                  linear-gradient(135deg, #111827, #020617);
+      border: 1px solid rgba(31,41,55,0.9);
+      position: relative;
+      overflow: hidden;
+    }
+    .mini-hero::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 230deg,
+        rgba(155,91,255,0.18),
+        rgba(248,250,252,0),
+        rgba(236,72,153,0.2),
+        rgba(248,250,252,0));
+      opacity: 0.65;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+    .mini-hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr);
+      gap: 10px;
+      align-items: center;
+    }
+    @media (max-width: 720px) {
+      .mini-hero-inner { grid-template-columns: minmax(0, 1fr); }
+    }
+    .mini-hero-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .mini-hero-sub { font-size: 12px; color: var(--text-sub); margin-bottom: 8px; }
+
+    .pill-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .pill-cta {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), var(--accent-1));
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .pill-cta span.icon { font-size: 16px; }
+    .pill-soft {
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-sub);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-game-card {
+      border-radius: 18px;
+      background: rgba(15,23,42,0.95);
+      border: 1px dashed rgba(148,163,184,0.7);
+      padding: 10px 10px 9px;
+      font-size: 11px;
+    }
+    .mini-game-title { font-weight: 600; margin-bottom: 4px; font-size: 12px; }
+    .mini-game-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 5px;
+    }
+    .mini-game-row input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(75,85,99,1);
+      background: #020617;
+      color: var(--text-main);
+      padding: 5px 9px;
+      font-size: 11px;
+      outline: none;
+    }
+    .mini-game-row button {
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #22c55e, #4ade80);
+      color: #022c22;
+      font-size: 11px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(22,163,74,0.7);
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    }
+    .mini-game-row button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(22,163,74,0.8);
+    }
+    .mini-game-result {
+      margin-top: 4px;
+      font-size: 11px;
+      color: #a5b4fc;
+    }
+
+    /* SHARED SECTION TITLES */
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+      margin-top: 10px;
+    }
+    .section-title { font-size: 14px; font-weight: 600; }
+    .section-subtext { font-size: 11px; color: var(--text-sub); }
+
+    /* TESTIMONIALS */
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .testimonial-card {
+      border-radius: 16px;
+      background: #020617;
+      border: 1px solid rgba(30,64,175,0.8);
+      padding: 9px 9px 10px;
+      font-size: 11px;
+      position: relative;
+      overflow: hidden;
+    }
+    .testimonial-card::before {
+      content: "“";
+      position: absolute;
+      font-size: 46px;
+      opacity: 0.11;
+      top: -10px;
+      left: 4px;
+    }
+    .testimonial-text { margin-bottom: 8px; color: #e5e7eb; }
+    .testimonial-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .testimonial-name { font-weight: 600; }
+    .testimonial-tag { font-size: 10px; color: var(--text-sub); }
+
+    /* TEACHERS */
+    .teacher-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .teacher-card {
+      border-radius: 16px;
+      background: radial-gradient(circle at 0 0, rgba(248,250,252,0.1), transparent 60%),
+                  #020617;
+      border: 1px solid rgba(30,64,175,0.85);
+      padding: 9px 9px 9px;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+    .teacher-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #020617;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .teacher-name { font-size: 12px; font-weight: 600; }
+    .teacher-meta { font-size: 10px; color: var(--text-sub); margin-top: 2px; }
+    .teacher-rating { font-size: 10px; margin-top: 4px; color: #fde68a; }
+
+    /* PROGRAMS */
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .program-card {
+      border-radius: 16px;
+      background: #020617;
+      border: 1px solid rgba(148,163,184,0.6);
+      padding: 9px 9px 9px;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .program-title { font-weight: 600; font-size: 12px; }
+    .program-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .program-tag {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.7);
+      color: #e0f2fe;
+      font-size: 10px;
+    }
+    .program-cta {
+      margin-top: 4px;
+      font-size: 11px;
+      color: #93c5fd;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* FAQ */
+    .faq-list { margin-top: 6px; }
+    .faq-item {
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+      padding: 6px 0;
+    }
+    .faq-q {
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .faq-q span.label { font-weight: 500; }
+    .faq-q span.toggle { font-size: 16px; color: var(--text-sub); }
+    .faq-a {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      display: none;
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* FOOTER */
+    .page-footer {
+      margin-top: 12px;
+      font-size: 10px;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .page-footer a {
+      color: #a5b4fc;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="top-row">
+      <div class="brand-left">
+        <div class="brand-logo">U</div>
+        <div>
+          <div class="brand-text-main">Unischooly</div>
+          <div class="brand-text-sub">Coding Trial Class Dashboard</div>
+        </div>
+      </div>
+      <div class="top-right-chip">
+        <span class="icon">✅</span>
+        <span id="headerStatus">Your free class is locked in!</span>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT -->
+      <div class="card">
+        <div class="card-inner">
+          <div class="card-header-row">
+            <div>
+              <div class="card-title">Your child’s personalised trial class</div>
+              <div class="card-sub" id="courseLine">Loading class details…</div>
+            </div>
+            <button id="rescheduleBtn" style="
+              border-radius: 999px;
+              border: 1px solid rgba(148,163,255,0.7);
+              background: rgba(15,23,42,0.95);
+              color: #e5e7eb;
+              padding: 6px 11px;
+              font-size: 11px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              cursor: pointer;
+            ">
+              <span>🔁</span><span>Reschedule</span>
+            </button>
+          </div>
+
+          <div class="profile-main">
+            <div class="profile-top-row">
+              <div class="profile-avatar" id="profileAvatarLetter">👤</div>
+              <div>
+                <div class="profile-name" id="studentName">Student Name</div>
+                <div class="profile-grade" id="studentGrade">Grade</div>
+              </div>
+            </div>
+
+            <div class="profile-chip-row">
+              <div class="profile-chip">
+                <span class="icon">🎓</span>
+                <span id="profileCourseChip">Coding Trial Class</span>
+              </div>
+              <div class="profile-chip">
+                <span class="icon">🌎</span>
+                <span id="profileRegionChip">Local time zone</span>
+              </div>
+            </div>
+
+            <div class="profile-fields">
+              <div class="profile-row">
+                <div class="profile-label">Parent Name</div>
+                <div class="profile-value" id="parentName">—</div>
+              </div>
+              <div class="profile-row">
+                <div class="profile-label">Contact No.</div>
+                <div class="profile-value" id="contactNumber">—</div>
+              </div>
+              <div class="profile-row">
+                <div class="profile-label">Email ID</div>
+                <div class="profile-value" id="emailId">—</div>
+              </div>
+              <div class="profile-row">
+                <div class="profile-label">Course</div>
+                <div class="profile-value" id="courseName">—</div>
+              </div>
+            </div>
+
+            <div class="profile-footer">
+              Powered by <span class="brand">Unischooly</span>
+            </div>
+          </div>
+
+          <div class="schedule-grid">
+            <div class="schedule-card">
+              <div class="schedule-card-inner">
+                <div class="sched-title">
+                  <span class="icon">📅</span><span>Class Schedule</span>
+                </div>
+                <div class="sched-main-time" id="classTimeMain">—</div>
+                <div class="sched-sub-line" id="classTimeSub">
+                  We’ll show this in your selected time zone.
+                </div>
+                <div class="sched-tags">
+                  <div class="sched-tag" id="durationTag">60 min live session</div>
+                  <div class="sched-tag" id="timezoneTag">Time zone —</div>
+                  <div class="sched-tag">Please join 5 mins early</div>
+                </div>
+
+                <div class="calendar-row">
+                  <a id="googleCalLink" class="btn-cal" target="_blank" rel="noopener">
+                    <span>📆</span><span>Google</span>
+                  </a>
+                  <a id="appleCalLink" class="btn-cal">
+                    <span>🍎</span><span>Apple / iCal</span>
+                  </a>
+                  <a id="outlookCalLink" class="btn-cal">
+                    <span>🗓️</span><span>Outlook</span>
+                  </a>
+                  <a id="yahooCalLink" class="btn-cal" target="_blank" rel="noopener">
+                    <span>✉️</span><span>Yahoo</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="countdown-card">
+              <div class="countdown-label">
+                <span>Join class in</span>
+                <span class="status-pill" id="countdownStatus">Counting down…</span>
+              </div>
+              <div class="countdown-row">
+                <div class="count-box">
+                  <div class="count-value" id="cdDays">—</div>
+                  <div class="count-label">Days</div>
+                </div>
+                <div class="count-box">
+                  <div class="count-value" id="cdHours">—</div>
+                  <div class="count-label">Hours</div>
+                </div>
+                <div class="count-box">
+                  <div class="count-value" id="cdMinutes">—</div>
+                  <div class="count-label">Minutes</div>
+                </div>
+                <div class="count-box">
+                  <div class="count-value" id="cdSeconds">—</div>
+                  <div class="count-label">Seconds</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div class="mini-hero">
+          <div class="mini-hero-inner">
+            <div>
+              <div class="mini-hero-title">While you wait, explore Coding Playground 🎮</div>
+              <div class="mini-hero-sub">
+                These bite-sized activities show the kind of fun, logical thinking your child will experience in class.
+              </div>
+              <div class="pill-cta-row">
+                <div class="pill-cta">
+                  <span class="icon">⚡</span><span>Live project-based learning</span>
+                </div>
+                <div class="pill-soft">
+                  ⭐ 4.9 / 5 rated by parents across 30+ countries
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="mini-game-card">
+                <div class="mini-game-title">Mini Game: Secret Number</div>
+                <div>Ask your child to guess the secret number between <strong>1 and 20</strong>.</div>
+                <div class="mini-game-row">
+                  <input id="guessInput" type="number" min="1" max="20" placeholder="Enter your guess" />
+                  <button id="guessBtn">Check</button>
+                </div>
+                <div class="mini-game-result" id="guessResult">
+                  Tip: Try to reach in ≤ 5 guesses.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="card" style="margin-top:12px;">
+          <div class="card-inner">
+            <div class="section-title-row">
+              <div>
+                <div class="section-title">Hear from our happy parents & learners</div>
+                <div class="section-subtext">Real stories from families in 30+ countries.</div>
+              </div>
+            </div>
+            <div class="testimonial-grid">
+              <div class="testimonial-card">
+                <div class="testimonial-text">
+                  “My son finished the trial asking for <strong>one more hour</strong>. The instructor kept him hooked with games and projects.”
+                </div>
+                <div class="testimonial-meta">
+                  <div>
+                    <div class="testimonial-name">Priya, India</div>
+                    <div class="testimonial-tag">Parent of Grade 3 learner</div>
+                  </div>
+                  <div class="testimonial-tag">★ 5 / 5</div>
+                </div>
+              </div>
+              <div class="testimonial-card">
+                <div class="testimonial-text">
+                  “We tried multiple platforms — Unischooly had the best <strong>1:1 attention</strong> and detailed progress report.”
+                </div>
+                <div class="testimonial-meta">
+                  <div>
+                    <div class="testimonial-name">Ahmed, UAE</div>
+                    <div class="testimonial-tag">Parent of Grade 5 learner</div>
+                  </div>
+                  <div class="testimonial-tag">★ 4.9 / 5</div>
+                </div>
+              </div>
+              <div class="testimonial-card">
+                <div class="testimonial-text">
+                  “The trial class project looked like a <strong>mini game</strong> my daughter proudly showed to her grandparents.”
+                </div>
+                <div class="testimonial-meta">
+                  <div>
+                    <div class="testimonial-name">Laura, USA</div>
+                    <div class="testimonial-tag">Parent of Grade 4 learner</div>
+                  </div>
+                  <div class="testimonial-tag">★ 5 / 5</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Teachers -->
+        <div class="card" style="margin-top:12px;">
+          <div class="card-inner">
+            <div class="section-title-row">
+              <div>
+                <div class="section-title">Our global team of instructors</div>
+                <div class="section-subtext">Certified teachers with real-world coding & STEM experience.</div>
+              </div>
+            </div>
+            <div class="teacher-grid">
+              <div class="teacher-card">
+                <div class="teacher-avatar">AK</div>
+                <div>
+                  <div class="teacher-name">Aisha Khan</div>
+                  <div class="teacher-meta">Scratch & Python specialist • India</div>
+                  <div class="teacher-rating">⭐ 4.9 • 3,200+ classes</div>
+                </div>
+              </div>
+              <div class="teacher-card">
+                <div class="teacher-avatar">DM</div>
+                <div>
+                  <div class="teacher-name">David Miller</div>
+                  <div class="teacher-meta">Roblox & Game Design mentor • USA</div>
+                  <div class="teacher-rating">⭐ 4.8 • 2,100+ classes</div>
+                </div>
+              </div>
+              <div class="teacher-card">
+                <div class="teacher-avatar">FS</div>
+                <div>
+                  <div class="teacher-name">Fatima Saleh</div>
+                  <div class="teacher-meta">AI & App Development • UAE</div>
+                  <div class="teacher-rating">⭐ 5.0 • Parent favourite</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other programs / kids projects -->
+        <div class="card" style="margin-top:12px;">
+          <div class="card-inner">
+            <div class="section-title-row">
+              <div>
+                <div class="section-title">More exciting programs at Unischooly</div>
+                <div class="section-subtext">Upgrade from trial to a personalised learning journey.</div>
+              </div>
+            </div>
+            <div class="program-grid">
+              <div class="program-card">
+                <div class="program-title">Explorer: Coding | Junior</div>
+                <div>Perfect for Grades 1–4 starting their coding journey.</div>
+                <div class="program-tag-row">
+                  <div class="program-tag">Scratch</div>
+                  <div class="program-tag">Logic games</div>
+                  <div class="program-tag">Story projects</div>
+                </div>
+                <div class="program-cta" onclick="window.open('https://www.unischooly.com/', '_blank')">
+                  View full curriculum →
+                </div>
+              </div>
+              <div class="program-card">
+                <div class="program-title">Creator: Coding | Senior</div>
+                <div>For Grades 5–8 building real apps & games.</div>
+                <div class="program-tag-row">
+                  <div class="program-tag">Python</div>
+                  <div class="program-tag">App dev</div>
+                  <div class="program-tag">Roblox Studio</div>
+                </div>
+                <div class="program-cta" onclick="window.open('https://www.unischooly.com/', '_blank')">
+                  See sample projects →
+                </div>
+              </div>
+              <div class="program-card">
+                <div class="program-title">Future Skills Lab</div>
+                <div>Short camps on AI, Robotics, and Game Design.</div>
+                <div class="program-tag-row">
+                  <div class="program-tag">AI tools</div>
+                  <div class="program-tag">STEM kits</div>
+                  <div class="program-tag">Weekend batches</div>
+                </div>
+                <div class="program-cta" onclick="window.open('https://www.unischooly.com/s/pages/winter-camp', '_blank')">
+                  Explore winter camp →
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="card" style="margin-top:12px;">
+          <div class="card-inner">
+            <div class="section-title-row">
+              <div>
+                <div class="section-title">FAQs before your trial class</div>
+                <div class="section-subtext">Quick answers to what parents usually ask.</div>
+              </div>
+            </div>
+            <div class="faq-list" id="faqList">
+              <div class="faq-item">
+                <div class="faq-q">
+                  <span class="label">Do I need to install anything before class?</span>
+                  <span class="toggle">+</span>
+                </div>
+                <div class="faq-a">
+                  For best experience, please install Zoom or Google Meet (as shared by our team) on a laptop or desktop.
+                  A stable internet connection and a quiet space are enough for the first class.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">
+                  <span class="label">Can parents join the trial class?</span>
+                  <span class="toggle">+</span>
+                </div>
+                <div class="faq-a">
+                  Yes, we encourage at least one parent to be available in the beginning and end of the class
+                  so the teacher can discuss goals and share a quick feedback summary.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-q">
+                  <span class="label">What happens after the trial?</span>
+                  <span class="toggle">+</span>
+                </div>
+                <div class="faq-a">
+                  You’ll receive a short report and suggested learning path. Our team will help you choose the right
+                  program, schedule and pricing based on your child’s interest and comfort.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div>Need help with your class? Write to <a href="mailto:support@unischooly.com">support@unischooly.com</a>.</div>
+      <div>By joining class, you agree to Unischooly’s terms of use &amp; privacy policy.</div>
+    </div>
+  </div>
+
+  <script>
+    const { DateTime } = luxon;
+
+    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const COURSE_LABELS = {
+      1: "Coding Trial Class",
+      2: "Roblox & Game Design Trial",
+      3: "App Development Trial",
+      4: "Maths / Logic Skills Trial"
+    };
+
+    const url = new URL(window.location.href);
+    const bookingUUID = url.searchParams.get("bookingUUID");
+    const courseId = parseInt(url.searchParams.get("courseId") || "1", 10);
+
+    let targetDateTime = null;
+    let leadTimezone = null;
+    let countdownTimer = null;
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    async function fetchLeadAndPopulate() {
+      if (!bookingUUID) {
+        setText("headerStatus", "Missing booking ID. Please open your link again.");
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("demo_leads")
+        .select("*")
+        .eq("id", bookingUUID)
+        .single();
+
+      if (error || !data) {
+        setText("headerStatus", "We couldn’t find this booking. Please contact support.");
+        console.error(error);
+        return;
+      }
+
+      const lead = data;
+
+      const courseLabel = COURSE_LABELS[lead.course_id] || COURSE_LABELS[courseId] || "Coding Trial Class";
+      setText("courseLine", courseLabel + " • 1-hour personalised session");
+      setText("profileCourseChip", courseLabel);
+      setText("courseName", courseLabel);
+
+      const name = lead.child_name || "Your child";
+      setText("studentName", name);
+      const initial = (name || "?").trim()[0]?.toUpperCase() || "U";
+      document.getElementById("profileAvatarLetter").textContent = initial;
+
+      const gradeText = lead.child_grade || "Grade not added yet";
+      setText("studentGrade", gradeText);
+
+      setText("parentName", lead.parent_name || "—");
+
+      const phoneFull = (lead.phone_country_code || "") + " " + (lead.phone_number || "");
+      setText("contactNumber", phoneFull.trim() || "—");
+
+      setText("emailId", lead.parent_email || "—");
+
+      leadTimezone = lead.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
+      setText("profileRegionChip", leadTimezone.replace("_", " "));
+      setText("timezoneTag", "Time zone • " + leadTimezone);
+
+      const preferredDate = lead.preferred_date;
+      const timeString = lead.preferred_time_slot;
+
+      if (!preferredDate || !timeString) {
+        setText("classTimeMain", "Time to be updated by our team");
+        setText("classTimeSub", "We will share your exact slot over WhatsApp & Email.");
+        return;
+      }
+
+      targetDateTime = DateTime.fromFormat(
+        preferredDate + " " + timeString,
+        "yyyy-MM-dd h:mm a",
+        { zone: leadTimezone }
+      );
+
+      if (!targetDateTime.isValid) {
+        console.warn("Invalid datetime parsed", targetDateTime.invalidExplanation);
+      }
+
+      const niceDate = targetDateTime.toFormat("EEE • dd LLL yyyy");
+      const niceTime = targetDateTime.toFormat("hh:mm a");
+      setText("classTimeMain", niceTime + " (" + leadTimezone + ")");
+      setText("classTimeSub", niceDate + " • We’ll send a reminder before class starts.");
+
+      setupCalendarLinks(name, courseLabel, targetDateTime);
+
+      startCountdown();
+
+      const regionKey = lead.region_key || "GLOBAL";
+      const baseReschedule = "https://booking.unischooly.com/book-trial-class";
+      const rescheduleUrl = baseReschedule +
+        "?courseId=" + encodeURIComponent(lead.course_id || courseId || 1) +
+        "&region=" + encodeURIComponent(regionKey) +
+        "&medium=reschedule";
+      document.getElementById("rescheduleBtn").onclick = () => {
+        window.location.href = rescheduleUrl;
+      };
+    }
+
+    function setupCalendarLinks(studentName, courseLabel, dt) {
+      if (!dt || !dt.isValid) return;
+
+      const durationMinutes = 60;
+      const end = dt.plus({ minutes: durationMinutes });
+
+      const title = encodeURIComponent(courseLabel + " • " + studentName);
+      const details = encodeURIComponent("Unischooly personalised coding trial class for " + studentName + ".");
+      const location = encodeURIComponent("Online class (link will be shared by Unischooly)");
+
+      const datesGoogle =
+        dt.toUTC().toFormat("yyyyLLdd'T'HHmmss'Z'") + "/" +
+        end.toUTC().toFormat("yyyyLLdd'T'HHmmss'Z'");
+      const googleUrl =
+        "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+        "&text=" + title +
+        "&dates=" + datesGoogle +
+        "&details=" + details +
+        "&location=" + location;
+
+      const googleLink = document.getElementById("googleCalLink");
+      if (googleLink) googleLink.href = googleUrl;
+
+      const startUtc = dt.toUTC().toFormat("yyyyLLdd'T'HHmmss'Z'");
+      const endUtc = end.toUTC().toFormat("yyyyLLdd'T'HHmmss'Z'");
+      const nowUtc = DateTime.utc().toFormat("yyyyLLdd'T'HHmmss'Z'");
+
+      const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Unischooly//Demo Class//EN
+BEGIN:VEVENT
+UID:${bookingUUID}@unischooly.com
+DTSTAMP:${nowUtc}
+DTSTART:${startUtc}
+DTEND:${endUtc}
+SUMMARY:${courseLabel.replace(/,/g, " ")}
+DESCRIPTION:${("Unischooly trial class for " + studentName).replace(/,/g, " ")}
+LOCATION:Online class (Zoom/Meet)
+END:VEVENT
+END:VCALENDAR`;
+
+      const icsBlob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+      const icsUrl = URL.createObjectURL(icsBlob);
+
+      const apple = document.getElementById("appleCalLink");
+      const outlook = document.getElementById("outlookCalLink");
+      if (apple) { apple.href = icsUrl; apple.download = "unischooly-demo-class.ics"; }
+      if (outlook) { outlook.href = icsUrl; outlook.download = "unischooly-demo-class.ics"; }
+
+      const yahooStart = dt.toUTC().toFormat("yyyyLLdd'T'HHmmss'Z'");
+      const yahooEnd = end.toUTC().toFormat("yyyyLLdd'T'HHmmss'Z'");
+      const yahooUrl =
+        "https://calendar.yahoo.com/?v=60&view=d&type=20" +
+        "&title=" + title +
+        "&st=" + yahooStart +
+        "&et=" + yahooEnd +
+        "&desc=" + details +
+        "&in_loc=" + location;
+
+      const yahoo = document.getElementById("yahooCalLink");
+      if (yahoo) yahoo.href = yahooUrl;
+    }
+
+    function startCountdown() {
+      if (!targetDateTime || !targetDateTime.isValid) return;
+      if (countdownTimer) clearInterval(countdownTimer);
+
+      function update() {
+        const now = DateTime.local();
+        const diff = targetDateTime.diff(now, ["days", "hours", "minutes", "seconds"]);
+
+        if (diff.toMillis() <= 0) {
+          setText("cdDays", "00");
+          setText("cdHours", "00");
+          setText("cdMinutes", "00");
+          setText("cdSeconds", "00");
+          setText("countdownStatus", "Class starting now!");
+          return;
+        }
+
+        const days = Math.floor(diff.days);
+        const hours = Math.floor(diff.hours);
+        const minutes = Math.floor(diff.minutes);
+        const seconds = Math.floor(diff.seconds);
+
+        setText("cdDays", String(days).padStart(2, "0"));
+        setText("cdHours", String(hours).padStart(2, "0"));
+        setText("cdMinutes", String(minutes).padStart(2, "0"));
+        setText("cdSeconds", String(seconds).padStart(2, "0"));
+
+        if (days === 0 && hours < 2) {
+          setText("countdownStatus", "Almost there! Get your laptop ready.");
+        } else {
+          setText("countdownStatus", "Counting down to your live class.");
+        }
+      }
+
+      update();
+      countdownTimer = setInterval(update, 1000);
+    }
+
+    /* MINI GAME */
+    let secretNumber = Math.floor(Math.random() * 20) + 1;
+    let attempts = 0;
+
+    function resetGame() {
+      secretNumber = Math.floor(Math.random() * 20) + 1;
+      attempts = 0;
+      document.getElementById("guessResult").textContent =
+        "New number generated! Try to guess it in 5 attempts or less.";
+      document.getElementById("guessInput").value = "";
+    }
+
+    function initMiniGame() {
+      const input = document.getElementById("guessInput");
+      const btn = document.getElementById("guessBtn");
+      const result = document.getElementById("guessResult");
+      if (!input || !btn || !result) return;
+
+      btn.addEventListener("click", () => {
+        const value = parseInt(input.value, 10);
+        if (Number.isNaN(value) || value < 1 || value > 20) {
+          result.textContent = "Pick a number between 1 and 20 🙂";
+          return;
+        }
+        attempts++;
+        if (value === secretNumber) {
+          result.textContent =
+            "Yay! You cracked the code in " + attempts + " attempts. Click again to play a new round.";
+          resetGame();
+        } else if (value < secretNumber) {
+          result.textContent = "Too low! Try a higher number.";
+        } else {
+          result.textContent = "Too high! Try a smaller number.";
+        }
+      });
+    }
+
+    /* FAQ TOGGLE */
+    function initFAQ() {
+      const list = document.getElementById("faqList");
+      if (!list) return;
+      list.addEventListener("click", (e) => {
+        const q = e.target.closest(".faq-q");
+        if (!q) return;
+        const item = q.parentElement;
+        item.classList.toggle("open");
+        const toggle = q.querySelector(".toggle");
+        if (toggle) toggle.textContent = item.classList.contains("open") ? "−" : "+";
+      });
+    }
+
+    (function init() {
+      fetchLeadAndPopulate();
+      initMiniGame();
+      initFAQ();
+    })();
+  </script>
+</body>
+</html>
 

@@ -15,7 +15,7 @@ body {
   color: #fff;
 }
 
-/* ---------- HEADER ---------- */
+/* ================= HEADER ================= */
 .header {
   display: flex;
   justify-content: space-between;
@@ -28,14 +28,14 @@ body {
 }
 
 .locked {
-  background: #22c55e;
-  color: #022c16;
-  padding: 10px 18px;
+  background: linear-gradient(90deg, #d946ef, #8b5cf6, #60a5fa);
+  padding: 12px 22px;
   border-radius: 999px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #0b1020;
 }
 
-/* ---------- LAYOUT ---------- */
+/* ================= LAYOUT ================= */
 .container {
   max-width: 1200px;
   margin: auto;
@@ -48,62 +48,75 @@ body {
   gap: 32px;
 }
 
-/* ---------- PASS CARD ---------- */
+/* ================= PASS CARD ================= */
 .pass-card {
-  background: linear-gradient(180deg, #0c1e3c, #060b16);
-  border-radius: 18px;
-  padding: 26px;
-  border: 1px solid rgba(255,215,128,0.35);
-  box-shadow: 0 0 40px rgba(255,215,128,0.12);
+  background: linear-gradient(180deg, #0f2a4d, #070b18);
+  border-radius: 22px;
+  padding: 28px;
+  border: 2px solid rgba(255,215,128,0.6);
+  box-shadow: 0 0 40px rgba(255,215,128,0.18);
+  position: relative;
   transition: box-shadow 0.3s ease;
 }
 
 .pass-card:hover {
-  box-shadow: 0 0 60px rgba(255,215,128,0.25);
+  box-shadow: 0 0 70px rgba(255,215,128,0.35);
 }
 
 .pass-header {
   background: linear-gradient(90deg, #ffe29a, #ffd36a);
   color: #1a1200;
-  padding: 12px 18px;
+  padding: 14px 22px;
   border-radius: 999px;
-  font-weight: 700;
+  font-weight: 800;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .pass-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 20px;
   font-size: 14px;
 }
 
 .label {
-  color: #9fb3d9;
+  color: #a7b8da;
   font-size: 12px;
 }
 
 .value {
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 4px;
+}
+
+.valid-stamp {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  border: 2px dashed #ffd36a;
+  color: #ffd36a;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .footer-note {
   text-align: center;
-  margin-top: 18px;
+  margin-top: 28px;
   font-size: 12px;
   opacity: 0.7;
 }
 
-/* ---------- SCHEDULE ---------- */
+/* ================= SCHEDULE ================= */
 .schedule {
   margin-top: 28px;
   background: linear-gradient(180deg, #0c1e3c, #060b16);
-  border-radius: 18px;
-  padding: 24px;
+  border-radius: 22px;
+  padding: 28px;
 }
 
 .timer {
@@ -113,17 +126,17 @@ body {
 }
 
 .time-box {
-  background: rgba(255,255,255,0.06);
-  padding: 14px 18px;
-  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  padding: 16px 20px;
+  border-radius: 14px;
   text-align: center;
-  min-width: 80px;
+  min-width: 90px;
 }
 
 .time-box span {
   display: block;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
 }
 
 .join-row {
@@ -135,42 +148,40 @@ body {
 .join-btn {
   background: linear-gradient(90deg, #ff6aa2, #ff956a);
   border: none;
-  padding: 14px 28px;
+  padding: 16px 34px;
   border-radius: 999px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  opacity: 0.5;
+  font-size: 16px;
+  font-weight: 800;
+  opacity: 0.4;
 }
 
 .join-btn.enabled {
   opacity: 1;
-  cursor: pointer;
 }
 
 .disclaimer {
   font-size: 12px;
   opacity: 0.7;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
-/* ---------- RIGHT PANEL ---------- */
+/* ================= RIGHT PANEL ================= */
 .right-panel {
   background: linear-gradient(180deg, #0c1e3c, #060b16);
-  border-radius: 18px;
-  padding: 28px;
+  border-radius: 22px;
+  padding: 32px;
 }
 
 h2 {
   margin-top: 0;
-  font-size: 26px;
+  font-size: 28px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 <div class="header">
   <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg">
   <div class="locked">✅ Your trial class is locked in!</div>
@@ -179,7 +190,7 @@ h2 {
 <div class="container">
   <div class="section">
 
-    <!-- LEFT -->
+    <!-- LEFT COLUMN -->
     <div>
       <div class="pass-card">
         <div class="pass-header">
@@ -216,6 +227,7 @@ h2 {
           </div>
         </div>
 
+        <div class="valid-stamp">VALID FOR 1 SESSION</div>
         <div class="footer-note">Powered by <strong>Unischooly</strong></div>
       </div>
 
@@ -240,10 +252,11 @@ h2 {
       </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT COLUMN -->
     <div class="right-panel">
       <h2 id="welcomeText">Welcome to your Trial Class</h2>
       <p>Join class in:</p>
+
       <div class="timer">
         <div class="time-box"><span id="rd">0</span>Days</div>
         <div class="time-box"><span id="rh">0</span>Hours</div>
@@ -256,8 +269,8 @@ h2 {
 </div>
 
 <script>
-const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY";
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const params = new URLSearchParams(window.location.search);

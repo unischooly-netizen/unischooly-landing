@@ -1,522 +1,684 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unischooly Demo Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Unischooly • Trial Dashboard</title>
 
-    <style>
-        :root {
-            --primary: #4F46E5;
-            --secondary: #9333EA;
-            --pink: #EC4899;
-            --gold: #F59E0B;
-            --gold-glow: rgba(245, 158, 11, 0.5);
-            --bg-dark: #0F172A;
-            --card-bg: #1E293B;
-            --text-white: #F8FAFC;
-            --text-gray: #94A3B8;
-            --success: #10B981;
-            --brand-grad: linear-gradient(90deg, #EC4899, #9333EA, #3B82F6);
-        }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-white); padding-bottom: 50px; }
+  <style>
+    :root{
+      --bg0:#060b14;
+      --bg1:#091327;
+      --card:#0d1833cc;
+      --card2:#0b142bdd;
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.16);
+      --text:#eaf1ff;
+      --muted:rgba(234,241,255,.70);
+      --muted2:rgba(234,241,255,.55);
+      --gold:#f7d98a;
+      --gold2:#caa24c;
+      --pink:#ff4fd8;
+      --purple:#8b5cf6;
+      --blue:#4cc9ff;
+      --teal:#2dd4bf;
+      --ok:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 20px 70px rgba(0,0,0,.45);
+      --r24:24px;
+      --r18:18px;
+    }
 
-        /* --- UTILS --- */
-        .container {
-            max-width: 1200px; /* FIX 2: Container constraint */
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        .hidden { display: none !important; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 18% 15%, rgba(139,92,246,.22) 0%, rgba(139,92,246,0) 55%),
+        radial-gradient(900px 600px at 82% 35%, rgba(76,201,255,.18) 0%, rgba(76,201,255,0) 50%),
+        radial-gradient(900px 600px at 35% 85%, rgba(45,212,191,.12) 0%, rgba(45,212,191,0) 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
 
-        /* --- HEADER --- */
-        header {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            position: sticky; top: 0; z-index: 100;
-            padding: 0.8rem 0;
-        }
-        .header-content {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { height: 35px; }
-        .status-pill {
-            background: var(--brand-grad);
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.9rem; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
-        }
+    /* ====== SECTION 1 (Top bar) ====== */
+    .topbar{
+      width:100%;
+      background: rgba(6,11,20,0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topContent {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        padding: 14px 22px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:14px;
+    }
+    .brand{ display:flex; align-items:center; gap:14px; }
+    .brand img{
+      height:34px;
+      width:auto;
+      display:block;
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+    }
+    .status-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(90deg, rgba(255,79,216,.22), rgba(139,92,246,.22), rgba(76,201,255,.22));
+      box-shadow: 0 12px 40px rgba(0,0,0,.30);
+      backdrop-filter: blur(10px);
+      font-weight:800;
+      font-size: 0.9rem;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .status-pill .check{
+      width:20px;height:20px;border-radius:999px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(16,185,129,.95));
+      box-shadow: 0 5px 15px rgba(34,197,94,.22);
+      color:#04110b;
+      font-weight:900;
+      font-size: 12px;
+    }
 
-        /* --- MAIN GRID --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr; /* Left slightly larger */
-            gap: 2rem;
-            margin-top: 2rem;
-        }
+    /* ====== SECTION 2 (Main layout) ====== */
+    .wrap{
+      width:min(1200px, 100%);
+      margin:0 auto;
+      padding:24px 22px 40px;
+    }
 
-        /* --- CARDS --- */
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:24px;
+      align-items:start;
+    }
 
-        /* --- 1. TICKET CARD (FIX 3) --- */
-        .ticket-card {
-            border: 2px solid var(--gold);
-            box-shadow: 0 0 20px var(--gold-glow);
-            overflow: hidden; /* Contains the stamp */
-        }
-        .stamp {
-            position: absolute;
-            top: 15px; right: 15px; /* FIX 3: Top Right Placement */
-            border: 3px double #EF4444;
-            color: #EF4444;
-            padding: 5px 10px;
-            font-weight: 800; font-size: 0.8rem;
-            transform: rotate(-15deg);
-            opacity: 0.8;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .ticket-header {
-            border-bottom: 2px dashed rgba(255,255,255,0.2);
-            padding-bottom: 1rem; margin-bottom: 1.5rem;
-        }
-        .ticket-grid {
-            display: grid;
-            grid-template-columns: 120px 1fr; /* FIX 3: Fixed label width, fluid content */
-            gap: 12px 0;
-            align-items: baseline;
-        }
-        .t-label {
-            color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .t-val {
-            font-weight: 600; font-size: 1rem; color: #fff;
-        }
-        .powered {
-            text-align: center; font-size: 0.7rem; color: var(--text-gray); margin-top: 1.5rem; opacity: 0.6;
-        }
+    /* FIX: Better Mobile Stacking */
+    @media (max-width: 900px){
+      .grid2{grid-template-columns: 1fr;}
+      .topContent{padding:12px 16px}
+      .wrap{padding:16px 16px 40px}
+      .brand img{height:28px}
+      .status-pill{font-size:12px; padding: 6px 12px;}
+    }
 
-        /* --- 2. RESCHEDULE (FIX 5) --- */
-        .schedule-card h3 { margin-bottom: 1rem; font-size: 1.2rem; }
-        .current-slot {
-            background: rgba(255,255,255,0.05);
-            padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;
-            display: flex; gap: 1rem; align-items: center;
-        }
-        .cal-icon { font-size: 2rem; color: var(--gold); }
-        
-        .reschedule-label {
-            color: var(--gold); text-decoration: underline; cursor: pointer;
-            font-size: 0.9rem; margin-bottom: 1rem; display: inline-block;
-        }
-        .reschedule-area {
-            display: none; /* Hidden by default */
-            background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 12px;
-        }
-        .reschedule-area.active { display: block; }
+    .card{
+      background: linear-gradient(180deg, rgba(13,24,51,.88), rgba(8,14,28,.88));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r24);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow:hidden;
+      position:relative;
+    }
+    .card.pad{padding:24px}
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+      margin:20px 0;
+    }
 
-        /* PILLS STYLE (BrightChamps) */
-        .date-scroll {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px;
-        }
-        .date-pill {
-            min-width: 60px; height: 70px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; border: 1px solid transparent;
-        }
-        .date-pill.selected { background: var(--gold); color: #000; font-weight: bold; }
-        
-        .time-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;
-        }
-        .time-pill {
-            padding: 8px; text-align: center; background: rgba(255,255,255,0.1);
-            border-radius: 8px; font-size: 0.9rem; cursor: pointer;
-        }
-        .time-pill.selected { background: var(--gold); color: #000; }
-        
-        .tz-select {
-            width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3);
-            color: #fff; border: 1px solid #444; margin-bottom: 10px;
-        }
+    /* ====== Ticket/Pass Card ====== */
+    .ticket{
+      padding:20px;
+      position:relative;
+      border-radius: var(--r24);
+      border:2px solid var(--gold); /* Gold Border */
+      background:
+        radial-gradient(900px 420px at 10% 10%, rgba(139,92,246,.20), rgba(139,92,246,0) 55%),
+        linear-gradient(180deg, rgba(9,16,34,.95), rgba(5,10,22,.95));
+      box-shadow: 0 0 25px rgba(247,217,138, 0.15); /* Glow */
+      overflow:hidden;
+      transition: transform .22s ease;
+    }
+    .ticket:hover{ transform: translateY(-2px); box-shadow: 0 0 35px rgba(247,217,138, 0.25); }
 
-        /* --- 3. WELCOME & TIMER (FIX 4) --- */
-        .welcome-panel { text-align: center; }
-        .w-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .highlight { color: var(--pink); }
-        
-        .timer-box {
-            display: flex; justify-content: center; gap: 10px; margin: 1.5rem 0;
-        }
-        .t-unit {
-            background: #000; padding: 10px; border-radius: 8px; min-width: 70px; border: 1px solid #333;
-        }
-        .t-num { font-size: 1.8rem; font-weight: 700; display: block; line-height: 1; }
-        .t-txt { font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; }
+    /* Perforation line */
+    .perforation{
+      position:absolute;
+      top:80px; left:50%; transform:translateX(-50%);
+      width:1px; height: calc(100% - 100px);
+      background: repeating-linear-gradient(to bottom, rgba(247,217,138,.5) 0 6px, transparent 6px 12px);
+    }
+    .notch{
+      position:absolute; top:50%; width:24px;height:24px; border-radius:50%;
+      background: #0d1833; border:1px solid rgba(255,255,255,.1);
+      z-index: 5;
+    }
+    .notch.left{left:-12px}
+    .notch.right{right:-12px}
 
-        .btn-join {
-            background: var(--success); color: #000;
-            padding: 1rem 3rem; border-radius: 50px;
-            font-size: 1.2rem; font-weight: 800; border: none;
-            cursor: pointer; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            display: block; width: 100%; max-width: 300px; margin: 0 auto; /* Centered */
-        }
-        .btn-join:disabled { background: #334155; color: #64748B; box-shadow: none; cursor: not-allowed; }
+    /* Ticket Header */
+    .ticketHeader{
+      display:flex; justify-content:space-between; align-items:center;
+      padding-bottom: 12px;
+      border-bottom: 2px dashed rgba(255,255,255,0.15);
+      margin-bottom: 16px;
+    }
+    .ticketHeader span {
+        font-weight: 800; font-size: 14px; letter-spacing: 1px; color: var(--gold); text-transform: uppercase;
+    }
 
-        /* --- GAMES & FACTS --- */
-        .game-tabs { display: flex; background: rgba(255,255,255,0.1); border-radius: 50px; padding: 4px; margin-bottom: 1rem; }
-        .tab { flex: 1; text-align: center; padding: 8px; cursor: pointer; border-radius: 50px; font-size: 0.9rem; }
-        .tab.active { background: var(--brand-grad); font-weight: 600; }
-        .game-area { text-align: center; padding: 1rem; min-height: 200px; }
-        .hidden-game { display: none; }
-        .active-game { display: block; animation: fadeIn 0.5s; }
+    /* FIX: Stamp Position Top Right */
+    .stamp{
+      position:absolute;
+      top: 15px;
+      right: 15px;
+      border: 3px double #ef4444;
+      color: #ef4444;
+      padding: 4px 8px;
+      font-weight: 900;
+      font-size: 11px;
+      text-transform: uppercase;
+      transform: rotate(-12deg);
+      border-radius: 4px;
+      background: rgba(0,0,0,0.3);
+      z-index: 10;
+      letter-spacing: 1px;
+    }
 
-        .fact-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-left: 4px solid var(--secondary); }
-        .fact-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-        .nav-btn { width: 30px; height: 30px; border-radius: 50%; background: #334155; border: none; color: #fff; cursor: pointer; }
+    .ticketBody{
+      display:grid;
+      grid-template-columns: 1fr 1fr; /* Two Columns */
+      gap: 20px;
+    }
+    @media (max-width: 600px){
+      .ticketBody{grid-template-columns: 1fr;} /* Stack on mobile */
+      .perforation{display:none} 
+    }
 
-        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+    .field{ margin-bottom: 12px; }
+    .k{ font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;}
+    .v{ font-size: 14px; font-weight: 700; color: #fff; word-break: break-word; }
 
-        /* --- MOBILE FIX (FIX 1) --- */
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr; /* Stack columns */
-                gap: 1rem;
-            }
-            .header-content { flex-direction: row; }
-            .status-pill span { display: none; } /* Show icon only if space tight */
-            .status-pill:after { content: "Locked In!"; font-size: 0.8rem; margin-left: 5px; }
-            .ticket-card { padding: 1.5rem; }
-            .stamp { top: 10px; right: 10px; font-size: 0.6rem; padding: 3px 6px; }
-        }
-    </style>
+    .powered{ margin-top:16px; text-align:center; font-size:11px; color: rgba(255,255,255,0.4); }
+
+    /* ====== Schedule Card ====== */
+    .scheduleTop{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .badge{
+      padding:6px 12px; border-radius:20px; background: rgba(255,255,255,0.08); font-weight:700; font-size:13px;
+    }
+    .mini{
+      background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 12px; display:flex; align-items:center; gap: 12px; margin-bottom: 10px;
+    }
+    .mini .ico{ font-size: 20px; }
+    .mini .t { font-weight: 700; font-size: 15px; }
+    .mini .s { font-size: 12px; color: var(--muted); }
+
+    .calendarBtn{
+      width:100%; border:none; padding:12px; border-radius:30px;
+      background: linear-gradient(90deg, #ff4fd8, #8b5cf6, #4cc9ff);
+      color: #000; font-weight: 800; font-size: 14px; cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.2s;
+    }
+    .calendarBtn:hover{ transform: scale(1.02); }
+
+    .providers{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; display:none;}
+    .chip{ padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.1); font-size:12px; cursor:pointer; }
+    
+    /* ====== Fun Facts ====== */
+    .funfacts { margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; border-left: 3px solid var(--purple); }
+    .factTitle { font-weight: 800; font-size: 13px; color: var(--purple); margin-bottom: 6px; text-transform: uppercase;}
+    .factText { font-size: 13px; line-height: 1.5; color: var(--muted); min-height: 40px;}
+    .factsNav { display:flex; justify-content: flex-end; gap: 8px; margin-top: 8px;}
+    .navBtn { background: rgba(255,255,255,0.1); border:none; color:white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer;}
+
+    /* ====== Welcome + Timer ====== */
+    .welcomeTitle { font-size: 20px; font-weight: 800; margin-bottom: 8px; line-height: 1.3; text-align: center;}
+    .welcomeTitle .accent { color: var(--pink); }
+    .subline { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+
+    .countRow {
+        display:flex; justify-content:center; gap: 8px; margin-bottom: 24px;
+    }
+    .tb { background: #000; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; min-width: 60px; text-align: center;}
+    .tb .n { font-size: 20px; font-weight: 800; display: block; line-height: 1;}
+    .tb .l { font-size: 10px; text-transform: uppercase; color: var(--muted); margin-top: 4px;}
+
+    /* FIX: Join Button Centered Below Timer */
+    .joinWrapper { display: flex; justify-content: center; margin-bottom: 16px; }
+    .joinBtn {
+        background: #10b981; color: #000; padding: 14px 32px; border-radius: 50px; font-weight: 800; font-size: 16px; border:none; cursor: pointer;
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); transition: transform 0.2s;
+    }
+    .joinBtn:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; }
+    .joinBtn:not(:disabled):hover { transform: scale(1.05); }
+
+    .disclaimer { text-align: center; font-size: 12px; color: var(--muted2); }
+    .link { color: var(--gold); text-decoration: underline; cursor: pointer; }
+
+    /* ====== Reschedule UI (Pills) ====== */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: flex-end; justify-content: center;}
+    .overlay.open { display: flex; }
+    .sheet { background: #0f172a; width: 100%; max-width: 600px; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 24px; border-top: 1px solid rgba(255,255,255,0.1); animation: slideUp 0.3s ease-out;}
+    @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
+
+    .sheetHead { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center;}
+    .sheetHead h2 { margin: 0; font-size: 18px; color: #fff;}
+    .closeX { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;}
+
+    .resLabel { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; }
+    
+    /* Scrollable Date Pills */
+    .dateScroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; scrollbar-width: none; }
+    .datePill { 
+        min-width: 70px; height: 75px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    }
+    .datePill.active { background: var(--gold); color: #000; border-color: var(--gold); }
+    .datePill span:first-child { font-size: 11px; text-transform: uppercase; }
+    .datePill span:last-child { font-size: 20px; font-weight: 800; }
+
+    /* Time Grid Pills */
+    .timeGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+    .timePill { 
+        padding: 10px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+        border-radius: 8px; font-size: 13px; cursor: pointer; color: var(--text);
+    }
+    .timePill.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
+
+    .tzSelect { width: 100%; padding: 12px; border-radius: 8px; background: #000; color: #fff; border: 1px solid #333; margin-bottom: 20px; }
+
+    .saveBtn { width: 100%; padding: 14px; background: #fff; color: #000; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; }
+
+    /* Games Styles (Minimal) */
+    .brainHeader { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 12px;}
+    .gameTabs { display: flex; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 20px; }
+    .gTab { padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; color: var(--muted); }
+    .gTab.active { background: var(--purple); color: #fff; font-weight: 700; }
+    .gamePanel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; min-height: 150px; text-align: center; }
+    .gameInput { background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; text-align: center; width: 80px; margin-top: 10px;}
+  </style>
 </head>
+
 <body>
-
-    <header>
-        <div class="container header-content">
-            <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Logo" class="logo">
-            <div class="status-pill">
-                <i class="fas fa-check-circle"></i>
-                <span>Your trial class is locked in!</span>
-            </div>
-        </div>
-    </header>
-
-    <div class="container dashboard-grid">
-        
-        <div class="left-col">
-            
-            <div class="card ticket-card">
-                <div class="stamp">VALUE WAIVED</div>
-                <div class="ticket-header">
-                    <h3 style="color:var(--gold); text-transform:uppercase; letter-spacing:1px;">Student Entry Pass</h3>
-                </div>
-                <div class="ticket-grid">
-                    <div class="t-label">Student</div>
-                    <div class="t-val" id="tk-name">Loading...</div>
-
-                    <div class="t-label">Grade</div>
-                    <div class="t-val" id="tk-grade">--</div>
-
-                    <div class="t-label">Course</div>
-                    <div class="t-val" id="tk-course">--</div>
-
-                    <div class="t-label">Parent</div>
-                    <div class="t-val" id="tk-pname">--</div>
-                    
-                    <div class="t-label">Email</div>
-                    <div class="t-val" id="tk-email" style="font-size:0.9rem; overflow-wrap:anywhere;">--</div>
-                    
-                    <div class="t-label">Phone</div>
-                    <div class="t-val" id="tk-phone">--</div>
-                </div>
-                <div class="powered">Powered by Unischooly</div>
-            </div>
-
-            <div class="card schedule-card">
-                <h3>🚀 Ready for Blast Off!!!</h3>
-                <div class="current-slot">
-                    <i class="fas fa-calendar-alt cal-icon"></i>
-                    <div>
-                        <div style="font-size:1.1rem; font-weight:700;" id="sc-date">--</div>
-                        <div style="color:var(--text-gray);" id="sc-time">--</div>
-                    </div>
-                </div>
-
-                <div class="reschedule-label" onclick="toggleReschedule()">Need to Reschedule?</div>
-                <div class="reschedule-area" id="reschedule-ui">
-                    <p style="margin-bottom:5px; font-size:0.8rem;">Select New Date:</p>
-                    <div class="date-scroll" id="date-container"></div> <p style="margin:10px 0 5px 0; font-size:0.8rem;">Select New Time:</p>
-                    <div class="time-grid" id="time-container">
-                        <div class="time-pill" onclick="selTime(this)">4:00 PM</div>
-                        <div class="time-pill" onclick="selTime(this)">5:00 PM</div>
-                        <div class="time-pill" onclick="selTime(this)">6:00 PM</div>
-                        <div class="time-pill" onclick="selTime(this)">7:00 PM</div>
-                        <div class="time-pill" onclick="selTime(this)">8:00 PM</div>
-                        <div class="time-pill" onclick="selTime(this)">9:00 PM</div>
-                    </div>
-
-                    <select class="tz-select">
-                        <option>Asia/Kolkata (IST)</option>
-                        <option>America/New_York (EST)</option>
-                        <option>Europe/London (GMT)</option>
-                    </select>
-                    <button style="width:100%; padding:10px; background:var(--text-white); border:none; border-radius:8px; font-weight:700; cursor:pointer;" onclick="alert('Reschedule logic here')">Confirm Change</button>
-                </div>
-            </div>
-
-            <div class="card fact-card">
-                <h4 style="color:var(--secondary); margin-bottom:10px;">Did you know?</h4>
-                <div id="fact-txt" style="min-height:50px; font-size:0.95rem;">Loading fact...</div>
-                <div class="fact-nav">
-                    <button class="nav-btn" onclick="nextFact(-1)"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-btn" onclick="nextFact(1)"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-
+  <header class="topbar">
+    <div class="topContent">
+        <div class="brand">
+        <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
         </div>
 
-        <div class="right-col">
-            
-            <div class="card welcome-panel">
-                <div class="w-title">
-                    Welcome to <span class="highlight" id="w-name">Student</span>'s <br> 
-                    <span id="w-course">Trial</span> Class
-                </div>
-                
-                <div class="timer-box" id="timer-ui">
-                    <div class="t-unit"><span class="t-num" id="d">00</span><span class="t-txt">Days</span></div>
-                    <div class="t-unit"><span class="t-num" id="h">00</span><span class="t-txt">Hrs</span></div>
-                    <div class="t-unit"><span class="t-num" id="m">00</span><span class="t-txt">Mins</span></div>
-                    <div class="t-unit"><span class="t-num" id="s">00</span><span class="t-txt">Secs</span></div>
-                </div>
-                <div id="msg-ended" class="hidden" style="color:red; font-weight:bold; margin-bottom:1rem;">Class Ended</div>
-
-                <button class="btn-join" id="join-btn" disabled>Join Class</button>
-                <div style="font-size:0.8rem; color:var(--text-gray); margin-top:5px;">(Activates 5 mins before)</div>
-            </div>
-
-            <div class="card">
-                <div class="game-tabs">
-                    <div class="tab active" onclick="setGame('math', this)">Math</div>
-                    <div class="tab" onclick="setGame('mem', this)">Memory</div>
-                    <div class="tab" onclick="setGame('type', this)">Sprint</div>
-                </div>
-                <div class="game-area">
-                    <div id="g-math" class="active-game">
-                        <h2 id="m-q">5 + 3 = ?</h2>
-                        <input type="number" id="m-in" style="padding:5px; font-size:1.2rem; width:80px; text-align:center; margin:10px 0;">
-                        <br><button onclick="checkMath()" style="padding:5px 15px;">Check</button>
-                        <p id="m-res" style="margin-top:5px; height:20px;"></p>
-                    </div>
-                    <div id="g-mem" class="hidden-game">
-                        <p>Memory Game Loading...</p>
-                        <button onclick="alert('Resetting...')">Reset</button>
-                    </div>
-                    <div id="g-type" class="hidden-game">
-                        <p>Type "Unischooly"</p>
-                        <input type="text" id="t-in" oninput="checkType(this)">
-                        <p id="t-res"></p>
-                    </div>
-                </div>
-            </div>
-
+        <div class="status-pill" id="lockedPill" title="Status">
+        <div class="check">✓</div>
+        <div>Your trial class is locked in!</div>
         </div>
     </div>
+  </header>
 
-    <script>
-        // --- 1. CONFIG & INIT ---
-        const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <main class="wrap">
+    <div class="grid2">
+      <section>
+        <div class="ticket" id="ticketCard">
+          <div class="notch left"></div>
+          <div class="notch right"></div>
+          <div class="perforation"></div>
 
-        const params = new URLSearchParams(window.location.search);
-        // FIX 1: Robust ID Check
-        const leadId = params.get('iduuid') || params.get('id'); 
-        
-        let leadData = null;
-        let classDate = null;
+          <div class="stamp">VALUE WAIVED</div>
 
-        async function init() {
-            if(!leadId) {
-                document.getElementById('tk-name').innerText = "Error: No ID Found in URL";
-                document.getElementById('tk-name').style.color = "red";
-                return;
-            }
+          <div class="ticketHeader">
+            <span>OFFICIAL ENTRY PASS</span>
+            <span style="opacity: 0.6">🎫 ADMIT ONE</span>
+          </div>
 
-            // Fetch
-            const { data, error } = await supabase.from('demo_leads').select('*').eq('id', leadId).single();
+          <div class="ticketBody">
+            <div>
+              <div class="field"><div class="k">Student Name</div><div class="v" id="v_child_name">Loading...</div></div>
+              <div class="field"><div class="k">Grade</div><div class="v" id="v_child_grade">--</div></div>
+              <div class="field"><div class="k">Course</div><div class="v" id="v_course_name">--</div></div>
+            </div>
+            <div>
+              <div class="field"><div class="k">Parent Name</div><div class="v" id="v_parent_name">--</div></div>
+              <div class="field"><div class="k">Phone</div><div class="v" id="v_parent_phone">--</div></div>
+              <div class="field"><div class="k">Email</div><div class="v" id="v_parent_email" style="font-size: 12px;">--</div></div>
+            </div>
+          </div>
+
+          <div class="powered">Powered by <b>Unischooly</b></div>
+        </div>
+
+        <div class="card pad" style="margin-top: 24px;">
+            <div class="scheduleTop">
+                <div class="badge">🚀 Ready for Blast Off!!!</div>
+            </div>
             
-            if(error || !data) {
-                console.error(error);
-                document.getElementById('tk-name').innerText = "Error: Lead Not Found";
-                document.getElementById('tk-name').style.color = "red";
-                return;
-            }
+            <div class="mini">
+                <div class="ico">📅</div>
+                <div>
+                    <div class="t" id="v_demo_date">--</div>
+                    <div class="s">Date</div>
+                </div>
+            </div>
+            <div class="mini">
+                <div class="ico">⏰</div>
+                <div>
+                    <div class="t" id="v_demo_time">--</div>
+                    <div class="s" id="v_demo_tz">Timezone</div>
+                </div>
+            </div>
 
-            leadData = data;
-            render();
-            startTimer();
-            initFacts();
-            initReschedule(); // Build pills
-            newMath();
+            <button class="calendarBtn" id="calendarSyncBtn">📅 Initiate Calendar Sync</button>
+            <div class="providers" id="calendarProviders">
+                <div class="chip" data-cal="google">Google</div>
+                <div class="chip" data-cal="apple">Apple</div>
+                <div class="chip" data-cal="outlook">Outlook</div>
+            </div>
+
+            <div class="funfacts">
+                <div class="factTitle">DID YOU KNOW?</div>
+                <div class="factText" id="factText">Loading...</div>
+                <div class="factsNav">
+                    <button class="navBtn" id="factPrev">‹</button>
+                    <button class="navBtn" id="factNext">›</button>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <section class="card pad">
+        <h1 class="welcomeTitle">Welcome to <span class="accent" id="welcomeName">Student</span>'s <br>Trial Class</h1>
+        <p class="subline">Class starts in:</p>
+
+        <div class="countRow" id="countRow">
+            <div class="tb"><div class="n" id="t_days">00</div><div class="l">Days</div></div>
+            <div class="tb"><div class="n" id="t_hours">00</div><div class="l">Hrs</div></div>
+            <div class="tb"><div class="n" id="t_mins">00</div><div class="l">Mins</div></div>
+            <div class="tb"><div class="n" id="t_secs">00</div><div class="l">Secs</div></div>
+        </div>
+
+        <div class="joinWrapper">
+            <button class="joinBtn" id="joinBtn" disabled>Join Class</button>
+        </div>
+
+        <div class="disclaimer">
+            <div style="margin-bottom: 8px;">(Button activates 5 mins before class)</div>
+            <span class="link" id="openTerms">Terms & Conditions</span> • 
+            <span class="link" id="openReschedule">Reschedule Class</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="brainHeader">
+            <h3 style="margin:0; font-size:16px;">Sharpen Your Brain 🧠</h3>
+            <div class="gameTabs">
+                <div class="gTab active" onclick="switchGame('math', this)">Math</div>
+                <div class="gTab" onclick="switchGame('memory', this)">Memory</div>
+            </div>
+        </div>
+        
+        <div class="gamePanel" id="gamePanel">
+            <div id="gMath">
+                <h2 id="mathQ" style="margin:10px 0;">5 + 3 = ?</h2>
+                <input type="number" id="mathIn" class="gameInput">
+                <button onclick="checkMath()" style="padding:6px 12px; border-radius:6px; background:var(--pink); border:none; margin-left:8px; cursor:pointer;">Check</button>
+                <div id="mathRes" style="margin-top:10px; font-weight:700; color: var(--ok);"></div>
+            </div>
+            <div id="gMem" style="display:none;">
+                <p>Memory Game Loading...</p>
+                <button onclick="switchGame('math', document.querySelector('.gTab'))" style="padding:8px;">Back to Math</button>
+            </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <div class="overlay" id="resOverlay">
+    <div class="sheet">
+        <div class="sheetHead">
+            <h2>Reschedule Class</h2>
+            <button class="closeX" id="closeRes">✕</button>
+        </div>
+
+        <div class="resLabel">Select New Date</div>
+        <div class="dateScroll" id="datePillsContainer">
+            </div>
+
+        <div class="resLabel">Select New Time</div>
+        <div class="timeGrid" id="timePillsContainer">
+            <div class="timePill" onclick="selectTime(this, '10:00')">10:00 AM</div>
+            <div class="timePill" onclick="selectTime(this, '11:00')">11:00 AM</div>
+            <div class="timePill" onclick="selectTime(this, '14:00')">02:00 PM</div>
+            <div class="timePill" onclick="selectTime(this, '15:00')">03:00 PM</div>
+            <div class="timePill" onclick="selectTime(this, '16:00')">04:00 PM</div>
+            <div class="timePill" onclick="selectTime(this, '17:00')">05:00 PM</div>
+        </div>
+
+        <div class="resLabel">Timezone</div>
+        <select class="tzSelect" id="resTz">
+            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+            <option value="America/New_York">America/New_York (EST)</option>
+            <option value="Europe/London">Europe/London (GMT)</option>
+            <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+        </select>
+
+        <button class="saveBtn" id="resSave">Confirm Reschedule</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="termsOverlay">
+    <div class="sheet">
+        <div class="sheetHead"><h2>Terms</h2><button class="closeX" id="closeTerms">✕</button></div>
+        <ul style="color:#ccc; line-height:1.6; padding-left:20px;">
+            <li>Class is recorded for quality purposes.</li>
+            <li>Zero tolerance for bullying.</li>
+            <li>Parental supervision advised.</li>
+        </ul>
+    </div>
+  </div>
+
+<script>
+/* =========================
+   CONFIG & HELPERS
+========================= */
+const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const qs = new URLSearchParams(location.search);
+const $ = (id)=>document.getElementById(id);
+
+// Course Data
+const FUNFACTS = {
+  1: ["Coding is logic!", "First bug was a moth.", "Computers use binary.", "Python is not a snake."],
+  2: ["Python reads like English.", "Used by NASA.", "Great for AI.", "Indentation matters."],
+  3: ["HTML is structure.", "CSS is style.", "JS is logic.", "The web is huge."]
+};
+let lead = null;
+let classUtc = null;
+let selectedDateVal = null; // For Reschedule Logic
+let selectedTimeVal = null;
+
+/* =========================
+   INIT & DATA FETCH
+========================= */
+async function loadLead(){
+  const iduuid = qs.get("iduuid");
+  if(!iduuid) { alert("Missing ID in URL"); return; }
+
+  const { data, error } = await sb.from("demo_leads").select("*").eq("id", iduuid).maybeSingle();
+  
+  if(error || !data){ console.error(error); alert("Booking not found"); return; }
+  lead = data;
+
+  // Render Pass
+  $("v_child_name").textContent = lead.child_name;
+  $("v_child_grade").textContent = lead.child_grade || "--";
+  $("v_parent_name").textContent = lead.parent_name;
+  $("v_parent_phone").textContent = `+${lead.phone_country_code} ${lead.phone_number}`;
+  $("v_parent_email").textContent = lead.parent_email;
+  $("v_course_name").textContent = getCourseName(lead.course_id);
+  $("welcomeName").textContent = lead.child_name;
+
+  // Schedule
+  $("v_demo_date").textContent = lead.preferred_date;
+  $("v_demo_time").textContent = lead.preferred_time_slot;
+  $("v_demo_tz").textContent = lead.timezone;
+  
+  // Reschedule Pre-fill
+  $("resTz").value = lead.timezone || "Asia/Kolkata";
+
+  // Countdown
+  if(lead.preferred_date && lead.preferred_time_slot) {
+     const dateStr = `${lead.preferred_date}T${lead.preferred_time_slot}:00`; // Naive parse
+     classUtc = new Date(dateStr); 
+     startCountdown();
+  }
+
+  setupFunFacts(lead.course_id);
+}
+
+function getCourseName(id){
+    const map = {1:"Coding", 2:"Python", 3:"Web Dev", 4:"GenAI", 5:"Roblox", 6:"Chess", 7:"Math"};
+    return map[id] || "Course";
+}
+
+/* =========================
+   COUNTDOWN
+========================= */
+function startCountdown(){
+    setInterval(()=>{
+        if(!classUtc) return;
+        const now = new Date();
+        const diff = classUtc - now;
+        
+        if(diff <= 0) {
+            if(Math.abs(diff) < 3600000) enableJoin(true); // Live
+            else { $("joinBtn").innerText = "Class Ended"; $("countRow").style.opacity = 0.5; }
+            return;
         }
 
-        // --- 2. RENDER ---
-        function render() {
-            const courseMap = { 1:"Coding", 2:"Python", 3:"Web Dev", 4:"GenAI", 5:"Roblox", 6:"Chess", 7:"Math" };
-            const cName = courseMap[leadData.course_id] || "Coding";
+        const d = Math.floor(diff / (1000*60*60*24));
+        const h = Math.floor((diff / (1000*60*60)) % 24);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        const s = Math.floor((diff / 1000) % 60);
 
-            document.getElementById('tk-name').innerText = leadData.child_name;
-            document.getElementById('tk-grade').innerText = leadData.child_grade;
-            document.getElementById('tk-course').innerText = cName;
-            document.getElementById('tk-pname').innerText = leadData.parent_name;
-            document.getElementById('tk-email').innerText = leadData.parent_email;
-            document.getElementById('tk-phone').innerText = `+${leadData.phone_country_code || ""} ${leadData.phone_number}`;
+        $("t_days").innerText = d<10?"0"+d:d;
+        $("t_hours").innerText = h<10?"0"+h:h;
+        $("t_mins").innerText = m<10?"0"+m:m;
+        $("t_secs").innerText = s<10?"0"+s:s;
 
-            document.getElementById('w-name').innerText = leadData.child_name;
-            document.getElementById('w-course').innerText = cName;
+        if(diff <= 300000) enableJoin(false); // 5 mins
+    }, 1000);
+}
 
-            // Date
-            if(leadData.preferred_date && leadData.preferred_time_slot) {
-                classDate = new Date(`${leadData.preferred_date}T${leadData.preferred_time_slot}:00`);
-                document.getElementById('sc-date').innerText = classDate.toLocaleDateString();
-                document.getElementById('sc-time').innerText = `${leadData.preferred_time_slot} (${leadData.timezone})`;
-            }
-        }
+function enableJoin(live){
+    const b = $("joinBtn");
+    if(b.disabled){
+        b.disabled = false;
+        b.innerText = live ? "JOIN NOW (LIVE)" : "JOIN CLASS";
+        b.onclick = () => alert("Joining Zoom...");
+    }
+}
 
-        // --- 3. TIMER ---
-        function startTimer() {
-            if(!classDate) return;
-            const tick = () => {
-                const now = new Date();
-                const diff = classDate - now;
+/* =========================
+   RESCHEDULE LOGIC (PILLS)
+========================= */
+function initReschedulePills(){
+    const con = $("datePillsContainer");
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    let html = "";
+    for(let i=1; i<=14; i++){
+        const d = new Date(); d.setDate(d.getDate()+i);
+        const iso = d.toISOString().split('T')[0];
+        html += `<div class="datePill" onclick="selectDate(this, '${iso}')">
+            <span>${days[d.getDay()]}</span>
+            <span>${d.getDate()}</span>
+        </div>`;
+    }
+    con.innerHTML = html;
+}
 
-                if(diff <= 0) {
-                    if(Math.abs(diff) < 3600000) { // 1hr class
-                         enableJoin(true);
-                         setTimer(0,0,0,0);
-                    } else {
-                        document.getElementById('join-btn').innerText = "Class Ended";
-                        document.getElementById('timer-ui').classList.add('hidden');
-                        document.getElementById('msg-ended').classList.remove('hidden');
-                    }
-                    return;
-                }
-                
-                // Enable 5 mins before (300,000ms)
-                if(diff <= 300000) enableJoin(false);
+window.selectDate = (el, val) => {
+    document.querySelectorAll('.datePill').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    selectedDateVal = val;
+}
+window.selectTime = (el, val) => {
+    document.querySelectorAll('.timePill').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    selectedTimeVal = val;
+}
 
-                const d = Math.floor(diff / (1000*60*60*24));
-                const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-                const m = Math.floor((diff%(1000*60*60))/(1000*60));
-                const s = Math.floor((diff%(1000*60))/1000);
-                setTimer(d,h,m,s);
-            }
-            setInterval(tick, 1000);
-            tick();
-        }
-        function setTimer(d,h,m,s) {
-            document.getElementById('d').innerText = d<10?'0'+d:d;
-            document.getElementById('h').innerText = h<10?'0'+h:h;
-            document.getElementById('m').innerText = m<10?'0'+m:m;
-            document.getElementById('s').innerText = s<10?'0'+s:s;
-        }
-        function enableJoin(live) {
-            const b = document.getElementById('join-btn');
-            if(b.disabled) {
-                b.disabled = false;
-                b.innerText = live ? "JOIN NOW (LIVE)" : "JOIN CLASS";
-                b.onclick = () => alert("Joining Zoom...");
-            }
-        }
+$("resSave").onclick = async () => {
+    if(!lead?.id) return;
+    if(!selectedDateVal || !selectedTimeVal) { alert("Please select date and time"); return; }
+    
+    const tz = $("resTz").value;
+    const { error } = await sb.from("demo_leads").update({
+        preferred_date: selectedDateVal,
+        preferred_time_slot: selectedTimeVal,
+        timezone: tz
+    }).eq("id", lead.id);
 
-        // --- 4. RESCHEDULE UI ---
-        function toggleReschedule() {
-            document.getElementById('reschedule-ui').classList.toggle('active');
-        }
-        function initReschedule() {
-            const con = document.getElementById('date-container');
-            const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-            let h = "";
-            for(let i=1; i<=14; i++) {
-                const d = new Date(); d.setDate(d.getDate()+i);
-                h += `<div class="date-pill" onclick="selDate(this)">
-                        <span style="font-size:0.7rem">${days[d.getDay()]}</span>
-                        <span style="font-size:1.2rem; font-weight:700">${d.getDate()}</span>
-                      </div>`;
-            }
-            con.innerHTML = h;
-        }
-        window.selDate = (el) => {
-            document.querySelectorAll('.date-pill').forEach(x=>x.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-        window.selTime = (el) => {
-            document.querySelectorAll('.time-pill').forEach(x=>x.classList.remove('selected'));
-            el.classList.add('selected');
-        }
+    if(error) alert("Error updating");
+    else { alert("Rescheduled!"); location.reload(); }
+}
 
-        // --- 5. EXTRAS ---
-        // Facts
-        const facts = ["Coding is logic!", "Python is snake named.", "First bug was a moth.", "AI is math."];
-        let fIdx = 0;
-        function initFacts() {
-            document.getElementById('fact-txt').innerText = facts[0];
-        }
-        window.nextFact = (d) => {
-            fIdx += d;
-            if(fIdx>=facts.length) fIdx=0; if(fIdx<0) fIdx=facts.length-1;
-            document.getElementById('fact-txt').innerText = facts[fIdx];
-        }
+/* =========================
+   UI INTERACTIONS
+========================= */
+// Modal Toggles
+$("openReschedule").onclick = () => { $("resOverlay").classList.add("open"); initReschedulePills(); }
+$("closeRes").onclick = () => $("resOverlay").classList.remove("open");
+$("openTerms").onclick = () => $("termsOverlay").classList.add("open");
+$("closeTerms").onclick = () => $("termsOverlay").classList.remove("open");
+$("calendarSyncBtn").onclick = () => $("calendarProviders").style.display = "flex";
 
-        // Games
-        window.setGame = (g, t) => {
-            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-            t.classList.add('active');
-            document.getElementById('g-math').className = 'hidden-game';
-            document.getElementById('g-mem').className = 'hidden-game';
-            document.getElementById('g-type').className = 'hidden-game';
-            document.getElementById('g-'+g).className = 'active-game';
-        }
-        // Math
-        let sum = 0;
-        function newMath() {
-            let a=Math.floor(Math.random()*10), b=Math.floor(Math.random()*10);
-            sum = a+b;
-            document.getElementById('m-q').innerText = `${a} + ${b} = ?`;
-            document.getElementById('m-in').value = "";
-            document.getElementById('m-res').innerText = "";
-        }
-        window.checkMath = () => {
-            if(parseInt(document.getElementById('m-in').value)===sum) {
-                document.getElementById('m-res').innerText = "Correct!";
-                setTimeout(newMath, 1000);
-            } else document.getElementById('m-res').innerText = "Try again";
-        }
-        window.checkType = (el) => {
-            if(el.value === "Unischooly") document.getElementById('t-res').innerText = "Nice!";
-        }
+// Fun Facts
+let fIdx = 0;
+function setupFunFacts(cid){
+    const list = FUNFACTS[cid] || FUNFACTS[1];
+    const render = () => $("factText").innerText = list[fIdx];
+    $("factNext").onclick = () => { fIdx = (fIdx+1)%list.length; render(); }
+    $("factPrev").onclick = () => { fIdx = (fIdx-1+list.length)%list.length; render(); }
+    render();
+}
 
-        init();
-    </script>
+// Math Game
+let sum = 0;
+function newMath(){
+    let a=Math.floor(Math.random()*10), b=Math.floor(Math.random()*10);
+    sum = a+b;
+    $("mathQ").innerText = `${a} + ${b} = ?`;
+    $("mathIn").value = "";
+    $("mathRes").innerText = "";
+}
+window.checkMath = () => {
+    if(parseInt($("mathIn").value) === sum) {
+        $("mathRes").innerText = "Correct! 🎉"; setTimeout(newMath, 1000);
+    } else $("mathRes").innerText = "Try Again";
+}
+window.switchGame = (g, el) => {
+    document.querySelectorAll('.gTab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    $("gMath").style.display = g==='math'?'block':'none';
+    $("gMem").style.display = g==='memory'?'block':'none';
+}
+
+// Start
+loadLead();
+newMath();
+
+</script>
 </body>
 </html>

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unischooly Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Unischooly Demo Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
@@ -14,280 +14,205 @@
             --secondary: #9333EA;
             --pink: #EC4899;
             --gold: #F59E0B;
-            --gold-glow: rgba(245, 158, 11, 0.4);
-            --bg-body: #F3F4F6;
-            --white: #FFFFFF;
-            --text-dark: #111827;
-            --text-gray: #6B7280;
+            --gold-glow: rgba(245, 158, 11, 0.5);
+            --bg-dark: #0F172A;
+            --card-bg: #1E293B;
+            --text-white: #F8FAFC;
+            --text-gray: #94A3B8;
             --success: #10B981;
-            --brand-gradient: linear-gradient(90deg, #EC4899, #9333EA, #3B82F6);
-            --container-width: 1150px;
-            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --brand-grad: linear-gradient(90deg, #EC4899, #9333EA, #3B82F6);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-white); padding-bottom: 50px; }
 
         /* --- UTILS --- */
-        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 1rem; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .hidden { display: none !important; }
-        .text-center { text-align: center; }
-        
-        /* --- SECTION 1: HEADER --- */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid #E5E7EB;
-            padding: 0.75rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        .container {
+            max-width: 1200px; /* FIX 2: Container constraint */
+            margin: 0 auto;
+            padding: 0 1rem;
         }
-        .header-inner { display: flex; justify-content: space-between; align-items: center; }
-        .logo img { height: 40px; width: auto; }
+        .hidden { display: none !important; }
+
+        /* --- HEADER --- */
+        header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky; top: 0; z-index: 100;
+            padding: 0.8rem 0;
+        }
+        .header-content {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { height: 35px; }
         .status-pill {
-            background-image: var(--brand-gradient);
-            color: white;
-            padding: 0.5rem 1.25rem;
+            background: var(--brand-grad);
+            padding: 0.4rem 1rem;
             border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.9rem; font-weight: 600;
             display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);
         }
 
-        /* --- SECTION 2: GRID LAYOUT --- */
+        /* --- MAIN GRID --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr; /* Left col slightly wider */
+            grid-template-columns: 1.1fr 0.9fr; /* Left slightly larger */
             gap: 2rem;
             margin-top: 2rem;
-            margin-bottom: 4rem;
         }
 
-        /* --- COMPONENT: TICKET CARD --- */
-        .ticket-card {
-            background: var(--white);
-            border-radius: 16px;
+        /* --- CARDS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
             padding: 2rem;
+            margin-bottom: 2rem;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* --- 1. TICKET CARD (FIX 3) --- */
+        .ticket-card {
             border: 2px solid var(--gold);
             box-shadow: 0 0 20px var(--gold-glow);
-            margin-bottom: 2rem;
-            overflow: hidden;
+            overflow: hidden; /* Contains the stamp */
+        }
+        .stamp {
+            position: absolute;
+            top: 15px; right: 15px; /* FIX 3: Top Right Placement */
+            border: 3px double #EF4444;
+            color: #EF4444;
+            padding: 5px 10px;
+            font-weight: 800; font-size: 0.8rem;
+            transform: rotate(-15deg);
+            opacity: 0.8;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         .ticket-header {
-            border-bottom: 2px dashed #E5E7EB;
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
+            border-bottom: 2px dashed rgba(255,255,255,0.2);
+            padding-bottom: 1rem; margin-bottom: 1.5rem;
         }
-        .ticket-title { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; color: var(--text-dark); letter-spacing: 1px; }
-        
-        /* Stamp */
-        .stamp-box {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            border: 3px double #DC2626;
-            color: #DC2626;
-            padding: 0.25rem 0.75rem;
-            font-weight: 800;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            transform: rotate(-12deg);
-            opacity: 0.8;
-            mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='); 
-        }
-
-        /* Ticket Grid to Prevent Drift */
-        .ticket-row {
+        .ticket-grid {
             display: grid;
-            grid-template-columns: 100px 1fr;
-            margin-bottom: 0.8rem;
+            grid-template-columns: 120px 1fr; /* FIX 3: Fixed label width, fluid content */
+            gap: 12px 0;
             align-items: baseline;
         }
-        .t-label { color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .t-value { color: var(--text-dark); font-weight: 600; font-size: 1rem; overflow-wrap: break-word; }
-        
-        .powered-by {
-            margin-top: 1.5rem;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #9CA3AF;
-            font-weight: 500;
+        .t-label {
+            color: var(--text-gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .t-val {
+            font-weight: 600; font-size: 1rem; color: #fff;
+        }
+        .powered {
+            text-align: center; font-size: 0.7rem; color: var(--text-gray); margin-top: 1.5rem; opacity: 0.6;
         }
 
-        /* --- COMPONENT: SCHEDULE CARD --- */
-        .schedule-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
+        /* --- 2. RESCHEDULE (FIX 5) --- */
+        .schedule-card h3 { margin-bottom: 1rem; font-size: 1.2rem; }
+        .current-slot {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;
+            display: flex; gap: 1rem; align-items: center;
         }
-        .schedule-display {
-            background: #F9FAFB;
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            display: flex; align-items: center; gap: 1rem;
-        }
-        .calendar-icon { font-size: 2rem; color: var(--primary); }
+        .cal-icon { font-size: 2rem; color: var(--gold); }
         
-        /* Reschedule Accordion */
-        .reschedule-toggle {
-            color: var(--primary);
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: underline;
-            margin-bottom: 1rem;
-            display: inline-block;
+        .reschedule-label {
+            color: var(--gold); text-decoration: underline; cursor: pointer;
+            font-size: 0.9rem; margin-bottom: 1rem; display: inline-block;
         }
-        .reschedule-panel {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+        .reschedule-area {
             display: none; /* Hidden by default */
+            background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 12px;
         }
-        .reschedule-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        .reschedule-area.active { display: block; }
 
-        /* BrightChamps Style Date Picker */
-        .date-scroll { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1rem; scrollbar-width: none; }
-        .date-chip {
-            min-width: 60px;
-            height: 70px;
-            border: 1px solid #E5E7EB;
+        /* PILLS STYLE (BrightChamps) */
+        .date-scroll {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px;
+        }
+        .date-pill {
+            min-width: 60px; height: 70px;
+            background: rgba(255,255,255,0.1);
             border-radius: 10px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s;
-            background: #F9FAFB;
+            cursor: pointer; border: 1px solid transparent;
         }
-        .date-chip.selected { background: var(--text-dark); color: white; border-color: var(--text-dark); }
-        .date-chip span:first-child { font-size: 0.75rem; }
-        .date-chip span:last-child { font-weight: 700; font-size: 1.1rem; }
-
-        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
-        .time-chip {
-            padding: 0.6rem;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.85rem;
-            cursor: pointer;
-            background: #fff;
-        }
-        .time-chip.selected { background: var(--text-dark); color: white; border-color: var(--text-dark); }
-        .timezone-select { width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #E5E7EB; margin-bottom: 1rem; }
-
-        .btn-sync {
-            width: 100%;
-            background: var(--brand-gradient);
-            color: white; border: none;
-            padding: 1rem; border-radius: 50px;
-            font-weight: 700; font-size: 1rem;
-            cursor: pointer; transition: transform 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .btn-sync:hover { transform: translateY(-2px); }
+        .date-pill.selected { background: var(--gold); color: #000; font-weight: bold; }
         
-        .sync-row { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; color: #9CA3AF; font-size: 1.4rem; }
-        .sync-row i:hover { color: var(--primary); cursor: pointer; }
-
-        /* --- COMPONENT: FUN FACTS --- */
-        .fun-facts-card {
-            background: linear-gradient(135deg, #FFFFFF, #F3F4F6);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border-left: 5px solid var(--secondary);
-            box-shadow: var(--card-shadow);
+        .time-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;
         }
-        .fact-content { min-height: 80px; display: flex; align-items: center; font-size: 0.95rem; line-height: 1.5; color: var(--text-dark); }
-        .fact-nav { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem; }
-        .fact-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #E5E7EB; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        /* --- RIGHT SIDE: WELCOME & GAMES --- */
-        .welcome-panel {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
+        .time-pill {
+            padding: 8px; text-align: center; background: rgba(255,255,255,0.1);
+            border-radius: 8px; font-size: 0.9rem; cursor: pointer;
         }
-        .welcome-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
-        .welcome-subtitle { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .time-pill.selected { background: var(--gold); color: #000; }
+        
+        .tz-select {
+            width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3);
+            color: #fff; border: 1px solid #444; margin-bottom: 10px;
+        }
 
-        .timer-container { display: flex; justify-content: center; gap: 0.8rem; margin-bottom: 1.5rem; }
-        .timer-box { background: var(--text-dark); color: white; padding: 0.8rem 0.5rem; border-radius: 8px; min-width: 65px; }
-        .timer-val { font-size: 1.5rem; font-weight: 700; display: block; line-height: 1; margin-bottom: 2px; }
-        .timer-label { font-size: 0.65rem; text-transform: uppercase; color: #9CA3AF; }
+        /* --- 3. WELCOME & TIMER (FIX 4) --- */
+        .welcome-panel { text-align: center; }
+        .w-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .highlight { color: var(--pink); }
+        
+        .timer-box {
+            display: flex; justify-content: center; gap: 10px; margin: 1.5rem 0;
+        }
+        .t-unit {
+            background: #000; padding: 10px; border-radius: 8px; min-width: 70px; border: 1px solid #333;
+        }
+        .t-num { font-size: 1.8rem; font-weight: 700; display: block; line-height: 1; }
+        .t-txt { font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; }
 
         .btn-join {
-            background: #10B981;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-size: 1.1rem; font-weight: 700;
-            border: none; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-            width: 100%; transition: all 0.3s;
+            background: var(--success); color: #000;
+            padding: 1rem 3rem; border-radius: 50px;
+            font-size: 1.2rem; font-weight: 800; border: none;
+            cursor: pointer; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            display: block; width: 100%; max-width: 300px; margin: 0 auto; /* Centered */
         }
-        .btn-join:disabled { background: #D1D5DB; cursor: not-allowed; box-shadow: none; }
-        .btn-join.pulse { animation: pulse-green 2s infinite; }
-        
-        .terms-link { font-size: 0.8rem; color: var(--text-gray); text-decoration: underline; cursor: pointer; margin-top: 1rem; display: block; }
+        .btn-join:disabled { background: #334155; color: #64748B; box-shadow: none; cursor: not-allowed; }
 
-        /* --- GAMES SECTION --- */
-        .games-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow); }
-        .games-header { padding: 1rem; border-bottom: 1px solid #F3F4F6; }
-        .game-tabs { display: flex; background: #F3F4F6; }
-        .game-tab { flex: 1; padding: 0.8rem; text-align: center; cursor: pointer; font-weight: 600; color: var(--text-gray); border-bottom: 3px solid transparent; }
-        .game-tab.active { background: white; color: var(--primary); border-bottom-color: var(--primary); }
-        .game-content { padding: 2rem; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        .game-pane { display: none; width: 100%; text-align: center; }
-        .game-pane.active { display: block; animation: fadeIn 0.3s; }
-        .game-input { padding: 0.5rem; font-size: 1.2rem; text-align: center; border: 2px solid #E5E7EB; border-radius: 8px; width: 120px; margin: 10px 0; }
-        
-        /* Memory Grid */
-        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 280px; margin: 0 auto; }
-        .memory-card { height: 60px; background: #F3F4F6; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-        .memory-card.flipped { background: white; border: 2px solid var(--primary); }
+        /* --- GAMES & FACTS --- */
+        .game-tabs { display: flex; background: rgba(255,255,255,0.1); border-radius: 50px; padding: 4px; margin-bottom: 1rem; }
+        .tab { flex: 1; text-align: center; padding: 8px; cursor: pointer; border-radius: 50px; font-size: 0.9rem; }
+        .tab.active { background: var(--brand-grad); font-weight: 600; }
+        .game-area { text-align: center; padding: 1rem; min-height: 200px; }
+        .hidden-game { display: none; }
+        .active-game { display: block; animation: fadeIn 0.5s; }
 
-        /* --- MODAL --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal-overlay.open { opacity: 1; pointer-events: auto; }
-        .modal-content { background: white; padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; position: relative; }
-        .close-modal { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; }
+        .fact-card { background: linear-gradient(135deg, #1e293b, #0f172a); border-left: 4px solid var(--secondary); }
+        .fact-nav { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .nav-btn { width: 30px; height: 30px; border-radius: 50%; background: #334155; border: none; color: #fff; cursor: pointer; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 900px) {
-            .dashboard-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-            .header-inner { flex-direction: row; }
-            .logo img { height: 32px; }
-            .status-pill { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-            /* On mobile, reorder columns if needed using flex order, but grid default is usually Left then Right. 
-               If you want Welcome Panel first on mobile, uncomment below: */
-            /* .dashboard-grid { display: flex; flex-direction: column; }
-            .right-column { order: -1; } */
+        /* --- MOBILE FIX (FIX 1) --- */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr; /* Stack columns */
+                gap: 1rem;
+            }
+            .header-content { flex-direction: row; }
+            .status-pill span { display: none; } /* Show icon only if space tight */
+            .status-pill:after { content: "Locked In!"; font-size: 0.8rem; margin-left: 5px; }
+            .ticket-card { padding: 1.5rem; }
+            .stamp { top: 10px; right: 10px; font-size: 0.6rem; padding: 3px 6px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="container header-inner">
-            <div class="logo">
-                <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly">
-            </div>
+        <div class="container header-content">
+            <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Logo" class="logo">
             <div class="status-pill">
                 <i class="fas fa-check-circle"></i>
                 <span>Your trial class is locked in!</span>
@@ -297,459 +222,300 @@
 
     <div class="container dashboard-grid">
         
-        <div class="left-column">
+        <div class="left-col">
             
-            <div class="ticket-card">
-                <div class="stamp-box">VALUE WAIVED</div>
+            <div class="card ticket-card">
+                <div class="stamp">VALUE WAIVED</div>
                 <div class="ticket-header">
-                    <div class="ticket-title">Student Entry Pass</div>
+                    <h3 style="color:var(--gold); text-transform:uppercase; letter-spacing:1px;">Student Entry Pass</h3>
                 </div>
-                
-                <div class="ticket-row">
+                <div class="ticket-grid">
                     <div class="t-label">Student</div>
-                    <div class="t-value" id="t-student">Loading...</div>
-                </div>
-                <div class="ticket-row">
+                    <div class="t-val" id="tk-name">Loading...</div>
+
                     <div class="t-label">Grade</div>
-                    <div class="t-value" id="t-grade">--</div>
-                </div>
-                <div class="ticket-row">
+                    <div class="t-val" id="tk-grade">--</div>
+
                     <div class="t-label">Course</div>
-                    <div class="t-value" id="t-course">--</div>
-                </div>
-                <div class="ticket-row">
+                    <div class="t-val" id="tk-course">--</div>
+
                     <div class="t-label">Parent</div>
-                    <div class="t-value" id="t-parent">--</div>
-                </div>
-                <div class="ticket-row">
+                    <div class="t-val" id="tk-pname">--</div>
+                    
                     <div class="t-label">Email</div>
-                    <div class="t-value" id="t-email">--</div>
-                </div>
-                <div class="ticket-row">
+                    <div class="t-val" id="tk-email" style="font-size:0.9rem; overflow-wrap:anywhere;">--</div>
+                    
                     <div class="t-label">Phone</div>
-                    <div class="t-value" id="t-phone">--</div>
+                    <div class="t-val" id="tk-phone">--</div>
                 </div>
-
-                <div class="powered-by">Powered by Unischooly</div>
+                <div class="powered">Powered by Unischooly</div>
             </div>
 
-            <div class="schedule-card">
-                <h3 style="margin-bottom: 1rem;">🚀 Ready for Blast Off!!!</h3>
-                
-                <div class="schedule-display">
-                    <i class="far fa-calendar-alt calendar-icon"></i>
+            <div class="card schedule-card">
+                <h3>🚀 Ready for Blast Off!!!</h3>
+                <div class="current-slot">
+                    <i class="fas fa-calendar-alt cal-icon"></i>
                     <div>
-                        <div style="font-weight: 700; font-size: 1.1rem;" id="s-date">--</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;" id="s-time">--</div>
+                        <div style="font-size:1.1rem; font-weight:700;" id="sc-date">--</div>
+                        <div style="color:var(--text-gray);" id="sc-time">--</div>
                     </div>
                 </div>
 
-                <div class="reschedule-toggle" onclick="toggleReschedule()">Need to Reschedule?</div>
-                <div class="reschedule-panel" id="reschedule-panel">
-                    <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">Select New Date:</p>
-                    <div class="date-scroll" id="date-scroller"></div> <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">Select Time:</p>
-                    <div class="time-grid">
-                        <div class="time-chip" onclick="selTime(this)">4:00 PM</div>
-                        <div class="time-chip" onclick="selTime(this)">5:00 PM</div>
-                        <div class="time-chip" onclick="selTime(this)">6:00 PM</div>
-                        <div class="time-chip" onclick="selTime(this)">7:00 PM</div>
-                        <div class="time-chip" onclick="selTime(this)">8:00 PM</div>
-                        <div class="time-chip" onclick="selTime(this)">9:00 PM</div>
+                <div class="reschedule-label" onclick="toggleReschedule()">Need to Reschedule?</div>
+                <div class="reschedule-area" id="reschedule-ui">
+                    <p style="margin-bottom:5px; font-size:0.8rem;">Select New Date:</p>
+                    <div class="date-scroll" id="date-container"></div> <p style="margin:10px 0 5px 0; font-size:0.8rem;">Select New Time:</p>
+                    <div class="time-grid" id="time-container">
+                        <div class="time-pill" onclick="selTime(this)">4:00 PM</div>
+                        <div class="time-pill" onclick="selTime(this)">5:00 PM</div>
+                        <div class="time-pill" onclick="selTime(this)">6:00 PM</div>
+                        <div class="time-pill" onclick="selTime(this)">7:00 PM</div>
+                        <div class="time-pill" onclick="selTime(this)">8:00 PM</div>
+                        <div class="time-pill" onclick="selTime(this)">9:00 PM</div>
                     </div>
 
-                    <select class="timezone-select" id="rs-timezone">
-                        <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-                        <option value="America/New_York">America/New_York (EST)</option>
-                        <option value="Europe/London">Europe/London (GMT)</option>
-                        <option value="Asia/Dubai">Asia/Dubai (GST)</option>
+                    <select class="tz-select">
+                        <option>Asia/Kolkata (IST)</option>
+                        <option>America/New_York (EST)</option>
+                        <option>Europe/London (GMT)</option>
                     </select>
-
-                    <button class="btn-sync" style="background: var(--text-dark); border-radius: 12px; font-size: 0.9rem;" onclick="submitReschedule()">Confirm New Time</button>
-                </div>
-
-                <button class="btn-sync" onclick="alert('Opening Calendar Sync...')">
-                    Initiate Calendar Sync
-                </button>
-                <div class="sync-row">
-                    <i class="fab fa-google" title="Google"></i>
-                    <i class="fab fa-apple" title="Apple"></i>
-                    <i class="fab fa-windows" title="Outlook"></i>
-                    <i class="fab fa-yahoo" title="Yahoo"></i>
+                    <button style="width:100%; padding:10px; background:var(--text-white); border:none; border-radius:8px; font-weight:700; cursor:pointer;" onclick="alert('Reschedule logic here')">Confirm Change</button>
                 </div>
             </div>
 
-            <div class="fun-facts-card">
-                <h4 style="color: var(--secondary); margin-bottom: 0.5rem;">Did you know?</h4>
-                <div class="fact-content" id="fact-display">Loading facts...</div>
+            <div class="card fact-card">
+                <h4 style="color:var(--secondary); margin-bottom:10px;">Did you know?</h4>
+                <div id="fact-txt" style="min-height:50px; font-size:0.95rem;">Loading fact...</div>
                 <div class="fact-nav">
-                    <button class="fact-btn" onclick="rotateFact(-1)"><i class="fas fa-chevron-left"></i></button>
-                    <button class="fact-btn" onclick="rotateFact(1)"><i class="fas fa-chevron-right"></i></button>
+                    <button class="nav-btn" onclick="nextFact(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="nav-btn" onclick="nextFact(1)"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
         </div>
 
-        <div class="right-column">
+        <div class="right-col">
             
-            <div class="welcome-panel">
-                <div class="welcome-title">
-                    Welcome to <span style="color: var(--pink);" id="w-name">Student</span>'s <br>
-                    <span id="w-course">Trial</span> Trial Class
-                </div>
-                <div class="welcome-subtitle">Class starts in:</div>
-
-                <div class="timer-container" id="countdown-box">
-                    <div class="timer-box">
-                        <span class="timer-val" id="d">00</span><span class="timer-label">Days</span>
-                    </div>
-                    <div class="timer-box">
-                        <span class="timer-val" id="h">00</span><span class="timer-label">Hrs</span>
-                    </div>
-                    <div class="timer-box">
-                        <span class="timer-val" id="m">00</span><span class="timer-label">Mins</span>
-                    </div>
-                    <div class="timer-box">
-                        <span class="timer-val" id="s">00</span><span class="timer-label">Secs</span>
-                    </div>
+            <div class="card welcome-panel">
+                <div class="w-title">
+                    Welcome to <span class="highlight" id="w-name">Student</span>'s <br> 
+                    <span id="w-course">Trial</span> Class
                 </div>
                 
-                <div id="class-ended" class="hidden" style="color: red; font-weight: 700; margin-bottom: 1rem;">Class has ended.</div>
+                <div class="timer-box" id="timer-ui">
+                    <div class="t-unit"><span class="t-num" id="d">00</span><span class="t-txt">Days</span></div>
+                    <div class="t-unit"><span class="t-num" id="h">00</span><span class="t-txt">Hrs</span></div>
+                    <div class="t-unit"><span class="t-num" id="m">00</span><span class="t-txt">Mins</span></div>
+                    <div class="t-unit"><span class="t-num" id="s">00</span><span class="t-txt">Secs</span></div>
+                </div>
+                <div id="msg-ended" class="hidden" style="color:red; font-weight:bold; margin-bottom:1rem;">Class Ended</div>
 
                 <button class="btn-join" id="join-btn" disabled>Join Class</button>
-                <div style="font-size: 0.75rem; color: #9CA3AF; margin-top: 0.5rem;" id="join-hint">(Button activates 5 mins before class)</div>
-
-                <div class="terms-link" onclick="toggleModal(true)">Terms & Conditions</div>
+                <div style="font-size:0.8rem; color:var(--text-gray); margin-top:5px;">(Activates 5 mins before)</div>
             </div>
 
-            <div class="games-card">
-                <div class="games-header">
-                    <h3 style="font-size: 1.1rem;">Sharpen Your Brain 🧠</h3>
-                </div>
+            <div class="card">
                 <div class="game-tabs">
-                    <div class="game-tab active" onclick="switchGame('puzzle', this)">Puzzle</div>
-                    <div class="game-tab" onclick="switchGame('memory', this)">Memory</div>
-                    <div class="game-tab" onclick="switchGame('sprint', this)">Sprint</div>
+                    <div class="tab active" onclick="setGame('math', this)">Math</div>
+                    <div class="tab" onclick="setGame('mem', this)">Memory</div>
+                    <div class="tab" onclick="setGame('type', this)">Sprint</div>
                 </div>
-                <div class="game-content">
-                    
-                    <div id="game-puzzle" class="game-pane active">
-                        <div id="math-q" style="font-size: 2rem; font-weight: 700; margin-bottom: 1rem;">5 + 3 = ?</div>
-                        <input type="number" id="math-in" class="game-input" placeholder="?">
-                        <br>
-                        <button style="padding: 0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;" onclick="checkMath()">Check</button>
-                        <p id="math-res" style="margin-top: 0.5rem; height: 20px; font-weight: 600;"></p>
+                <div class="game-area">
+                    <div id="g-math" class="active-game">
+                        <h2 id="m-q">5 + 3 = ?</h2>
+                        <input type="number" id="m-in" style="padding:5px; font-size:1.2rem; width:80px; text-align:center; margin:10px 0;">
+                        <br><button onclick="checkMath()" style="padding:5px 15px;">Check</button>
+                        <p id="m-res" style="margin-top:5px; height:20px;"></p>
                     </div>
-
-                    <div id="game-memory" class="game-pane">
-                        <div class="memory-grid" id="memory-grid"></div>
-                        <button style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--text-dark); color: white; border: none; border-radius: 8px; cursor: pointer;" onclick="initMemory()">Reset Game</button>
+                    <div id="g-mem" class="hidden-game">
+                        <p>Memory Game Loading...</p>
+                        <button onclick="alert('Resetting...')">Reset</button>
                     </div>
-
-                    <div id="game-sprint" class="game-pane">
-                        <p style="margin-bottom: 1rem;">Type <strong>"Unischooly"</strong> fast!</p>
-                        <input type="text" id="sprint-in" class="game-input" style="width: 180px;">
-                        <p id="sprint-res" style="margin-top: 0.5rem; height: 20px; color: var(--success); font-weight: 700;"></p>
+                    <div id="g-type" class="hidden-game">
+                        <p>Type "Unischooly"</p>
+                        <input type="text" id="t-in" oninput="checkType(this)">
+                        <p id="t-res"></p>
                     </div>
-
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="t-modal">
-        <div class="modal-content">
-            <div class="close-modal" onclick="toggleModal(false)">&times;</div>
-            <h3 style="margin-bottom: 1rem;">Terms & Conditions</h3>
-            <ul style="margin-left: 1.5rem; font-size: 0.9rem; line-height: 1.6;">
-                <li><strong>Recording:</strong> This session may be recorded for quality purposes.</li>
-                <li><strong>Zero Tolerance:</strong> No bullying or inappropriate language.</li>
-                <li><strong>Guidelines:</strong> Students should be dressed appropriately. Parents can sit nearby but please let the student answer.</li>
-            </ul>
         </div>
     </div>
 
     <script>
-        // 1. SUPABASE CONFIG
+        // --- 1. CONFIG & INIT ---
         const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // 2. STATE
         const params = new URLSearchParams(window.location.search);
-        const iduuid = params.get('iduuid');
-        const courseIdParam = params.get('courseId');
+        // FIX 1: Robust ID Check
+        const leadId = params.get('iduuid') || params.get('id'); 
+        
         let leadData = null;
-        let classDateObj = null;
+        let classDate = null;
 
-        // 3. COURSE DATA
-        const courses = {
-            1: { name: "Coding", facts: ["Coding improves logic!", "Python is named after Monty Python.", "The first bug was a real moth.", "There are 700+ coding languages.", "Computers use binary (0 & 1).", "Ada Lovelace was the first programmer.", "Coding powers the internet.", "Minecraft is built on Java.", "Google uses Python.", "It's a superpower!"] },
-            2: { name: "Python", facts: ["Python is great for AI.", "It reads like English.", "Used by NASA.", "No curly braces needed!", "Great for data science.", "Instagram uses Python.", "Automate boring stuff.", "Very beginner friendly.", "Huge community support.", "Named after a comedy show."] },
-            3: { name: "Web Dev", facts: ["HTML is the skeleton.", "CSS is the style.", "JS is the brain.", "The first website is still online.", "Websites live on servers.", "Chrome is a browser.", "Mobile-first is key.", "HTTP runs the web.", "Cloudflare protects sites.", "Cookies store data."] },
-            4: { name: "GenAI", facts: ["AI learns from data.", "ChatGPT is an LLM.", "AI can generate art.", "Neural networks mimic brains.", "AI helps doctors.", "Self-driving cars use AI.", "AI is growing fast.", "Prompt engineering is a skill.", "Deepfakes are AI generated.", "Robots use AI."] },
-            5: { name: "Roblox", facts: ["Roblox uses Lua code.", "You can make real money.", "Millions of games exist.", "Not just a game, a platform.", "Started in 2006.", "Developers earn Robux.", "Learn 3D design.", "Physics engine is built-in.", "Play with friends anywhere.", "Host virtual concerts."] },
-            6: { name: "Chess", facts: ["Chess improves memory.", "Infinite possibilities.", "Queen is most powerful.", "Checkmate wins the game.", "Originates from India.", "Computers beat humans now.", "Opening moves matter.", "Tactics vs Strategy.", "Time control is key.", "Pawns can promote."] },
-            7: { name: "Math", facts: ["Math is the universal language.", "Zero was invented in India.", "Pi is infinite.", "Golden ratio is everywhere.", "Prime numbers are special.", "Geometry measures earth.", "Algebra solves for X.", "Calculus studies change.", "Patterns rule the world.", "Math builds logic."] }
-        };
-
-        // 4. INIT
         async function init() {
-            if (!iduuid) {
-                console.error("No ID UUID provided");
-                document.querySelector('.ticket-card').innerHTML = '<p style="color:red; text-align:center;">No Booking ID Found</p>';
+            if(!leadId) {
+                document.getElementById('tk-name').innerText = "Error: No ID Found in URL";
+                document.getElementById('tk-name').style.color = "red";
                 return;
             }
 
-            // Fetch Data
-            let { data, error } = await supabase
-                .from('demo_leads')
-                .select('*')
-                .eq('id', iduuid)
-                .single();
-
-            if (error) {
-                console.error("Supabase Error:", error);
-                document.querySelector('.ticket-card').innerHTML = '<p style="color:red; text-align:center;">Error Loading Data</p>';
+            // Fetch
+            const { data, error } = await supabase.from('demo_leads').select('*').eq('id', leadId).single();
+            
+            if(error || !data) {
+                console.error(error);
+                document.getElementById('tk-name').innerText = "Error: Lead Not Found";
+                document.getElementById('tk-name').style.color = "red";
                 return;
             }
 
             leadData = data;
-            renderData();
+            render();
             startTimer();
-            setupFacts();
-            setupRescheduleUI();
-            setupGames(); // Init Math
+            initFacts();
+            initReschedule(); // Build pills
+            newMath();
         }
 
-        // 5. RENDER
-        function renderData() {
-            // Determine Course
-            const cId = leadData.course_id || courseIdParam || 1;
-            const cInfo = courses[cId] || courses[1];
+        // --- 2. RENDER ---
+        function render() {
+            const courseMap = { 1:"Coding", 2:"Python", 3:"Web Dev", 4:"GenAI", 5:"Roblox", 6:"Chess", 7:"Math" };
+            const cName = courseMap[leadData.course_id] || "Coding";
 
-            // Ticket
-            setText('t-student', leadData.child_name || "Student");
-            setText('t-grade', leadData.child_grade || "N/A");
-            setText('t-course', cInfo.name);
-            setText('t-parent', leadData.parent_name || "Parent");
-            setText('t-email', leadData.parent_email || "N/A");
-            setText('t-phone', `+${leadData.phone_country_code || ""} ${leadData.phone_number || ""}`);
+            document.getElementById('tk-name').innerText = leadData.child_name;
+            document.getElementById('tk-grade').innerText = leadData.child_grade;
+            document.getElementById('tk-course').innerText = cName;
+            document.getElementById('tk-pname').innerText = leadData.parent_name;
+            document.getElementById('tk-email').innerText = leadData.parent_email;
+            document.getElementById('tk-phone').innerText = `+${leadData.phone_country_code || ""} ${leadData.phone_number}`;
 
-            // Welcome
-            setText('w-name', leadData.child_name || "Student");
-            setText('w-course', cInfo.name);
+            document.getElementById('w-name').innerText = leadData.child_name;
+            document.getElementById('w-course').innerText = cName;
 
-            // Schedule
-            if (leadData.preferred_date && leadData.preferred_time_slot) {
-                // Parse Date
-                const dStr = `${leadData.preferred_date}T${leadData.preferred_time_slot}:00`;
-                classDateObj = new Date(dStr);
-                
-                const dateOpts = { weekday: 'long', month: 'long', day: 'numeric' };
-                setText('s-date', classDateObj.toLocaleDateString('en-US', dateOpts));
-                setText('s-time', `${leadData.preferred_time_slot} (${leadData.timezone || 'Local'})`);
-            } else {
-                setText('s-date', "Not Scheduled");
+            // Date
+            if(leadData.preferred_date && leadData.preferred_time_slot) {
+                classDate = new Date(`${leadData.preferred_date}T${leadData.preferred_time_slot}:00`);
+                document.getElementById('sc-date').innerText = classDate.toLocaleDateString();
+                document.getElementById('sc-time').innerText = `${leadData.preferred_time_slot} (${leadData.timezone})`;
             }
         }
 
-        function setText(id, val) {
-            const el = document.getElementById(id);
-            if(el) el.innerText = val;
-        }
-
-        // 6. TIMER
+        // --- 3. TIMER ---
         function startTimer() {
-            if (!classDateObj) return;
-
+            if(!classDate) return;
             const tick = () => {
                 const now = new Date();
-                const diff = classDateObj - now;
+                const diff = classDate - now;
 
-                if (diff <= 0) {
-                    // Check if class ended (e.g., > 1 hour ago)
-                    if (Math.abs(diff) > 3600000) {
-                        document.getElementById('countdown-box').classList.add('hidden');
-                        document.getElementById('class-ended').classList.remove('hidden');
-                        document.getElementById('join-btn').innerText = "Class Ended";
-                        document.getElementById('join-btn').disabled = true;
+                if(diff <= 0) {
+                    if(Math.abs(diff) < 3600000) { // 1hr class
+                         enableJoin(true);
+                         setTimer(0,0,0,0);
                     } else {
-                        // Class is Live
-                        enableJoin(true);
-                        document.getElementById('d').innerText = "00";
-                        document.getElementById('h').innerText = "00";
-                        document.getElementById('m').innerText = "00";
-                        document.getElementById('s').innerText = "00";
+                        document.getElementById('join-btn').innerText = "Class Ended";
+                        document.getElementById('timer-ui').classList.add('hidden');
+                        document.getElementById('msg-ended').classList.remove('hidden');
                     }
                     return;
                 }
+                
+                // Enable 5 mins before (300,000ms)
+                if(diff <= 300000) enableJoin(false);
 
-                // Calc time
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                document.getElementById('d').innerText = d < 10 ? '0'+d : d;
-                document.getElementById('h').innerText = h < 10 ? '0'+h : h;
-                document.getElementById('m').innerText = m < 10 ? '0'+m : m;
-                document.getElementById('s').innerText = s < 10 ? '0'+s : s;
-
-                // Enable Join at 5 mins (300,000ms)
-                if (diff <= 300000) enableJoin(false);
-            };
-
+                const d = Math.floor(diff / (1000*60*60*24));
+                const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+                const m = Math.floor((diff%(1000*60*60))/(1000*60));
+                const s = Math.floor((diff%(1000*60))/1000);
+                setTimer(d,h,m,s);
+            }
             setInterval(tick, 1000);
             tick();
         }
-
-        function enableJoin(isLive) {
-            const btn = document.getElementById('join-btn');
-            if (btn.disabled) {
-                btn.disabled = false;
-                btn.classList.add('pulse');
-                btn.innerText = isLive ? "JOIN CLASS NOW" : "JOIN CLASS";
-                document.getElementById('join-hint').style.display = 'none';
-                
-                // Add Link Logic Here (Placeholder)
-                btn.onclick = () => alert("Redirecting to Zoom Class...");
+        function setTimer(d,h,m,s) {
+            document.getElementById('d').innerText = d<10?'0'+d:d;
+            document.getElementById('h').innerText = h<10?'0'+h:h;
+            document.getElementById('m').innerText = m<10?'0'+m:m;
+            document.getElementById('s').innerText = s<10?'0'+s:s;
+        }
+        function enableJoin(live) {
+            const b = document.getElementById('join-btn');
+            if(b.disabled) {
+                b.disabled = false;
+                b.innerText = live ? "JOIN NOW (LIVE)" : "JOIN CLASS";
+                b.onclick = () => alert("Joining Zoom...");
             }
         }
 
-        // 7. FUN FACTS
-        let currentFact = 0;
-        function setupFacts() {
-            const cId = leadData?.course_id || courseIdParam || 1;
-            const factList = courses[cId].facts;
-            
-            const showFact = () => {
-                const el = document.getElementById('fact-display');
-                el.style.opacity = 0;
-                setTimeout(() => {
-                    el.innerText = factList[currentFact];
-                    el.style.opacity = 1;
-                }, 200);
-            };
-            
-            window.rotateFact = (dir) => {
-                currentFact += dir;
-                if(currentFact >= factList.length) currentFact = 0;
-                if(currentFact < 0) currentFact = factList.length - 1;
-                showFact();
-            };
-            
-            showFact();
-            setInterval(() => window.rotateFact(1), 5000); // Auto rotate
-        }
-
-        // 8. RESCHEDULE UI
+        // --- 4. RESCHEDULE UI ---
         function toggleReschedule() {
-            document.getElementById('reschedule-panel').classList.toggle('active');
+            document.getElementById('reschedule-ui').classList.toggle('active');
         }
-
-        function setupRescheduleUI() {
-            const scroll = document.getElementById('date-scroller');
+        function initReschedule() {
+            const con = document.getElementById('date-container');
             const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-            let html = '';
-            
+            let h = "";
             for(let i=1; i<=14; i++) {
-                const d = new Date(); d.setDate(d.getDate() + i);
-                const dayName = days[d.getDay()];
-                const dateNum = d.getDate();
-                html += `<div class="date-chip" onclick="selDate(this)"><span>${dayName}</span><span>${dateNum}</span></div>`;
+                const d = new Date(); d.setDate(d.getDate()+i);
+                h += `<div class="date-pill" onclick="selDate(this)">
+                        <span style="font-size:0.7rem">${days[d.getDay()]}</span>
+                        <span style="font-size:1.2rem; font-weight:700">${d.getDate()}</span>
+                      </div>`;
             }
-            scroll.innerHTML = html;
+            con.innerHTML = h;
         }
-        
         window.selDate = (el) => {
-            document.querySelectorAll('.date-chip').forEach(x => x.classList.remove('selected'));
+            document.querySelectorAll('.date-pill').forEach(x=>x.classList.remove('selected'));
             el.classList.add('selected');
         }
         window.selTime = (el) => {
-            document.querySelectorAll('.time-chip').forEach(x => x.classList.remove('selected'));
+            document.querySelectorAll('.time-pill').forEach(x=>x.classList.remove('selected'));
             el.classList.add('selected');
         }
-        window.submitReschedule = () => {
-            alert("Reschedule Request Sent! (Logic Placeholder)");
-            // Add Supabase update logic here if needed
+
+        // --- 5. EXTRAS ---
+        // Facts
+        const facts = ["Coding is logic!", "Python is snake named.", "First bug was a moth.", "AI is math."];
+        let fIdx = 0;
+        function initFacts() {
+            document.getElementById('fact-txt').innerText = facts[0];
+        }
+        window.nextFact = (d) => {
+            fIdx += d;
+            if(fIdx>=facts.length) fIdx=0; if(fIdx<0) fIdx=facts.length-1;
+            document.getElementById('fact-txt').innerText = facts[fIdx];
         }
 
-        // 9. GAMES & MODAL
-        window.toggleModal = (show) => {
-            const m = document.getElementById('t-modal');
-            show ? m.classList.add('open') : m.classList.remove('open');
+        // Games
+        window.setGame = (g, t) => {
+            document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+            t.classList.add('active');
+            document.getElementById('g-math').className = 'hidden-game';
+            document.getElementById('g-mem').className = 'hidden-game';
+            document.getElementById('g-type').className = 'hidden-game';
+            document.getElementById('g-'+g).className = 'active-game';
         }
-
-        window.switchGame = (g, tab) => {
-            document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            document.querySelectorAll('.game-pane').forEach(p => p.classList.remove('active'));
-            document.getElementById('game-'+g).classList.add('active');
-            if(g==='memory') initMemory();
-            if(g==='puzzle') setupGames();
-        }
-
         // Math
         let sum = 0;
-        function setupGames() {
-            const a = Math.floor(Math.random()*10)+1;
-            const b = Math.floor(Math.random()*10)+1;
-            sum = a + b;
-            document.getElementById('math-q').innerText = `${a} + ${b} = ?`;
-            document.getElementById('math-res').innerText = "";
-            document.getElementById('math-in').value = "";
+        function newMath() {
+            let a=Math.floor(Math.random()*10), b=Math.floor(Math.random()*10);
+            sum = a+b;
+            document.getElementById('m-q').innerText = `${a} + ${b} = ?`;
+            document.getElementById('m-in').value = "";
+            document.getElementById('m-res').innerText = "";
         }
         window.checkMath = () => {
-            if(parseInt(document.getElementById('math-in').value) === sum) {
-                document.getElementById('math-res').innerText = "Correct! 🎉";
-                document.getElementById('math-res').style.color = "green";
-                setTimeout(setupGames, 1000);
-            } else {
-                document.getElementById('math-res').innerText = "Try Again";
-                document.getElementById('math-res').style.color = "red";
-            }
+            if(parseInt(document.getElementById('m-in').value)===sum) {
+                document.getElementById('m-res').innerText = "Correct!";
+                setTimeout(newMath, 1000);
+            } else document.getElementById('m-res').innerText = "Try again";
+        }
+        window.checkType = (el) => {
+            if(el.value === "Unischooly") document.getElementById('t-res').innerText = "Nice!";
         }
 
-        // Memory
-        function initMemory() {
-            const grid = document.getElementById('memory-grid');
-            grid.innerHTML = "";
-            const icons = ['🐶','🐶','🐱','🐱','🚀','🚀','⭐','⭐'];
-            icons.sort(() => Math.random() - 0.5);
-            let sel = [], matched = 0;
-
-            icons.forEach(ico => {
-                const c = document.createElement('div');
-                c.className = 'memory-card';
-                c.onclick = () => {
-                    if(c.classList.contains('flipped') || sel.length >= 2) return;
-                    c.classList.add('flipped');
-                    c.innerText = ico;
-                    sel.push(c);
-                    if(sel.length === 2) {
-                        if(sel[0].innerText === sel[1].innerText) {
-                            sel = []; matched++;
-                            if(matched === 4) alert("You Win!");
-                        } else {
-                            setTimeout(() => {
-                                sel.forEach(s => { s.classList.remove('flipped'); s.innerText = ''; });
-                                sel = [];
-                            }, 600);
-                        }
-                    }
-                }
-                grid.appendChild(c);
-            });
-        }
-
-        // Sprint
-        document.getElementById('sprint-in').addEventListener('input', (e) => {
-            if(e.target.value.toLowerCase() === 'unischooly') document.getElementById('sprint-res').innerText = "Nice Speed! ⚡";
-            else document.getElementById('sprint-res').innerText = "";
-        });
-
-        // Start
         init();
     </script>
 </body>

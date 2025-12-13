@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,679 +6,542 @@
   <title>Unischooly • Trial Dashboard</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg0:#060b14;
-      --bg1:#091327;
-      --card:#0d1833cc;
-      --card2:#0b142bdd;
-      --stroke:rgba(255,255,255,.10);
-      --stroke2:rgba(255,255,255,.16);
-      --text:#eaf1ff;
-      --muted:rgba(234,241,255,.70);
-      --muted2:rgba(234,241,255,.55);
-      --gold:#f7d98a;
-      --gold2:#caa24c;
-      --pink:#ff4fd8;
-      --purple:#8b5cf6;
-      --blue:#4cc9ff;
-      --teal:#2dd4bf;
-      --ok:#22c55e;
-      --danger:#ef4444;
-      --shadow: 0 20px 70px rgba(0,0,0,.45);
-      --r24:24px;
-      --r18:18px;
+      --bg-dark: #060b14;
+      --card-bg: #0d1833cc;
+      --text: #eaf1ff;
+      --muted: rgba(234,241,255,0.7);
+      --gold: #f7d98a;
+      --gold-glow: rgba(247, 217, 138, 0.2);
+      --purple: #8b5cf6;
+      --pink: #ff4fd8;
+      --green: #10b981;
+      --shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #1e1b4b 0%, #060b14 100%);
+      color: var(--text); min-height: 100vh;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 18% 15%, rgba(139,92,246,.22) 0%, rgba(139,92,246,0) 55%),
-        radial-gradient(900px 600px at 82% 35%, rgba(76,201,255,.18) 0%, rgba(76,201,255,0) 50%),
-        radial-gradient(900px 600px at 35% 85%, rgba(45,212,191,.12) 0%, rgba(45,212,191,0) 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
-    }
+    /* --- UTILS --- */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .hidden { display: none !important; }
 
-    /* ====== SECTION 1 (Top bar) ====== */
-    .topbar{
-      width:100%;
-      background: rgba(6,11,20,0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 50;
+    /* --- HEADER --- */
+    header {
+      background: rgba(6,11,20,0.9); backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 50; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    .topContent {
-        width: min(1200px, 100%);
-        margin: 0 auto;
-        padding: 14px 22px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:14px;
-    }
-    .brand{ display:flex; align-items:center; gap:14px; }
-    .brand img{
-      height:34px;
-      width:auto;
-      display:block;
-      filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
-    }
-    .status-pill{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:8px 16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(90deg, rgba(255,79,216,.22), rgba(139,92,246,.22), rgba(76,201,255,.22));
-      box-shadow: 0 12px 40px rgba(0,0,0,.30);
-      backdrop-filter: blur(10px);
-      font-weight:800;
-      font-size: 0.9rem;
-      letter-spacing:.2px;
-      white-space:nowrap;
-    }
-    .status-pill .check{
-      width:20px;height:20px;border-radius:999px;
-      display:grid;place-items:center;
-      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(16,185,129,.95));
-      box-shadow: 0 5px 15px rgba(34,197,94,.22);
-      color:#04110b;
-      font-weight:900;
-      font-size: 12px;
-    }
-
-    /* ====== SECTION 2 (Main layout) ====== */
-    .wrap{
-      width:min(1200px, 100%);
-      margin:0 auto;
-      padding:24px 22px 40px;
-    }
-
-    .grid2{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:24px;
-      align-items:start;
-    }
-
-    /* FIX: Better Mobile Stacking */
-    @media (max-width: 900px){
-      .grid2{grid-template-columns: 1fr;}
-      .topContent{padding:12px 16px}
-      .wrap{padding:16px 16px 40px}
-      .brand img{height:28px}
-      .status-pill{font-size:12px; padding: 6px 12px;}
-    }
-
-    .card{
-      background: linear-gradient(180deg, rgba(13,24,51,.88), rgba(8,14,28,.88));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: var(--r24);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      overflow:hidden;
-      position:relative;
-    }
-    .card.pad{padding:24px}
-    .muted{color:var(--muted)}
-    .muted2{color:var(--muted2)}
-    .divider{
-      height:1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
-      margin:20px 0;
-    }
-
-    /* ====== Ticket/Pass Card ====== */
-    .ticket{
-      padding:20px;
-      position:relative;
-      border-radius: var(--r24);
-      border:2px solid var(--gold); /* Gold Border */
-      background:
-        radial-gradient(900px 420px at 10% 10%, rgba(139,92,246,.20), rgba(139,92,246,0) 55%),
-        linear-gradient(180deg, rgba(9,16,34,.95), rgba(5,10,22,.95));
-      box-shadow: 0 0 25px rgba(247,217,138, 0.15); /* Glow */
-      overflow:hidden;
-      transition: transform .22s ease;
-    }
-    .ticket:hover{ transform: translateY(-2px); box-shadow: 0 0 35px rgba(247,217,138, 0.25); }
-
-    /* Perforation line */
-    .perforation{
-      position:absolute;
-      top:80px; left:50%; transform:translateX(-50%);
-      width:1px; height: calc(100% - 100px);
-      background: repeating-linear-gradient(to bottom, rgba(247,217,138,.5) 0 6px, transparent 6px 12px);
-    }
-    .notch{
-      position:absolute; top:50%; width:24px;height:24px; border-radius:50%;
-      background: #0d1833; border:1px solid rgba(255,255,255,.1);
-      z-index: 5;
-    }
-    .notch.left{left:-12px}
-    .notch.right{right:-12px}
-
-    /* Ticket Header */
-    .ticketHeader{
-      display:flex; justify-content:space-between; align-items:center;
-      padding-bottom: 12px;
-      border-bottom: 2px dashed rgba(255,255,255,0.15);
-      margin-bottom: 16px;
-    }
-    .ticketHeader span {
-        font-weight: 800; font-size: 14px; letter-spacing: 1px; color: var(--gold); text-transform: uppercase;
-    }
-
-    /* FIX: Stamp Position Top Right */
-    .stamp{
-      position:absolute;
-      top: 15px;
-      right: 15px;
-      border: 3px double #ef4444;
-      color: #ef4444;
-      padding: 4px 8px;
-      font-weight: 900;
-      font-size: 11px;
-      text-transform: uppercase;
-      transform: rotate(-12deg);
-      border-radius: 4px;
-      background: rgba(0,0,0,0.3);
-      z-index: 10;
-      letter-spacing: 1px;
-    }
-
-    .ticketBody{
-      display:grid;
-      grid-template-columns: 1fr 1fr; /* Two Columns */
-      gap: 20px;
-    }
-    @media (max-width: 600px){
-      .ticketBody{grid-template-columns: 1fr;} /* Stack on mobile */
-      .perforation{display:none} 
-    }
-
-    .field{ margin-bottom: 12px; }
-    .k{ font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;}
-    .v{ font-size: 14px; font-weight: 700; color: #fff; word-break: break-word; }
-
-    .powered{ margin-top:16px; text-align:center; font-size:11px; color: rgba(255,255,255,0.4); }
-
-    /* ====== Schedule Card ====== */
-    .scheduleTop{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
-    .badge{
-      padding:6px 12px; border-radius:20px; background: rgba(255,255,255,0.08); font-weight:700; font-size:13px;
-    }
-    .mini{
-      background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius: 12px;
-      padding: 12px; display:flex; align-items:center; gap: 12px; margin-bottom: 10px;
-    }
-    .mini .ico{ font-size: 20px; }
-    .mini .t { font-weight: 700; font-size: 15px; }
-    .mini .s { font-size: 12px; color: var(--muted); }
-
-    .calendarBtn{
-      width:100%; border:none; padding:12px; border-radius:30px;
+    .header-content { display: flex; justify-content: space-between; align-items: center; }
+    .logo { height: 35px; }
+    .status-pill {
       background: linear-gradient(90deg, #ff4fd8, #8b5cf6, #4cc9ff);
-      color: #000; font-weight: 800; font-size: 14px; cursor: pointer;
-      margin-top: 10px;
-      transition: transform 0.2s;
+      padding: 8px 16px; border-radius: 50px; font-weight: 700; font-size: 0.85rem;
+      display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(139,92,246,0.3);
     }
-    .calendarBtn:hover{ transform: scale(1.02); }
+    .check-icon { background: #fff; color: #8b5cf6; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
 
-    .providers{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; display:none;}
-    .chip{ padding:6px 12px; border-radius:20px; background:rgba(255,255,255,0.1); font-size:12px; cursor:pointer; }
+    /* --- GRID --- */
+    .grid-layout {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; margin-bottom: 50px;
+    }
+
+    /* --- CARDS --- */
+    .card {
+      background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 25px; box-shadow: var(--shadow); position: relative;
+    }
+
+    /* --- TICKET --- */
+    .ticket-card {
+      border: 2px solid var(--gold); box-shadow: 0 0 30px var(--gold-glow);
+      background: linear-gradient(180deg, rgba(13,24,51,0.95), rgba(0,0,0,0.95));
+    }
+    .stamp {
+      position: absolute; top: 15px; right: 15px;
+      border: 3px double #ef4444; color: #ef4444; padding: 5px 10px;
+      font-weight: 800; font-size: 0.8rem; transform: rotate(-12deg);
+      border-radius: 4px; background: rgba(0,0,0,0.4); text-transform: uppercase;
+    }
+    .ticket-header {
+      border-bottom: 2px dashed rgba(255,255,255,0.15); padding-bottom: 15px; margin-bottom: 20px;
+    }
+    .ticket-title { color: var(--gold); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem; }
     
-    /* ====== Fun Facts ====== */
-    .funfacts { margin-top: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; border-left: 3px solid var(--purple); }
-    .factTitle { font-weight: 800; font-size: 13px; color: var(--purple); margin-bottom: 6px; text-transform: uppercase;}
-    .factText { font-size: 13px; line-height: 1.5; color: var(--muted); min-height: 40px;}
-    .factsNav { display:flex; justify-content: flex-end; gap: 8px; margin-top: 8px;}
-    .navBtn { background: rgba(255,255,255,0.1); border:none; color:white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer;}
+    .ticket-row { display: grid; grid-template-columns: 110px 1fr; margin-bottom: 12px; align-items: baseline; }
+    .lbl { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+    .val { color: #fff; font-weight: 600; font-size: 0.95rem; }
 
-    /* ====== Welcome + Timer ====== */
-    .welcomeTitle { font-size: 20px; font-weight: 800; margin-bottom: 8px; line-height: 1.3; text-align: center;}
-    .welcomeTitle .accent { color: var(--pink); }
-    .subline { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 24px; }
-
-    .countRow {
-        display:flex; justify-content:center; gap: 8px; margin-bottom: 24px;
+    /* --- SCHEDULE --- */
+    .schedule-info {
+      background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px;
+      display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
     }
-    .tb { background: #000; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 10px; min-width: 60px; text-align: center;}
-    .tb .n { font-size: 20px; font-weight: 800; display: block; line-height: 1;}
-    .tb .l { font-size: 10px; text-transform: uppercase; color: var(--muted); margin-top: 4px;}
-
-    /* FIX: Join Button Centered Below Timer */
-    .joinWrapper { display: flex; justify-content: center; margin-bottom: 16px; }
-    .joinBtn {
-        background: #10b981; color: #000; padding: 14px 32px; border-radius: 50px; font-weight: 800; font-size: 16px; border:none; cursor: pointer;
-        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); transition: transform 0.2s;
+    .cal-icon { font-size: 1.5rem; }
+    .reschedule-btn {
+      width: 100%; background: #fff; color: #000; border: none; padding: 12px;
+      border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 10px;
+      font-size: 0.9rem; transition: transform 0.2s;
     }
-    .joinBtn:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; }
-    .joinBtn:not(:disabled):hover { transform: scale(1.05); }
+    .reschedule-btn:hover { transform: translateY(-2px); }
 
-    .disclaimer { text-align: center; font-size: 12px; color: var(--muted2); }
-    .link { color: var(--gold); text-decoration: underline; cursor: pointer; }
+    /* --- WELCOME & TIMER --- */
+    .welcome-title { text-align: center; font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
+    .welcome-sub { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+    
+    .timer-container {
+      display: flex; justify-content: center; gap: 10px; margin-bottom: 25px;
+    }
+    .timer-box {
+      background: #000; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+      padding: 10px; min-width: 65px; text-align: center;
+    }
+    .t-val { font-size: 1.5rem; font-weight: 800; line-height: 1; display: block; }
+    .t-lbl { font-size: 0.65rem; text-transform: uppercase; color: var(--muted); margin-top: 5px; }
 
-    /* ====== Reschedule UI (Pills) ====== */
-    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; display: none; align-items: flex-end; justify-content: center;}
+    .join-btn {
+      background: var(--green); color: #000; width: 100%; padding: 15px;
+      border-radius: 50px; border: none; font-weight: 800; font-size: 1.1rem;
+      cursor: pointer; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+      display: block; max-width: 280px; margin: 0 auto 15px;
+    }
+    .join-btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
+    
+    .links-row { text-align: center; font-size: 0.8rem; color: var(--muted); }
+    .text-link { color: var(--gold); text-decoration: underline; cursor: pointer; margin: 0 5px; }
+
+    /* --- FACTS & GAMES --- */
+    .fact-box {
+      margin-top: 25px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px;
+      border-left: 3px solid var(--purple);
+    }
+    .fact-text { min-height: 45px; font-size: 0.9rem; margin: 10px 0; line-height: 1.4; }
+    .fact-nav button { background: rgba(255,255,255,0.1); border: none; color: white; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; }
+
+    .game-tabs { display: flex; background: rgba(255,255,255,0.1); border-radius: 50px; padding: 4px; margin-bottom: 15px; }
+    .tab { flex: 1; text-align: center; padding: 8px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; color: var(--muted); }
+    .tab.active { background: var(--purple); color: #fff; font-weight: 700; }
+    .game-panel { text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+
+    /* --- OVERLAY / MODALS --- */
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); z-index: 1000;
+      display: none; align-items: center; justify-content: center;
+    }
     .overlay.open { display: flex; }
-    .sheet { background: #0f172a; width: 100%; max-width: 600px; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 24px; border-top: 1px solid rgba(255,255,255,0.1); animation: slideUp 0.3s ease-out;}
-    @keyframes slideUp { from {transform: translateY(100%);} to {transform: translateY(0);} }
+    .modal {
+      background: #1e293b; padding: 25px; border-radius: 20px;
+      width: 90%; max-width: 500px; position: relative;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
 
-    .sheetHead { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center;}
-    .sheetHead h2 { margin: 0; font-size: 18px; color: #fff;}
-    .closeX { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;}
-
-    .resLabel { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; }
+    /* --- RESCHEDULE UI --- */
+    .date-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+    .date-pill {
+      min-width: 70px; height: 80px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .date-pill.selected { background: var(--gold); color: #000; border-color: var(--gold); }
     
-    /* Scrollable Date Pills */
-    .dateScroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; scrollbar-width: none; }
-    .datePill { 
-        min-width: 70px; height: 75px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-        display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+    .time-pill {
+      padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.9rem;
     }
-    .datePill.active { background: var(--gold); color: #000; border-color: var(--gold); }
-    .datePill span:first-child { font-size: 11px; text-transform: uppercase; }
-    .datePill span:last-child { font-size: 20px; font-weight: 800; }
+    .time-pill.selected { background: var(--gold); color: #000; font-weight: 700; border-color: var(--gold); }
 
-    /* Time Grid Pills */
-    .timeGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-    .timePill { 
-        padding: 10px; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-        border-radius: 8px; font-size: 13px; cursor: pointer; color: var(--text);
+    /* --- MOBILE --- */
+    @media(max-width: 768px) {
+      .grid-layout { grid-template-columns: 1fr; gap: 20px; }
+      .header-content { flex-direction: row; }
+      .status-pill span { display: none; }
+      .status-pill:after { content: "Locked In!"; margin-left: 5px; }
+      .ticket-card { padding: 20px; }
+      .stamp { font-size: 0.7rem; top: 10px; right: 10px; }
     }
-    .timePill.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
-
-    .tzSelect { width: 100%; padding: 12px; border-radius: 8px; background: #000; color: #fff; border: 1px solid #333; margin-bottom: 20px; }
-
-    .saveBtn { width: 100%; padding: 14px; background: #fff; color: #000; font-weight: 800; border: none; border-radius: 12px; cursor: pointer; }
-
-    /* Games Styles (Minimal) */
-    .brainHeader { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 12px;}
-    .gameTabs { display: flex; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 20px; }
-    .gTab { padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; color: var(--muted); }
-    .gTab.active { background: var(--purple); color: #fff; font-weight: 700; }
-    .gamePanel { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; min-height: 150px; text-align: center; }
-    .gameInput { background: #000; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; text-align: center; width: 80px; margin-top: 10px;}
   </style>
 </head>
-
 <body>
-  <header class="topbar">
-    <div class="topContent">
-        <div class="brand">
-        <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
-        </div>
 
-        <div class="status-pill" id="lockedPill" title="Status">
-        <div class="check">✓</div>
-        <div>Your trial class is locked in!</div>
-        </div>
+  <header>
+    <div class="container header-content">
+      <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" class="logo">
+      <div class="status-pill">
+        <div class="check-icon">✓</div>
+        <span>Your trial class is locked in!</span>
+      </div>
     </div>
   </header>
 
-  <main class="wrap">
-    <div class="grid2">
-      <section>
-        <div class="ticket" id="ticketCard">
-          <div class="notch left"></div>
-          <div class="notch right"></div>
-          <div class="perforation"></div>
-
-          <div class="stamp">VALUE WAIVED</div>
-
-          <div class="ticketHeader">
-            <span>OFFICIAL ENTRY PASS</span>
-            <span style="opacity: 0.6">🎫 ADMIT ONE</span>
-          </div>
-
-          <div class="ticketBody">
-            <div>
-              <div class="field"><div class="k">Student Name</div><div class="v" id="v_child_name">Loading...</div></div>
-              <div class="field"><div class="k">Grade</div><div class="v" id="v_child_grade">--</div></div>
-              <div class="field"><div class="k">Course</div><div class="v" id="v_course_name">--</div></div>
-            </div>
-            <div>
-              <div class="field"><div class="k">Parent Name</div><div class="v" id="v_parent_name">--</div></div>
-              <div class="field"><div class="k">Phone</div><div class="v" id="v_parent_phone">--</div></div>
-              <div class="field"><div class="k">Email</div><div class="v" id="v_parent_email" style="font-size: 12px;">--</div></div>
-            </div>
-          </div>
-
-          <div class="powered">Powered by <b>Unischooly</b></div>
-        </div>
-
-        <div class="card pad" style="margin-top: 24px;">
-            <div class="scheduleTop">
-                <div class="badge">🚀 Ready for Blast Off!!!</div>
-            </div>
-            
-            <div class="mini">
-                <div class="ico">📅</div>
-                <div>
-                    <div class="t" id="v_demo_date">--</div>
-                    <div class="s">Date</div>
-                </div>
-            </div>
-            <div class="mini">
-                <div class="ico">⏰</div>
-                <div>
-                    <div class="t" id="v_demo_time">--</div>
-                    <div class="s" id="v_demo_tz">Timezone</div>
-                </div>
-            </div>
-
-            <button class="calendarBtn" id="calendarSyncBtn">📅 Initiate Calendar Sync</button>
-            <div class="providers" id="calendarProviders">
-                <div class="chip" data-cal="google">Google</div>
-                <div class="chip" data-cal="apple">Apple</div>
-                <div class="chip" data-cal="outlook">Outlook</div>
-            </div>
-
-            <div class="funfacts">
-                <div class="factTitle">DID YOU KNOW?</div>
-                <div class="factText" id="factText">Loading...</div>
-                <div class="factsNav">
-                    <button class="navBtn" id="factPrev">‹</button>
-                    <button class="navBtn" id="factNext">›</button>
-                </div>
-            </div>
-        </div>
-      </section>
-
-      <section class="card pad">
-        <h1 class="welcomeTitle">Welcome to <span class="accent" id="welcomeName">Student</span>'s <br>Trial Class</h1>
-        <p class="subline">Class starts in:</p>
-
-        <div class="countRow" id="countRow">
-            <div class="tb"><div class="n" id="t_days">00</div><div class="l">Days</div></div>
-            <div class="tb"><div class="n" id="t_hours">00</div><div class="l">Hrs</div></div>
-            <div class="tb"><div class="n" id="t_mins">00</div><div class="l">Mins</div></div>
-            <div class="tb"><div class="n" id="t_secs">00</div><div class="l">Secs</div></div>
-        </div>
-
-        <div class="joinWrapper">
-            <button class="joinBtn" id="joinBtn" disabled>Join Class</button>
-        </div>
-
-        <div class="disclaimer">
-            <div style="margin-bottom: 8px;">(Button activates 5 mins before class)</div>
-            <span class="link" id="openTerms">Terms & Conditions</span> • 
-            <span class="link" id="openReschedule">Reschedule Class</span>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="brainHeader">
-            <h3 style="margin:0; font-size:16px;">Sharpen Your Brain 🧠</h3>
-            <div class="gameTabs">
-                <div class="gTab active" onclick="switchGame('math', this)">Math</div>
-                <div class="gTab" onclick="switchGame('memory', this)">Memory</div>
-            </div>
+  <div class="container grid-layout">
+    
+    <div class="left-col">
+      <div class="card ticket-card">
+        <div class="stamp">VALUE WAIVED</div>
+        <div class="ticket-header">
+          <div class="ticket-title">Official Entry Pass</div>
         </div>
         
-        <div class="gamePanel" id="gamePanel">
-            <div id="gMath">
-                <h2 id="mathQ" style="margin:10px 0;">5 + 3 = ?</h2>
-                <input type="number" id="mathIn" class="gameInput">
-                <button onclick="checkMath()" style="padding:6px 12px; border-radius:6px; background:var(--pink); border:none; margin-left:8px; cursor:pointer;">Check</button>
-                <div id="mathRes" style="margin-top:10px; font-weight:700; color: var(--ok);"></div>
-            </div>
-            <div id="gMem" style="display:none;">
-                <p>Memory Game Loading...</p>
-                <button onclick="switchGame('math', document.querySelector('.gTab'))" style="padding:8px;">Back to Math</button>
-            </div>
-        </div>
+        <div class="ticket-row"><div class="lbl">Student</div><div class="val" id="tk-child">Loading...</div></div>
+        <div class="ticket-row"><div class="lbl">Grade</div><div class="val" id="tk-grade">--</div></div>
+        <div class="ticket-row"><div class="lbl">Course</div><div class="val" id="tk-course">--</div></div>
+        <div class="ticket-row"><div class="lbl">Parent</div><div class="val" id="tk-parent">--</div></div>
+        <div class="ticket-row"><div class="lbl">Phone</div><div class="val" id="tk-phone">--</div></div>
+        <div class="ticket-row"><div class="lbl">Email</div><div class="val" id="tk-email" style="font-size:0.85rem">--</div></div>
+        
+        <div style="text-align:center; font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:20px;">Powered by Unischooly</div>
+      </div>
 
-      </section>
+      <div class="card" style="margin-top: 25px;">
+        <h3 style="margin-top:0; font-size:1.1rem;">🚀 Ready for Blast Off!!!</h3>
+        <div class="schedule-info">
+          <div class="cal-icon">📅</div>
+          <div>
+            <div style="font-weight:700; font-size:1.1rem;" id="sc-date">--</div>
+            <div style="color:var(--muted); font-size:0.9rem;" id="sc-time">--</div>
+          </div>
+        </div>
+        
+        <button class="reschedule-btn" onclick="openReschedule()">📅 Reschedule Class</button>
+
+        <div class="fact-box">
+          <div style="color:var(--purple); font-weight:800; font-size:0.8rem;">DID YOU KNOW?</div>
+          <div class="fact-text" id="fact-content">Loading...</div>
+          <div class="fact-nav" style="display:flex; justify-content:flex-end; gap:5px;">
+            <button onclick="changeFact(-1)">‹</button>
+            <button onclick="changeFact(1)">›</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
 
-  <div class="overlay" id="resOverlay">
-    <div class="sheet">
-        <div class="sheetHead">
-            <h2>Reschedule Class</h2>
-            <button class="closeX" id="closeRes">✕</button>
+    <div class="right-col">
+      <div class="card">
+        <div class="welcome-title">Welcome to <span style="color:var(--pink)" id="w-name">Student</span>'s <br> Trial Class</div>
+        <div class="welcome-sub">Class starts in:</div>
+
+        <div class="timer-container" id="timer-ui">
+          <div class="timer-box"><span class="t-val" id="d">00</span><span class="t-lbl">Days</span></div>
+          <div class="timer-box"><span class="t-val" id="h">00</span><span class="t-lbl">Hrs</span></div>
+          <div class="timer-box"><span class="t-val" id="m">00</span><span class="t-lbl">Mins</span></div>
+          <div class="timer-box"><span class="t-val" id="s">00</span><span class="t-lbl">Secs</span></div>
         </div>
+        <div id="class-ended" class="hidden" style="text-align:center; color:red; font-weight:700; margin-bottom:20px;">Class has Ended</div>
 
-        <div class="resLabel">Select New Date</div>
-        <div class="dateScroll" id="datePillsContainer">
-            </div>
-
-        <div class="resLabel">Select New Time</div>
-        <div class="timeGrid" id="timePillsContainer">
-            <div class="timePill" onclick="selectTime(this, '10:00')">10:00 AM</div>
-            <div class="timePill" onclick="selectTime(this, '11:00')">11:00 AM</div>
-            <div class="timePill" onclick="selectTime(this, '14:00')">02:00 PM</div>
-            <div class="timePill" onclick="selectTime(this, '15:00')">03:00 PM</div>
-            <div class="timePill" onclick="selectTime(this, '16:00')">04:00 PM</div>
-            <div class="timePill" onclick="selectTime(this, '17:00')">05:00 PM</div>
+        <button class="join-btn" id="join-btn" disabled>Join Class</button>
+        <div class="links-row">
+          (Button activates 5 mins before)<br><br>
+          <span class="text-link" onclick="openTerms()">Terms & Conditions</span>
         </div>
+      </div>
 
-        <div class="resLabel">Timezone</div>
-        <select class="tzSelect" id="resTz">
-            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
-            <option value="America/New_York">America/New_York (EST)</option>
-            <option value="Europe/London">Europe/London (GMT)</option>
-            <option value="Asia/Dubai">Asia/Dubai (GST)</option>
-        </select>
-
-        <button class="saveBtn" id="resSave">Confirm Reschedule</button>
+      <div class="card" style="margin-top: 25px;">
+        <div class="game-tabs">
+          <div class="tab active" onclick="setGame('math', this)">Math</div>
+          <div class="tab" onclick="setGame('memory', this)">Memory</div>
+        </div>
+        
+        <div class="game-panel">
+          <div id="game-math">
+            <h2 id="math-q" style="margin:0 0 10px 0;">5 + 3 = ?</h2>
+            <input type="number" id="math-in" style="padding:5px; border-radius:5px; border:none; text-align:center;">
+            <button onclick="checkMath()" style="padding:5px 10px; border-radius:5px; border:none; cursor:pointer; background:var(--green);">Check</button>
+            <div id="math-res" style="height:20px; margin-top:10px; font-weight:700; color:var(--green);"></div>
+          </div>
+          <div id="game-memory" class="hidden">
+            <p>Memory Game</p>
+            <div id="mem-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; max-width:200px; margin:0 auto;"></div>
+            <button onclick="initMemory()" style="margin-top:10px; padding:5px 10px; cursor:pointer;">Reset</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="overlay" id="termsOverlay">
-    <div class="sheet">
-        <div class="sheetHead"><h2>Terms</h2><button class="closeX" id="closeTerms">✕</button></div>
-        <ul style="color:#ccc; line-height:1.6; padding-left:20px;">
-            <li>Class is recorded for quality purposes.</li>
-            <li>Zero tolerance for bullying.</li>
-            <li>Parental supervision advised.</li>
-        </ul>
+  <div class="overlay" id="res-modal">
+    <div class="modal">
+      <button class="close-modal" onclick="closeReschedule()">×</button>
+      <h2 style="margin-top:0;">Reschedule Class</h2>
+      
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:5px;">SELECT NEW DATE</p>
+      <div class="date-scroll" id="date-container"></div>
+      
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:5px;">SELECT NEW TIME</p>
+      <div class="time-grid" id="time-container">
+        <div class="time-pill" onclick="selTime(this, '16:00')">04:00 PM</div>
+        <div class="time-pill" onclick="selTime(this, '17:00')">05:00 PM</div>
+        <div class="time-pill" onclick="selTime(this, '18:00')">06:00 PM</div>
+        <div class="time-pill" onclick="selTime(this, '19:00')">07:00 PM</div>
+        <div class="time-pill" onclick="selTime(this, '20:00')">08:00 PM</div>
+        <div class="time-pill" onclick="selTime(this, '21:00')">09:00 PM</div>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:5px;">TIMEZONE</p>
+      <select id="res-tz" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #333; border-radius:8px; margin-bottom:20px;">
+        <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+        <option value="America/New_York">America/New_York (EST)</option>
+        <option value="Europe/London">Europe/London (GMT)</option>
+      </select>
+
+      <button class="join-btn" style="width:100%; margin:0;" onclick="saveReschedule()">Confirm Change</button>
     </div>
   </div>
 
-<script>
-/* =========================
-   CONFIG & HELPERS
-========================= */
-const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const qs = new URLSearchParams(location.search);
-const $ = (id)=>document.getElementById(id);
+  <div class="overlay" id="terms-modal">
+    <div class="modal">
+      <button class="close-modal" onclick="closeTerms()">×</button>
+      <h2 style="margin-top:0;">Terms & Conditions</h2>
+      <ul style="padding-left:20px; line-height:1.6; color:var(--muted);">
+        <li>Classes are recorded for quality assurance.</li>
+        <li>We maintain a zero-tolerance policy for bullying.</li>
+        <li>Students should be dressed appropriately.</li>
+        <li>Parents are welcome to observe but allow students to answer.</li>
+      </ul>
+    </div>
+  </div>
 
-// Course Data
-const FUNFACTS = {
-  1: ["Coding is logic!", "First bug was a moth.", "Computers use binary.", "Python is not a snake."],
-  2: ["Python reads like English.", "Used by NASA.", "Great for AI.", "Indentation matters."],
-  3: ["HTML is structure.", "CSS is style.", "JS is logic.", "The web is huge."]
-};
-let lead = null;
-let classUtc = null;
-let selectedDateVal = null; // For Reschedule Logic
-let selectedTimeVal = null;
+  <script>
+    // --- CONFIG ---
+    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* =========================
-   INIT & DATA FETCH
-========================= */
-async function loadLead(){
-  const iduuid = qs.get("iduuid");
-  if(!iduuid) { alert("Missing ID in URL"); return; }
+    // --- DATA ---
+    const FACTS = {
+      1: ["Coding is the new literacy.", "First computer bug was a moth.", "Python is named after Monty Python.", "There are 700+ coding languages."],
+      2: ["Python is used by NASA.", "It's great for AI.", "Readable like English.", "Named after a comedy show."],
+      default: ["Learning grows your brain.", "Mistakes help you learn.", "Practice makes perfect.", "Stay curious!"]
+    };
 
-  const { data, error } = await sb.from("demo_leads").select("*").eq("id", iduuid).maybeSingle();
-  
-  if(error || !data){ console.error(error); alert("Booking not found"); return; }
-  lead = data;
+    let lead = null;
+    let classDate = null;
+    let factIdx = 0;
+    
+    // --- INIT ---
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('iduuid') || params.get('id');
+      
+      if(!id) { alert("No Booking ID found."); return; }
 
-  // Render Pass
-  $("v_child_name").textContent = lead.child_name;
-  $("v_child_grade").textContent = lead.child_grade || "--";
-  $("v_parent_name").textContent = lead.parent_name;
-  $("v_parent_phone").textContent = `+${lead.phone_country_code} ${lead.phone_number}`;
-  $("v_parent_email").textContent = lead.parent_email;
-  $("v_course_name").textContent = getCourseName(lead.course_id);
-  $("welcomeName").textContent = lead.child_name;
+      const { data, error } = await sb.from('demo_leads').select('*').eq('id', id).single();
+      
+      if(error || !data) { console.error(error); alert("Could not load booking."); return; }
+      
+      lead = data;
+      render();
+      setupTimer();
+      setupFacts();
+      setupReschedule();
+      newMath();
+    }
 
-  // Schedule
-  $("v_demo_date").textContent = lead.preferred_date;
-  $("v_demo_time").textContent = lead.preferred_time_slot;
-  $("v_demo_tz").textContent = lead.timezone;
-  
-  // Reschedule Pre-fill
-  $("resTz").value = lead.timezone || "Asia/Kolkata";
+    // --- RENDER ---
+    function render() {
+      const cMap = {1:"Coding", 2:"Python", 3:"Web Dev", 4:"GenAI", 5:"Roblox", 6:"Chess", 7:"Math"};
+      const cName = cMap[lead.course_id] || "Coding";
 
-  // Countdown
-  if(lead.preferred_date && lead.preferred_time_slot) {
-     const dateStr = `${lead.preferred_date}T${lead.preferred_time_slot}:00`; // Naive parse
-     classUtc = new Date(dateStr); 
-     startCountdown();
-  }
+      document.getElementById('tk-child').innerText = lead.child_name;
+      document.getElementById('tk-grade').innerText = lead.child_grade || "--";
+      document.getElementById('tk-course').innerText = cName;
+      document.getElementById('tk-parent').innerText = lead.parent_name;
+      document.getElementById('tk-phone').innerText = `+${lead.phone_country_code} ${lead.phone_number}`;
+      document.getElementById('tk-email').innerText = lead.parent_email;
 
-  setupFunFacts(lead.course_id);
-}
+      document.getElementById('w-name').innerText = lead.child_name;
+      document.getElementById('sc-date').innerText = lead.preferred_date || "Pending";
+      document.getElementById('sc-time').innerText = (lead.preferred_time_slot || "--") + " (" + (lead.timezone || "") + ")";
+      document.getElementById('res-tz').value = lead.timezone || "Asia/Kolkata";
+    }
 
-function getCourseName(id){
-    const map = {1:"Coding", 2:"Python", 3:"Web Dev", 4:"GenAI", 5:"Roblox", 6:"Chess", 7:"Math"};
-    return map[id] || "Course";
-}
+    // --- TIMER (ROBUST PARSING) ---
+    function setupTimer() {
+      if(!lead.preferred_date || !lead.preferred_time_slot) return;
+      
+      // Parse Time (Handle "3:00 PM" and "15:00:00")
+      let timeStr = lead.preferred_time_slot;
+      let hours = 0, mins = 0;
 
-/* =========================
-   COUNTDOWN
-========================= */
-function startCountdown(){
-    setInterval(()=>{
-        if(!classUtc) return;
+      if(timeStr.includes('M')) { // AM/PM format
+         const parts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+         if(parts) {
+            hours = parseInt(parts[1]);
+            mins = parseInt(parts[2]);
+            if(parts[3].toUpperCase() === 'PM' && hours < 12) hours += 12;
+            if(parts[3].toUpperCase() === 'AM' && hours === 12) hours = 0;
+         }
+      } else { // 24h format
+         const parts = timeStr.split(':');
+         hours = parseInt(parts[0]);
+         mins = parseInt(parts[1]);
+      }
+
+      // Combine Date + Time
+      const dateParts = lead.preferred_date.split('-'); // YYYY-MM-DD
+      classDate = new Date(dateParts[0], dateParts[1]-1, dateParts[2], hours, mins, 0);
+
+      const tick = () => {
         const now = new Date();
-        const diff = classUtc - now;
-        
+        const diff = classDate - now;
+
         if(diff <= 0) {
-            if(Math.abs(diff) < 3600000) enableJoin(true); // Live
-            else { $("joinBtn").innerText = "Class Ended"; $("countRow").style.opacity = 0.5; }
-            return;
+           if(Math.abs(diff) < 3600000) enableJoin(true); // Live for 1 hour
+           else {
+             document.getElementById('timer-ui').classList.add('hidden');
+             document.getElementById('class-ended').classList.remove('hidden');
+             document.getElementById('join-btn').innerText = "Class Ended";
+           }
+           return;
         }
 
+        if(diff <= 300000) enableJoin(false); // Enable 5 mins before
+
         const d = Math.floor(diff / (1000*60*60*24));
-        const h = Math.floor((diff / (1000*60*60)) % 24);
-        const m = Math.floor((diff / 1000 / 60) % 60);
-        const s = Math.floor((diff / 1000) % 60);
+        const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+        const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+        const s = Math.floor((diff % (1000*60)) / 1000);
 
-        $("t_days").innerText = d<10?"0"+d:d;
-        $("t_hours").innerText = h<10?"0"+h:h;
-        $("t_mins").innerText = m<10?"0"+m:m;
-        $("t_secs").innerText = s<10?"0"+s:s;
-
-        if(diff <= 300000) enableJoin(false); // 5 mins
-    }, 1000);
-}
-
-function enableJoin(live){
-    const b = $("joinBtn");
-    if(b.disabled){
-        b.disabled = false;
-        b.innerText = live ? "JOIN NOW (LIVE)" : "JOIN CLASS";
-        b.onclick = () => alert("Joining Zoom...");
+        document.getElementById('d').innerText = d<10?'0'+d:d;
+        document.getElementById('h').innerText = h<10?'0'+h:h;
+        document.getElementById('m').innerText = m<10?'0'+m:m;
+        document.getElementById('s').innerText = s<10?'0'+s:s;
+      };
+      
+      setInterval(tick, 1000);
+      tick();
     }
-}
 
-/* =========================
-   RESCHEDULE LOGIC (PILLS)
-========================= */
-function initReschedulePills(){
-    const con = $("datePillsContainer");
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let html = "";
-    for(let i=1; i<=14; i++){
-        const d = new Date(); d.setDate(d.getDate()+i);
-        const iso = d.toISOString().split('T')[0];
-        html += `<div class="datePill" onclick="selectDate(this, '${iso}')">
-            <span>${days[d.getDay()]}</span>
-            <span>${d.getDate()}</span>
-        </div>`;
+    function enableJoin(live) {
+      const btn = document.getElementById('join-btn');
+      if(btn.disabled) {
+        btn.disabled = false;
+        btn.innerText = live ? "JOIN CLASS (LIVE)" : "JOIN CLASS";
+        btn.onclick = () => alert("Redirecting to Zoom...");
+      }
     }
-    con.innerHTML = html;
-}
 
-window.selectDate = (el, val) => {
-    document.querySelectorAll('.datePill').forEach(x => x.classList.remove('active'));
-    el.classList.add('active');
-    selectedDateVal = val;
-}
-window.selectTime = (el, val) => {
-    document.querySelectorAll('.timePill').forEach(x => x.classList.remove('active'));
-    el.classList.add('active');
-    selectedTimeVal = val;
-}
+    // --- FUN FACTS ---
+    function setupFacts() {
+      const list = FACTS[lead.course_id] || FACTS.default;
+      const el = document.getElementById('fact-content');
+      const render = () => el.innerText = list[factIdx];
+      
+      window.changeFact = (dir) => {
+        factIdx += dir;
+        if(factIdx >= list.length) factIdx = 0;
+        if(factIdx < 0) factIdx = list.length - 1;
+        render();
+      };
+      render();
+    }
 
-$("resSave").onclick = async () => {
-    if(!lead?.id) return;
-    if(!selectedDateVal || !selectedTimeVal) { alert("Please select date and time"); return; }
-    
-    const tz = $("resTz").value;
-    const { error } = await sb.from("demo_leads").update({
-        preferred_date: selectedDateVal,
-        preferred_time_slot: selectedTimeVal,
-        timezone: tz
-    }).eq("id", lead.id);
+    // --- GAMES ---
+    window.setGame = (g, el) => {
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('game-math').classList.add('hidden');
+      document.getElementById('game-memory').classList.add('hidden');
+      document.getElementById('game-'+g).classList.remove('hidden');
+      if(g==='memory') initMemory();
+    };
 
-    if(error) alert("Error updating");
-    else { alert("Rescheduled!"); location.reload(); }
-}
+    let sum = 0;
+    function newMath() {
+      let a = Math.floor(Math.random()*10)+1;
+      let b = Math.floor(Math.random()*10)+1;
+      sum = a+b;
+      document.getElementById('math-q').innerText = `${a} + ${b} = ?`;
+      document.getElementById('math-in').value = '';
+      document.getElementById('math-res').innerText = '';
+    }
+    window.checkMath = () => {
+      if(parseInt(document.getElementById('math-in').value) === sum) {
+        document.getElementById('math-res').innerText = "Correct! 🎉";
+        setTimeout(newMath, 1000);
+      } else document.getElementById('math-res').innerText = "Try again";
+    };
 
-/* =========================
-   UI INTERACTIONS
-========================= */
-// Modal Toggles
-$("openReschedule").onclick = () => { $("resOverlay").classList.add("open"); initReschedulePills(); }
-$("closeRes").onclick = () => $("resOverlay").classList.remove("open");
-$("openTerms").onclick = () => $("termsOverlay").classList.add("open");
-$("closeTerms").onclick = () => $("termsOverlay").classList.remove("open");
-$("calendarSyncBtn").onclick = () => $("calendarProviders").style.display = "flex";
+    function initMemory() {
+       const grid = document.getElementById('mem-grid');
+       grid.innerHTML = '';
+       const chars = ['A','A','B','B','C','C','D','D'];
+       chars.sort(()=>Math.random()-0.5);
+       let sel = [], matched = 0;
 
-// Fun Facts
-let fIdx = 0;
-function setupFunFacts(cid){
-    const list = FUNFACTS[cid] || FUNFACTS[1];
-    const render = () => $("factText").innerText = list[fIdx];
-    $("factNext").onclick = () => { fIdx = (fIdx+1)%list.length; render(); }
-    $("factPrev").onclick = () => { fIdx = (fIdx-1+list.length)%list.length; render(); }
-    render();
-}
+       chars.forEach(c => {
+         const d = document.createElement('div');
+         d.style.cssText = "height:40px; background:#fff; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#000; font-weight:bold;";
+         d.dataset.val = c;
+         d.onclick = () => {
+            if(d.innerText || sel.length>=2) return;
+            d.innerText = c;
+            sel.push(d);
+            if(sel.length===2) {
+               if(sel[0].dataset.val === sel[1].dataset.val) {
+                 sel=[]; matched++; if(matched===4) alert("You Win!");
+               } else {
+                 setTimeout(() => { sel.forEach(x=>x.innerText=''); sel=[]; }, 500);
+               }
+            }
+         };
+         grid.appendChild(d);
+       });
+    }
 
-// Math Game
-let sum = 0;
-function newMath(){
-    let a=Math.floor(Math.random()*10), b=Math.floor(Math.random()*10);
-    sum = a+b;
-    $("mathQ").innerText = `${a} + ${b} = ?`;
-    $("mathIn").value = "";
-    $("mathRes").innerText = "";
-}
-window.checkMath = () => {
-    if(parseInt($("mathIn").value) === sum) {
-        $("mathRes").innerText = "Correct! 🎉"; setTimeout(newMath, 1000);
-    } else $("mathRes").innerText = "Try Again";
-}
-window.switchGame = (g, el) => {
-    document.querySelectorAll('.gTab').forEach(t=>t.classList.remove('active'));
-    el.classList.add('active');
-    $("gMath").style.display = g==='math'?'block':'none';
-    $("gMem").style.display = g==='memory'?'block':'none';
-}
+    // --- MODALS ---
+    window.openTerms = () => document.getElementById('terms-modal').classList.add('open');
+    window.closeTerms = () => document.getElementById('terms-modal').classList.remove('open');
+    window.openReschedule = () => document.getElementById('res-modal').classList.add('open');
+    window.closeReschedule = () => document.getElementById('res-modal').classList.remove('open');
 
-// Start
-loadLead();
-newMath();
+    // --- RESCHEDULE LOGIC ---
+    let selDate = null, selTime = null;
+    function setupReschedule() {
+       const con = document.getElementById('date-container');
+       const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+       let h = '';
+       for(let i=1; i<=14; i++) {
+         const d = new Date(); d.setDate(d.getDate()+i);
+         const iso = d.toISOString().split('T')[0];
+         h += `<div class="date-pill" onclick="pickDate(this, '${iso}')">
+                 <span style="font-size:0.7rem; text-transform:uppercase;">${days[d.getDay()]}</span>
+                 <span style="font-size:1.2rem; font-weight:700;">${d.getDate()}</span>
+               </div>`;
+       }
+       con.innerHTML = h;
+    }
+    window.pickDate = (el, val) => {
+       document.querySelectorAll('.date-pill').forEach(x=>x.classList.remove('selected'));
+       el.classList.add('selected');
+       selDate = val;
+    };
+    window.selTime = (el, val) => {
+       document.querySelectorAll('.time-pill').forEach(x=>x.classList.remove('selected'));
+       el.classList.add('selected');
+       selTime = val;
+    };
+    window.saveReschedule = async () => {
+       if(!selDate || !selTime) { alert("Please select a date and time."); return; }
+       
+       const { error } = await sb.from('demo_leads').update({
+          preferred_date: selDate,
+          preferred_time_slot: selTime,
+          timezone: document.getElementById('res-tz').value
+       }).eq('id', lead.id);
 
-</script>
+       if(error) alert("Error saving.");
+       else { alert("Class Rescheduled!"); location.reload(); }
+    };
+
+    // START
+    init();
+  </script>
 </body>
 </html>

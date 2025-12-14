@@ -1857,3 +1857,40 @@
   </script>
 </body>
 </html>
+
+<script>
+function copyEmail(el){
+  const email = el.innerText.trim();
+  navigator.clipboard.writeText(email);
+  el.title = "Copied!";
+  setTimeout(()=>el.title=email,1200);
+}
+</script>
+
+<style>
+.fun-divider{
+  height:2px;
+  background:linear-gradient(90deg,#6f6cff,#00e5ff,#6f6cff);
+  background-size:200% 100%;
+  animation:slide 3s linear infinite;
+  margin:12px 0;
+}
+.fun-dots span{
+  display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#6f6cff;margin:0 3px;opacity:.4;
+}
+@keyframes slide{
+  from{background-position:0%}
+  to{background-position:200%}
+}
+.child-name-gradient{
+  background:linear-gradient(90deg,#6f6cff,#00e5ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-weight:700;
+}
+.slot-card{position:relative;padding-top:28px}
+.slot-card .star-badge{
+  position:absolute;top:6px;right:8px;
+}
+</style>

@@ -113,7 +113,6 @@
       border-radius:26px;
       box-shadow:var(--shadow);
       position:relative;
-      /* removed overflow:hidden to allow calendar popup to show */
     }
     .card-inner{padding:16px 14px;}
     @media (min-width: 720px){
@@ -226,9 +225,9 @@
     }
     .k{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.3px}
     
-    /* FIX: Email Overflow Ellipsis */
     .v{
-        font-weight:800; color:var(--text); 
+        font-weight:800;
+        color:var(--text); 
         min-width:0; 
         overflow:hidden; 
         text-overflow:ellipsis;
@@ -246,7 +245,8 @@
 
     /* Schedule card */
     .schedule-head{
-      display:flex; align-items:center; justify-content:space-between;
+      display:flex;
+      align-items:center; justify-content:space-between;
       gap:10px;
       margin-bottom:10px;
     }
@@ -304,8 +304,7 @@
       border-radius:18px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(7,10,28,.72);
-      /* FIX: Changed from hidden to visible so menu works */
-      overflow:visible; 
+      overflow:visible;
     }
 
     .cal{
@@ -364,7 +363,7 @@
     .dropdown{position:relative}
     .menu{
       position:absolute;
-      left:0; top:44px; /* Changed from right:0 to left:0 for better wrapping */
+      left:0; top:44px;
       width:260px;
       background: rgba(11,15,36,.98);
       border:1px solid rgba(255,255,255,.14);
@@ -401,7 +400,7 @@
       background: rgba(7,10,28,.72);
       padding:12px;
       overflow:hidden;
-      min-height: 100px; /* FIX: Prevents empty looking box */
+      min-height: auto; 
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .facts-head{
@@ -413,7 +412,8 @@
       font-weight:1000;
       font-size:14px;
     }
-    .facts-nav{display:flex; gap:8px;}
+    .facts-nav{display:flex;
+      gap:8px;}
     .iconbtn{
       width:36px; height:36px;
       border-radius:12px;
@@ -435,11 +435,30 @@
       border-radius:14px;
       border:1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
-      flex-grow: 1; /* Ensures it fills space */
+      flex-grow: 1; 
     }
     .factemoji{font-size:20px}
-    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800;
+    .facttext{font-size:14px;
+      color:rgba(255,255,255,.92); font-weight:800;
       line-height:1.25;}
+
+    /* Fun Fact Progress Bar (Slower) */
+    .fact-timer {
+      height: 2px; width: 100%;
+      background: rgba(255,255,255,0.08);
+      margin-top: 10px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .fact-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--grad);
+      /* Slowed down to 15s as requested */
+      animation: loadFact 15s linear infinite;
+    }
+    @keyframes loadFact { 0% { width: 0%; } 100% { width: 100%; } }
+
 
     /* Right side welcome/timer */
     .welcome{
@@ -589,7 +608,6 @@
       .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));}
     }
     
-    /* FIX: Slot Colors for visibility */
     .slot{
       border-radius:14px;
       border:1px solid rgba(255,255,255,.16);
@@ -605,9 +623,10 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      color: #e9ecff; /* Force readable color */
+      color: #e9ecff; 
     }
-    .slot:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
+    .slot:hover{transform: translateY(-1px);
+      background: rgba(255,255,255,.10);}
     .slot.active{
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
       border-color: rgba(155,91,255,.55);
@@ -673,20 +692,17 @@
 
     /* MOBILE OPTIMIZATIONS */
     @media (max-width: 768px) {
-        .brand img { height: 24px; } /* Smaller Logo */
-        
+        .brand img { height: 24px;
+        } 
         .topbar {
-            flex-direction: row; /* Keep row but ensure space */
+            flex-direction: row; /* row for logo and tick */
         }
-        
-        /* Ensure calendar menu fits on screen */
         .menu {
             width: 220px;
             left: -50px; 
         }
-        
-        /* Stack ticket columns on very small screens */
-        .ticket-body { grid-template-columns: 1fr; }
+        .ticket-body { grid-template-columns: 1fr;
+        }
     }
   </style>
 </head>
@@ -707,7 +723,9 @@
       </div>
     </div>
 
-    <div id="stateError" class="state hide">Booking not found. Please check the link.</div>
+    <div id="stateError" class="state hide">Booking not found.
+      Please check the link.</div>
+    <div id="stateLoading" class="state hide">Loading...</div>
 
     <div id="section2" class="grid">
       <div class="card">
@@ -717,18 +735,21 @@
               <div class="big">VALUE<br/>WAIVED</div>
               <div class="small">$30</div>
             </div>
+     
             <div class="ticket-head">
               <div>
                 <div class="ticket-title">🎫 OFFICIAL FREE TRIAL PASS</div>
                 <div class="ticket-sub">Valid for 1 session • Powered by Unischooly</div>
               </div>
             </div>
+       
             <div class="ticket-body">
               <div class="ticket-col">
                 <h4>Admit One Student</h4>
                 <div class="kv">
                    <div class="k">Name</div><div class="v" id="vChild">—</div>
                   <div class="k">Grade</div><div class="v" id="vGrade">—</div>
+ 
                   <div class="k">Course</div><div class="v" id="vCourse">—</div>
                 </div>
               </div>
@@ -770,11 +791,11 @@
                 <div class="dropdown">
                   <button class="btn" id="btnCalendar">📅 Initiate Calendar Sync</button>
                   <div class="menu" id="calMenu">
-                    <a id="calGoogle" target="_blank" rel="noreferrer">Google Calendar <span>↗</span></a>
+                     <a id="calGoogle" target="_blank" rel="noreferrer">Google Calendar <span>↗</span></a>
                     <a id="calApple" target="_blank" rel="noreferrer">Apple Calendar (ICS) <span>⬇</span></a>
                     <a id="calOutlook" target="_blank" rel="noreferrer">Outlook.com <span>↗</span></a>
                     <a id="calYahoo" target="_blank" rel="noreferrer">Yahoo Calendar <span>↗</span></a>
-                    <button id="calDownload">Download .ics <span>⬇</span></button>
+                     <button id="calDownload">Download .ics <span>⬇</span></button>
                   </div>
                 </div>
                 <button class="btn btn-ghost" id="btnCopy">🔗 Copy class time</button>
@@ -794,6 +815,7 @@
               <div class="factemoji" id="factEmoji">💡</div>
               <div class="facttext" id="factText">—</div>
             </div>
+            <div class="fact-timer"><div class="fact-bar"></div></div>
           </div>
         </div>
       </div>
@@ -801,7 +823,6 @@
       <div class="card">
         <div class="welcome">
           <h2 id="welcomeTitle">Welcome!</h2>
-         
           <p id="welcomeSub">Your trial class details are loading.</p>
 
           <div class="timer">
@@ -815,7 +836,8 @@
             </div>
 
             <div class="disclaimer">
-              By clicking join class, you are confirming that you have read, understood and agree to
+              By clicking join class, you are confirming that you have read, 
+              understood and agree to
               <span class="linklike" id="openTerms">Terms & Conditions</span>.
             </div>
           </div>
@@ -833,7 +855,7 @@
               <div class="factemoji">🧩</div>
               <div style="flex:1">
                 <div class="facttext" id="pQuestion" style="margin-bottom:8px">—</div>
-                 <div class="pills" id="pChoices" style="margin-top:0"></div>
+                  <div class="pills" id="pChoices" style="margin-top:0"></div>
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="pStatus">—</div>
               </div>
             </div>
@@ -841,32 +863,43 @@
 
           <div class="facts" style="margin-top:12px">
             <div class="facts-head">
-              <div class="t">Mini Games 🎮</div>
-              <div style="font-size:11px; color:rgba(255,255,255,.72); font-weight:800">Quick brain boosters</div>
+                <div class="t">Mini Games 🎮</div>
+              <div style="font-size:11px;
+                color:rgba(255,255,255,.72); font-weight:800">Quick brain boosters</div>
             </div>
-            <div class="factbox" style="flex-direction:column; align-items:stretch; gap:10px">
-              <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <div class="factbox" style="flex-direction:column;
+                align-items:stretch; gap:10px">
+              <div style="display:flex; gap:10px;
+                flex-wrap:wrap">
                 <button class="btn btn-ghost" id="tabSprint">Quick Sprint</button>
                 <button class="btn btn-ghost" id="tabMemory">Memory Match</button>
               </div>
 
               <div id="gameSprint" class="hide">
-                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+                 <div style="display:flex;
+                    justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
                   <div style="font-weight:1000">Quick Math Sprint (60s)</div>
-                  <div style="font-variant-numeric:tabular-nums; font-weight:1000" id="sprintTime">60</div>
+                  <div style="font-variant-numeric:tabular-nums;
+                    font-weight:1000" id="sprintTime">60</div>
                 </div>
-                <div style="margin-top:8px; font-size:14px; font-weight:1000" id="sprintQ">—</div>
+                <div style="margin-top:8px;
+                    font-size:14px; font-weight:1000" id="sprintQ">—</div>
                 <div class="pills" style="margin-top:10px" id="sprintChoices"></div>
-                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
+                <div style="margin-top:8px;
+                    font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
               </div>
 
               <div id="gameMemory" class="hide">
-                <div style="font-weight:1000; margin-bottom:6px">Memory Match (Emoji)</div>
-                <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
-                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
+                <div style="font-weight:1000;
+                    margin-bottom:6px">Memory Match (Emoji)</div>
+                <div style="display:grid;
+                    grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
+                <div style="margin-top:8px;
+                    font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
               </div>
 
-              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: Solving puzzles helps warm up your brain before class!</div>
+              <div style="font-size:11px;
+                color:rgba(255,255,255,.70); font-weight:800">Tip: Solving puzzles helps warm up your brain before class!</div>
             </div>
           </div>
 
@@ -880,7 +913,8 @@
       <div class="modal-top">
         <div>
           <h3>Terms & Conditions</h3>
-           <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
+          
+          <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
         </div>
         <button class="xbtn" id="closeTerms">✕</button>
       </div>
@@ -899,7 +933,8 @@
       <div class="panel-top">
         <div>
           <h3>Reschedule your class</h3>
-          <div class="sub">Timezone is prefilled. You can change it.</div>
+          <div class="sub">Timezone is prefilled.
+            You can change it.</div>
         </div>
         <button class="xbtn" id="closeRes">✕</button>
       </div>
@@ -926,7 +961,8 @@
         <button class="btn" id="confirmRes" disabled>Confirm Reschedule</button>
       </div>
 
-      <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70); font-weight:800">
+      <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70);
+        font-weight:800">
         Your class timing will update instantly once confirmed.
       </div>
     </div>
@@ -1043,7 +1079,7 @@
         ["🔁","Multiplication is repeated addition."],
         ["📐","Angles tell you how much you turn."],
         ["🌟","Math helps in games, coding, and real life."],
-      ],
+      ]
     };
     const PUZZLES = {
       1:[
@@ -1153,9 +1189,9 @@
     }
     function dateKeyInTZ(dt, tz){
       const p = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit"}).format(dt);
-      return p; // YYYY-MM-DD
+      return p;
+      // YYYY-MM-DD
     }
-
     // =========================
     // Booking load
     // =========================
@@ -1164,16 +1200,17 @@
     let bookingRegion = null;
     let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
     async function loadBooking(){
-      if(!iduuid){ return null; }
+      if(!iduuid){ return null;
+      }
       const { data, error } = await sb
         .from("demo_leads")
         .select("*")
         .eq("id", iduuid)
         .single();
-      if(error || !data){ console.error(error); return null; }
+      if(error || !data){ console.error(error); return null;
+      }
       return data;
     }
-
     // =========================
     // Derive class datetime for countdown + calendar
     // preferred_date is date (no timezone), preferred_time_slot is local string (e.g., "10:00 AM")
@@ -1190,18 +1227,15 @@
       if(ap==="AM" && h===12) h = 0;
       return {h, m:mm};
     }
-
     function makeDateInTZ(dateStr, timeStr, tz){
       // Build a Date that represents the same wall-clock time in tz.
       // Approach: create in UTC then adjust using tz offset at that moment by formatting.
       const t = parseTime12hTo24(timeStr);
       if(!dateStr || !t) return null;
-
       // Start with UTC date
       const [Y,M,D] = dateStr.split("-").map(x=>parseInt(x,10));
       const guessUTC = new Date(Date.UTC(Y, M-1, D, t.h, t.m, 0));
-      // Determine what wall clock that UTC time shows in tz; then shift.
-      // We want the tz wall clock == (Y-M-D + t.h:t.m).
+      // Determine what wall clock that UTC time shows in tz; then shift
       const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
         .formatToParts(guessUTC);
       const map = Object.fromEntries(shown.map(p=>[p.type,p.value]));
@@ -1210,20 +1244,17 @@
       const shownD = parseInt(map.day,10);
       const shownH = parseInt(map.hour,10);
       const shownMin = parseInt(map.minute,10);
-
       // Calculate delta minutes between desired and shown in tz
       const desired = Date.UTC(Y, M-1, D, t.h, t.m, 0);
       const shownAsIfUTC = Date.UTC(shownY, shownM-1, shownD, shownH, shownMin, 0);
       const deltaMs = desired - shownAsIfUTC;
       return new Date(guessUTC.getTime() + deltaMs);
     }
-
     function buildMeetLink(){
       // Placeholder until meet link column exists (wise/zoom/etc).
       // If you later store a meet link in demo_leads (e.g., meeting_link), read it here.
       return null;
     }
-
     // =========================
     // Render Section 2
     // =========================
@@ -1231,7 +1262,6 @@
       const el = document.getElementById(id);
       if(el) el.textContent = value ?? "—";
     }
-
     function renderBooking(b){
       BOOKING = b;
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
@@ -1244,7 +1274,6 @@
       setText("vEmail", b.parent_email);
       setText("vPhone", `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim());
       setText("vCourse", bookingCourseName);
-
       // Schedule
       const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
       if(classDT){
@@ -1254,7 +1283,6 @@
         setText("calDow", s.weekday);
         setText("schedTime", `${s.time}`);
         setText("schedMeta", `${b.preferred_date} • ${bookingTZ}`);
-
         // calendar links
         setupCalendarLinks(classDT, bookingTZ, bookingCourseName, b.child_name);
         // copy
@@ -1270,7 +1298,6 @@
         document.getElementById("btnJoin").disabled = true;
         document.getElementById("countdown").textContent = "--:--:--";
       }
-
       // Welcome
       setText("welcomeTitle", `Welcome to ${b.child_name}’s ${bookingCourseName} Trial Class`);
       setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
@@ -1281,15 +1308,13 @@
       initMiniGames();
       // reschedule prefill
       initRescheduleUI();
-
       // join button logic
       const meetLink = buildMeetLink();
       document.getElementById("btnJoin").onclick = () => {
-        if(meetLink){ window.open(meetLink, "_blank", "noopener,noreferrer"); }
-        else toast("Meet link will appear 5 mins before class.");
+        if(meetLink){ window.open(meetLink, "_blank", "noopener,noreferrer");
+        } else toast("Meet link will appear 5 mins before class.");
       };
     }
-
     // =========================
     // Toast (tiny)
     // =========================
@@ -1319,7 +1344,6 @@
       clearTimeout(toastTimer);
       toastTimer=setTimeout(()=>{el.style.display="none"}, 2200);
     }
-
     // =========================
     // Calendar integration
     // =========================
@@ -1329,7 +1353,6 @@
       return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
     }
     function escapeICS(s){ return String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
-
     function makeICS({title, desc, startUTC, endUTC}){
       return [
         "BEGIN:VCALENDAR",
@@ -1348,9 +1371,9 @@
         "END:VCALENDAR"
       ].join("\r\n");
     }
-
     function setupCalendarLinks(classDT, tz, course, child){
-      const start = classDT; // already actual instant
+      const start = classDT;
+      // already actual instant
       const end = new Date(start.getTime() + 60*60*1000);
       const title = `Unischooly Trial Class - ${course}`;
       const desc = `Trial class for ${child}. Timezone: ${tz}.`;
@@ -1358,26 +1381,21 @@
       const gBase = "https://calendar.google.com/calendar/render?action=TEMPLATE";
       const gDates = `${toIcsDateUTC(start)}/${toIcsDateUTC(end)}`;
       const gUrl = `${gBase}&text=${encodeURIComponent(title)}&details=${encodeURIComponent(desc)}&dates=${encodeURIComponent(gDates)}`;
-
       // Outlook.com
       const oBase = "https://outlook.live.com/calendar/0/deeplink/compose";
       const oUrl = `${oBase}?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(desc)}&startdt=${encodeURIComponent(start.toISOString())}&enddt=${encodeURIComponent(end.toISOString())}`;
-
       // Yahoo
       const yBase = "https://calendar.yahoo.com/";
       const dur = "0100";
       const yUrl = `${yBase}?v=60&title=${encodeURIComponent(title)}&st=${encodeURIComponent(toIcsDateUTC(start))}&dur=${dur}&desc=${encodeURIComponent(desc)}`;
-
       // ICS download (Apple uses .ics)
       const ics = makeICS({title, desc, startUTC:start, endUTC:end});
       const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
       const icsUrl = URL.createObjectURL(blob);
-
       document.getElementById("calGoogle").href = gUrl;
       document.getElementById("calOutlook").href = oUrl;
       document.getElementById("calYahoo").href = yUrl;
       document.getElementById("calApple").href = icsUrl;
-
       document.getElementById("calDownload").onclick = () => {
         const a = document.createElement("a");
         a.href = icsUrl;
@@ -1385,7 +1403,6 @@
         a.click();
       };
     }
-
     // Calendar dropdown
     const calBtn = document.getElementById("btnCalendar");
     const calMenu = document.getElementById("calMenu");
@@ -1396,7 +1413,6 @@
       calBtn.animate([{transform:"translateY(0)"},{transform:"translateY(-2px)"},{transform:"translateY(0)"}], {duration:700});
     });
     document.addEventListener("click", ()=> calMenu.classList.remove("open"));
-
     // =========================
     // Fun Facts auto-rotate
     // =========================
@@ -1408,7 +1424,6 @@
       showFact(0);
       clearInterval(factTimer);
       factTimer = setInterval(()=> nextFact(1), 5200);
-
       document.getElementById("factPrev").onclick = ()=> nextFact(-1, true);
       document.getElementById("factNext").onclick = ()=> nextFact(1, true);
     }
@@ -1425,7 +1440,6 @@
         factTimer = setInterval(()=> nextFact(1), 5200);
       }
     }
-
     // =========================
     // Puzzles
     // =========================
@@ -1458,7 +1472,6 @@
       if(resetMsg){ document.getElementById("pStatus").textContent=`Score: ${pScore}/${pAnswered}`; }
       if(pAnswered===0){ document.getElementById("pStatus").textContent="Pick an answer to start.";}
     }
-
     // =========================
     // Mini games (super light)
     // =========================
@@ -1467,7 +1480,6 @@
       const tabMemory = document.getElementById("tabMemory");
       const gameSprint = document.getElementById("gameSprint");
       const gameMemory = document.getElementById("gameMemory");
-
       let active = null;
       function show(which){
         gameSprint.classList.add("hide");
@@ -1482,7 +1494,6 @@
       show("sprint");
       startSprint();
     }
-
     // Quick Sprint
     let sprintTimer=null, sprintLeft=60, sprintScore=0, sprintRunning=false;
     function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
@@ -1533,13 +1544,14 @@
         box.appendChild(b);
       });
     }
-
     // Memory Match
     let memFirst=null, memLock=false, memMatches=0;
     function startMemory(){
       const emojis=["🍀","🚀","⭐","🎯","🧠","🐍","🌈","🎮"];
       const deck = emojis.concat(emojis).sort(()=>Math.random()-0.5);
-      memFirst=null; memLock=false; memMatches=0;
+      memFirst=null;
+      memLock=false;
+      memMatches=0;
       const grid=document.getElementById("memGrid");
       grid.innerHTML="";
       deck.forEach((emo, idx)=>{
@@ -1574,7 +1586,6 @@
       });
       document.getElementById("memStatus").textContent="Find all pairs.";
     }
-
     // =========================
     // Countdown + join enable (T-5min)
     // Hide countdown if ended
@@ -1595,14 +1606,12 @@
           joinBtn.disabled = true;
           return;
         }
-
         if(diff <= 0){
           label.textContent = "Class is live";
           cd.textContent = "Now";
           joinBtn.disabled = false;
           return;
         }
-
         const totalSec = Math.floor(diff/1000);
         const hh = Math.floor(totalSec/3600);
         const mm = Math.floor((totalSec%3600)/60);
@@ -1614,7 +1623,6 @@
       tick();
       cdTimer=setInterval(tick, 1000);
     }
-
     // =========================
     // Terms modal
     // =========================
@@ -1647,7 +1655,6 @@
       selectedResSlot = null;
       document.getElementById("confirmRes").disabled = true;
     }
-
     // timezone dropdown (like page 1 style, but simplified list)
     const TZ_OPTIONS = [
       {label:"India (IST) — Asia/Kolkata", tz:"Asia/Kolkata"},
@@ -1670,41 +1677,40 @@
     let resDate = null; // YYYY-MM-DD (in IST date for DB fetch)
     let selectedResSlot = null;
     // {slot_id, display, localDate}
-
     function initRescheduleUI(){
       const sel = document.getElementById("tzSelect");
       sel.innerHTML="";
+      let found = false;
       TZ_OPTIONS.forEach(o=>{
         const op=document.createElement("option");
         op.value=o.tz;
         op.textContent=o.label;
+        if(o.tz === bookingTZ) found = true;
         sel.appendChild(op);
       });
-      resTZ = bookingTZ;
-      // pick nearest option or set custom at top if not in list
-      if(!TZ_OPTIONS.some(o=>o.tz===resTZ)){
+      // FIX: If timezone is not in list, add it
+      if(!found){
         const op=document.createElement("option");
-        op.value=resTZ;
-        op.textContent=`Your timezone — ${resTZ}`;
+        op.value=bookingTZ;
+        op.textContent=`Your Timezone (${bookingTZ})`;
         sel.insertBefore(op, sel.firstChild);
       }
+      resTZ = bookingTZ;
       sel.value = resTZ;
       sel.onchange = ()=>{
         resTZ = safeTZ(sel.value);
         fetchResSlots();
       };
     }
-
     function buildResDates(){
       const wrap=document.getElementById("resDates");
       wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
       const now = new Date();
       const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
       const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
       const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
       const dates=[];
-      for(let i=0;i<3;i++){
+      for(let i=0;i<7;i++){
         const d = new Date(base.getTime() + i*24*60*60*1000);
         const key = dateKeyInTZ(d, "Asia/Kolkata");
         dates.push(key);
@@ -1725,7 +1731,6 @@
         wrap.appendChild(pill);
       });
     }
-
     async function fetchResSlots(){
       const grid=document.getElementById("resSlots");
       const empty=document.getElementById("resEmpty");
@@ -1733,11 +1738,9 @@
       empty.classList.add("hide");
       selectedResSlot = null;
       document.getElementById("confirmRes").disabled = true;
-
       if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
       }
       if(!resDate) buildResDates();
-
       const { data, error } = await sb
         .from("demo_slots_live_view")
         .select("*")
@@ -1747,24 +1750,21 @@
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
       if(!data || data.length===0){ empty.classList.remove("hide"); return;
       }
-
       // convert to local tz, apply SEA hide <7am;
-      // also shift if local time <3am to next day (only for display grouping)
       const slots=[];
+      const now = new Date();
       data.forEach(r=>{
         const utc = new Date(r.slot_datetime_local);
+        if(utc < now) return; // Hide past slots
         // convert by formatting in tz then re-parsing
         const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
         let local = new Date(localStr);
-
         // shift if local < 03:00
         if(local.getHours() < 3){
           local = new Date(local.getTime() + 24*60*60*1000);
         }
-
         // SEA hide < 7AM
         if(bookingRegion === "SEA" && local.getHours() < 7) return;
-
         const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
         const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
         const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
@@ -1773,7 +1773,6 @@
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       slots.sort((a,b)=>a.localInstant - b.localInstant);
       if(slots.length===0){ empty.classList.remove("hide"); return; }
-
       slots.forEach(s=>{
         const btn=document.createElement("button");
         btn.className="slot";
@@ -1793,7 +1792,6 @@
         grid.appendChild(btn);
       });
     }
-
     document.getElementById("confirmRes").onclick = async ()=>{
       if(!BOOKING || !selectedResSlot) return;
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
@@ -1805,28 +1803,23 @@
         timezone: resTZ,
         updated_at: new Date().toISOString()
       };
-
       const { error } = await sb
         .from("demo_leads")
         .update(upd)
         .eq("id", iduuid);
-
       if(error){
         console.error(error);
         toast("Reschedule failed. Try again.");
         return;
       }
-
       toast("✅ Rescheduled!");
       closeRes();
-
       // reload booking fresh
       document.getElementById("stateLoading").classList.remove("hide"); // kept for visual feedback on refresh
       const fresh = await loadBooking();
       document.getElementById("stateLoading").classList.add("hide");
       if(fresh) renderBooking(fresh);
     };
-
     // =========================
     // Boot
     // =========================
@@ -1834,22 +1827,18 @@
       const loading=document.getElementById("stateLoading");
       const err=document.getElementById("stateError");
       const section2=document.getElementById("section2");
-
       if(!iduuid){
         // loading.classList.add("hide"); // REMOVED to keep UI visible
         err.classList.remove("hide");
         err.textContent = "Missing iduuid in URL. Example: ?iduuid=<demo_leads.id>";
         return;
       }
-
       const b = await loadBooking();
       // loading.classList.add("hide"); // REMOVED - element no longer exists in same form
-
       if(!b){
         err.classList.remove("hide");
         return;
       }
-
       err.classList.add("hide");
       // section2.classList.remove("hide"); // REMOVED - UI is visible by default
       renderBooking(b);
@@ -1857,30 +1846,3 @@
   </script>
 </body>
 </html>
-
-<script>
-document.addEventListener("click", function(e){
-  if(e.target.classList.contains("parent-email")){
-    navigator.clipboard.writeText(e.target.innerText);
-  }
-});
-</script>
-
-<style>
-.child-name-gradient {
-  background: linear-gradient(90deg,#7c3aed,#4f46e5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-</style>
-
-<style>
-.fun-divider {
-  height: 3px;
-  background: linear-gradient(90deg,#7c3aed,#22d3ee);
-  animation: glow 2s infinite alternate;
-}
-@keyframes glow { from{opacity:.6} to{opacity:1} }
-.fun-dots { text-align:center; margin-top:6px }
-.fun-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#7c3aed;margin:0 3px}
-</style>

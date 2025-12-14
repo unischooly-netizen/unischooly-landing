@@ -3,1978 +3,1359 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Unischooly | Demo Dashboard (Section 1 + 2)</title>
+  <title>Unischooly | Student Dashboard</title>
 
-  <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    /* =========================================
+       CSS VARIABLES & THEME
+       ========================================= */
     :root{
-      --bg:#050816;
-      --card:#0b0f24;
-      --card2:#0f1633;
-      --border:rgba(255,255,255,.10);
-      --text:#f8f5ff;
-      --sub:#a8acd0;
-      --muted:#7b7fa9;
-      --shadow:0 18px 40px rgba(0,0,0,.55);
+      --bg-dark: #050816;
+      --card-bg: #0b0f24;
+      --card-highlight: #0f1633;
+      --border-color: rgba(255,255,255,0.10);
+      --text-main: #f8f5ff;
+      --text-sub: #a8acd0;
+      --text-muted: #7b7fa9;
+      --shadow-lg: 0 18px 40px rgba(0,0,0,0.55);
 
-      /* Brand gradient (logo vibes) */
-      --g1:#9b5bff;
-      --g2:#ff7b5f;
-      --grad:linear-gradient(135deg,var(--g1),var(--g2));
-      --radius:18px;
-      --pill:999px;
-      --t: .18s ease-out;
-    }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--text);
-      background:radial-gradient(circle at top, #211a44 0, #050816 55%, #020010 100%);
+      /* Brand Gradients */
+      --g1: #9b5bff;
+      --g2: #ff7b5f;
+      --grad: linear-gradient(135deg, var(--g1), var(--g2));
+      
+      /* UI Utils */
+      --radius: 18px;
+      --pill: 999px;
+      --anim-speed: 0.2s ease-out;
     }
 
-    .page{
-      width:100%;
-      max-width:1200px;
-      margin:0 auto;
-      padding:14px 12px 24px;
+    /* =========================================
+       GLOBAL RESET
+       ========================================= */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top, #211a44 0, #050816 55%, #020010 100%);
+      overflow-x: hidden;
     }
 
-    /* Section 1 - Top bar */
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:12px 14px;
-      border:1px solid var(--border);
-      border-radius:22px;
-      background:rgba(7,10,28,.72);
-      box-shadow:0 10px 28px rgba(0,0,0,.35);
-      backdrop-filter: blur(8px);
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; min-width:0;
-    }
-    .brand img{
-      height:30px;
-      width:auto;
-      display:block;
-      filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
+    .page-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 12px 40px;
     }
 
-    .locked{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:var(--pill);
-      background:var(--grad);
-      color:white;
-      font-weight:800;
-      letter-spacing:.2px;
-      font-size:13px;
-      box-shadow:0 14px 28px rgba(155,91,255,.25);
-      white-space:nowrap;
+    /* =========================================
+       SECTION 1: HEADER & TOP BAR
+       ========================================= */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      background: rgba(7,10,28,0.72);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      backdrop-filter: blur(12px);
+      margin-bottom: 20px;
     }
 
-    /* Section 2 - Two column */
-    .grid{
-      display:grid;
+    .brand-logo img {
+      height: 30px;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.55));
+    }
+
+    /* "Locked In" Badge */
+    .locked-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--pill);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    
+    .locked-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--grad);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 10px rgba(155, 91, 255, 0.4);
+        animation: pulseAnimation 2s infinite;
+    }
+    
+    @keyframes pulseAnimation {
+        0% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(155, 91, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0); }
+    }
+
+    /* =========================================
+       SECTION 2: DASHBOARD GRID
+       ========================================= */
+    .dashboard-grid {
+      display: grid;
       grid-template-columns: 1fr;
-      gap:12px;
-      margin-top:12px;
+      gap: 16px;
     }
+    
     @media (min-width: 980px){
-      .grid{grid-template-columns: 1fr 1fr; gap:14px;}
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
     }
 
-    .card{
-      background:radial-gradient(circle at 0 0, rgba(155,91,255,.18), transparent 55%), rgba(11,15,36,.92);
-      border:1px solid var(--border);
-      border-radius:26px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      position:relative;
+    .content-card {
+      background: radial-gradient(circle at 0 0, rgba(155,91,255,0.18), transparent 55%), rgba(11,15,36,0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 26px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
-    .card-inner{padding:16px 14px;}
+    
+    .card-padding {
+      padding: 16px 14px;
+    }
+    
     @media (min-width: 720px){
-      .card-inner{padding:18px 18px;}
+      .card-padding { padding: 20px; }
     }
 
-    /* Ticket look */
-    .ticket{
-      position:relative;
+    /* =========================================
+       COMPONENT: TICKET (Left Column)
+       ========================================= */
+    .ticket-wrapper {
+      position: relative;
       background:
-        radial-gradient(circle at 0 0, rgba(255,123,95,.18), transparent 55%),
-        radial-gradient(circle at 100% 0, rgba(155,91,255,.18), transparent 55%),
-        rgba(12,16,40,.94);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:20px;
-      overflow:hidden;
-      transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+        radial-gradient(circle at 0 0, rgba(255,123,95,0.15), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(155,91,255,0.15), transparent 55%),
+        rgba(12,16,40,0.96);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
     }
-    .ticket:hover{
+    
+    .ticket-wrapper:hover {
       transform: translateY(-2px);
-      border-color: rgba(155,91,255,.55);
-      box-shadow:0 22px 48px rgba(0,0,0,.6);
+      border-color: rgba(155,91,255,0.5);
+      box-shadow: 0 22px 48px rgba(0,0,0,0.6);
     }
 
-    .ticket::before, .ticket::after{
-      content:"";
-      position:absolute;
-      top:50%;
-      width:34px; height:34px;
-      border-radius:50%;
-      background: rgba(5,8,22,1);
-      border:1px solid rgba(255,255,255,.12);
+    /* Ticket Holes */
+    .ticket-wrapper::before, .ticket-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: #050816; /* Matches body bg */
+      border: 1px solid rgba(255,255,255,0.12);
       transform: translateY(-50%);
-      z-index:2;
+      z-index: 2;
     }
-    .ticket::before{left:-17px}
-    .ticket::after{right:-17px}
+    .ticket-wrapper::before { left: -18px; }
+    .ticket-wrapper::after { right: -18px; }
 
-    .ticket-head{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      padding:14px 14px 10px;
-      border-bottom:1px dashed rgba(255,255,255,.18);
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px dashed rgba(255,255,255,0.18);
     }
-    .ticket-title{
-      font-weight:900;
-      letter-spacing:.4px;
-      font-size:13px;
-      text-transform:uppercase;
-      opacity:.98;
+    
+    .ticket-label {
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      font-size: 13px;
+      text-transform: uppercase;
+      opacity: 0.95;
     }
-    .ticket-sub{
-      font-size:12px;
-      color:var(--sub);
-      margin-top:2px;
-    }
-
-    .stamp{
-      position:absolute;
-      right:12px; top:12px;
-      transform: rotate(10deg);
-      background: rgba(0,0,0,.25);
-      border:2px solid rgba(255,255,255,.22);
-      border-radius:14px;
-      padding:10px 10px 8px;
-      color:white;
-      box-shadow:0 18px 30px rgba(0,0,0,.45);
-      z-index:3;
-      backdrop-filter: blur(6px);
-    }
-    .stamp .big{
-      font-weight:1000;
-      font-size:12px;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      background:var(--grad);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-    .stamp .small{
-      font-size:10px;
-      color:rgba(255,255,255,.88);
-      margin-top:2px;
-      text-align:center;
+    
+    .ticket-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 2px;
     }
 
-    .ticket-body{
-      display:grid;
+    .value-stamp {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      transform: rotate(12deg);
+      background: rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 8px 10px;
+      z-index: 5;
+      backdrop-filter: blur(4px);
+      text-align: center;
+    }
+    .value-stamp .val-title {
+      font-weight: 900; font-size: 11px;
+      background: var(--grad); -webkit-background-clip: text; color: transparent;
+      line-height: 1.1;
+    }
+    .value-stamp .val-amt {
+      font-size: 10px; color: white; margin-top: 2px;
+    }
+
+    .ticket-content {
+      display: grid;
       grid-template-columns: 1fr;
-      gap:12px;
-      padding:12px 14px 14px;
+      gap: 16px;
+      padding: 14px 16px 16px;
     }
+    
     @media (min-width: 520px){
-      .ticket-body{grid-template-columns:1fr 1fr}
-    }
-    .ticket-col h4{
-      margin:0 0 6px;
-      font-size:12px;
-      letter-spacing:.4px;
-      color:rgba(255,255,255,.92);
-      text-transform:uppercase;
-    }
-    .kv{
-      display:grid;
-      grid-template-columns: 86px 1fr;
-      gap:8px 10px;
-      font-size:13px;
-      align-items:center;
-    }
-    .k{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.3px}
-    .v{font-weight:800; color:var(--text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-
-    .powered{
-      text-align:center;
-      font-size:10px;
-      color:rgba(255,255,255,.70);
-      padding:8px 10px 10px;
-      border-top:1px dashed rgba(255,255,255,.14);
+      .ticket-content { grid-template-columns: 1fr 1fr; }
     }
 
-    /* Schedule card */
-    .schedule-head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:10px;
+    .info-group h4 {
+      margin: 0 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.8);
+      text-transform: uppercase;
     }
-    .schedule-title{
-      display:flex; flex-direction:column; gap:2px;
+    
+    .key-value-grid {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 6px 12px;
+      font-size: 13px;
+      align-items: center;
     }
-    .schedule-title .tag{
-      display:inline-flex; align-items:center; gap:7px;
-      font-weight:900;
-      letter-spacing:.2px;
-      font-size:12px;
-      color:white;
+    
+    .kv-label {
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
-    .schedule-title .tag span{
-      display:inline-flex; width:22px; height:22px; border-radius:8px;
-      align-items:center; justify-content:center;
-      background: rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.14);
+    
+    .kv-val {
+      font-weight: 700;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .schedule-title .sub{
-      color:var(--sub);
-      font-size:12px;
+    
+    .clickable-text {
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: rgba(255,255,255,0.2);
+      transition: color 0.2s;
+    }
+    .clickable-text:hover { color: var(--g1); }
+
+    .ticket-footer {
+      text-align: center;
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+      padding: 8px;
+      border-top: 1px dashed rgba(255,255,255,0.14);
     }
 
-    .btn{
-      border:0;
-      border-radius: var(--pill);
-      padding:10px 14px;
-      font-weight:900;
-      color:white;
+    /* =========================================
+       COMPONENT: SCHEDULE BOX
+       ========================================= */
+    .schedule-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+    
+    .rocket-tag {
+      font-weight: 900;
+      font-size: 12px;
+      color: white;
+      display: flex; align-items: center; gap: 6px;
+    }
+    
+    .btn-reschedule {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reschedule:hover { background: rgba(255,255,255,0.15); }
+
+    .schedule-card {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--border-color);
+      background: rgba(7,10,28,0.6);
+    }
+
+    .calendar-icon {
+      width: 90px; height: 90px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: radial-gradient(circle at 0 0, rgba(155,91,255,0.2), transparent), #0a0d2a;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .cal-month {
+      background: rgba(255,255,255,0.08);
+      font-size: 11px; font-weight: 900; text-transform: uppercase;
+      text-align: center; padding: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .cal-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .cal-date { font-size: 28px; font-weight: 900; line-height: 1; }
+    .cal-day { font-size: 11px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; margin-top: 2px;}
+
+    .time-display { font-size: 16px; font-weight: 800; color: white; margin-bottom: 4px; }
+    .time-meta { font-size: 12px; color: var(--text-sub); line-height: 1.4; }
+
+    /* Action Buttons */
+    .btn-primary {
       background: var(--grad);
-      cursor:pointer;
-      box-shadow:0 16px 28px rgba(155,91,255,.22);
-      transition: transform var(--t), box-shadow var(--t), opacity var(--t);
-      display:inline-flex; align-items:center; gap:8px;
-      white-space:nowrap;
+      color: white;
+      border: 0;
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(155, 91, 255, 0.25);
+      transition: transform 0.2s;
     }
-    .btn:hover{transform: translateY(-1px); box-shadow:0 22px 34px rgba(155,91,255,.28);}
-    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none;}
-    .btn-ghost{
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.16);
-      color:rgba(255,255,255,.92);
-      box-shadow:none;
-    }
-    .btn-ghost:hover{background:rgba(255,255,255,.12); transform: translateY(-1px);}
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 24px rgba(155, 91, 255, 0.35); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
-    .schedule-box{
-      display:grid;
-      grid-template-columns: 104px 1fr;
-      gap:12px;
-      align-items:center;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
-      overflow:hidden;
-    }
-
-    .cal{
-      width:104px; height:104px;
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,.14);
-      background: radial-gradient(circle at 0 0, rgba(155,91,255,.25), transparent 55%), rgba(10,13,42,.95);
-      display:flex; flex-direction:column;
-      overflow:hidden;
-    }
-    .cal .m{
-      padding:8px 10px;
-      background: rgba(255,255,255,.08);
-      border-bottom:1px solid rgba(255,255,255,.10);
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.8px;
-      text-transform:uppercase;
-      text-align:center;
-    }
-    .cal .d{
-      flex:1;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      gap:2px;
-    }
-    .cal .daynum{
-      font-size:34px;
-      font-weight:1000;
-      line-height:1;
-    }
-    .cal .dow{
-      font-size:12px;
-      color:rgba(255,255,255,.78);
-      font-weight:800;
-      letter-spacing:.4px;
-      text-transform:uppercase;
-    }
-
-    .sched-info .line1{
-      font-weight:1000;
-      font-size:16px;
-      margin-bottom:4px;
-    }
-    .sched-info .line2{
-      color:var(--sub);
-      font-size:13px;
-      line-height:1.25;
-    }
-    .sched-actions{
-      margin-top:10px;
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-
-    /* calendar dropdown */
-    .dropdown{position:relative}
-    .menu{
-      position:absolute;
-      right:0; top:44px;
-      width:260px;
-      background: rgba(11,15,36,.98);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;
-      box-shadow:0 22px 50px rgba(0,0,0,.6);
-      padding:8px;
-      display:none;
-      z-index:20;
-    }
-    .menu.open{display:block}
-    .menu a, .menu button{
-      width:100%;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:10px 10px;
-      border-radius:12px;
-      border:0;
+    .btn-secondary {
       background: transparent;
-      color: rgba(255,255,255,.92);
-      text-decoration:none;
-      font-weight:800;
-      font-size:13px;
-      cursor:pointer;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.9);
+      padding: 10px 16px;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
     }
-    .menu a:hover, .menu button:hover{background: rgba(255,255,255,.08);}
+    .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: white; }
 
-    /* fun facts */
-    .facts{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
-      padding:12px;
-      overflow:hidden;
-    }
-    .facts-head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:8px;
-    }
-    .facts-head .t{
-      font-weight:1000;
-      font-size:14px;
-    }
-    .facts-nav{display:flex; gap:8px;}
-    .iconbtn{
-      width:36px; height:36px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:white;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform var(--t), background var(--t);
-    }
-    .iconbtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
-    .factbox{
-      min-height:62px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px dashed rgba(255,255,255,.18);
-      background: rgba(0,0,0,.18);
-    }
-    .factemoji{font-size:20px}
-    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800; line-height:1.25;}
+    .actions-row { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
 
-    /* Right side welcome/timer */
-    .welcome{
-      padding:16px 14px;
+    /* Calendar Dropdown */
+    .dropdown-wrapper { position: relative; display: inline-block; }
+    .dropdown-menu {
+      position: absolute; left: 0; top: 110%;
+      width: 240px;
+      background: #0b0f24;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      display: none; z-index: 100;
     }
-    .welcome h2{
-      margin:0 0 6px;
-      font-size:22px;
-      letter-spacing:.2px;
+    .dropdown-menu.show { display: block; animation: fadeIn 0.2s; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
+    
+    .menu-item {
+      display: flex; justify-content: space-between;
+      padding: 10px; color: white; text-decoration: none;
+      font-size: 13px; font-weight: 600;
+      border-radius: 8px; cursor: pointer; transition: background 0.1s;
     }
-    .welcome p{
-      margin:0 0 10px;
-      color:var(--sub);
-      font-size:14px;
-      line-height:1.35;
+    .menu-item:hover { background: rgba(255,255,255,0.1); }
+
+    /* =========================================
+       COMPONENT: FUN FACTS & GAMES BOX
+       ========================================= */
+    .widget-box {
+      margin-top: 16px;
+      background: rgba(7,10,28,0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex; flex-direction: column;
     }
-    .timer{
-      display:flex; flex-direction:column; gap:10px;
-      margin-top:10px;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
+
+    .widget-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
     }
-    .timer-row{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
-      flex-wrap:wrap;
+    .widget-title { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+    
+    .nav-buttons { display: flex; gap: 6px; }
+    .nav-btn {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
-    .timer-label{font-weight:1000; font-size:14px;}
-    .count{
+    .nav-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .fact-content {
+      background: rgba(0,0,0,0.2);
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex; align-items: flex-start; gap: 12px;
+      min-height: 70px;
+    }
+    .emoji-large { font-size: 24px; line-height: 1; }
+    .text-body { font-size: 13px; line-height: 1.4; color: rgba(255,255,255,0.9); }
+
+    /* SLOW PROGRESS BAR (15s) */
+    .progress-track {
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--grad);
+      width: 0%;
+      animation: progressFill 15s linear infinite;
+    }
+    @keyframes progressFill { 0% { width: 0%; } 100% { width: 100%; } }
+
+    /* =========================================
+       COMPONENT: WELCOME & TIMER (Right Column)
+       ========================================= */
+    .welcome-section h2 { margin: 0 0 6px; font-size: 24px; letter-spacing: -0.5px; }
+    .welcome-section p { color: var(--text-sub); margin: 0 0 16px; font-size: 14px; }
+    
+    .timer-card {
+      background: linear-gradient(180deg, rgba(15,22,51,0.6), rgba(7,10,28,0.8));
+      border: 1px solid rgba(155,91,255,0.2);
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .timer-display {
+      font-size: 32px;
+      font-weight: 800;
       font-variant-numeric: tabular-nums;
-      font-size:22px;
-      font-weight:1000;
-      letter-spacing:.6px;
+      margin: 8px 0 12px;
+      text-shadow: 0 0 20px rgba(155,91,255,0.3);
     }
-    .joinwrap{
-      display:flex;
-      justify-content:center;
-      margin-top:6px;
-    }
-    .disclaimer{
-      margin-top:10px;
-      font-size:11px;
-      color:rgba(255,255,255,.70);
-      line-height:1.35;
-    }
-    .linklike{
-      color:white;
-      text-decoration:underline;
-      cursor:pointer;
-      font-weight:900;
+    
+    .legal-text {
+      margin-top: 12px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.4;
     }
 
-    /* Reschedule */
-    .res-btn{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
-      border-radius: var(--pill);
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:white;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform var(--t), background var(--t);
-      white-space:nowrap;
+    /* =========================================
+       COMPONENT: PUZZLES & GAMES
+       ========================================= */
+    .puzzle-options {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
     }
-    .res-btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
+    .option-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ddd;
+      cursor: pointer;
+      flex: 1 1 40%;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .option-pill:hover { background: rgba(255,255,255,0.15); border-color: white; }
+    
+    /* Mini Games Tab Switcher */
+    .game-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+    .tab-btn {
+      flex: 1; padding: 8px; background: transparent; border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px; color: white; font-size: 12px; cursor: pointer;
+    }
+    .tab-btn.active { background: white; color: black; border-color: white; font-weight: 800; }
 
-    .drawer{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      z-index:80;
+    /* Memory Game Grid */
+    .memory-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
     }
-    .drawer.open{display:block}
-    .panel{
-      position:absolute;
-      top:0; right:0;
-      width:min(520px, 100%);
-      height:100%;
-      background: radial-gradient(circle at 0 0, rgba(155,91,255,.20), transparent 55%), rgba(11,15,36,.98);
-      border-left:1px solid rgba(255,255,255,.12);
-      box-shadow:-22px 0 60px rgba(0,0,0,.65);
-      padding:14px 14px 18px;
-      overflow:auto;
+    .mem-card {
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      user-select: none;
     }
-    .panel h3{margin:8px 0 4px; font-size:18px;}
-    .panel .sub{margin:0 0 10px; color:var(--sub); font-size:13px;}
-    .panel-top{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .xbtn{
-      width:40px; height:40px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color:white;
-      cursor:pointer;
-      font-size:18px;
-      font-weight:900;
-    }
+    .mem-card.flipped { background: white; color: black; }
 
-    .select{
-      width:100%;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(7,10,28,.72);
-      color:white;
-      padding:10px 12px;
-      outline:none;
-      font-weight:800;
-      font-size:13px;
+    /* =========================================
+       MODALS & DRAWERS
+       ========================================= */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none; align-items: center; justify-content: center;
     }
-
-    .pills{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
-    .pill{
-      padding:9px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:rgba(255,255,255,.86);
-      cursor:pointer;
-      font-weight:900;
-      font-size:13px;
-      transition: transform var(--t), background var(--t), border-color var(--t);
-      min-width:120px;
-    }
-    .pill:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
-    .pill.active{
-      background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
-      border-color: rgba(155,91,255,.55);
-      color:white;
+    .modal-overlay.active { display: flex; }
+    
+    .modal-box {
+      width: 90%; max-width: 600px;
+      background: #0b0f24; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px; padding: 24px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     }
 
-    .slotgrid{
-      margin-top:10px;
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:10px;
+    /* Reschedule Drawer (Slide in from right) */
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 900; display: none;
     }
-    @media (min-width:420px){
-      .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));}
+    .drawer-overlay.active { display: block; }
+    
+    .drawer-panel {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 450px;
+      background: #0f1633;
+      border-left: 1px solid rgba(255,255,255,0.15);
+      padding: 20px;
+      transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
     }
-    .slot{
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      padding:10px 10px;
-      cursor:pointer;
-      font-weight:1000;
-      text-align:center;
-      transition: transform var(--t), background var(--t), border-color var(--t);
-      font-size:13px;
-      position:relative;
-      min-height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .slot:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
-    .slot.active{
-      background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
-      border-color: rgba(155,91,255,.55);
-      color:white;
-    }
-    .star{
-      position:absolute; top:6px; right:6px;
-      font-size:10px;
-      padding:2px 6px;
-      border-radius:var(--pill);
-      border:1px solid rgba(255,222,140,.8);
-      background: rgba(79,54,7,.45);
-      color:#ffeec4;
-      font-weight:1000;
-    }
+    .drawer-overlay.active .drawer-panel { transform: translateX(0); }
 
-    /* Modal - Terms */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      background: rgba(0,0,0,.60);
-      z-index:90;
-      padding:18px 12px;
-    }
-    .modal.open{display:flex; align-items:center; justify-content:center;}
-    .modal-card{
-      width:min(760px, 100%);
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.14);
-      background: radial-gradient(circle at 0 0, rgba(155,91,255,.20), transparent 55%), rgba(11,15,36,.98);
-      box-shadow:0 22px 60px rgba(0,0,0,.75);
-      padding:16px 16px 14px;
-    }
-    .modal-top{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      margin-bottom:8px;
-    }
-    .modal-top h3{margin:0; font-size:18px;}
-    .modal-top p{margin:4px 0 0; color:var(--sub); font-size:13px;}
-    .modal-card ul{
-      margin:10px 0 0;
-      padding-left:18px;
-      color:rgba(255,255,255,.88);
-      font-size:13px;
-      line-height:1.5;
-    }
+    /* Utility Classes */
+    .hide { display: none !important; }
+    .text-gradient { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .status-msg { margin-top: 20px; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05); text-align: center; }
 
-    /* Loading / errors */
-    .state{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
-      color:rgba(255,255,255,.86);
-      font-weight:800;
-      font-size:13px;
+    /* Mobile Responsive tweaks */
+    @media (max-width: 600px) {
+      .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .locked-badge { width: 100%; justify-content: center; }
+      .ticket-content { grid-template-columns: 1fr; }
+      .schedule-card { grid-template-columns: 1fr; text-align: center; }
+      .calendar-icon { width: 100%; height: 80px; margin: 0 auto; }
+      .actions-row { justify-content: center; }
     }
-    .hide{display:none !important;}
-  
-/* ===== Fixes Dec14 ===== */
-.tickPulse{
-  width:22px;height:22px;border-radius:999px;
-  display:inline-flex;align-items:center;justify-content:center;
-  background: linear-gradient(135deg, var(--g1), var(--g2));
-  box-shadow: 0 0 0 0 rgba(155,91,255,.55);
-  animation: tickPulse 1.9s ease-in-out infinite;
-}
-.tickSvg{width:14px;height:14px;color:#0b0f24;filter: drop-shadow(0 0 10px rgba(255,255,255,.55));}
-@keyframes tickPulse{
-  0%{box-shadow:0 0 0 0 rgba(155,91,255,.55)}
-  70%{box-shadow:0 0 0 10px rgba(155,91,255,0)}
-  100%{box-shadow:0 0 0 0 rgba(155,91,255,0)}
-}
-/* reschedule time buttons were inheriting browser black */
-.slot{color:#E9ECFF;}
-/* calendar menu shouldn't be clipped */
-.schedule, .card { overflow: visible; }
-/* email ellipsis + tooltip + copy affordance */
-#vEmail{cursor:copy;}
-#vEmail:hover{text-decoration:underline;}
-/* fun facts visual filler */
-.facts{position:relative;}
-.facts:after{
-  content:"";display:block;height:2px;border-radius:999px;margin-top:10px;
-  background: linear-gradient(90deg, rgba(155,91,255,.0), rgba(155,91,255,.7), rgba(255,123,95,.7), rgba(155,91,255,.0));
-  animation: factsGlow 2.4s ease-in-out infinite;
-}
-@keyframes factsGlow{0%,100%{opacity:.35}50%{opacity:.95}}
-.factDots{display:flex;gap:6px;justify-content:center;margin-top:8px}
-.factDot{width:7px;height:7px;border-radius:999px;background:rgba(255,255,255,.18)}
-.factDot.on{background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 0 3px rgba(155,91,255,.12)}
-/* mobile header stack + smaller logo */
-@media (max-width: 520px){
-  .topbar{flex-wrap:wrap;gap:10px;padding:14px 14px 4px}
-  .brand img{height:26px}
-  .locked{width:100%;justify-content:flex-start}
-}
-
-</style>
+  </style>
 </head>
-
 <body>
-  <div class="page">
-    <!-- SECTION 1 -->
+
+  <div class="page-container">
+    
     <div class="topbar">
-      <div class="brand">
-        <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
+      <div class="brand-logo">
+        <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly">
       </div>
-      <div class="locked"> Your trial class is locked in!</div>
+      <div class="locked-badge">
+        <div class="locked-icon">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        Your trial class is locked in!
+      </div>
     </div>
 
-    <div id="stateLoading" class="state">Loading your booking…</div>
-    <div id="stateError" class="state hide">Booking not found. Please check the link.</div>
+    <div id="loadingState" class="status-msg hide">Loading your dashboard...</div>
+    <div id="errorState" class="status-msg hide">
+      ⚠️ Booking not found. Please check your link.<br>
+      <small style="opacity:0.6; display:block; margin-top:6px;">Missing "iduuid" parameter.</small>
+    </div>
 
-    <!-- SECTION 2 -->
-    <div id="section2" class="grid hide">
-      <!-- LEFT: Pass + Schedule + Facts -->
-      <div class="card">
-        <div class="card-inner">
-          <!-- Pass -->
-          <div class="ticket" id="ticketCard">
-            <div class="stamp" aria-label="Value waived stamp">
-              <div class="big">VALUE<br/>WAIVED</div>
-              <div class="small">$30</div>
-            </div>
-            <div class="ticket-head">
-              <div>
-                <div class="ticket-title">🎫 OFFICIAL FREE TRIAL PASS</div>
-                <div class="ticket-sub">Valid for 1 session • Powered by Unischooly</div>
-              </div>
-            </div>
-            <div class="ticket-body">
-              <div class="ticket-col">
-                <h4>Admit One Student</h4>
-                <div class="kv">
-                  <div class="k">Name</div><div class="v" id="vChild">—</div>
-                  <div class="k">Grade</div><div class="v" id="vGrade">—</div>
-                  <div class="k">Course</div><div class="v" id="vCourse">—</div>
-                </div>
-              </div>
-              <div class="ticket-col">
-                <h4>Parent Confirmation</h4>
-                <div class="kv">
-                  <div class="k">Sent to</div><div class="v" id="vParent">—</div>
-                  <div class="k">Cell</div><div class="v" id="vPhone">—</div>
-                  <div class="k">Email</div><div class="v" id="vEmail">—</div>
-                </div>
-              </div>
-            </div>
-            <div class="powered">Powered by Unischooly</div>
+    <div id="mainDashboard" class="dashboard-grid">
+      
+      <div class="content-card card-padding">
+        
+        <div class="ticket-wrapper">
+          <div class="value-stamp">
+            <div class="val-title">VALUE<br>WAIVED</div>
+            <div class="val-amt">$30</div>
           </div>
-
-          <!-- Schedule -->
-          <div style="height:12px"></div>
-          <div class="schedule-head">
-            <div class="schedule-title">
-              <div class="tag"><span>🚀</span> Ready for Blast Off!!!</div>
-              <div class="sub">Class Schedule</div>
+          <div class="ticket-header">
+            <div>
+              <div class="ticket-label">🎫 Official Trial Pass</div>
+              <div class="ticket-sub">Valid for 1 session • Unischooly</div>
             </div>
-            <button class="res-btn" id="btnReschedule">🗓️ Reschedule</button>
           </div>
-
-          <div class="schedule-box">
-            <div class="cal" aria-label="Calendar">
-              <div class="m" id="calMonth">—</div>
-              <div class="d">
-                <div class="daynum" id="calDay">—</div>
-                <div class="dow" id="calDow">—</div>
+          <div class="ticket-content">
+            <div class="info-group">
+              <h4>Admit One Student</h4>
+              <div class="key-value-grid">
+                <div class="kv-label">Name</div> <div class="kv-val" id="dispChildName">--</div>
+                <div class="kv-label">Grade</div> <div class="kv-val" id="dispGrade">--</div>
+                <div class="kv-label">Course</div> <div class="kv-val" id="dispCourse">--</div>
               </div>
             </div>
-            <div class="sched-info">
-              <div class="line1" id="schedTime">—</div>
-              <div class="line2" id="schedMeta">—</div>
-
-              <div class="sched-actions">
-                <div class="dropdown">
-                  <button class="btn" id="btnCalendar">📅 Initiate Calendar Sync</button>
-                  <div class="menu" id="calMenu">
-                    <a id="calGoogle" target="_blank" rel="noreferrer">Google Calendar <span>↗</span></a>
-                    <a id="calApple" target="_blank" rel="noreferrer">Apple Calendar (ICS) <span>⬇</span></a>
-                    <a id="calOutlook" target="_blank" rel="noreferrer">Outlook.com <span>↗</span></a>
-                    <a id="calYahoo" target="_blank" rel="noreferrer">Yahoo Calendar <span>↗</span></a>
-                    <button id="calDownload">Download .ics <span>⬇</span></button>
-                  </div>
-                </div>
-                <button class="btn btn-ghost" id="btnCopy">🔗 Copy class time</button>
+            <div class="info-group">
+              <h4>Parent Details</h4>
+              <div class="key-value-grid">
+                <div class="kv-label">Parent</div> <div class="kv-val" id="dispParentName">--</div>
+                <div class="kv-label">Mobile</div> <div class="kv-val" id="dispPhone">--</div>
+                <div class="kv-label">Email</div> <div class="kv-val clickable-text" id="dispEmail" title="Click to copy">--</div>
               </div>
             </div>
           </div>
+          <div class="ticket-footer">Powered by Unischooly Education</div>
+        </div>
 
-          <!-- Fun facts -->
-          <div class="facts">
-            <div class="facts-head">
-              <div class="t">✨ Fun Facts</div>
-              <div class="facts-nav">
-                <button class="iconbtn" id="factPrev">‹</button>
-                <button class="iconbtn" id="factNext">›</button>
-              </div>
+        <div class="schedule-section-header">
+          <div class="rocket-tag"><span>🚀</span> Ready for Blast Off!</div>
+          <button class="btn-reschedule" id="btnReschedule">🗓️ Reschedule</button>
+        </div>
+
+        <div class="schedule-card">
+          <div class="calendar-icon">
+            <div class="cal-month" id="calMonth">DEC</div>
+            <div class="cal-body">
+              <div class="cal-date" id="calDate">--</div>
+              <div class="cal-day" id="calDay">--</div>
             </div>
-            <div class="factbox" aria-live="polite">
-              <div class="factemoji" id="factEmoji">💡</div>
-              <div class="facttext" id="factText">—</div>
+          </div>
+          <div>
+            <div class="time-display" id="timeDisplay">--:-- AM</div>
+            <div class="time-meta" id="timeMeta">Timezone: --</div>
+            
+            <div class="actions-row">
+              <div class="dropdown-wrapper">
+                <button class="btn-primary" id="btnAddToCal">📅 Add to Calendar</button>
+                <div class="dropdown-menu" id="calDropdown">
+                  <a class="menu-item" id="linkGoogle" target="_blank">Google Calendar <span>↗</span></a>
+                  <a class="menu-item" id="linkOutlook" target="_blank">Outlook <span>↗</span></a>
+                  <a class="menu-item" id="linkYahoo" target="_blank">Yahoo <span>↗</span></a>
+                  <a class="menu-item" id="linkIcs">Download .ICS <span>⬇</span></a>
+                </div>
+              </div>
+              <button class="btn-secondary" id="btnCopyTime">🔗 Copy Time</button>
             </div>
           </div>
         </div>
+
+        <div class="widget-box">
+          <div class="widget-header">
+            <div class="widget-title">✨ Did You Know?</div>
+            <div class="nav-buttons">
+              <button class="nav-btn" id="factPrev">‹</button>
+              <button class="nav-btn" id="factNext">›</button>
+            </div>
+          </div>
+          <div class="fact-content">
+            <div class="emoji-large" id="factEmoji">💡</div>
+            <div class="text-body" id="factText">Loading facts...</div>
+          </div>
+          <div class="progress-track"><div class="progress-fill"></div></div>
+        </div>
+
       </div>
 
-      <!-- RIGHT: Welcome + Timer + Join + T&C + Sharpen -->
-      <div class="card">
-        <div class="welcome">
-          <h2 id="welcomeTitle">Welcome!</h2>
-          <p id="welcomeSub">Your trial class details are loading.</p>
+      <div class="content-card card-padding">
+        
+        <div class="welcome-section">
+          <h2 id="welcomeHeader">Welcome!</h2>
+          <p id="welcomeSub">Please check the details to the left. While you wait, warm up your brain with these puzzles!</p>
+        </div>
 
-          <div class="timer">
-            <div class="timer-row">
-              <div class="timer-label" id="timerLabel">Join class in</div>
-              <div class="count" id="countdown">--:--:--</div>
+        <div class="timer-card">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1px; opacity:0.7;">Class Starts In</div>
+          <div class="timer-display" id="countdownDisplay">--:--:--</div>
+          <button class="btn-primary" id="btnJoinClass" style="width:100%;" disabled>🎥 Join Class</button>
+          <div class="legal-text">
+            By joining, you agree to our <span class="clickable-text" id="linkTerms">Terms & Conditions</span> regarding recording and conduct.
+          </div>
+        </div>
+
+        <div class="widget-box">
+          <div class="widget-header">
+            <div class="widget-title">🧠 Brain Teasers</div>
+            <div class="nav-buttons">
+              <button class="nav-btn" id="puzPrev">‹</button>
+              <button class="nav-btn" id="puzNext">›</button>
             </div>
+          </div>
+          <div class="fact-content" style="flex-direction:column; gap:8px;">
+            <div style="font-weight:700;" id="puzQuestion">Question loading...</div>
+            <div class="puzzle-options" id="puzOptions"></div>
+            <div style="font-size:11px; opacity:0.7; margin-top:4px;" id="puzFeedback">Select an answer</div>
+          </div>
+        </div>
 
-            <div class="joinwrap">
-              <button class="btn" id="btnJoin" disabled>🎥 Join Class</button>
+        <div class="widget-box" style="flex:1;">
+          <div class="widget-header">
+            <div class="widget-title">🎮 Mini Games</div>
+          </div>
+          
+          <div class="game-tabs">
+            <button class="tab-btn active" id="tabSprint">Math Sprint</button>
+            <button class="tab-btn" id="tabMemory">Memory</button>
+          </div>
+
+          <div id="viewSprint">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:800; font-size:14px;">
+              <span>Score: <span id="sprintScore">0</span></span>
+              <span>⏱️ <span id="sprintTimer">60</span>s</span>
             </div>
-
-            <div class="disclaimer">
-              By clicking join class, you are confirming that you have read, understood and agree to
-              <span class="linklike" id="openTerms">Terms & Conditions</span>.
+            <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:12px; text-align:center; font-size:18px; font-weight:800; margin-bottom:10px;" id="sprintProblem">
+              Tap Start!
+            </div>
+            <div class="puzzle-options" id="sprintOptions">
+              <button class="option-pill" onclick="startSprintGame()" style="width:100%;">Start Game</button>
             </div>
           </div>
 
-          <div class="facts" style="margin-top:12px">
-            <div class="facts-head">
-              <div class="t">Sharpen Your Brain 🧠</div>
-              <div class="facts-nav">
-                <button class="iconbtn" id="pPrev">‹</button>
-                <button class="iconbtn" id="pNext">›</button>
-              </div>
-            </div>
-
-            <div class="factbox" style="align-items:flex-start">
-              <div class="factemoji">🧩</div>
-              <div style="flex:1">
-                <div class="facttext" id="pQuestion" style="margin-bottom:8px">—</div>
-                <div class="pills" id="pChoices" style="margin-top:0"></div>
-                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="pStatus">—</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- mini games placeholder (lightweight) -->
-          <div class="facts" style="margin-top:12px">
-            <div class="facts-head">
-              <div class="t">Mini Games 🎮</div>
-              <div style="font-size:11px; color:rgba(255,255,255,.72); font-weight:800">Quick brain boosters</div>
-            </div>
-            <div class="factbox" style="flex-direction:column; align-items:stretch; gap:10px">
-              <div style="display:flex; gap:10px; flex-wrap:wrap">
-                <button class="btn btn-ghost" id="tabSprint">Quick Sprint</button>
-                <button class="btn btn-ghost" id="tabMemory">Memory Match</button>
-              </div>
-
-              <!-- Sprint -->
-              <div id="gameSprint" class="hide">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
-                  <div style="font-weight:1000">Quick Math Sprint (60s)</div>
-                  <div style="font-variant-numeric:tabular-nums; font-weight:1000" id="sprintTime">60</div>
-                </div>
-                <div style="margin-top:8px; font-size:14px; font-weight:1000" id="sprintQ">—</div>
-                <div class="pills" style="margin-top:10px" id="sprintChoices"></div>
-                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
-              </div>
-
-              <!-- Memory -->
-              <div id="gameMemory" class="hide">
-                <div style="font-weight:1000; margin-bottom:6px">Memory Match (Emoji)</div>
-                <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
-                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
-              </div>
-
-              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: Try to beat your own score before class starts!.</div>
-            </div>
+          <div id="viewMemory" class="hide">
+            <div class="memory-grid" id="memoryGrid"></div>
+            <div style="text-align:center; font-size:12px; margin-top:8px; opacity:0.7;" id="memStatus">Flip cards to find pairs</div>
+            <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="initMemoryGame()">Reset Board</button>
           </div>
 
         </div>
+
       </div>
     </div>
   </div>
 
-  <!-- Terms modal -->
-  <div id="termsModal" class="modal" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <div class="modal-top">
-        <div>
-          <h3>Terms & Conditions</h3>
-          <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
-        </div>
-        <button class="xbtn" id="closeTerms">✕</button>
-      </div>
-
-      <ul>
-        <li>By taking this demo/trial session, you consent to Unischooly/Company recording this session.</li>
-        <li>This demo/trial session or class will be recorded for the whole duration for training, constant process improvement, and audit purposes.</li>
-        <li>Unischooly/Company adheres to zero tolerance towards sexual, non-sexual, verbal and visual abuse. Inappropriate hand gestures, threats, or any other indecent behaviour captured or reported during the session shall also be considered a violation of the Company’s internal policies.</li>
-        <li>While taking the demo/trial session, kindly avoid clothing with controversial messages, including but not limited to racial and/or religious slurs or any type of sexual or non-sexual abuse.</li>
+  <div class="modal-overlay" id="modalTerms">
+    <div class="modal-box">
+      <h3 style="margin-top:0;">Terms & Conditions</h3>
+      <ul style="padding-left:20px; color:var(--text-sub); line-height:1.6;">
+        <li>Sessions are recorded for quality assurance.</li>
+        <li>Zero tolerance policy for inappropriate behavior.</li>
+        <li>Parents should ensure a quiet environment.</li>
+        <li>Please join 5 minutes before start time.</li>
       </ul>
+      <div style="text-align:right; margin-top:20px;">
+        <button class="btn-secondary" onclick="closeTerms()">Close</button>
+      </div>
     </div>
   </div>
 
-  <!-- Reschedule drawer -->
-  <div id="resDrawer" class="drawer" aria-hidden="true">
-    <div class="panel">
-      <div class="panel-top">
-        <div>
-          <h3>Reschedule your class</h3>
-          <div class="sub">Timezone is prefilled. You can change it.</div>
-        </div>
-        <button class="xbtn" id="closeRes">✕</button>
+  <div class="drawer-overlay" id="drawerReschedule">
+    <div class="drawer-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 style="margin:0;">Reschedule Class</h3>
+        <button class="nav-btn" onclick="closeReschedule()">✕</button>
+      </div>
+      
+      <div style="margin-bottom:15px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">Timezone</label>
+        <select id="resTimezone" style="width:100%; padding:10px; background:rgba(0,0,0,0.3); color:white; border:1px solid rgba(255,255,255,0.2); border-radius:8px;">
+          </select>
       </div>
 
-      <div style="margin-top:10px">
-        <div style="font-weight:1000; font-size:13px; margin-bottom:8px">Timezone</div>
-        <select id="tzSelect" class="select"></select>
+      <div style="margin-bottom:15px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">Select Date</label>
+        <div style="display:flex; gap:8px; overflow-x:auto; padding-bottom:8px;" id="resDatesContainer">
+          </div>
       </div>
 
-      <div style="margin-top:12px">
-        <div style="font-weight:1000; font-size:13px; margin-bottom:8px">Select Date</div>
-        <div class="pills" id="resDates"></div>
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:6px;">Available Slots</label>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:8px;" id="resSlotsContainer">
+          </div>
+        <div id="resEmptyState" class="hide" style="text-align:center; padding:20px; opacity:0.6; font-size:13px;">No slots available for this date.</div>
       </div>
 
-      <div style="margin-top:12px">
-        <div style="font-weight:1000; font-size:13px; margin-bottom:8px">Select Start Time</div>
-        <div class="sub">Slots shown in your selected timezone.</div>
-        <div class="slotgrid" id="resSlots"></div>
-        <div id="resEmpty" class="state hide" style="margin-top:10px">No slots available for this date.</div>
-      </div>
-
-      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end">
-        <button class="btn btn-ghost" id="cancelRes">Cancel</button>
-        <button class="btn" id="confirmRes" disabled>Confirm Reschedule</button>
-      </div>
-
-      <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70); font-weight:800">
-        Your class timing will update instantly once you confirm.
-      </div>
+      <button class="btn-primary" id="btnConfirmReschedule" style="width:100%;" disabled>Confirm New Time</button>
     </div>
   </div>
 
   <script>
-    // =========================
-    // CONFIG: Supabase
-    // =========================
+    // --- CONFIGURATION ---
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // =========================
-    // URL params
-    // =========================
-    const url = new URL(window.location.href);
-    const iduuid = url.searchParams.get("iduuid"); // IMPORTANT: demo_leads primary key
-    const courseId = parseInt(url.searchParams.get("courseId") || "1", 10);
-
-    // =========================
-    // Course mapping + facts + puzzles
-    // =========================
-    const COURSE = {
-      1:{name:"Coding", emoji:"💻"},
-      2:{name:"Python", emoji:"🐍"},
-      3:{name:"Website Development", emoji:"🌐"},
-      4:{name:"Generative AI", emoji:"✨"},
-      5:{name:"Roblox", emoji:"🧱"},
-      6:{name:"Chess", emoji:"♟️"},
-      7:{name:"Mathematics", emoji:"➗"},
+    // --- STATE ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const leadId = urlParams.get('iduuid');
+    // Fallback logic: If courseId is missing, default to 1 so UI doesn't break
+    const urlCourseId = parseInt(urlParams.get('courseId') || "1", 10);
+    
+    let currentBooking = null;
+    let selectedSlot = null;
+    let selectedDate = null;
+    
+    // --- DATA BANKS (Facts, Puzzles) ---
+    const COURSE_INFO = {
+      1: { name: "Coding", icon: "💻" },
+      2: { name: "Python", icon: "🐍" },
+      3: { name: "Web Dev", icon: "🌐" },
+      4: { name: "Gen AI", icon: "✨" },
+      5: { name: "Roblox", icon: "🎮" },
+      6: { name: "Chess", icon: "♟️" },
+      7: { name: "Math", icon: "➗" }
     };
 
-    const FACT_BANK = {
-      1:[
-        ["💡","The first computer bug was an actual moth found in 1947!"],
-        ["🧠","Coding is like giving step-by-step instructions to a super-fast helper."],
-        ["🧩","Algorithms are just smart recipes for solving problems."],
-        ["🎮","Many games run at 60 frames per second—your code helps make that smooth!"],
-        ["🔁","Loops save time by repeating actions so you don’t write the same code again."],
-        ["🧱","Scratch blocks teach logic the same way real code does."],
-        ["🌍","The Internet works because of protocols—rules computers agree on."],
-        ["🔐","Encryption turns messages into secret code to keep them safe."],
-        ["🛰️","GPS relies on satellites + math + code to find your location."],
-        ["⚡","Computers love patterns—good coders learn to spot patterns too!"],
-      ],
-      2:[
-        ["🐍","Python is named after Monty Python—not the snake!"],
-        ["📦","Python has packages so you can add superpowers quickly."],
-        ["🧠","Indentation in Python matters—it shows what belongs together."],
-        ["🔢","Python is great for math, data, and AI projects."],
-        ["🧩","Lists in Python hold many items, like a backpack of values."],
-        ["🧪","You can test code in small pieces to find bugs faster."],
-        ["🤖","Many AI tools use Python behind the scenes."],
-        ["⚙️","Functions are mini-machines: input → work → output."],
-        ["🧯","Errors are normal—debugging is a coder’s superpower."],
-        ["🌟","Readable code is powerful code."],
-      ],
-      3:[
-        ["🌐","Web pages are built with HTML (structure), CSS (style), and JS (logic)."],
-        ["🎨","CSS can animate shapes without images!"],
-        ["📱","Responsive design makes sites look great on phones and desktops."],
-        ["🧭","Links connect pages like roads connect cities."],
-        ["⚡","Browsers run JavaScript to make sites interactive."],
-        ["🔤","A URL is an address to a page on the Internet."],
-        ["🧱","Components help reuse the same UI blocks."],
-        ["🖼️","Images should be optimized so pages load faster."],
-        ["🔐","HTTPS keeps website data secure."],
-        ["🧠","Good UX is about clarity and confidence."],
-      ],
-      4:[
-        ["✨","Generative AI can create text, images, and music from prompts."],
-        ["🧠","Models learn patterns from lots of examples."],
-        ["🧩","Prompts work best when they’re specific and clear."],
-        ["🧪","AI outputs should be checked—humans stay in control."],
-        ["📚","AI can help summarize, brainstorm, and explain concepts."],
-        ["🎨","AI art tools turn words into pictures."],
-        ["🧠","Training data shapes what AI knows."],
-        ["⚖️","Using AI responsibly is important—be kind and respectful."],
-        ["🔁","Iteration is key: prompt → result → improve prompt."],
-        ["🌟","AI is a tool—your ideas are the magic."],
-      ],
-      5:[
-        ["🧱","Roblox games are built with Lua scripting."],
-        ["🎮","Game loops update the world many times per second."],
-        ["🧠","Design + code = fun gameplay."],
-        ["🗺️","Levels are like puzzles you build for others."],
-        ["🔁","Events trigger actions—like when a player touches a part."],
-        ["🎨","Lighting and colors change the mood of a game."],
-        ["🧩","Physics rules make jumping and falling feel real."],
-        ["🔊","Sound effects make games feel alive."],
-        ["🧪","Testing helps you catch glitches before players do."],
-        ["🏆","Small improvements add up to big fun."],
-      ],
-      6:[
-        ["♟️","In chess, controlling the center gives you more options."],
-        ["🧠","Tactics are short puzzles; strategy is the long plan."],
-        ["🎯","Forks attack two pieces at once."],
-        ["🛡️","Develop pieces early to activate your army."],
-        ["🏰","Castling helps keep your king safe."],
-        ["📌","Pins stop a piece from moving."],
-        ["🔁","Checkmate means the king cannot escape."],
-        ["🧩","Good players look for threats AND defenses."],
-        ["⏱️","Time management matters in fast games."],
-        ["🌟","Every game teaches something new."],
-      ],
-      7:[
-        ["➗","Math is a language for patterns."],
-        ["🧠","Fractions are just parts of a whole."],
-        ["📈","Graphs show relationships visually."],
-        ["🔢","Prime numbers have only two factors: 1 and themselves."],
-        ["🧩","Geometry is like drawing with rules."],
-        ["⚡","Mental math is a skill—practice makes it fast."],
-        ["🧠","Estimation helps you check if answers make sense."],
-        ["🔁","Multiplication is repeated addition."],
-        ["📐","Angles tell you how much you turn."],
-        ["🌟","Math helps in games, coding, and real life."],
-      ],
+    const FACTS = {
+      1: [["💡","The first computer bug was a real moth found in a relay!"], ["⚡","A single Google search uses as much computing power as Apollo 11."]],
+      default: [["🚀","Learning new skills rewires your brain!"], ["🌟","Practice is the key to mastery."]]
     };
 
-    const PUZZLES = {
-      1:[
-        {q:"What comes next? 2, 4, 8, 16, ?", choices:["18","24","32","34"], a:2},
-        {q:"If a loop runs 5 times, and prints 'Hi' each time, how many 'Hi'?", choices:["1","5","10","0"], a:1},
-        {q:"Which is a 'condition'?", choices:["Run fast","If it rains","Blue is nice","Hello!"], a:1},
-        {q:"Pick the best order to solve a task:", choices:["Plan → Code → Test","Code → Hope","Skip plan","Only test"], a:0},
-        {q:"Binary uses only:", choices:["0 and 1","1 and 2","2 and 3","A and B"], a:0},
-        {q:"A bug is:", choices:["A feature","A mistake in code","A keyboard","A mouse"], a:1},
-        {q:"Which repeats actions?", choices:["Loop","Variable","Comment","Pixel"], a:0},
-        {q:"Algorithm is like:", choices:["A recipe","A color","A shoe","A cloud"], a:0},
-        {q:"What stores a value?", choices:["Variable","Monitor","Speaker","Cable"], a:0},
-        {q:"Debugging means:", choices:["Adding bugs","Fixing issues","Deleting files","Shouting"], a:1},
-      ],
-      2:[
-        {q:"Python is great for:", choices:["Only painting","Data & AI","Only music","Only chess"], a:1},
-        {q:"In Python, indentation shows:", choices:["Color","Block of code","Volume","Speed"], a:1},
-        {q:"A list is:", choices:["One value","Many values together","A keyboard","A website"], a:1},
-        {q:"Function is like:", choices:["A mini-machine","A sandwich","A bus stop","A cloud"], a:0},
-        {q:"Which is a number?", choices:["'7'","7","Seven","None"], a:1},
-        {q:"Bug fixing is called:", choices:["Debugging","Painting","Sleeping","Singing"], a:0},
-        {q:"Print() does:", choices:["Shows output","Deletes code","Plays music","Makes tea"], a:0},
-        {q:"If x=3, x+2 = ?", choices:["3","4","5","6"], a:2},
-        {q:"A loop repeats until:", choices:["It wants","Condition ends","Keyboard breaks","Sun sets"], a:1},
-        {q:"Best coder habit:", choices:["Never test","Write readable code","Hide errors","Skip learning"], a:1},
-      ],
-      3:[
-        {q:"HTML is for:", choices:["Style","Structure","Music","Painting"], a:1},
-        {q:"CSS is for:", choices:["Style","Math","Storage","Network"], a:0},
-        {q:"JS is for:", choices:["Interactivity","Only images","Only fonts","Only paper"], a:0},
-        {q:"Responsive means:", choices:["Fast","Fits all screens","Only desktop","Only mobile"], a:1},
-        {q:"A link connects:", choices:["Shoes","Pages","Clouds","Books"], a:1},
-        {q:"URL is:", choices:["A page address","A game score","A color","A bug"], a:0},
-        {q:"Button click is handled by:", choices:["JavaScript","Paper","Wind","Paint"], a:0},
-        {q:"Best for speed:", choices:["Huge images","Optimized images","No images ever","Random"], a:1},
-        {q:"HTTPS means:", choices:["Secure site","Slow site","Fun site","Old site"], a:0},
-        {q:"UX is about:", choices:["Confusing users","User experience","Only colors","Only text"], a:1},
-      ],
-      4: [
-        {q:"Generative AI can:", choices:["Only sleep","Create content","Only run","Only paint walls"], a:1},
-        {q:"Good prompts are:", choices:["Vague","Specific","Empty","Angry"], a:1},
-        {q:"AI outputs should be:", choices:["Always trusted","Checked by humans","Ignored","Printed"], a:1},
-        {q:"AI learns from:", choices:["Patterns in data","Rain","Shoes","Cars"], a:0},
-        {q:"Iteration means:", choices:["Try once","Improve repeatedly","Stop","Delete"], a:1},
-        {q:"AI is a:", choices:["Tool","Wizard","Monster","Book"], a:0},
-        {q:"Responsible AI is:", choices:["Kind & safe","Mean","Secret","Lazy"], a:0},
-        {q:"Models are:", choices:["Pattern learners","Sandwiches","Shoes","Buses"], a:0},
-        {q:"Clear prompts help:", choices:["Confuse AI","Get better results","Break code","Slow down"], a:1},
-        {q:"Human role is:", choices:["None","In control","Only watch","Only sleep"], a:1},
-      ],
-      5: [
-        {q:"Roblox scripting uses:", choices:["Lua","Python","HTML","Cement"], a:0},
-        {q:"Game loop does:", choices:["Updates world","Stops time","Cooks","Draws"], a:0},
-        {q:"Events trigger:", choices:["Actions","Rain","Sand","Paper"], a:0},
-        {q:"Testing helps:", choices:["Catch glitches","Add bugs","Make noise","Hide work"], a:0},
-        {q:"Lighting changes:", choices:["Mood","Math","Keyboard","Cable"], a:0},
-        {q:"Physics makes:", choices:["Movement real","Only colors","Only text","Only sound"], a:0},
-        {q:"Levels are:", choices:["Puzzles you build","Shoes","Bikes","Clouds"], a:0},
-        {q:"Sound effects:", choices:["Add life","Remove fun","Break code","Delete"], a:0},
-        {q:"Design + code =", choices:["Fun gameplay","Nothing","Confusion","Sleep"], a:0},
-        {q:"Small improvements:", choices:["Add up big","Never matter","Break all","Stop"], a:0},
-      ],
-      6: [
-        {q:"Control the center gives:", choices:["More options","Less moves","No moves","Only pawns"], a:0},
-        {q:"Fork attacks:", choices:["Two pieces","Zero pieces","Only king","Only pawn"], a:0},
-        {q:"Castling keeps:", choices:["King safer","Queen faster","Pawns taller","Time slower"], a:0},
-        {q:"Pin means:", choices:["Piece can't move","Piece flies","Board breaks","Win instantly"], a:0},
-        {q:"Checkmate is:", choices:["King trapped","King happy","Queen gone","Draw"], a:0},
-        {q:"Strategy is:", choices:["Long plan","Short trick","Random","No plan"], a:0},
-        {q:"Tactics are:", choices:["Short puzzles","Long speeches","Books","Songs"], a:0},
-        {q:"Develop pieces:", choices:["Early","Never","Only end","Only start"], a:0},
-        {q:"Time matters in:", choices:["Fast games","Only slow","Never","Only puzzles"], a:0},
-        {q:"Every game teaches:", choices:["Something","Nothing","Only loss","Only win"], a:0},
-      ],
-      7: [
-        {q:"Prime numbers have:", choices:["2 factors","3 factors","0 factors","10 factors"], a:0},
-        {q:"Multiplication is:", choices:["Repeated addition","Repeated division","Drawing","Singing"], a:0},
-        {q:"Estimation helps:", choices:["Check answers","Confuse","Hide","Lose"], a:0},
-        {q:"Angles measure:", choices:["Turn","Speed","Weight","Sound"], a:0},
-        {q:"Graphs show:", choices:["Relationships","Only colors","Only sounds","Only bugs"], a:0},
-        {q:"Fractions are:", choices:["Parts of whole","Only big numbers","Only primes","Only shapes"], a:0},
-        {q:"Geometry is:", choices:["Drawing with rules","Cooking","Flying","Typing"], a:0},
-        {q:"Math is:", choices:["Pattern language","Random","Only hard","Only easy"], a:0},
-        {q:"Mental math is:", choices:["Practice skill","Magic","Luck","Sleep"], a:0},
-        {q:"Math helps in:", choices:["Life & coding","Only school","Only games","Nowhere"], a:0},
-      ]
-    };
-
-    // =========================
-    // Helpers: timezone formatting
-    // =========================
-    function safeTZ(tz){
-      try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date()); return tz; } catch { return "Asia/Kolkata"; }
-    }
-    function fmtLocal(dt, tz){
-      const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: tz,
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-      }).formatToParts(dt);
-      const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
-      return {weekday: map.weekday, month: map.month, day: map.day, time: `${map.hour}:${map.minute} ${map.dayPeriod}`};
-    }
-    function dateKeyInTZ(dt, tz){
-      const p = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit"}).format(dt);
-      return p; // YYYY-MM-DD
-    }
-
-    // =========================
-    // Booking load
-    // =========================
-    let BOOKING = null;
-    let bookingTZ = "Asia/Kolkata";
-    let bookingRegion = null;
-    let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
-
-    async function loadBooking(){
-      if(!iduuid){ return null; }
-      const { data, error } = await sb
-        .from("demo_leads")
-        .select("*")
-        .eq("id", iduuid)
-        .single();
-
-      if(error || !data){ console.error(error); return null; }
-      return data;
-    }
-
-    // =========================
-    // Derive class datetime for countdown + calendar
-    // preferred_date is date (no timezone), preferred_time_slot is local string (e.g., "10:00 AM")
-    // We'll compute a Date by combining preferred_date with local time in booking.timezone
-    // =========================
-    function parseTime12hTo24(t){
-      // "10:00 AM" -> {h:10,m:0}
-      const m = (t||"").trim().match(/^(\d{1,2})\s*:\s*(\d{2})\s*(AM|PM)$/i);
-      if(!m) return null;
-      let h = parseInt(m[1],10);
-      const mm = parseInt(m[2],10);
-      const ap = m[3].toUpperCase();
-      if(ap==="PM" && h!==12) h += 12;
-      if(ap==="AM" && h===12) h = 0;
-      return {h, m:mm};
-    }
-
-    function makeDateInTZ(dateStr, timeStr, tz){
-      // Build a Date that represents the same wall-clock time in tz.
-      // Approach: create in UTC then adjust using tz offset at that moment by formatting.
-      const t = parseTime12hTo24(timeStr);
-      if(!dateStr || !t) return null;
-
-      // Start with UTC date
-      const [Y,M,D] = dateStr.split("-").map(x=>parseInt(x,10));
-      const guessUTC = new Date(Date.UTC(Y, M-1, D, t.h, t.m, 0));
-
-      // Determine what wall clock that UTC time shows in tz; then shift.
-      // We want the tz wall clock == (Y-M-D + t.h:t.m).
-      const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
-        .formatToParts(guessUTC);
-      const map = Object.fromEntries(shown.map(p=>[p.type,p.value]));
-      const shownY = parseInt(map.year,10);
-      const shownM = parseInt(map.month,10);
-      const shownD = parseInt(map.day,10);
-      const shownH = parseInt(map.hour,10);
-      const shownMin = parseInt(map.minute,10);
-
-      // Calculate delta minutes between desired and shown in tz
-      const desired = Date.UTC(Y, M-1, D, t.h, t.m, 0);
-      const shownAsIfUTC = Date.UTC(shownY, shownM-1, shownD, shownH, shownMin, 0);
-      const deltaMs = desired - shownAsIfUTC;
-      return new Date(guessUTC.getTime() + deltaMs);
-    }
-
-    function buildMeetLink(){
-      // Placeholder until meet link column exists (wise/zoom/etc).
-      // If you later store a meet link in demo_leads (e.g., meeting_link), read it here.
-      return null;
-    }
-
-    // =========================
-    // Render Section 2
-    // =========================
-    function setText(id, value){
-      const el = document.getElementById(id);
-      if(el) el.textContent = value ?? "—";
-    }
-
-    function renderBooking(b){
-      BOOKING = b;
-      bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
-      bookingRegion = b.region_key || null;
-      bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
-
-      // Ticket fields
-      setText("vChild", b.child_name);
-      setText("vGrade", b.child_grade);
-      setText("vParent", b.parent_name);
-      setText("vEmail", b.parent_email);
-      setText("vPhone", `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim());
-      setText("vCourse", bookingCourseName);
-
-      // Schedule
-      const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
-      if(classDT){
-        const s = fmtLocal(classDT, bookingTZ);
-        setText("calMonth", s.month);
-        setText("calDay", s.day);
-        setText("calDow", s.weekday);
-        setText("schedTime", `${s.time}`);
-        setText("schedMeta", `${b.preferred_date} • ${bookingTZ}`);
-
-        // calendar links
-        setupCalendarLinks(classDT, bookingTZ, bookingCourseName, b.child_name);
-        // copy
-        document.getElementById("btnCopy").onclick = async () => {
-          const txt = `Unischooly Trial Class for ${b.child_name} — ${s.weekday}, ${s.month} ${s.day} at ${s.time} (${bookingTZ})`;
-          try{ await navigator.clipboard.writeText(txt); toast("Copied!"); } catch { toast("Copy failed"); }
-        };
-
-        // countdown
-        startCountdown(classDT, bookingTZ);
-      } else {
-        setText("schedTime", "Schedule not set");
-        setText("schedMeta", "Please reschedule or contact support.");
-        document.getElementById("btnJoin").disabled = true;
-        document.getElementById("countdown").textContent = "--:--:--";
-      }
-
-      // Welcome
-      setText("welcomeTitle", `Welcome to ${b.child_name}’s ${bookingCourseName} Trial Class`);
-      setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
-
-      // facts
-      initFacts(b.course_id || courseId);
-
-      // puzzles & games
-      initPuzzle(b.course_id || courseId);
-      initMiniGames();
-
-      // reschedule prefill
-      initRescheduleUI();
-
-      // join button logic
-      const meetLink = buildMeetLink();
-      document.getElementById("btnJoin").onclick = () => {
-        if(meetLink){ window.open(meetLink, "_blank", "noopener,noreferrer"); }
-        else toast("Meet link will appear 5 mins before class.");
-      };
-    }
-
-    // =========================
-    // Toast (tiny)
-    // =========================
-    let toastTimer=null;
-    function toast(msg){
-      let el = document.getElementById("toast");
-      if(!el){
-        el=document.createElement("div");
-        el.id="toast";
-        el.style.position="fixed";
-        el.style.left="50%";
-        el.style.bottom="16px";
-        el.style.transform="translateX(-50%)";
-        el.style.padding="10px 12px";
-        el.style.borderRadius="14px";
-        el.style.background="rgba(11,15,36,.95)";
-        el.style.border="1px solid rgba(255,255,255,.14)";
-        el.style.color="white";
-        el.style.fontWeight="900";
-        el.style.fontSize="13px";
-        el.style.boxShadow="0 18px 40px rgba(0,0,0,.6)";
-        el.style.zIndex="120";
-        document.body.appendChild(el);
-      }
-      el.textContent=msg;
-      el.style.display="block";
-      clearTimeout(toastTimer);
-      toastTimer=setTimeout(()=>{el.style.display="none"}, 2200);
-    }
-
-    // =========================
-    // Calendar integration
-    // =========================
-    function pad2(n){return String(n).padStart(2,"0");}
-    function toIcsDateUTC(d){
-      // YYYYMMDDTHHMMSSZ
-      return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
-    }
-    function escapeICS(s){ return String(s||"").replace(/\\\\/g,"\\\\\\\\").replace(/\\n/g,"\\\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
-
-    function makeICS({title, desc, startUTC, endUTC}){
-      return [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//Unischooly//Demo//EN",
-        "CALSCALE:GREGORIAN",
-        "METHOD:PUBLISH",
-        "BEGIN:VEVENT",
-        `UID:${Date.now()}@unischooly.com`,
-        `DTSTAMP:${toIcsDateUTC(new Date())}`,
-        `DTSTART:${toIcsDateUTC(startUTC)}`,
-        `DTEND:${toIcsDateUTC(endUTC)}`,
-        `SUMMARY:${escapeICS(title)}`,
-        `DESCRIPTION:${escapeICS(desc)}`,
-        "END:VEVENT",
-        "END:VCALENDAR"
-      ].join("\\r\\n");
-    }
-
-    function setupCalendarLinks(classDT, tz, course, child){
-      const start = classDT; // already actual instant
-      const end = new Date(start.getTime() + 60*60*1000);
-      const title = `Unischooly Trial Class - ${course}`;
-      const desc = `Trial class for ${child}. Timezone: ${tz}.`;
-
-      // Google Calendar uses dates in UTC in URL parameters
-      const gBase = "https://calendar.google.com/calendar/render?action=TEMPLATE";
-      const gDates = `${toIcsDateUTC(start)}/${toIcsDateUTC(end)}`;
-      const gUrl = `${gBase}&text=${encodeURIComponent(title)}&details=${encodeURIComponent(desc)}&dates=${encodeURIComponent(gDates)}`;
-
-      // Outlook.com
-      const oBase = "https://outlook.live.com/calendar/0/deeplink/compose";
-      const oUrl = `${oBase}?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(desc)}&startdt=${encodeURIComponent(start.toISOString())}&enddt=${encodeURIComponent(end.toISOString())}`;
-
-      // Yahoo
-      const yBase = "https://calendar.yahoo.com/";
-      const dur = "0100";
-      const yUrl = `${yBase}?v=60&title=${encodeURIComponent(title)}&st=${encodeURIComponent(toIcsDateUTC(start))}&dur=${dur}&desc=${encodeURIComponent(desc)}`;
-
-      // ICS download (Apple uses .ics)
-      const ics = makeICS({title, desc, startUTC:start, endUTC:end});
-      const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
-      const icsUrl = URL.createObjectURL(blob);
-
-      document.getElementById("calGoogle").href = gUrl;
-      document.getElementById("calOutlook").href = oUrl;
-      document.getElementById("calYahoo").href = yUrl;
-      document.getElementById("calApple").href = icsUrl;
-
-      document.getElementById("calDownload").onclick = () => {
-        const a = document.createElement("a");
-        a.href = icsUrl;
-        a.download = "unischooly-trial.ics";
-        a.click();
-      };
-    }
-
-    // Calendar dropdown
-    const calBtn = document.getElementById("btnCalendar");
-    const calMenu = document.getElementById("calMenu");
-    calBtn.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      calMenu.classList.toggle("open");
-      // subtle pulse animation by reflowing box-shadow
-      calBtn.animate([{transform:"translateY(0)"},{transform:"translateY(-2px)"},{transform:"translateY(0)"}], {duration:700});
-    });
-    document.addEventListener("click", ()=> calMenu.classList.remove("open"));
-
-    // =========================
-    // Fun Facts auto-rotate
-    // =========================
-    let factIdx=0, factList=[];
-    let factTimer=null;
-    function initFacts(cid){
-      factList = (FACT_BANK[cid]||FACT_BANK[1]).slice();
-      factIdx = 0;
-      showFact(0);
-      clearInterval(factTimer);
-      factTimer = setInterval(()=> nextFact(1), 5200);
-
-      document.getElementById("factPrev").onclick = ()=> nextFact(-1, true);
-      document.getElementById("factNext").onclick = ()=> nextFact(1, true);
-    }
-    function showFact(i){
-      const item = factList[(i+factList.length)%factList.length];
-      document.getElementById("factEmoji").textContent = item[0];
-      document.getElementById("factText").textContent = item[1];
-      // dots
-      const dotsWrap = document.getElementById("factDots");
-      if(dotsWrap){
-        dotsWrap.innerHTML = factList.map((_,idx)=>`<span class="factDot ${idx===((i+factList.length)%factList.length)?"on":""}"></span>`).join("");
-      }
-    }
-    function nextFact(delta, manual=false){
-      factIdx = (factIdx + delta + factList.length) % factList.length;
-      showFact(factIdx);
-      if(manual){
-        clearInterval(factTimer);
-        factTimer = setInterval(()=> nextFact(1), 5200);
-      }
-    }
-
-    // =========================
-    // Puzzles
-    // =========================
-    let pList=[], pIdx=0, pScore=0, pAnswered=0;
-    function initPuzzle(cid){
-      pList = (PUZZLES[cid]||PUZZLES[1]).slice();
-      pIdx = 0; pScore = 0; pAnswered = 0;
-      renderPuzzle();
-
-      document.getElementById("pPrev").onclick = ()=> { pIdx = (pIdx - 1 + pList.length)%pList.length; renderPuzzle(true); };
-      document.getElementById("pNext").onclick = ()=> { pIdx = (pIdx + 1)%pList.length; renderPuzzle(true); };
-    }
-    function renderPuzzle(resetMsg=false){
-      const p = pList[pIdx];
-      document.getElementById("pQuestion").textContent = p.q;
-      const choices = document.getElementById("pChoices");
-      choices.innerHTML = "";
-      p.choices.forEach((c, idx)=>{
-        const b=document.createElement("button");
-        b.className="pill";
-        b.textContent=c;
-        b.onclick=()=>{
-          pAnswered++;
-          if(idx===p.a){ pScore++; document.getElementById("pStatus").textContent=` Correct! Score: ${pScore}/${pAnswered}`; }
-          else { document.getElementById("pStatus").textContent=`❌ Oops! Correct: ${p.choices[p.a]} • Score: ${pScore}/${pAnswered}`; }
-          // auto next
-          setTimeout(()=>{ pIdx = (pIdx + 1)%pList.length; renderPuzzle(); }, 700);
-        };
-        choices.appendChild(b);
-      });
-      if(resetMsg){ document.getElementById("pStatus").textContent=`Score: ${pScore}/${pAnswered}`; }
-      if(pAnswered===0){ document.getElementById("pStatus").textContent="Pick an answer to start.";}
-    }
-
-    // =========================
-    // Mini games (super light)
-    // =========================
-    function initMiniGames(){
-      const tabSprint = document.getElementById("tabSprint");
-      const tabMemory = document.getElementById("tabMemory");
-      const gameSprint = document.getElementById("gameSprint");
-      const gameMemory = document.getElementById("gameMemory");
-
-      let active = null;
-      function show(which){
-        gameSprint.classList.add("hide");
-        gameMemory.classList.add("hide");
-        if(which==="sprint"){ gameSprint.classList.remove("hide"); }
-        if(which==="memory"){ gameMemory.classList.remove("hide"); }
-        active = which;
-      }
-      tabSprint.onclick = ()=> { show("sprint"); startSprint(); };
-      tabMemory.onclick = ()=> { show("memory"); startMemory(); };
-
-      // default
-      show("sprint");
-      startSprint();
-    }
-
-    // Quick Sprint
-    let sprintTimer=null, sprintLeft=60, sprintScore=0, sprintRunning=false;
-    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-    function newSprintQ(){
-      const a=randInt(2,12), b=randInt(2,12);
-      const op = Math.random()<0.5 ? "+" : "×";
-      const ans = op==="+" ? (a+b) : (a*b);
-      const wrong1 = ans + randInt(-3,3) || ans+1;
-      const wrong2 = ans + randInt(-6,6) || ans+2;
-      const opts = [ans, wrong1, wrong2].sort(()=>Math.random()-0.5);
-      return {text:`${a} ${op} ${b} = ?`, ans, opts};
-    }
-    let sprintQ=null;
-    function startSprint(){
-      clearInterval(sprintTimer);
-      sprintLeft=60; sprintScore=0; sprintRunning=false;
-      document.getElementById("sprintTime").textContent = sprintLeft;
-      document.getElementById("sprintStatus").textContent = "Tap an answer to start.";
-      nextSprint();
-    }
-    function nextSprint(){
-      sprintQ = newSprintQ();
-      document.getElementById("sprintQ").textContent = sprintQ.text;
-      const box = document.getElementById("sprintChoices");
-      box.innerHTML="";
-      sprintQ.opts.forEach(v=>{
-        const b=document.createElement("button");
-        b.className="pill";
-        b.textContent=String(v);
-        b.onclick=()=>{
-          if(!sprintRunning){
-            sprintRunning=true;
-            sprintTimer=setInterval(()=>{
-              sprintLeft--;
-              document.getElementById("sprintTime").textContent = sprintLeft;
-              if(sprintLeft<=0){
-                clearInterval(sprintTimer);
-                sprintRunning=false;
-                document.getElementById("sprintStatus").textContent = `⏱️ Time! Score: ${sprintScore}`;
-              }
-            },1000);
-          }
-          if(sprintLeft<=0) return;
-          if(v===sprintQ.ans){ sprintScore++; document.getElementById("sprintStatus").textContent = ` Correct! Score: ${sprintScore}`; }
-          else { document.getElementById("sprintStatus").textContent = `❌ Try again! Score: ${sprintScore}`; }
-          setTimeout(nextSprint, 350);
-        };
-        box.appendChild(b);
-      });
-    }
-
-    // Memory Match
-    let memFirst=null, memLock=false, memMatches=0;
-    function startMemory(){
-      const emojis=["🍀","🚀","⭐","🎯","🧠","🐍","🌈","🎮"];
-      const deck = emojis.concat(emojis).sort(()=>Math.random()-0.5);
-      memFirst=null; memLock=false; memMatches=0;
-      const grid=document.getElementById("memGrid");
-      grid.innerHTML="";
-      deck.forEach((emo, idx)=>{
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.style.height="54px";
-        btn.dataset.emo=emo;
-        btn.dataset.open="0";
-        btn.textContent="❓";
-        btn.onclick=()=>{
-          if(memLock) return;
-          if(btn.dataset.open==="1") return;
-          btn.textContent=emo;
-          btn.dataset.open="1";
-          if(!memFirst){ memFirst=btn; return; }
-          if(memFirst.dataset.emo===btn.dataset.emo){
-            memMatches++;
-            memFirst=null;
-            document.getElementById("memStatus").textContent = ` Matched ${memMatches}/8 pairs`;
-            if(memMatches===8){ document.getElementById("memStatus").textContent = "🏆 All pairs found!"; }
-          } else {
-            memLock=true;
-            setTimeout(()=>{
-              btn.textContent="❓"; btn.dataset.open="0";
-              memFirst.textContent="❓"; memFirst.dataset.open="0";
-              memFirst=null;
-              memLock=false;
-            }, 650);
-          }
-        };
-        grid.appendChild(btn);
-      });
-      document.getElementById("memStatus").textContent="Find all pairs.";
-    }
-
-    // =========================
-    // Countdown + join enable (T-5min)
-    // Hide countdown if ended
-    // =========================
-    let cdTimer=null;
-    function startCountdown(classDT, tz){
-      clearInterval(cdTimer);
-      const joinBtn=document.getElementById("btnJoin");
-      const cd=document.getElementById("countdown");
-      const label=document.getElementById("timerLabel");
-
-      function tick(){
-        const now = new Date();
-        const diff = classDT.getTime() - now.getTime();
-
-        // ended if more than +60 min past start
-        if(now.getTime() > classDT.getTime() + 60*60*1000){
-          label.textContent = "Class status";
-          cd.textContent = "Ended";
-          joinBtn.disabled = true;
-          return;
-        }
-
-        if(diff <= 0){
-          label.textContent = "Class is live";
-          cd.textContent = "Now";
-          joinBtn.disabled = false;
-          return;
-        }
-
-        const totalSec = Math.floor(diff/1000);
-        const hh = Math.floor(totalSec/3600);
-        const mm = Math.floor((totalSec%3600)/60);
-        const ss = totalSec%60;
-        cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
-
-        // enable join at T-5 minutes
-        joinBtn.disabled = diff > 5*60*1000;
-      }
-      tick();
-      cdTimer=setInterval(tick, 1000);
-    }
-
-    // =========================
-    // Terms modal
-    // =========================
-    const termsModal = document.getElementById("termsModal");
-    document.getElementById("openTerms").onclick = ()=> termsModal.classList.add("open");
-    document.getElementById("closeTerms").onclick = ()=> termsModal.classList.remove("open");
-    termsModal.addEventListener("click", (e)=>{ if(e.target===termsModal) termsModal.classList.remove("open"); });
-
-    // =========================
-    // Reschedule logic (Brightchamps-style drawer)
-    // Updates: preferred_date, preferred_time_slot, timezone (optional)
-    // and slot_id (optional) based on chosen slot
-    // =========================
-    const resDrawer = document.getElementById("resDrawer");
-    document.getElementById("btnReschedule").onclick = ()=> openRes();
-    document.getElementById("closeRes").onclick = ()=> closeRes();
-    document.getElementById("cancelRes").onclick = ()=> closeRes();
-    resDrawer.addEventListener("click", (e)=>{ if(e.target===resDrawer) closeRes(); });
-
-    function openRes(){
-      if(!BOOKING) return;
-      resDrawer.classList.add("open");
-      resDrawer.setAttribute("aria-hidden","false");
-      // default selection
-      buildResDates();
-      fetchResSlots();
-    }
-    function closeRes(){
-      resDrawer.classList.remove("open");
-      resDrawer.setAttribute("aria-hidden","true");
-      // reset active slot
-      selectedResSlot = null;
-      document.getElementById("confirmRes").disabled = true;
-    }
-
-    // timezone dropdown (like page 1 style, but simplified list)
-    const TZ_OPTIONS = [
-      {label:"India (IST) — Asia/Kolkata", tz:"Asia/Kolkata"},
-      {label:"UAE (GST) — Asia/Dubai", tz:"Asia/Dubai"},
-      {label:"Saudi Arabia — Asia/Riyadh", tz:"Asia/Riyadh"},
-      {label:"Singapore — Asia/Singapore", tz:"Asia/Singapore"},
-      {label:"Indonesia (Jakarta) — Asia/Jakarta", tz:"Asia/Jakarta"},
-      {label:"Philippines — Asia/Manila", tz:"Asia/Manila"},
-      {label:"Vietnam — Asia/Ho_Chi_Minh", tz:"Asia/Ho_Chi_Minh"},
-      {label:"Thailand — Asia/Bangkok", tz:"Asia/Bangkok"},
-      {label:"UK — Europe/London", tz:"Europe/London"},
-      {label:"Germany — Europe/Berlin", tz:"Europe/Berlin"},
-      {label:"USA (Eastern) — America/New_York", tz:"America/New_York"},
-      {label:"USA (Central) — America/Chicago", tz:"America/Chicago"},
-      {label:"USA (Pacific) — America/Los_Angeles", tz:"America/Los_Angeles"},
-      {label:"Australia — Australia/Sydney", tz:"Australia/Sydney"},
-      {label:"New Zealand — Pacific/Auckland", tz:"Pacific/Auckland"},
+    const PUZZLES = [
+      { q: "What comes next: 2, 4, 8, 16...?", options: ["18", "20", "32", "64"], ans: 2 },
+      { q: "Which is a coding language?", options: ["Snake", "Python", "Lizard", "Cobra"], ans: 1 },
+      { q: "HTML stands for?", options: ["Hyper Text Markup", "High Tech Make", "Home Tool Made"], ans: 0 }
     ];
 
-    let resTZ = "Asia/Kolkata";
-    let resDate = null; // YYYY-MM-DD (in IST date for DB fetch)
-    let selectedResSlot = null; // {slot_id, display, localDate}
-
-    
-  function setCalendarLinks(booking){
-    const courseName = courseLabelFromId(courseId);
-    const title = `Unischooly Trial Class • ${booking.child_name || "Student"} • ${courseName}`;
-    const tz = booking.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    const startISO = buildStartISO(booking.preferred_date, booking.preferred_time_slot, tz);
-    if(!startISO) return;
-
-    const start = new Date(startISO);
-    const end = new Date(start.getTime() + 60*60*1000);
-
-    const fmtG = (d)=> d.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
-    const dtStart = fmtG(start), dtEnd = fmtG(end);
-
-    const details = encodeURIComponent("Your Unischooly free trial class. Please join on time.");
-    const location = encodeURIComponent("Online");
-    const text = encodeURIComponent(title);
-
-    // Google
-    setHref("calGoogle",
-      `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dtStart}/${dtEnd}&details=${details}&location=${location}&ctz=${encodeURIComponent(tz)}`
-    );
-
-    // Yahoo
-    setHref("calYahoo",
-      `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${text}&st=${encodeURIComponent(dtStart)}&dur=0100&desc=${details}&in_loc=${location}`
-    );
-
-    // Outlook.com
-    setHref("calOutlook",
-      `https://outlook.live.com/calendar/0/deeplink/compose?subject=${text}&startdt=${encodeURIComponent(start.toISOString())}&enddt=${encodeURIComponent(end.toISOString())}&body=${details}&location=${location}`
-    );
-
-    // Apple + ICS download
-    const ics = buildICS(title, start, end, decodeURIComponent(details), tz);
-    const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
-    const icsUrl = URL.createObjectURL(blob);
-    setHref("calApple", icsUrl, true);
-    setHref("calICS", icsUrl, true);
-  }
-
-  function setHref(id, url, download=false){
-    const a=document.getElementById(id);
-    if(!a) return;
-    a.href=url;
-    if(download) a.setAttribute("download","unischooly-trial.ics");
-  }
-
-  function buildICS(title, start, end, details, tz){
-    const pad=n=>String(n).padStart(2,"0");
-    const dt=(d)=>`${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
-    return [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Unischooly//Trial Class//EN",
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      "BEGIN:VEVENT",
-      `UID:${crypto.randomUUID()}@unischooly.com`,
-      `DTSTAMP:${dt(new Date())}`,
-      `DTSTART:${dt(start)}`,
-      `DTEND:${dt(end)}`,
-      `SUMMARY:${title}`,
-      `DESCRIPTION:${String(details||"").replace(/\n/g," ")}`,
-      "END:VEVENT",
-      "END:VCALENDAR"
-    ].join("\r\n");
-  }
-
-  function buildStartISO(dateStr, timeStr, tz){
-    if(!dateStr || !timeStr) return null;
-    const m = String(timeStr).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    if(!m) return null;
-    let h=parseInt(m[1],10);
-    const min=parseInt(m[2],10);
-    const ap=m[3].toUpperCase();
-    if(ap==="PM" && h!==12) h+=12;
-    if(ap==="AM" && h===12) h=0;
-
-    const parts = String(dateStr).split("-");
-    const y=+parts[0], mo=+parts[1]-1, da=+parts[2];
-
-    // use an approx UTC date then read the wall-clock parts in tz
-    const approx = new Date(Date.UTC(y,mo,da,h,min,0));
-    const fmt = new Intl.DateTimeFormat("en-US",{
-      timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",
-      hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false
-    });
-    const p = Object.fromEntries(fmt.formatToParts(approx).map(x=>[x.type,x.value]));
-    // Interpret the tz wall-clock as if it were UTC (sufficient for calendar links)
-    return new Date(`${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}Z`).toISOString();
-  }
-
-  function initCalendarMenu(){
-    const btn = document.getElementById("calBtn");
-    const menu = document.getElementById("calMenu");
-    if(!btn || !menu) return;
-
-    const close=()=>menu.classList.remove("open");
-    btn.addEventListener("click",(e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-      menu.classList.toggle("open");
-    });
-
-    document.addEventListener("click",(e)=>{
-      if(!menu.contains(e.target) && e.target!==btn) close();
-    });
-
-    menu.querySelectorAll("a").forEach(a=>a.addEventListener("click", close));
-  }
-
-function initRescheduleUI(){
-      const sel = document.getElementById("tzSelect");
-      sel.innerHTML="";
-      TZ_OPTIONS.forEach(o=>{
-        const op=document.createElement("option");
-        op.value=o.tz;
-        op.textContent=o.label;
-        sel.appendChild(op);
-      });
-      resTZ = bookingTZ;
-      // pick nearest option or set custom at top if not in list
-      if(!TZ_OPTIONS.some(o=>o.tz===resTZ)){
-        const op=document.createElement("option");
-        op.value=resTZ;
-        op.textContent=`Your timezone — ${resTZ}`;
-        sel.insertBefore(op, sel.firstChild);
-      }
-      sel.value = resTZ;
-      sel.onchange = ()=>{
-        resTZ = safeTZ(sel.value);
-        fetchResSlots();
-      };
-    }
-
-    function buildResDates(){
-      const wrap=document.getElementById("resDates");
-      wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
-      const now = new Date();
-      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
-      const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
-      const dates=[];
-      for(let i=0;i<3;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, "Asia/Kolkata");
-        dates.push(key);
-      }
-      resDate = dates[0];
-
-      dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
-        const pill=document.createElement("button");
-        pill.className="pill"+(idx===0?" active":"");
-        pill.textContent = (idx===0?"Today • ":"")+shown;
-        pill.onclick=()=>{
-          [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-          pill.classList.add("active");
-          resDate = key;
-          fetchResSlots();
-        };
-        wrap.appendChild(pill);
-      });
-    }
-
-    async function fetchResSlots(){
-      const grid=document.getElementById("resSlots");
-      const empty=document.getElementById("resEmpty");
-      grid.innerHTML="";
-      empty.classList.add("hide");
-      selectedResSlot = null;
-      document.getElementById("confirmRes").disabled = true;
-
-      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return; }
-      if(!resDate) buildResDates();
-
-      const { data, error } = await sb
-        .from("demo_slots_live_view")
-        .select("*")
-        .eq("region_key", bookingRegion)
-        .eq("course_id", BOOKING.course_id || courseId)
-        .eq("slot_date", resDate);
-
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return; }
-
-      // convert to local tz, apply SEA hide <7am; also shift if local time <3am to next day (only for display grouping)
-      const slots=[];
-      data.forEach(r=>{
-        const utc = new Date(r.slot_datetime_local);
-        // convert by formatting in tz then re-parsing
-        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
-        let local = new Date(localStr);
-
-        // shift if local < 03:00
-        if(local.getHours() < 3){
-          local = new Date(local.getTime() + 24*60*60*1000);
-        }
-
-        // SEA hide < 7AM
-        if(bookingRegion === "SEA" && local.getHours() < 7) return;
-
-        const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
-        const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
-      });
-
-      // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      slots.sort((a,b)=>a.localInstant - b.localInstant);
-
-      if(slots.length===0){ empty.classList.remove("hide"); return; }
-
-      slots.forEach(s=>{
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.textContent = s.display;
-        if(s.isStar){
-          const tag=document.createElement("div");
-          tag.className="star";
-          tag.textContent="⭐ Star";
-          btn.appendChild(tag);
-        }
-        btn.onclick=()=>{
-          [...grid.querySelectorAll(".slot")].forEach(x=>x.classList.remove("active"));
-          btn.classList.add("active");
-          selectedResSlot = s;
-          document.getElementById("confirmRes").disabled = false;
-        };
-        grid.appendChild(btn);
-      });
-    }
-
-    document.getElementById("confirmRes").onclick = async ()=>{
-      if(!BOOKING || !selectedResSlot) return;
-
-      // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
-      // Additionally store timezone if user changed it.
-      const upd = {
-        preferred_date: resDate,
-        preferred_time_slot: selectedResSlot.display,
-        slot_id: selectedResSlot.slot_id,
-        timezone: resTZ,
-        updated_at: new Date().toISOString()
-      };
-
-      const { error } = await sb
-        .from("demo_leads")
-        .update(upd)
-        .eq("id", iduuid);
-
-      if(error){
-        console.error(error);
-        toast("Reschedule failed. Try again.");
+    // --- INITIALIZATION ---
+    async function init() {
+      if (!leadId) {
+        document.getElementById('errorState').classList.remove('hide');
         return;
       }
 
-      toast(" Rescheduled!");
-      closeRes();
+      document.getElementById('loadingState').classList.remove('hide');
 
-      // reload booking fresh
-      document.getElementById("stateLoading").classList.remove("hide");
-      const fresh = await loadBooking();
-      document.getElementById("stateLoading").classList.add("hide");
-      if(fresh) renderBooking(fresh);
+      // Fetch Booking
+      const { data, error } = await sb.from('demo_leads').select('*').eq('id', leadId).single();
+      
+      document.getElementById('loadingState').classList.add('hide');
+
+      if (error || !data) {
+        document.getElementById('errorState').classList.remove('hide');
+        document.getElementById('errorState').innerHTML = "Booking not found in database.";
+        return;
+      }
+
+      currentBooking = data;
+      renderDashboard(data);
+    }
+
+    // --- RENDER DASHBOARD ---
+    function renderDashboard(data) {
+      // 1. Fill Text Details
+      setText('dispChildName', data.child_name);
+      setText('dispGrade', data.child_grade);
+      setText('dispParentName', data.parent_name);
+      setText('dispPhone', (data.phone_country_code || "") + " " + data.phone_number);
+      setText('dispEmail', data.parent_email);
+      
+      const courseId = data.course_id || urlCourseId || 1;
+      const cName = COURSE_INFO[courseId] ? COURSE_INFO[courseId].name : "Coding";
+      setText('dispCourse', cName);
+
+      // Welcome Message with Gradient Name
+      const firstName = data.child_name ? data.child_name.split(' ')[0] : "Student";
+      document.getElementById('welcomeHeader').innerHTML = `Welcome, <span class="text-gradient">${firstName}</span>!`;
+
+      // 2. Date & Time Processing
+      // We need to convert the stored date/time string into a JS Date object relative to the timezone
+      const tz = data.timezone || "Asia/Kolkata";
+      
+      // Parse "YYYY-MM-DD" and "HH:MM AM/PM"
+      const dateStr = data.preferred_date; // "2023-12-25"
+      const timeStr = data.preferred_time_slot; // "10:00 AM" (Local to tz)
+      
+      if(dateStr && timeStr) {
+        const dateTimeObj = parseDateTimeInZone(dateStr, timeStr, tz);
+        
+        // Update Calendar UI
+        const monthShort = dateTimeObj.toLocaleString('en-US', { month: 'short', timeZone: tz });
+        const dateNum = dateTimeObj.toLocaleString('en-US', { day: 'numeric', timeZone: tz });
+        const dayName = dateTimeObj.toLocaleString('en-US', { weekday: 'long', timeZone: tz });
+        
+        setText('calMonth', monthShort);
+        setText('calDate', dateNum);
+        setText('calDay', dayName);
+        setText('timeDisplay', timeStr);
+        setText('timeMeta', `Timezone: ${tz}`);
+
+        // Setup Countdown
+        startTimer(dateTimeObj);
+        
+        // Setup Calendar Links
+        setupCalendarButtons(dateTimeObj, cName);
+        
+      } else {
+        setText('timeDisplay', "Not Scheduled");
+        setText('timeMeta', "Please Reschedule");
+      }
+
+      // 3. Init Features
+      initFacts(courseId);
+      initPuzzles();
+      initMemoryGame(); // Prepare game board
+    }
+
+    // --- HELPERS ---
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if(el) el.textContent = text || "--";
+    }
+
+    function parseDateTimeInZone(dateStr, timeStr, tz) {
+      // Create a string like "2023-12-25 10:00 AM" and force JS to interpret it in that TZ
+      // Simplest robust way: Parse Manually to 24h, then construct ISO string
+      
+      const [y, m, d] = dateStr.split('-').map(Number);
+      let [time, modifier] = timeStr.split(' ');
+      let [h, min] = time.split(':').map(Number);
+      
+      if (modifier === 'PM' && h < 12) h += 12;
+      if (modifier === 'AM' && h === 12) h = 0;
+
+      // We create a date object that *looks* right in UTC, then shift it.
+      // Actually, let's use the Internationalization API to find the offset.
+      // But for this demo, we will assume standard parsing.
+      // A trick: Construct string "YYYY-MM-DDTHH:MM:00" and append implicit offset if known, or rely on Date.parse
+      
+      // Better approach for stability:
+      // 1. Create date in UTC
+      const utcDate = new Date(Date.UTC(y, m-1, d, h, min, 0));
+      // 2. Calculate offset of target TZ vs UTC
+      const invDate = new Date(utcDate.toLocaleString('en-US', { timeZone: tz }));
+      const diff = utcDate.getTime() - invDate.getTime();
+      return new Date(utcDate.getTime() + diff);
+    }
+
+    // --- TIMER ---
+    function startTimer(targetDate) {
+      const display = document.getElementById('countdownDisplay');
+      const btn = document.getElementById('btnJoinClass');
+      
+      setInterval(() => {
+        const now = new Date();
+        const diff = targetDate - now;
+
+        if (diff <= 0) {
+          // Class Started
+          if (diff > -3600000) { // Within 1 hour
+            display.textContent = "CLASS IS LIVE!";
+            display.classList.add('text-gradient');
+            btn.disabled = false;
+            btn.textContent = "🚀 JOIN NOW";
+            btn.onclick = () => window.open("https://meet.google.com/abc-defg-hij", "_blank"); // Placeholder link
+          } else {
+            display.textContent = "CLASS ENDED";
+            btn.disabled = true;
+          }
+          return;
+        }
+
+        // Countdown
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        
+        display.textContent = 
+          `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+          
+        // Enable button 10 mins before
+        if (diff < 600000) {
+           btn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    // --- FUN FACTS ROTATION ---
+    function initFacts(cid) {
+      const list = FACTS[cid] || FACTS[1] || FACTS['default'];
+      let idx = 0;
+      
+      const show = () => {
+        const [emoji, text] = list[idx];
+        document.getElementById('factEmoji').textContent = emoji;
+        document.getElementById('factText').textContent = text;
+        idx = (idx + 1) % list.length;
+      };
+      
+      show(); // Show first immediately
+      setInterval(show, 15000); // Rotate every 15s (matches CSS bar)
+      
+      document.getElementById('factNext').onclick = show;
+      document.getElementById('factPrev').onclick = () => {
+        idx = (idx - 2 + list.length) % list.length;
+        show();
+      };
+    }
+
+    // --- PUZZLES ---
+    let currentPuzIdx = 0;
+    function initPuzzles() {
+      renderPuzzle();
+      document.getElementById('puzNext').onclick = () => {
+        currentPuzIdx = (currentPuzIdx + 1) % PUZZLES.length;
+        renderPuzzle();
+      };
+      document.getElementById('puzPrev').onclick = () => {
+        currentPuzIdx = (currentPuzIdx - 1 + PUZZLES.length) % PUZZLES.length;
+        renderPuzzle();
+      };
+    }
+
+    function renderPuzzle() {
+      const p = PUZZLES[currentPuzIdx];
+      document.getElementById('puzQuestion').textContent = p.q;
+      const optsDiv = document.getElementById('puzOptions');
+      const feed = document.getElementById('puzFeedback');
+      
+      optsDiv.innerHTML = "";
+      feed.textContent = "Select an answer";
+      feed.style.color = "#a8acd0";
+
+      p.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = "option-pill";
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (i === p.ans) {
+            feed.textContent = "✅ Correct!";
+            feed.style.color = "#4cc9ff";
+            triggerConfetti(btn);
+          } else {
+            feed.textContent = "❌ Try Again";
+            feed.style.color = "#ff7b5f";
+          }
+        };
+        optsDiv.appendChild(btn);
+      });
+    }
+
+    // --- MINI GAMES: TABS ---
+    const tabSprint = document.getElementById('tabSprint');
+    const tabMemory = document.getElementById('tabMemory');
+    const viewSprint = document.getElementById('viewSprint');
+    const viewMemory = document.getElementById('viewMemory');
+
+    tabSprint.onclick = () => {
+      tabSprint.classList.add('active'); tabMemory.classList.remove('active');
+      viewSprint.classList.remove('hide'); viewMemory.classList.add('hide');
+    };
+    tabMemory.onclick = () => {
+      tabMemory.classList.add('active'); tabSprint.classList.remove('active');
+      viewMemory.classList.remove('hide'); viewSprint.classList.add('hide');
     };
 
-    // =========================
-    // Boot
-    // =========================
-    (async function init(){
-      const loading=document.getElementById("stateLoading");
-      const err=document.getElementById("stateError");
-      const section2=document.getElementById("section2");
+    // --- GAME: SPRINT ---
+    let sprintInterval;
+    function startSprintGame() {
+      let score = 0;
+      let time = 60;
+      document.getElementById('sprintScore').textContent = score;
+      document.getElementById('sprintTimer').textContent = time;
+      
+      clearInterval(sprintInterval);
+      sprintInterval = setInterval(() => {
+        time--;
+        document.getElementById('sprintTimer').textContent = time;
+        if(time <= 0) {
+          clearInterval(sprintInterval);
+          document.getElementById('sprintProblem').textContent = "Game Over!";
+          document.getElementById('sprintOptions').innerHTML = `<button class="option-pill" onclick="startSprintGame()" style="width:100%;">Play Again</button>`;
+        }
+      }, 1000);
 
-      if(!iduuid){
-        loading.classList.add("hide");
-        err.classList.remove("hide");
-        err.textContent = "Missing iduuid in URL. Example: ?iduuid=<demo_leads.id>";
+      nextSprintProblem(score);
+    }
+
+    function nextSprintProblem(currentScore) {
+      if(document.getElementById('sprintTimer').textContent <= 0) return;
+      
+      const a = Math.floor(Math.random() * 10) + 1;
+      const b = Math.floor(Math.random() * 10) + 1;
+      const isAdd = Math.random() > 0.5;
+      const correct = isAdd ? a + b : a * b;
+      const symbol = isAdd ? "+" : "x";
+
+      document.getElementById('sprintProblem').textContent = `${a} ${symbol} ${b} = ?`;
+
+      // Generate options
+      const opts = [correct, correct + 1, correct - 1].sort(() => Math.random() - 0.5);
+      
+      const div = document.getElementById('sprintOptions');
+      div.innerHTML = "";
+      opts.forEach(ans => {
+        const btn = document.createElement('button');
+        btn.className = "option-pill";
+        btn.textContent = ans;
+        btn.onclick = () => {
+          if(ans === correct) {
+            currentScore++;
+            document.getElementById('sprintScore').textContent = currentScore;
+            nextSprintProblem(currentScore);
+          } else {
+             // Shake effect (simple visual cue)
+             btn.style.borderColor = "red";
+          }
+        };
+        div.appendChild(btn);
+      });
+    }
+
+    // --- GAME: MEMORY ---
+    function initMemoryGame() {
+      const grid = document.getElementById('memoryGrid');
+      grid.innerHTML = "";
+      const icons = ["🍎","🚗","🐶","⚽","🍎","🚗","🐶","⚽"];
+      // Shuffle
+      icons.sort(() => Math.random() - 0.5);
+      
+      let flipped = [];
+      let matched = 0;
+      
+      icons.forEach((icon, index) => {
+        const card = document.createElement('div');
+        card.className = "mem-card";
+        card.dataset.val = icon;
+        card.textContent = "❓";
+        
+        card.onclick = () => {
+          if(card.classList.contains('flipped') || flipped.length >= 2) return;
+          
+          card.classList.add('flipped');
+          card.textContent = icon;
+          flipped.push(card);
+          
+          if(flipped.length === 2) {
+            if(flipped[0].dataset.val === flipped[1].dataset.val) {
+              // Match
+              flipped = [];
+              matched++;
+              if(matched === 4) document.getElementById('memStatus').textContent = "🎉 You Won!";
+            } else {
+              // No Match
+              setTimeout(() => {
+                flipped[0].classList.remove('flipped');
+                flipped[0].textContent = "❓";
+                flipped[1].classList.remove('flipped');
+                flipped[1].textContent = "❓";
+                flipped = [];
+              }, 800);
+            }
+          }
+        };
+        grid.appendChild(card);
+      });
+      document.getElementById('memStatus').textContent = "Flip cards to find pairs";
+    }
+
+    // --- CALENDAR LINKS ---
+    function setupCalendarButtons(dateObj, title) {
+      // Toggle Dropdown
+      const btn = document.getElementById('btnAddToCal');
+      const menu = document.getElementById('calDropdown');
+      
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('show');
+      };
+      window.onclick = () => menu.classList.remove('show');
+
+      // Generate Links
+      const start = dateObj.toISOString().replace(/-|:|\.\d\d\d/g,"");
+      const endObj = new Date(dateObj.getTime() + 60*60*1000);
+      const end = endObj.toISOString().replace(/-|:|\.\d\d\d/g,"");
+      
+      const gUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Trial Class: "+title)}&dates=${start}/${end}&details=Join+link+inside`;
+      document.getElementById('linkGoogle').href = gUrl;
+      
+      // Copy Handler
+      document.getElementById('btnCopyTime').onclick = () => {
+        const text = `Trial Class: ${dateObj.toLocaleString()}`;
+        navigator.clipboard.writeText(text);
+        alert("Copied: " + text);
+      };
+    }
+
+    // --- MODAL: TERMS ---
+    const modalTerms = document.getElementById('modalTerms');
+    document.getElementById('linkTerms').onclick = () => modalTerms.classList.add('active');
+    function closeTerms() { modalTerms.classList.remove('active'); }
+
+    // --- DRAWER: RESCHEDULE ---
+    const drawer = document.getElementById('drawerReschedule');
+    document.getElementById('btnReschedule').onclick = () => {
+      drawer.classList.add('active');
+      initRescheduleLogic();
+    };
+    function closeReschedule() { drawer.classList.remove('active'); }
+
+    // --- RESCHEDULE LOGIC ---
+    const TIMEZONES = [
+      "Asia/Kolkata", "Asia/Dubai", "Asia/Singapore", 
+      "Europe/London", "America/New_York", "America/Los_Angeles"
+    ];
+
+    function initRescheduleLogic() {
+      // 1. Populate Timezones
+      const sel = document.getElementById('resTimezone');
+      sel.innerHTML = "";
+      const currentTz = currentBooking.timezone || "Asia/Kolkata";
+      
+      // Ensure current TZ is in list
+      const allTz = new Set([currentTz, ...TIMEZONES]);
+      allTz.forEach(tz => {
+        const opt = document.createElement('option');
+        opt.value = tz;
+        opt.textContent = tz;
+        if(tz === currentTz) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      // 2. Populate Dates (Next 5 days)
+      const dateCont = document.getElementById('resDatesContainer');
+      dateCont.innerHTML = "";
+      const today = new Date();
+      
+      for(let i=0; i<5; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        const display = d.toLocaleString('en-US', {weekday:'short', day:'numeric'});
+        
+        const pill = document.createElement('button');
+        pill.className = "option-pill";
+        pill.style.minWidth = "80px";
+        pill.textContent = display;
+        pill.onclick = () => loadSlots(iso);
+        dateCont.appendChild(pill);
+        
+        if(i===0) loadSlots(iso); // Load today by default
+      }
+      
+      // Change listeners
+      sel.onchange = () => loadSlots(selectedDate);
+    }
+
+    async function loadSlots(dateStr) {
+      selectedDate = dateStr;
+      const container = document.getElementById('resSlotsContainer');
+      const emptyMsg = document.getElementById('resEmptyState');
+      const tz = document.getElementById('resTimezone').value;
+      const cid = currentBooking.course_id || 1;
+      const region = currentBooking.region_key || "MEA"; // Fallback region
+
+      container.innerHTML = "Loading...";
+      emptyMsg.classList.add('hide');
+
+      // Fetch from Supabase View
+      const { data, error } = await sb
+        .from('demo_slots_live_view')
+        .select('*')
+        .eq('region_key', region)
+        .eq('course_id', cid)
+        .eq('slot_date', dateStr);
+
+      container.innerHTML = "";
+      
+      if(!data || data.length === 0) {
+        emptyMsg.classList.remove('hide');
         return;
       }
 
-      const b = await loadBooking();
-      loading.classList.add("hide");
+      // Filter past slots
+      const now = new Date();
+      
+      data.forEach(slot => {
+        // Convert slot UTC to Selected Timezone Display
+        const slotDate = new Date(slot.slot_datetime_local); // UTC ISO from DB view
+        if(slotDate < now) return; // Skip past
 
-      if(!b){
-        err.classList.remove("hide");
-        return;
+        // Format to "10:00 AM" in selected TZ
+        const timeDisplay = slotDate.toLocaleString('en-US', {
+           hour: 'numeric', minute: '2-digit', hour12: true, timeZone: tz
+        });
+
+        const btn = document.createElement('button');
+        btn.className = "option-pill";
+        btn.textContent = timeDisplay + (slot.is_star_teacher ? " ⭐" : "");
+        btn.onclick = () => {
+          // Highlight selection
+          Array.from(container.children).forEach(c => c.style.borderColor = "rgba(255,255,255,0.1)");
+          btn.style.borderColor = "#9b5bff";
+          
+          selectedSlot = {
+            id: slot.slot_id,
+            display: timeDisplay,
+            date: dateStr,
+            tz: tz
+          };
+          document.getElementById('btnConfirmReschedule').disabled = false;
+        };
+        container.appendChild(btn);
+      });
+
+      if(container.children.length === 0) emptyMsg.classList.remove('hide');
+    }
+
+    document.getElementById('btnConfirmReschedule').onclick = async () => {
+      if(!selectedSlot) return;
+      const btn = document.getElementById('btnConfirmReschedule');
+      btn.textContent = "Updating...";
+      btn.disabled = true;
+
+      const { error } = await sb.from('demo_leads').update({
+        preferred_date: selectedSlot.date,
+        preferred_time_slot: selectedSlot.display,
+        timezone: selectedSlot.tz,
+        slot_id: selectedSlot.id
+      }).eq('id', leadId);
+
+      if(error) {
+        alert("Update failed. Please try again.");
+        btn.textContent = "Try Again";
+        btn.disabled = false;
+      } else {
+        alert("✅ Class Rescheduled Successfully!");
+        window.location.reload();
       }
+    };
 
-      err.classList.add("hide");
-      section2.classList.remove("hide");
-      renderBooking(b);
-    })();
+    // --- UTILS: CONFETTI ---
+    function triggerConfetti(elem) {
+      // Simple CSS burst placeholder or actual library if available
+      // For this single-file constraint, we stick to button animation
+      elem.style.transform = "scale(1.1)";
+      setTimeout(() => elem.style.transform = "scale(1)", 200);
+    }
+
+    // START
+    init();
+
   </script>
 </body>
 </html>

@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Unischooly | Demo Dashboard</title>
+  <title>Unischooly | Demo Dashboard (Section 1 + 2)</title>
 
+  <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -66,33 +67,19 @@
       filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
     }
 
-    /* Animated Tick & Gradient for "Locked In" */
     .locked{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:8px 16px;
+      padding:9px 12px;
       border-radius:var(--pill);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background:var(--grad);
       color:white;
       font-weight:800;
       letter-spacing:.2px;
       font-size:13px;
+      box-shadow:0 14px 28px rgba(155,91,255,.25);
       white-space:nowrap;
-    }
-    .locked-icon {
-        width: 20px; height: 20px;
-        border-radius: 50%;
-        background: var(--grad);
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 0 10px rgba(155, 91, 255, 0.4);
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0.7); }
-        70% { box-shadow: 0 0 0 8px rgba(155, 91, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0); }
     }
 
     /* Section 2 - Two column */
@@ -103,8 +90,7 @@
       margin-top:12px;
     }
     @media (min-width: 980px){
-      .grid{grid-template-columns: 1fr 1fr;
-      gap:14px;}
+      .grid{grid-template-columns: 1fr 1fr; gap:14px;}
     }
 
     .card{
@@ -112,8 +98,8 @@
       border:1px solid var(--border);
       border-radius:26px;
       box-shadow:var(--shadow);
+      overflow:hidden;
       position:relative;
-      /* removed overflow:hidden to allow calendar popup to show */
     }
     .card-inner{padding:16px 14px;}
     @media (min-width: 720px){
@@ -153,8 +139,7 @@
     .ticket::after{right:-17px}
 
     .ticket-head{
-      display:flex;
-      align-items:flex-start; justify-content:space-between; gap:10px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       padding:14px 14px 10px;
       border-bottom:1px dashed rgba(255,255,255,.18);
     }
@@ -225,16 +210,7 @@
       align-items:center;
     }
     .k{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.3px}
-    
-    /* FIX: Email Overflow Ellipsis */
-    .v{
-        font-weight:800; color:var(--text); 
-        min-width:0; 
-        overflow:hidden; 
-        text-overflow:ellipsis;
-        white-space:nowrap;
-        display: block;
-    }
+    .v{font-weight:800; color:var(--text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 
     .powered{
       text-align:center;
@@ -246,8 +222,7 @@
 
     /* Schedule card */
     .schedule-head{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       margin-bottom:10px;
     }
     .schedule-title{
@@ -285,8 +260,7 @@
       white-space:nowrap;
     }
     .btn:hover{transform: translateY(-1px); box-shadow:0 22px 34px rgba(155,91,255,.28);}
-    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;
-      box-shadow:none;}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none;}
     .btn-ghost{
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.16);
@@ -304,8 +278,7 @@
       border-radius:18px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(7,10,28,.72);
-      /* FIX: Changed from hidden to visible so menu works */
-      overflow:visible; 
+      overflow:hidden;
     }
 
     .cal{
@@ -364,7 +337,7 @@
     .dropdown{position:relative}
     .menu{
       position:absolute;
-      left:0; top:44px; /* Changed from right:0 to left:0 for better wrapping */
+      right:0; top:44px;
       width:260px;
       background: rgba(11,15,36,.98);
       border:1px solid rgba(255,255,255,.14);
@@ -372,7 +345,7 @@
       box-shadow:0 22px 50px rgba(0,0,0,.6);
       padding:8px;
       display:none;
-      z-index:100;
+      z-index:20;
     }
     .menu.open{display:block}
     .menu a, .menu button{
@@ -401,12 +374,9 @@
       background: rgba(7,10,28,.72);
       padding:12px;
       overflow:hidden;
-      min-height: 100px; /* FIX: Prevents empty looking box */
-      display: flex; flex-direction: column; justify-content: space-between;
     }
     .facts-head{
-      display:flex; align-items:center;
-      justify-content:space-between; gap:10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       margin-bottom:8px;
     }
     .facts-head .t{
@@ -424,8 +394,7 @@
       cursor:pointer;
       transition: transform var(--t), background var(--t);
     }
-    .iconbtn:hover{transform: translateY(-1px);
-      background: rgba(255,255,255,.10);}
+    .iconbtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .factbox{
       min-height:62px;
       display:flex;
@@ -435,11 +404,9 @@
       border-radius:14px;
       border:1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
-      flex-grow: 1; /* Ensures it fills space */
     }
     .factemoji{font-size:20px}
-    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800;
-      line-height:1.25;}
+    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800; line-height:1.25;}
 
     /* Right side welcome/timer */
     .welcome{
@@ -518,8 +485,7 @@
     .drawer.open{display:block}
     .panel{
       position:absolute;
-      top:0;
-      right:0;
+      top:0; right:0;
       width:min(520px, 100%);
       height:100%;
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.20), transparent 55%), rgba(11,15,36,.98);
@@ -529,8 +495,7 @@
       overflow:auto;
     }
     .panel h3{margin:8px 0 4px; font-size:18px;}
-    .panel .sub{margin:0 0 10px;
-      color:var(--sub); font-size:13px;}
+    .panel .sub{margin:0 0 10px; color:var(--sub); font-size:13px;}
     .panel-top{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
@@ -557,8 +522,7 @@
       font-size:13px;
     }
 
-    .pills{display:flex; flex-wrap:wrap; gap:10px;
-      margin-top:8px;}
+    .pills{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
     .pill{
       padding:9px 12px;
       border-radius:16px;
@@ -571,8 +535,7 @@
       transition: transform var(--t), background var(--t), border-color var(--t);
       min-width:120px;
     }
-    .pill:hover{transform: translateY(-1px);
-      background: rgba(255,255,255,.10);}
+    .pill:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .pill.active{
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
       border-color: rgba(155,91,255,.55);
@@ -588,8 +551,6 @@
     @media (min-width:420px){
       .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));}
     }
-    
-    /* FIX: Slot Colors for visibility */
     .slot{
       border-radius:14px;
       border:1px solid rgba(255,255,255,.16);
@@ -605,7 +566,6 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      color: #e9ecff; /* Force readable color */
     }
     .slot:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .slot.active{
@@ -626,15 +586,13 @@
 
     /* Modal - Terms */
     .modal{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       display:none;
       background: rgba(0,0,0,.60);
       z-index:90;
       padding:18px 12px;
     }
-    .modal.open{display:flex; align-items:center;
-      justify-content:center;}
+    .modal.open{display:flex; align-items:center; justify-content:center;}
     .modal-card{
       width:min(760px, 100%);
       border-radius:22px;
@@ -648,8 +606,7 @@
       margin-bottom:8px;
     }
     .modal-top h3{margin:0; font-size:18px;}
-    .modal-top p{margin:4px 0 0; color:var(--sub);
-      font-size:13px;}
+    .modal-top p{margin:4px 0 0; color:var(--sub); font-size:13px;}
     .modal-card ul{
       margin:10px 0 0;
       padding-left:18px;
@@ -670,48 +627,28 @@
       font-size:13px;
     }
     .hide{display:none !important;}
-
-    /* MOBILE OPTIMIZATIONS */
-    @media (max-width: 768px) {
-        .brand img { height: 24px; } /* Smaller Logo */
-        
-        .topbar {
-            flex-direction: row; /* Keep row but ensure space */
-        }
-        
-        /* Ensure calendar menu fits on screen */
-        .menu {
-            width: 220px;
-            left: -50px; 
-        }
-        
-        /* Stack ticket columns on very small screens */
-        .ticket-body { grid-template-columns: 1fr; }
-    }
   </style>
 </head>
 
 <body>
   <div class="page">
+    <!-- SECTION 1 -->
     <div class="topbar">
       <div class="brand">
         <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
       </div>
-      <div class="locked">
-        <div class="locked-icon">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        </div>
-        Your trial class is locked in!
-      </div>
+      <div class="locked">✅ Your trial class is locked in!</div>
     </div>
 
+    <div id="stateLoading" class="state">Loading your booking…</div>
     <div id="stateError" class="state hide">Booking not found. Please check the link.</div>
 
-    <div id="section2" class="grid">
+    <!-- SECTION 2 -->
+    <div id="section2" class="grid hide">
+      <!-- LEFT: Pass + Schedule + Facts -->
       <div class="card">
         <div class="card-inner">
+          <!-- Pass -->
           <div class="ticket" id="ticketCard">
             <div class="stamp" aria-label="Value waived stamp">
               <div class="big">VALUE<br/>WAIVED</div>
@@ -727,26 +664,27 @@
               <div class="ticket-col">
                 <h4>Admit One Student</h4>
                 <div class="kv">
-                   <div class="k">Name</div><div class="v" id="vChild">—</div>
+                  <div class="k">Name</div><div class="v" id="vChild">—</div>
                   <div class="k">Grade</div><div class="v" id="vGrade">—</div>
                   <div class="k">Course</div><div class="v" id="vCourse">—</div>
                 </div>
               </div>
               <div class="ticket-col">
-                 <h4>Parent Confirmation</h4>
+                <h4>Parent Confirmation</h4>
                 <div class="kv">
                   <div class="k">Sent to</div><div class="v" id="vParent">—</div>
                   <div class="k">Cell</div><div class="v" id="vPhone">—</div>
-                  <div class="k">Email</div><div class="v" id="vEmail" title="Hover to see email">—</div>
+                  <div class="k">Email</div><div class="v" id="vEmail">—</div>
                 </div>
               </div>
             </div>
             <div class="powered">Powered by Unischooly</div>
           </div>
 
+          <!-- Schedule -->
           <div style="height:12px"></div>
           <div class="schedule-head">
-             <div class="schedule-title">
+            <div class="schedule-title">
               <div class="tag"><span>🚀</span> Ready for Blast Off!!!</div>
               <div class="sub">Class Schedule</div>
             </div>
@@ -761,7 +699,6 @@
                 <div class="dow" id="calDow">—</div>
               </div>
             </div>
- 
             <div class="sched-info">
               <div class="line1" id="schedTime">—</div>
               <div class="line2" id="schedMeta">—</div>
@@ -778,10 +715,11 @@
                   </div>
                 </div>
                 <button class="btn btn-ghost" id="btnCopy">🔗 Copy class time</button>
-             </div>
+              </div>
             </div>
           </div>
 
+          <!-- Fun facts -->
           <div class="facts">
             <div class="facts-head">
               <div class="t">✨ Fun Facts</div>
@@ -798,10 +736,10 @@
         </div>
       </div>
 
+      <!-- RIGHT: Welcome + Timer + Join + T&C + Sharpen -->
       <div class="card">
         <div class="welcome">
           <h2 id="welcomeTitle">Welcome!</h2>
-         
           <p id="welcomeSub">Your trial class details are loading.</p>
 
           <div class="timer">
@@ -833,16 +771,17 @@
               <div class="factemoji">🧩</div>
               <div style="flex:1">
                 <div class="facttext" id="pQuestion" style="margin-bottom:8px">—</div>
-                 <div class="pills" id="pChoices" style="margin-top:0"></div>
+                <div class="pills" id="pChoices" style="margin-top:0"></div>
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="pStatus">—</div>
               </div>
             </div>
           </div>
 
+          <!-- mini games placeholder (lightweight) -->
           <div class="facts" style="margin-top:12px">
             <div class="facts-head">
               <div class="t">Mini Games 🎮</div>
-              <div style="font-size:11px; color:rgba(255,255,255,.72); font-weight:800">Quick brain boosters</div>
+              <div style="font-size:11px; color:rgba(255,255,255,.72); font-weight:800">Lightweight • Mobile-friendly</div>
             </div>
             <div class="factbox" style="flex-direction:column; align-items:stretch; gap:10px">
               <div style="display:flex; gap:10px; flex-wrap:wrap">
@@ -850,8 +789,9 @@
                 <button class="btn btn-ghost" id="tabMemory">Memory Match</button>
               </div>
 
+              <!-- Sprint -->
               <div id="gameSprint" class="hide">
-                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
                   <div style="font-weight:1000">Quick Math Sprint (60s)</div>
                   <div style="font-variant-numeric:tabular-nums; font-weight:1000" id="sprintTime">60</div>
                 </div>
@@ -860,13 +800,14 @@
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
               </div>
 
+              <!-- Memory -->
               <div id="gameMemory" class="hide">
                 <div style="font-weight:1000; margin-bottom:6px">Memory Match (Emoji)</div>
                 <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
               </div>
 
-              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: Solving puzzles helps warm up your brain before class!</div>
+              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: These are just for fun while you wait.</div>
             </div>
           </div>
 
@@ -875,12 +816,13 @@
     </div>
   </div>
 
+  <!-- Terms modal -->
   <div id="termsModal" class="modal" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-top">
         <div>
           <h3>Terms & Conditions</h3>
-           <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
+          <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
         </div>
         <button class="xbtn" id="closeTerms">✕</button>
       </div>
@@ -894,6 +836,7 @@
     </div>
   </div>
 
+  <!-- Reschedule drawer -->
   <div id="resDrawer" class="drawer" aria-hidden="true">
     <div class="panel">
       <div class="panel-top">
@@ -927,7 +870,7 @@
       </div>
 
       <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70); font-weight:800">
-        Your class timing will update instantly once confirmed.
+        Note: Rescheduling updates your booking instantly in Supabase.
       </div>
     </div>
   </div>
@@ -959,6 +902,7 @@
       6:{name:"Chess", emoji:"♟️"},
       7:{name:"Mathematics", emoji:"➗"},
     };
+
     const FACT_BANK = {
       1:[
         ["💡","The first computer bug was an actual moth found in 1947!"],
@@ -1045,6 +989,7 @@
         ["🌟","Math helps in games, coding, and real life."],
       ],
     };
+
     const PUZZLES = {
       1:[
         {q:"What comes next? 2, 4, 8, 16, ?", choices:["18","24","32","34"], a:2},
@@ -1131,12 +1076,12 @@
         {q:"Math helps in:", choices:["Life & coding","Only school","Only games","Nowhere"], a:0},
       ]
     };
+
     // =========================
     // Helpers: timezone formatting
     // =========================
     function safeTZ(tz){
-      try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date());
-      return tz; } catch { return "Asia/Kolkata"; }
+      try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date()); return tz; } catch { return "Asia/Kolkata"; }
     }
     function fmtLocal(dt, tz){
       const parts = new Intl.DateTimeFormat("en-US", {
@@ -1163,6 +1108,7 @@
     let bookingTZ = "Asia/Kolkata";
     let bookingRegion = null;
     let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
+
     async function loadBooking(){
       if(!iduuid){ return null; }
       const { data, error } = await sb
@@ -1170,6 +1116,7 @@
         .select("*")
         .eq("id", iduuid)
         .single();
+
       if(error || !data){ console.error(error); return null; }
       return data;
     }
@@ -1200,6 +1147,7 @@
       // Start with UTC date
       const [Y,M,D] = dateStr.split("-").map(x=>parseInt(x,10));
       const guessUTC = new Date(Date.UTC(Y, M-1, D, t.h, t.m, 0));
+
       // Determine what wall clock that UTC time shows in tz; then shift.
       // We want the tz wall clock == (Y-M-D + t.h:t.m).
       const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
@@ -1237,6 +1185,7 @@
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
       bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
+
       // Ticket fields
       setText("vChild", b.child_name);
       setText("vGrade", b.child_grade);
@@ -1262,6 +1211,7 @@
           const txt = `Unischooly Trial Class for ${b.child_name} — ${s.weekday}, ${s.month} ${s.day} at ${s.time} (${bookingTZ})`;
           try{ await navigator.clipboard.writeText(txt); toast("Copied!"); } catch { toast("Copy failed"); }
         };
+
         // countdown
         startCountdown(classDT, bookingTZ);
       } else {
@@ -1274,11 +1224,14 @@
       // Welcome
       setText("welcomeTitle", `Welcome to ${b.child_name}’s ${bookingCourseName} Trial Class`);
       setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
+
       // facts
       initFacts(b.course_id || courseId);
+
       // puzzles & games
       initPuzzle(b.course_id || courseId);
       initMiniGames();
+
       // reschedule prefill
       initRescheduleUI();
 
@@ -1328,7 +1281,7 @@
       // YYYYMMDDTHHMMSSZ
       return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
     }
-    function escapeICS(s){ return String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
+    function escapeICS(s){ return String(s||"").replace(/\\\\/g,"\\\\\\\\").replace(/\\n/g,"\\\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
 
     function makeICS({title, desc, startUTC, endUTC}){
       return [
@@ -1346,7 +1299,7 @@
         `DESCRIPTION:${escapeICS(desc)}`,
         "END:VEVENT",
         "END:VCALENDAR"
-      ].join("\r\n");
+      ].join("\\r\\n");
     }
 
     function setupCalendarLinks(classDT, tz, course, child){
@@ -1354,6 +1307,7 @@
       const end = new Date(start.getTime() + 60*60*1000);
       const title = `Unischooly Trial Class - ${course}`;
       const desc = `Trial class for ${child}. Timezone: ${tz}.`;
+
       // Google Calendar uses dates in UTC in URL parameters
       const gBase = "https://calendar.google.com/calendar/render?action=TEMPLATE";
       const gDates = `${toIcsDateUTC(start)}/${toIcsDateUTC(end)}`;
@@ -1434,6 +1388,7 @@
       pList = (PUZZLES[cid]||PUZZLES[1]).slice();
       pIdx = 0; pScore = 0; pAnswered = 0;
       renderPuzzle();
+
       document.getElementById("pPrev").onclick = ()=> { pIdx = (pIdx - 1 + pList.length)%pList.length; renderPuzzle(true); };
       document.getElementById("pNext").onclick = ()=> { pIdx = (pIdx + 1)%pList.length; renderPuzzle(true); };
     }
@@ -1478,6 +1433,7 @@
       }
       tabSprint.onclick = ()=> { show("sprint"); startSprint(); };
       tabMemory.onclick = ()=> { show("memory"); startMemory(); };
+
       // default
       show("sprint");
       startSprint();
@@ -1585,9 +1541,11 @@
       const joinBtn=document.getElementById("btnJoin");
       const cd=document.getElementById("countdown");
       const label=document.getElementById("timerLabel");
+
       function tick(){
         const now = new Date();
         const diff = classDT.getTime() - now.getTime();
+
         // ended if more than +60 min past start
         if(now.getTime() > classDT.getTime() + 60*60*1000){
           label.textContent = "Class status";
@@ -1608,6 +1566,7 @@
         const mm = Math.floor((totalSec%3600)/60);
         const ss = totalSec%60;
         cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+
         // enable join at T-5 minutes
         joinBtn.disabled = diff > 5*60*1000;
       }
@@ -1622,6 +1581,7 @@
     document.getElementById("openTerms").onclick = ()=> termsModal.classList.add("open");
     document.getElementById("closeTerms").onclick = ()=> termsModal.classList.remove("open");
     termsModal.addEventListener("click", (e)=>{ if(e.target===termsModal) termsModal.classList.remove("open"); });
+
     // =========================
     // Reschedule logic (Brightchamps-style drawer)
     // Updates: preferred_date, preferred_time_slot, timezone (optional)
@@ -1632,6 +1592,7 @@
     document.getElementById("closeRes").onclick = ()=> closeRes();
     document.getElementById("cancelRes").onclick = ()=> closeRes();
     resDrawer.addEventListener("click", (e)=>{ if(e.target===resDrawer) closeRes(); });
+
     function openRes(){
       if(!BOOKING) return;
       resDrawer.classList.add("open");
@@ -1666,10 +1627,10 @@
       {label:"Australia — Australia/Sydney", tz:"Australia/Sydney"},
       {label:"New Zealand — Pacific/Auckland", tz:"Pacific/Auckland"},
     ];
+
     let resTZ = "Asia/Kolkata";
     let resDate = null; // YYYY-MM-DD (in IST date for DB fetch)
-    let selectedResSlot = null;
-    // {slot_id, display, localDate}
+    let selectedResSlot = null; // {slot_id, display, localDate}
 
     function initRescheduleUI(){
       const sel = document.getElementById("tzSelect");
@@ -1710,6 +1671,7 @@
         dates.push(key);
       }
       resDate = dates[0];
+
       dates.forEach((key, idx)=>{
         const dt = new Date(key+"T00:00:00Z");
         const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
@@ -1734,8 +1696,7 @@
       selectedResSlot = null;
       document.getElementById("confirmRes").disabled = true;
 
-      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
-      }
+      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return; }
       if(!resDate) buildResDates();
 
       const { data, error } = await sb
@@ -1744,12 +1705,11 @@
         .eq("region_key", bookingRegion)
         .eq("course_id", BOOKING.course_id || courseId)
         .eq("slot_date", resDate);
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return;
-      }
 
-      // convert to local tz, apply SEA hide <7am;
-      // also shift if local time <3am to next day (only for display grouping)
+      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
+      if(!data || data.length===0){ empty.classList.remove("hide"); return; }
+
+      // convert to local tz, apply SEA hide <7am; also shift if local time <3am to next day (only for display grouping)
       const slots=[];
       data.forEach(r=>{
         const utc = new Date(r.slot_datetime_local);
@@ -1770,8 +1730,10 @@
         const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
         slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
       });
+
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       slots.sort((a,b)=>a.localInstant - b.localInstant);
+
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 
       slots.forEach(s=>{
@@ -1796,6 +1758,7 @@
 
     document.getElementById("confirmRes").onclick = async ()=>{
       if(!BOOKING || !selectedResSlot) return;
+
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
       // Additionally store timezone if user changed it.
       const upd = {
@@ -1821,7 +1784,7 @@
       closeRes();
 
       // reload booking fresh
-      document.getElementById("stateLoading").classList.remove("hide"); // kept for visual feedback on refresh
+      document.getElementById("stateLoading").classList.remove("hide");
       const fresh = await loadBooking();
       document.getElementById("stateLoading").classList.add("hide");
       if(fresh) renderBooking(fresh);
@@ -1836,14 +1799,14 @@
       const section2=document.getElementById("section2");
 
       if(!iduuid){
-        // loading.classList.add("hide"); // REMOVED to keep UI visible
+        loading.classList.add("hide");
         err.classList.remove("hide");
         err.textContent = "Missing iduuid in URL. Example: ?iduuid=<demo_leads.id>";
         return;
       }
 
       const b = await loadBooking();
-      // loading.classList.add("hide"); // REMOVED - element no longer exists in same form
+      loading.classList.add("hide");
 
       if(!b){
         err.classList.remove("hide");
@@ -1851,7 +1814,7 @@
       }
 
       err.classList.add("hide");
-      // section2.classList.remove("hide"); // REMOVED - UI is visible by default
+      section2.classList.remove("hide");
       renderBooking(b);
     })();
   </script>

@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Unischooly | Demo Dashboard (Section 1 + 2)</title>
+  <title>Unischooly | Demo Dashboard</title>
 
-  <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -67,19 +66,33 @@
       filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
     }
 
+    /* Animated Tick & Gradient for "Locked In" */
     .locked{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:9px 12px;
+      padding:8px 16px;
       border-radius:var(--pill);
-      background:var(--grad);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
       color:white;
       font-weight:800;
       letter-spacing:.2px;
       font-size:13px;
-      box-shadow:0 14px 28px rgba(155,91,255,.25);
       white-space:nowrap;
+    }
+    .locked-icon {
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        background: var(--grad);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 10px rgba(155, 91, 255, 0.4);
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(155, 91, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0); }
     }
 
     /* Section 2 - Two column */
@@ -90,7 +103,8 @@
       margin-top:12px;
     }
     @media (min-width: 980px){
-      .grid{grid-template-columns: 1fr 1fr; gap:14px;}
+      .grid{grid-template-columns: 1fr 1fr;
+      gap:14px;}
     }
 
     .card{
@@ -98,8 +112,8 @@
       border:1px solid var(--border);
       border-radius:26px;
       box-shadow:var(--shadow);
-      overflow:hidden;
       position:relative;
+      /* removed overflow:hidden to allow calendar popup to show */
     }
     .card-inner{padding:16px 14px;}
     @media (min-width: 720px){
@@ -139,7 +153,8 @@
     .ticket::after{right:-17px}
 
     .ticket-head{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      display:flex;
+      align-items:flex-start; justify-content:space-between; gap:10px;
       padding:14px 14px 10px;
       border-bottom:1px dashed rgba(255,255,255,.18);
     }
@@ -210,7 +225,16 @@
       align-items:center;
     }
     .k{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.3px}
-    .v{font-weight:800; color:var(--text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+    
+    /* FIX: Email Overflow Ellipsis */
+    .v{
+        font-weight:800; color:var(--text); 
+        min-width:0; 
+        overflow:hidden; 
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        display: block;
+    }
 
     .powered{
       text-align:center;
@@ -222,7 +246,8 @@
 
     /* Schedule card */
     .schedule-head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
       margin-bottom:10px;
     }
     .schedule-title{
@@ -260,7 +285,8 @@
       white-space:nowrap;
     }
     .btn:hover{transform: translateY(-1px); box-shadow:0 22px 34px rgba(155,91,255,.28);}
-    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none;}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;
+      box-shadow:none;}
     .btn-ghost{
       background: rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.16);
@@ -278,7 +304,8 @@
       border-radius:18px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(7,10,28,.72);
-      overflow:hidden;
+      /* FIX: Changed from hidden to visible so menu works */
+      overflow:visible; 
     }
 
     .cal{
@@ -337,7 +364,7 @@
     .dropdown{position:relative}
     .menu{
       position:absolute;
-      right:0; top:44px;
+      left:0; top:44px; /* Changed from right:0 to left:0 for better wrapping */
       width:260px;
       background: rgba(11,15,36,.98);
       border:1px solid rgba(255,255,255,.14);
@@ -345,7 +372,7 @@
       box-shadow:0 22px 50px rgba(0,0,0,.6);
       padding:8px;
       display:none;
-      z-index:20;
+      z-index:100;
     }
     .menu.open{display:block}
     .menu a, .menu button{
@@ -374,9 +401,12 @@
       background: rgba(7,10,28,.72);
       padding:12px;
       overflow:hidden;
+      min-height: 100px; /* FIX: Prevents empty looking box */
+      display: flex; flex-direction: column; justify-content: space-between;
     }
     .facts-head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      display:flex; align-items:center;
+      justify-content:space-between; gap:10px;
       margin-bottom:8px;
     }
     .facts-head .t{
@@ -394,7 +424,8 @@
       cursor:pointer;
       transition: transform var(--t), background var(--t);
     }
-    .iconbtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
+    .iconbtn:hover{transform: translateY(-1px);
+      background: rgba(255,255,255,.10);}
     .factbox{
       min-height:62px;
       display:flex;
@@ -404,9 +435,11 @@
       border-radius:14px;
       border:1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
+      flex-grow: 1; /* Ensures it fills space */
     }
     .factemoji{font-size:20px}
-    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800; line-height:1.25;}
+    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800;
+      line-height:1.25;}
 
     /* Right side welcome/timer */
     .welcome{
@@ -485,7 +518,8 @@
     .drawer.open{display:block}
     .panel{
       position:absolute;
-      top:0; right:0;
+      top:0;
+      right:0;
       width:min(520px, 100%);
       height:100%;
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.20), transparent 55%), rgba(11,15,36,.98);
@@ -495,7 +529,8 @@
       overflow:auto;
     }
     .panel h3{margin:8px 0 4px; font-size:18px;}
-    .panel .sub{margin:0 0 10px; color:var(--sub); font-size:13px;}
+    .panel .sub{margin:0 0 10px;
+      color:var(--sub); font-size:13px;}
     .panel-top{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
@@ -522,7 +557,8 @@
       font-size:13px;
     }
 
-    .pills{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
+    .pills{display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:8px;}
     .pill{
       padding:9px 12px;
       border-radius:16px;
@@ -535,7 +571,8 @@
       transition: transform var(--t), background var(--t), border-color var(--t);
       min-width:120px;
     }
-    .pill:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
+    .pill:hover{transform: translateY(-1px);
+      background: rgba(255,255,255,.10);}
     .pill.active{
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
       border-color: rgba(155,91,255,.55);
@@ -551,6 +588,8 @@
     @media (min-width:420px){
       .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));}
     }
+    
+    /* FIX: Slot Colors for visibility */
     .slot{
       border-radius:14px;
       border:1px solid rgba(255,255,255,.16);
@@ -566,6 +605,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      color: #e9ecff; /* Force readable color */
     }
     .slot:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .slot.active{
@@ -586,13 +626,15 @@
 
     /* Modal - Terms */
     .modal{
-      position:fixed; inset:0;
+      position:fixed;
+      inset:0;
       display:none;
       background: rgba(0,0,0,.60);
       z-index:90;
       padding:18px 12px;
     }
-    .modal.open{display:flex; align-items:center; justify-content:center;}
+    .modal.open{display:flex; align-items:center;
+      justify-content:center;}
     .modal-card{
       width:min(760px, 100%);
       border-radius:22px;
@@ -606,7 +648,8 @@
       margin-bottom:8px;
     }
     .modal-top h3{margin:0; font-size:18px;}
-    .modal-top p{margin:4px 0 0; color:var(--sub); font-size:13px;}
+    .modal-top p{margin:4px 0 0; color:var(--sub);
+      font-size:13px;}
     .modal-card ul{
       margin:10px 0 0;
       padding-left:18px;
@@ -627,68 +670,48 @@
       font-size:13px;
     }
     .hide{display:none !important;}
-  
-/* ===== Fixes Dec14 ===== */
-.tickPulse{
-  width:22px;height:22px;border-radius:999px;
-  display:inline-flex;align-items:center;justify-content:center;
-  background: linear-gradient(135deg, var(--g1), var(--g2));
-  box-shadow: 0 0 0 0 rgba(155,91,255,.55);
-  animation: tickPulse 1.9s ease-in-out infinite;
-}
-.tickSvg{width:14px;height:14px;color:#0b0f24;filter: drop-shadow(0 0 10px rgba(255,255,255,.55));}
-@keyframes tickPulse{
-  0%{box-shadow:0 0 0 0 rgba(155,91,255,.55)}
-  70%{box-shadow:0 0 0 10px rgba(155,91,255,0)}
-  100%{box-shadow:0 0 0 0 rgba(155,91,255,0)}
-}
-/* reschedule time buttons were inheriting browser black */
-.slot{color:#E9ECFF;}
-/* calendar menu shouldn't be clipped */
-.schedule, .card { overflow: visible; }
-/* email ellipsis + tooltip + copy affordance */
-#vEmail{cursor:copy;}
-#vEmail:hover{text-decoration:underline;}
-/* fun facts visual filler */
-.facts{position:relative;}
-.facts:after{
-  content:"";display:block;height:2px;border-radius:999px;margin-top:10px;
-  background: linear-gradient(90deg, rgba(155,91,255,.0), rgba(155,91,255,.7), rgba(255,123,95,.7), rgba(155,91,255,.0));
-  animation: factsGlow 2.4s ease-in-out infinite;
-}
-@keyframes factsGlow{0%,100%{opacity:.35}50%{opacity:.95}}
-.factDots{display:flex;gap:6px;justify-content:center;margin-top:8px}
-.factDot{width:7px;height:7px;border-radius:999px;background:rgba(255,255,255,.18)}
-.factDot.on{background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 0 3px rgba(155,91,255,.12)}
-/* mobile header stack + smaller logo */
-@media (max-width: 520px){
-  .topbar{flex-wrap:wrap;gap:10px;padding:14px 14px 4px}
-  .brand img{height:26px}
-  .locked{width:100%;justify-content:flex-start}
-}
 
-</style>
+    /* MOBILE OPTIMIZATIONS */
+    @media (max-width: 768px) {
+        .brand img { height: 24px; } /* Smaller Logo */
+        
+        .topbar {
+            flex-direction: row; /* Keep row but ensure space */
+        }
+        
+        /* Ensure calendar menu fits on screen */
+        .menu {
+            width: 220px;
+            left: -50px; 
+        }
+        
+        /* Stack ticket columns on very small screens */
+        .ticket-body { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
   <div class="page">
-    <!-- SECTION 1 -->
     <div class="topbar">
       <div class="brand">
         <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
       </div>
-      <div class="locked"> Your trial class is locked in!</div>
+      <div class="locked">
+        <div class="locked-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        Your trial class is locked in!
+      </div>
     </div>
 
-    <div id="stateLoading" class="state">Loading your booking…</div>
     <div id="stateError" class="state hide">Booking not found. Please check the link.</div>
 
-    <!-- SECTION 2 -->
-    <div id="section2" class="grid hide">
-      <!-- LEFT: Pass + Schedule + Facts -->
+    <div id="section2" class="grid">
       <div class="card">
         <div class="card-inner">
-          <!-- Pass -->
           <div class="ticket" id="ticketCard">
             <div class="stamp" aria-label="Value waived stamp">
               <div class="big">VALUE<br/>WAIVED</div>
@@ -704,27 +727,26 @@
               <div class="ticket-col">
                 <h4>Admit One Student</h4>
                 <div class="kv">
-                  <div class="k">Name</div><div class="v" id="vChild">—</div>
+                   <div class="k">Name</div><div class="v" id="vChild">—</div>
                   <div class="k">Grade</div><div class="v" id="vGrade">—</div>
                   <div class="k">Course</div><div class="v" id="vCourse">—</div>
                 </div>
               </div>
               <div class="ticket-col">
-                <h4>Parent Confirmation</h4>
+                 <h4>Parent Confirmation</h4>
                 <div class="kv">
                   <div class="k">Sent to</div><div class="v" id="vParent">—</div>
                   <div class="k">Cell</div><div class="v" id="vPhone">—</div>
-                  <div class="k">Email</div><div class="v" id="vEmail">—</div>
+                  <div class="k">Email</div><div class="v" id="vEmail" title="Hover to see email">—</div>
                 </div>
               </div>
             </div>
             <div class="powered">Powered by Unischooly</div>
           </div>
 
-          <!-- Schedule -->
           <div style="height:12px"></div>
           <div class="schedule-head">
-            <div class="schedule-title">
+             <div class="schedule-title">
               <div class="tag"><span>🚀</span> Ready for Blast Off!!!</div>
               <div class="sub">Class Schedule</div>
             </div>
@@ -739,6 +761,7 @@
                 <div class="dow" id="calDow">—</div>
               </div>
             </div>
+ 
             <div class="sched-info">
               <div class="line1" id="schedTime">—</div>
               <div class="line2" id="schedMeta">—</div>
@@ -755,11 +778,10 @@
                   </div>
                 </div>
                 <button class="btn btn-ghost" id="btnCopy">🔗 Copy class time</button>
-              </div>
+             </div>
             </div>
           </div>
 
-          <!-- Fun facts -->
           <div class="facts">
             <div class="facts-head">
               <div class="t">✨ Fun Facts</div>
@@ -776,10 +798,10 @@
         </div>
       </div>
 
-      <!-- RIGHT: Welcome + Timer + Join + T&C + Sharpen -->
       <div class="card">
         <div class="welcome">
           <h2 id="welcomeTitle">Welcome!</h2>
+         
           <p id="welcomeSub">Your trial class details are loading.</p>
 
           <div class="timer">
@@ -811,13 +833,12 @@
               <div class="factemoji">🧩</div>
               <div style="flex:1">
                 <div class="facttext" id="pQuestion" style="margin-bottom:8px">—</div>
-                <div class="pills" id="pChoices" style="margin-top:0"></div>
+                 <div class="pills" id="pChoices" style="margin-top:0"></div>
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="pStatus">—</div>
               </div>
             </div>
           </div>
 
-          <!-- mini games placeholder (lightweight) -->
           <div class="facts" style="margin-top:12px">
             <div class="facts-head">
               <div class="t">Mini Games 🎮</div>
@@ -829,9 +850,8 @@
                 <button class="btn btn-ghost" id="tabMemory">Memory Match</button>
               </div>
 
-              <!-- Sprint -->
               <div id="gameSprint" class="hide">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
                   <div style="font-weight:1000">Quick Math Sprint (60s)</div>
                   <div style="font-variant-numeric:tabular-nums; font-weight:1000" id="sprintTime">60</div>
                 </div>
@@ -840,14 +860,13 @@
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
               </div>
 
-              <!-- Memory -->
               <div id="gameMemory" class="hide">
                 <div style="font-weight:1000; margin-bottom:6px">Memory Match (Emoji)</div>
                 <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
                 <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
               </div>
 
-              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: Try to beat your own score before class starts!.</div>
+              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: Solving puzzles helps warm up your brain before class!</div>
             </div>
           </div>
 
@@ -856,13 +875,12 @@
     </div>
   </div>
 
-  <!-- Terms modal -->
   <div id="termsModal" class="modal" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="modal-top">
         <div>
           <h3>Terms & Conditions</h3>
-          <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
+           <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
         </div>
         <button class="xbtn" id="closeTerms">✕</button>
       </div>
@@ -876,7 +894,6 @@
     </div>
   </div>
 
-  <!-- Reschedule drawer -->
   <div id="resDrawer" class="drawer" aria-hidden="true">
     <div class="panel">
       <div class="panel-top">
@@ -910,7 +927,7 @@
       </div>
 
       <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70); font-weight:800">
-        Your class timing will update instantly once you confirm.
+        Your class timing will update instantly once confirmed.
       </div>
     </div>
   </div>
@@ -942,7 +959,6 @@
       6:{name:"Chess", emoji:"♟️"},
       7:{name:"Mathematics", emoji:"➗"},
     };
-
     const FACT_BANK = {
       1:[
         ["💡","The first computer bug was an actual moth found in 1947!"],
@@ -1029,7 +1045,6 @@
         ["🌟","Math helps in games, coding, and real life."],
       ],
     };
-
     const PUZZLES = {
       1:[
         {q:"What comes next? 2, 4, 8, 16, ?", choices:["18","24","32","34"], a:2},
@@ -1116,12 +1131,12 @@
         {q:"Math helps in:", choices:["Life & coding","Only school","Only games","Nowhere"], a:0},
       ]
     };
-
     // =========================
     // Helpers: timezone formatting
     // =========================
     function safeTZ(tz){
-      try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date()); return tz; } catch { return "Asia/Kolkata"; }
+      try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date());
+      return tz; } catch { return "Asia/Kolkata"; }
     }
     function fmtLocal(dt, tz){
       const parts = new Intl.DateTimeFormat("en-US", {
@@ -1148,7 +1163,6 @@
     let bookingTZ = "Asia/Kolkata";
     let bookingRegion = null;
     let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
-
     async function loadBooking(){
       if(!iduuid){ return null; }
       const { data, error } = await sb
@@ -1156,7 +1170,6 @@
         .select("*")
         .eq("id", iduuid)
         .single();
-
       if(error || !data){ console.error(error); return null; }
       return data;
     }
@@ -1187,7 +1200,6 @@
       // Start with UTC date
       const [Y,M,D] = dateStr.split("-").map(x=>parseInt(x,10));
       const guessUTC = new Date(Date.UTC(Y, M-1, D, t.h, t.m, 0));
-
       // Determine what wall clock that UTC time shows in tz; then shift.
       // We want the tz wall clock == (Y-M-D + t.h:t.m).
       const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
@@ -1225,7 +1237,6 @@
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
       bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
-
       // Ticket fields
       setText("vChild", b.child_name);
       setText("vGrade", b.child_grade);
@@ -1251,7 +1262,6 @@
           const txt = `Unischooly Trial Class for ${b.child_name} — ${s.weekday}, ${s.month} ${s.day} at ${s.time} (${bookingTZ})`;
           try{ await navigator.clipboard.writeText(txt); toast("Copied!"); } catch { toast("Copy failed"); }
         };
-
         // countdown
         startCountdown(classDT, bookingTZ);
       } else {
@@ -1264,14 +1274,11 @@
       // Welcome
       setText("welcomeTitle", `Welcome to ${b.child_name}’s ${bookingCourseName} Trial Class`);
       setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
-
       // facts
       initFacts(b.course_id || courseId);
-
       // puzzles & games
       initPuzzle(b.course_id || courseId);
       initMiniGames();
-
       // reschedule prefill
       initRescheduleUI();
 
@@ -1321,7 +1328,7 @@
       // YYYYMMDDTHHMMSSZ
       return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
     }
-    function escapeICS(s){ return String(s||"").replace(/\\\\/g,"\\\\\\\\").replace(/\\n/g,"\\\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
+    function escapeICS(s){ return String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
 
     function makeICS({title, desc, startUTC, endUTC}){
       return [
@@ -1339,7 +1346,7 @@
         `DESCRIPTION:${escapeICS(desc)}`,
         "END:VEVENT",
         "END:VCALENDAR"
-      ].join("\\r\\n");
+      ].join("\r\n");
     }
 
     function setupCalendarLinks(classDT, tz, course, child){
@@ -1347,7 +1354,6 @@
       const end = new Date(start.getTime() + 60*60*1000);
       const title = `Unischooly Trial Class - ${course}`;
       const desc = `Trial class for ${child}. Timezone: ${tz}.`;
-
       // Google Calendar uses dates in UTC in URL parameters
       const gBase = "https://calendar.google.com/calendar/render?action=TEMPLATE";
       const gDates = `${toIcsDateUTC(start)}/${toIcsDateUTC(end)}`;
@@ -1410,11 +1416,6 @@
       const item = factList[(i+factList.length)%factList.length];
       document.getElementById("factEmoji").textContent = item[0];
       document.getElementById("factText").textContent = item[1];
-      // dots
-      const dotsWrap = document.getElementById("factDots");
-      if(dotsWrap){
-        dotsWrap.innerHTML = factList.map((_,idx)=>`<span class="factDot ${idx===((i+factList.length)%factList.length)?"on":""}"></span>`).join("");
-      }
     }
     function nextFact(delta, manual=false){
       factIdx = (factIdx + delta + factList.length) % factList.length;
@@ -1433,7 +1434,6 @@
       pList = (PUZZLES[cid]||PUZZLES[1]).slice();
       pIdx = 0; pScore = 0; pAnswered = 0;
       renderPuzzle();
-
       document.getElementById("pPrev").onclick = ()=> { pIdx = (pIdx - 1 + pList.length)%pList.length; renderPuzzle(true); };
       document.getElementById("pNext").onclick = ()=> { pIdx = (pIdx + 1)%pList.length; renderPuzzle(true); };
     }
@@ -1448,7 +1448,7 @@
         b.textContent=c;
         b.onclick=()=>{
           pAnswered++;
-          if(idx===p.a){ pScore++; document.getElementById("pStatus").textContent=` Correct! Score: ${pScore}/${pAnswered}`; }
+          if(idx===p.a){ pScore++; document.getElementById("pStatus").textContent=`✅ Correct! Score: ${pScore}/${pAnswered}`; }
           else { document.getElementById("pStatus").textContent=`❌ Oops! Correct: ${p.choices[p.a]} • Score: ${pScore}/${pAnswered}`; }
           // auto next
           setTimeout(()=>{ pIdx = (pIdx + 1)%pList.length; renderPuzzle(); }, 700);
@@ -1478,7 +1478,6 @@
       }
       tabSprint.onclick = ()=> { show("sprint"); startSprint(); };
       tabMemory.onclick = ()=> { show("memory"); startMemory(); };
-
       // default
       show("sprint");
       startSprint();
@@ -1527,7 +1526,7 @@
             },1000);
           }
           if(sprintLeft<=0) return;
-          if(v===sprintQ.ans){ sprintScore++; document.getElementById("sprintStatus").textContent = ` Correct! Score: ${sprintScore}`; }
+          if(v===sprintQ.ans){ sprintScore++; document.getElementById("sprintStatus").textContent = `✅ Correct! Score: ${sprintScore}`; }
           else { document.getElementById("sprintStatus").textContent = `❌ Try again! Score: ${sprintScore}`; }
           setTimeout(nextSprint, 350);
         };
@@ -1559,7 +1558,7 @@
           if(memFirst.dataset.emo===btn.dataset.emo){
             memMatches++;
             memFirst=null;
-            document.getElementById("memStatus").textContent = ` Matched ${memMatches}/8 pairs`;
+            document.getElementById("memStatus").textContent = `✅ Matched ${memMatches}/8 pairs`;
             if(memMatches===8){ document.getElementById("memStatus").textContent = "🏆 All pairs found!"; }
           } else {
             memLock=true;
@@ -1586,11 +1585,9 @@
       const joinBtn=document.getElementById("btnJoin");
       const cd=document.getElementById("countdown");
       const label=document.getElementById("timerLabel");
-
       function tick(){
         const now = new Date();
         const diff = classDT.getTime() - now.getTime();
-
         // ended if more than +60 min past start
         if(now.getTime() > classDT.getTime() + 60*60*1000){
           label.textContent = "Class status";
@@ -1611,7 +1608,6 @@
         const mm = Math.floor((totalSec%3600)/60);
         const ss = totalSec%60;
         cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
-
         // enable join at T-5 minutes
         joinBtn.disabled = diff > 5*60*1000;
       }
@@ -1626,7 +1622,6 @@
     document.getElementById("openTerms").onclick = ()=> termsModal.classList.add("open");
     document.getElementById("closeTerms").onclick = ()=> termsModal.classList.remove("open");
     termsModal.addEventListener("click", (e)=>{ if(e.target===termsModal) termsModal.classList.remove("open"); });
-
     // =========================
     // Reschedule logic (Brightchamps-style drawer)
     // Updates: preferred_date, preferred_time_slot, timezone (optional)
@@ -1637,7 +1632,6 @@
     document.getElementById("closeRes").onclick = ()=> closeRes();
     document.getElementById("cancelRes").onclick = ()=> closeRes();
     resDrawer.addEventListener("click", (e)=>{ if(e.target===resDrawer) closeRes(); });
-
     function openRes(){
       if(!BOOKING) return;
       resDrawer.classList.add("open");
@@ -1672,125 +1666,12 @@
       {label:"Australia — Australia/Sydney", tz:"Australia/Sydney"},
       {label:"New Zealand — Pacific/Auckland", tz:"Pacific/Auckland"},
     ];
-
     let resTZ = "Asia/Kolkata";
     let resDate = null; // YYYY-MM-DD (in IST date for DB fetch)
-    let selectedResSlot = null; // {slot_id, display, localDate}
+    let selectedResSlot = null;
+    // {slot_id, display, localDate}
 
-    
-  function setCalendarLinks(booking){
-    const courseName = courseLabelFromId(courseId);
-    const title = `Unischooly Trial Class • ${booking.child_name || "Student"} • ${courseName}`;
-    const tz = booking.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    const startISO = buildStartISO(booking.preferred_date, booking.preferred_time_slot, tz);
-    if(!startISO) return;
-
-    const start = new Date(startISO);
-    const end = new Date(start.getTime() + 60*60*1000);
-
-    const fmtG = (d)=> d.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
-    const dtStart = fmtG(start), dtEnd = fmtG(end);
-
-    const details = encodeURIComponent("Your Unischooly free trial class. Please join on time.");
-    const location = encodeURIComponent("Online");
-    const text = encodeURIComponent(title);
-
-    // Google
-    setHref("calGoogle",
-      `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dtStart}/${dtEnd}&details=${details}&location=${location}&ctz=${encodeURIComponent(tz)}`
-    );
-
-    // Yahoo
-    setHref("calYahoo",
-      `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${text}&st=${encodeURIComponent(dtStart)}&dur=0100&desc=${details}&in_loc=${location}`
-    );
-
-    // Outlook.com
-    setHref("calOutlook",
-      `https://outlook.live.com/calendar/0/deeplink/compose?subject=${text}&startdt=${encodeURIComponent(start.toISOString())}&enddt=${encodeURIComponent(end.toISOString())}&body=${details}&location=${location}`
-    );
-
-    // Apple + ICS download
-    const ics = buildICS(title, start, end, decodeURIComponent(details), tz);
-    const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
-    const icsUrl = URL.createObjectURL(blob);
-    setHref("calApple", icsUrl, true);
-    setHref("calICS", icsUrl, true);
-  }
-
-  function setHref(id, url, download=false){
-    const a=document.getElementById(id);
-    if(!a) return;
-    a.href=url;
-    if(download) a.setAttribute("download","unischooly-trial.ics");
-  }
-
-  function buildICS(title, start, end, details, tz){
-    const pad=n=>String(n).padStart(2,"0");
-    const dt=(d)=>`${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
-    return [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//Unischooly//Trial Class//EN",
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      "BEGIN:VEVENT",
-      `UID:${crypto.randomUUID()}@unischooly.com`,
-      `DTSTAMP:${dt(new Date())}`,
-      `DTSTART:${dt(start)}`,
-      `DTEND:${dt(end)}`,
-      `SUMMARY:${title}`,
-      `DESCRIPTION:${String(details||"").replace(/\n/g," ")}`,
-      "END:VEVENT",
-      "END:VCALENDAR"
-    ].join("\r\n");
-  }
-
-  function buildStartISO(dateStr, timeStr, tz){
-    if(!dateStr || !timeStr) return null;
-    const m = String(timeStr).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    if(!m) return null;
-    let h=parseInt(m[1],10);
-    const min=parseInt(m[2],10);
-    const ap=m[3].toUpperCase();
-    if(ap==="PM" && h!==12) h+=12;
-    if(ap==="AM" && h===12) h=0;
-
-    const parts = String(dateStr).split("-");
-    const y=+parts[0], mo=+parts[1]-1, da=+parts[2];
-
-    // use an approx UTC date then read the wall-clock parts in tz
-    const approx = new Date(Date.UTC(y,mo,da,h,min,0));
-    const fmt = new Intl.DateTimeFormat("en-US",{
-      timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",
-      hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false
-    });
-    const p = Object.fromEntries(fmt.formatToParts(approx).map(x=>[x.type,x.value]));
-    // Interpret the tz wall-clock as if it were UTC (sufficient for calendar links)
-    return new Date(`${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}Z`).toISOString();
-  }
-
-  function initCalendarMenu(){
-    const btn = document.getElementById("calBtn");
-    const menu = document.getElementById("calMenu");
-    if(!btn || !menu) return;
-
-    const close=()=>menu.classList.remove("open");
-    btn.addEventListener("click",(e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-      menu.classList.toggle("open");
-    });
-
-    document.addEventListener("click",(e)=>{
-      if(!menu.contains(e.target) && e.target!==btn) close();
-    });
-
-    menu.querySelectorAll("a").forEach(a=>a.addEventListener("click", close));
-  }
-
-function initRescheduleUI(){
+    function initRescheduleUI(){
       const sel = document.getElementById("tzSelect");
       sel.innerHTML="";
       TZ_OPTIONS.forEach(o=>{
@@ -1829,7 +1710,6 @@ function initRescheduleUI(){
         dates.push(key);
       }
       resDate = dates[0];
-
       dates.forEach((key, idx)=>{
         const dt = new Date(key+"T00:00:00Z");
         const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
@@ -1854,7 +1734,8 @@ function initRescheduleUI(){
       selectedResSlot = null;
       document.getElementById("confirmRes").disabled = true;
 
-      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return; }
+      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
+      }
       if(!resDate) buildResDates();
 
       const { data, error } = await sb
@@ -1863,11 +1744,12 @@ function initRescheduleUI(){
         .eq("region_key", bookingRegion)
         .eq("course_id", BOOKING.course_id || courseId)
         .eq("slot_date", resDate);
-
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return; }
+      if(!data || data.length===0){ empty.classList.remove("hide"); return;
+      }
 
-      // convert to local tz, apply SEA hide <7am; also shift if local time <3am to next day (only for display grouping)
+      // convert to local tz, apply SEA hide <7am;
+      // also shift if local time <3am to next day (only for display grouping)
       const slots=[];
       data.forEach(r=>{
         const utc = new Date(r.slot_datetime_local);
@@ -1888,10 +1770,8 @@ function initRescheduleUI(){
         const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
         slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
       });
-
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       slots.sort((a,b)=>a.localInstant - b.localInstant);
-
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 
       slots.forEach(s=>{
@@ -1916,7 +1796,6 @@ function initRescheduleUI(){
 
     document.getElementById("confirmRes").onclick = async ()=>{
       if(!BOOKING || !selectedResSlot) return;
-
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
       // Additionally store timezone if user changed it.
       const upd = {
@@ -1938,11 +1817,11 @@ function initRescheduleUI(){
         return;
       }
 
-      toast(" Rescheduled!");
+      toast("✅ Rescheduled!");
       closeRes();
 
       // reload booking fresh
-      document.getElementById("stateLoading").classList.remove("hide");
+      document.getElementById("stateLoading").classList.remove("hide"); // kept for visual feedback on refresh
       const fresh = await loadBooking();
       document.getElementById("stateLoading").classList.add("hide");
       if(fresh) renderBooking(fresh);
@@ -1957,14 +1836,14 @@ function initRescheduleUI(){
       const section2=document.getElementById("section2");
 
       if(!iduuid){
-        loading.classList.add("hide");
+        // loading.classList.add("hide"); // REMOVED to keep UI visible
         err.classList.remove("hide");
         err.textContent = "Missing iduuid in URL. Example: ?iduuid=<demo_leads.id>";
         return;
       }
 
       const b = await loadBooking();
-      loading.classList.add("hide");
+      // loading.classList.add("hide"); // REMOVED - element no longer exists in same form
 
       if(!b){
         err.classList.remove("hide");
@@ -1972,7 +1851,7 @@ function initRescheduleUI(){
       }
 
       err.classList.add("hide");
-      section2.classList.remove("hide");
+      // section2.classList.remove("hide"); // REMOVED - UI is visible by default
       renderBooking(b);
     })();
   </script>

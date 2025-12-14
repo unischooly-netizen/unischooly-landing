@@ -113,7 +113,6 @@
       border-radius:26px;
       box-shadow:var(--shadow);
       position:relative;
-      /* removed overflow:hidden to allow calendar popup to show */
     }
     .card-inner{padding:16px 14px;}
     @media (min-width: 720px){
@@ -226,7 +225,7 @@
     }
     .k{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.3px}
     
-    /* FIX: Email Overflow Ellipsis */
+    /* FIX: Email Overflow Ellipsis & Click */
     .v{
         font-weight:800; color:var(--text); 
         min-width:0; 
@@ -235,6 +234,8 @@
         white-space:nowrap;
         display: block;
     }
+    #vEmail { cursor: pointer; transition: color 0.2s; }
+    #vEmail:hover { color: var(--sub); }
 
     .powered{
       text-align:center;
@@ -304,7 +305,6 @@
       border-radius:18px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(7,10,28,.72);
-      /* FIX: Changed from hidden to visible so menu works */
       overflow:visible; 
     }
 
@@ -364,7 +364,7 @@
     .dropdown{position:relative}
     .menu{
       position:absolute;
-      left:0; top:44px; /* Changed from right:0 to left:0 for better wrapping */
+      left:0; top:44px;
       width:260px;
       background: rgba(11,15,36,.98);
       border:1px solid rgba(255,255,255,.14);
@@ -393,7 +393,7 @@
     }
     .menu a:hover, .menu button:hover{background: rgba(255,255,255,.08);}
 
-    /* fun facts */
+    /* FIX: Fun Facts - Auto Height & Progress Bar */
     .facts{
       margin-top:12px;
       border-radius:18px;
@@ -401,7 +401,7 @@
       background: rgba(7,10,28,.72);
       padding:12px;
       overflow:hidden;
-      min-height: 100px; /* FIX: Prevents empty looking box */
+      min-height: auto; /* Shrink to fit */
       display: flex; flex-direction: column; justify-content: space-between;
     }
     .facts-head{
@@ -435,11 +435,27 @@
       border-radius:14px;
       border:1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
-      flex-grow: 1; /* Ensures it fills space */
+      flex-grow: 1;
     }
     .factemoji{font-size:20px}
     .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800;
       line-height:1.25;}
+
+    /* Fun Fact Progress Bar */
+    .fact-timer {
+      height: 2px; width: 100%;
+      background: rgba(255,255,255,0.08);
+      margin-top: 10px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .fact-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--grad);
+      animation: loadFact 5.2s linear infinite;
+    }
+    @keyframes loadFact { 0% { width: 0%; } 100% { width: 100%; } }
 
     /* Right side welcome/timer */
     .welcome{
@@ -589,12 +605,14 @@
       .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));}
     }
     
-    /* FIX: Slot Colors for visibility */
+    /* FIX: Slot Padding to prevent Star Badge Overlap */
     .slot{
       border-radius:14px;
       border:1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
       padding:10px 10px;
+      /* Added right padding so text doesn't hit star */
+      padding-right: 48px;
       cursor:pointer;
       font-weight:1000;
       text-align:center;
@@ -605,7 +623,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      color: #e9ecff; /* Force readable color */
+      color: #e9ecff; 
     }
     .slot:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .slot.active{
@@ -673,19 +691,18 @@
 
     /* MOBILE OPTIMIZATIONS */
     @media (max-width: 768px) {
-        .brand img { height: 24px; } /* Smaller Logo */
+        .brand img { height: 24px; } 
         
         .topbar {
-            flex-direction: row; /* Keep row but ensure space */
+            flex-direction: column; /* Stacked */
+            align-items: flex-start;
         }
         
-        /* Ensure calendar menu fits on screen */
         .menu {
             width: 220px;
             left: -50px; 
         }
         
-        /* Stack ticket columns on very small screens */
         .ticket-body { grid-template-columns: 1fr; }
     }
   </style>
@@ -737,7 +754,7 @@
                 <div class="kv">
                   <div class="k">Sent to</div><div class="v" id="vParent">—</div>
                   <div class="k">Cell</div><div class="v" id="vPhone">—</div>
-                  <div class="k">Email</div><div class="v" id="vEmail" title="Hover to see email">—</div>
+                  <div class="k">Email</div><div class="v" id="vEmail" title="Click to copy email">—</div>
                 </div>
               </div>
             </div>
@@ -794,6 +811,7 @@
               <div class="factemoji" id="factEmoji">💡</div>
               <div class="facttext" id="factText">—</div>
             </div>
+            <div class="fact-timer"><div class="fact-bar"></div></div>
           </div>
         </div>
       </div>
@@ -1245,6 +1263,14 @@
       setText("vPhone", `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim());
       setText("vCourse", bookingCourseName);
 
+      // FIX: Email Copy Listener
+      const eBox = document.getElementById("vEmail");
+      eBox.title = b.parent_email; // Hover to see full
+      eBox.onclick = async () => {
+         try { await navigator.clipboard.writeText(b.parent_email); toast("Email copied!"); } 
+         catch(e) { toast("Copy failed"); }
+      };
+
       // Schedule
       const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
       if(classDT){
@@ -1271,8 +1297,12 @@
         document.getElementById("countdown").textContent = "--:--:--";
       }
 
-      // Welcome
-      setText("welcomeTitle", `Welcome to ${b.child_name}’s ${bookingCourseName} Trial Class`);
+      // Welcome & Logic Update (First Name + Color)
+      const firstName = b.child_name ? b.child_name.split(' ')[0] : 'Student';
+      const wTitle = document.getElementById("welcomeTitle");
+      // Inject HTML with gradient span
+      wTitle.innerHTML = `Welcome to <span style="background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; display:inline-block;">${firstName}</span>’s ${bookingCourseName} Trial Class`;
+
       setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
       // facts
       initFacts(b.course_id || courseId);
@@ -1366,7 +1396,7 @@
       // Yahoo
       const yBase = "https://calendar.yahoo.com/";
       const dur = "0100";
-      const yUrl = `${yBase}?v=60&title=${encodeURIComponent(title)}&st=${encodeURIComponent(toIcsDateUTC(start))}&dur=${dur}&desc=${encodeURIComponent(desc)}`;
+      const yUrl = `${yBase}?v=60&title=${encodeURIComponent(title)}&st=${encode(toIcsDateUTC(start))}&dur=${dur}&desc=${encodeURIComponent(desc)}`;
 
       // ICS download (Apple uses .ics)
       const ics = makeICS({title, desc, startUTC:start, endUTC:end});
@@ -1698,13 +1728,13 @@
     function buildResDates(){
       const wrap=document.getElementById("resDates");
       wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
+      // FIX 5: Range increased to 7 days
       const now = new Date();
       const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
       const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
       const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
       const dates=[];
-      for(let i=0;i<3;i++){
+      for(let i=0;i<7;i++){
         const d = new Date(base.getTime() + i*24*60*60*1000);
         const key = dateKeyInTZ(d, "Asia/Kolkata");
         dates.push(key);
@@ -1748,11 +1778,15 @@
       if(!data || data.length===0){ empty.classList.remove("hide"); return;
       }
 
-      // convert to local tz, apply SEA hide <7am;
-      // also shift if local time <3am to next day (only for display grouping)
       const slots=[];
+      const now = new Date(); // Current time
+
       data.forEach(r=>{
         const utc = new Date(r.slot_datetime_local);
+        
+        // FIX 4: Hide Past Slots Logic
+        if (utc < now) return;
+
         // convert by formatting in tz then re-parsing
         const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
         let local = new Date(localStr);

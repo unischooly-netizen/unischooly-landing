@@ -5,37 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Unischooly | Demo Dashboard</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-// Email copy helper
-function copyEmailToClipboard(el){
-  const email = el.innerText || el.textContent;
-  navigator.clipboard.writeText(email).then(()=>{
-    let t=document.getElementById('copyToast');
-    if(!t){
-      t=document.createElement('div');
-      t.id='copyToast'; t.className='copy-toast';
-      t.innerText='Email copied';
-      document.body.appendChild(t);
-    }
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),1200);
-  });
-}
-
-
-// Reschedule slot filtering
-function filterRescheduleSlots(slots, tz){
-  const now = new Date();
-  const end = new Date(); end.setDate(end.getDate()+6);
-  return slots.filter(s=>{
-    const d = new Date(s.slot_datetime_local || s.slot_datetime_ist);
-    if(d < now) return false;
-    if(d > end) return false;
-    return true;
-  });
-}
-
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root{
@@ -718,52 +688,7 @@ function filterRescheduleSlots(slots, tz){
         /* Stack ticket columns on very small screens */
         .ticket-body { grid-template-columns: 1fr; }
     }
-  
-/* Email ellipsis + copy */
-.ellipsis-email{
-  max-width: 220px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-}
-.ellipsis-email:hover{ text-decoration: underline; }
-.copy-toast{
-  position: fixed; bottom: 16px; right: 16px;
-  background: #111827; color: #fff; padding: 8px 12px;
-  border-radius: 8px; font-size: 12px; opacity: 0; transition: .3s;
-  z-index: 9999;
-}
-.copy-toast.show{ opacity: 1; }
-
-
-/* Fun facts visual filler */
-.fun-divider{
-  height: 3px; width: 100%;
-  background: linear-gradient(90deg,#7c3aed,#22d3ee,#7c3aed);
-  background-size: 200% 100%;
-  animation: funflow 2.5s linear infinite;
-  border-radius: 999px; margin: 10px 0;
-}
-@keyframes funflow{0%{background-position:0%}100%{background-position:200%}}
-.fun-dots{display:flex; gap:6px; justify-content:center; margin-top:6px;}
-.fun-dots span{width:6px;height:6px;border-radius:50%;background:#c7d2fe;opacity:.5}
-.fun-dots span.active{opacity:1;background:#6366f1}
-
-
-/* Reschedule popup fixes */
-.resched-time{ color:#e9ecff; }
-.resched-time.disabled{ opacity:.35; pointer-events:none; }
-.star-badge{ z-index:2; }
-
-
-.name-gradient{
-  background: linear-gradient(90deg,#7c3aed,#22d3ee);
-  -webkit-background-clip:text; background-clip:text;
-  color: transparent; font-weight: 800;
-}
-
-</style>
+  </style>
 </head>
 
 <body>
@@ -1929,36 +1854,33 @@ function filterRescheduleSlots(slots, tz){
       // section2.classList.remove("hide"); // REMOVED - UI is visible by default
       renderBooking(b);
     })();
-  
-// Email copy helper
-function copyEmailToClipboard(el){
-  const email = el.innerText || el.textContent;
-  navigator.clipboard.writeText(email).then(()=>{
-    let t=document.getElementById('copyToast');
-    if(!t){
-      t=document.createElement('div');
-      t.id='copyToast'; t.className='copy-toast';
-      t.innerText='Email copied';
-      document.body.appendChild(t);
-    }
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),1200);
-  });
-}
-
-
-// Reschedule slot filtering
-function filterRescheduleSlots(slots, tz){
-  const now = new Date();
-  const end = new Date(); end.setDate(end.getDate()+6);
-  return slots.filter(s=>{
-    const d = new Date(s.slot_datetime_local || s.slot_datetime_ist);
-    if(d < now) return false;
-    if(d > end) return false;
-    return true;
-  });
-}
-
-</script>
+  </script>
 </body>
 </html>
+
+<script>
+document.addEventListener("click", function(e){
+  if(e.target.classList.contains("parent-email")){
+    navigator.clipboard.writeText(e.target.innerText);
+  }
+});
+</script>
+
+<style>
+.child-name-gradient {
+  background: linear-gradient(90deg,#7c3aed,#4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+</style>
+
+<style>
+.fun-divider {
+  height: 3px;
+  background: linear-gradient(90deg,#7c3aed,#22d3ee);
+  animation: glow 2s infinite alternate;
+}
+@keyframes glow { from{opacity:.6} to{opacity:1} }
+.fun-dots { text-align:center; margin-top:6px }
+.fun-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#7c3aed;margin:0 3px}
+</style>

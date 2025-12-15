@@ -1398,7 +1398,7 @@
       const rawChild = (b.child_name || "").trim();
       const firstName = rawChild ? rawChild.split(/\s+/)[0] : "Student";
       const welcomeEl = document.getElementById("welcomeTitle");
-      const safeFirstName =
+      if const safeFirstName =
       (b.child_name || "").trim().split(/\s+/)[0] || "Friend";
       welcomeEl.innerHTML =
       `Welcome to <span class="grad-name">${safeFirstName.replace(/</g,"&lt;").replace(/>/g,"&gt;")}’s</span> ${bookingCourseName} Trial Class`;

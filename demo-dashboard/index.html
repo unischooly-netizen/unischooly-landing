@@ -235,6 +235,13 @@
         white-space:nowrap;
         display: block;
     }
+    /* Gradient text helper (used for names & missed state) */
+        .gradText{
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
 
     .powered{
       text-align:center;
@@ -1391,7 +1398,8 @@
       const firstName = rawChild ? rawChild.split(/\s+/)[0] : "Student";
       const welcomeEl = document.getElementById("welcomeTitle");
       if (welcomeEl){
-        welcomeEl.innerHTML = `Welcome to <span class="grad-name">${firstName.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span>’s ${bookingCourseName} Trial Class`;
+        welcomeEl.innerHTML =
+          `Welcome to <span class="grad-name">${firstName.replace(/</g,"&lt;").replace(/>/g,"&gt;")}’s</span> ${bookingCourseName} Trial Class`;
       }
       setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
       // facts

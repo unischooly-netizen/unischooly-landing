@@ -18,7 +18,7 @@
       --muted:#7b7fa9;
       --shadow:0 18px 40px rgba(0,0,0,.55);
 
-      /* Brand gradient (logo vibes) */
+      /* Brand gradient */
       --g1:#9b5bff;
       --g2:#ff7b5f;
       --grad:linear-gradient(135deg,var(--g1),var(--g2));
@@ -66,7 +66,7 @@
       filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
     }
 
-    /* Animated Tick & Gradient for "Locked In" */
+    /* Animated Tick */
     .locked{
       display:inline-flex;
       align-items:center;
@@ -95,7 +95,7 @@
         100% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0); }
     }
 
-    /* Section 2 - Two column */
+    /* Section 2 - Grid */
     .grid{
       display:grid;
       grid-template-columns: 1fr;
@@ -103,8 +103,7 @@
       margin-top:12px;
     }
     @media (min-width: 980px){
-      .grid{grid-template-columns: 1fr 1fr;
-      gap:14px;}
+      .grid{grid-template-columns: 1fr 1fr; gap:14px;}
     }
 
     .card{
@@ -119,7 +118,7 @@
       .card-inner{padding:18px 18px;}
     }
 
-    /* Ticket look */
+    /* Ticket */
     .ticket{
       position:relative;
       background:
@@ -136,573 +135,281 @@
       border-color: rgba(155,91,255,.55);
       box-shadow:0 22px 48px rgba(0,0,0,.6);
     }
-
     .ticket::before, .ticket::after{
-      content:"";
-      position:absolute;
-      top:50%;
-      width:34px; height:34px;
-      border-radius:50%;
-      background: rgba(5,8,22,1);
-      border:1px solid rgba(255,255,255,.12);
-      transform: translateY(-50%);
-      z-index:2;
+      content:""; position:absolute; top:50%; width:34px; height:34px;
+      border-radius:50%; background: rgba(5,8,22,1); border:1px solid rgba(255,255,255,.12);
+      transform: translateY(-50%); z-index:2;
     }
     .ticket::before{left:-17px}
     .ticket::after{right:-17px}
 
     .ticket-head{
-      display:flex;
-      align-items:flex-start; justify-content:space-between; gap:10px;
-      padding:14px 14px 10px;
-      border-bottom:1px dashed rgba(255,255,255,.18);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      padding:14px 14px 10px; border-bottom:1px dashed rgba(255,255,255,.18);
     }
     .ticket-title{
-      font-weight:900;
-      letter-spacing:.4px;
-      font-size:13px;
-      text-transform:uppercase;
-      opacity:.98;
+      font-weight:900; letter-spacing:.4px; font-size:13px; text-transform:uppercase; opacity:.98;
     }
-    .ticket-sub{
-      font-size:12px;
-      color:var(--sub);
-      margin-top:2px;
-    }
+    .ticket-sub{ font-size:12px; color:var(--sub); margin-top:2px; }
 
     .stamp{
-      position:absolute;
-      right:12px; top:12px;
-      transform: rotate(10deg);
-      background: rgba(0,0,0,.25);
-      border:2px solid rgba(255,255,255,.22);
-      border-radius:14px;
-      padding:10px 10px 8px;
-      color:white;
-      box-shadow:0 18px 30px rgba(0,0,0,.45);
-      z-index:3;
-      backdrop-filter: blur(6px);
+      position:absolute; right:12px; top:12px; transform: rotate(10deg);
+      background: rgba(0,0,0,.25); border:2px solid rgba(255,255,255,.22);
+      border-radius:14px; padding:10px 10px 8px; color:white;
+      box-shadow:0 18px 30px rgba(0,0,0,.45); z-index:3; backdrop-filter: blur(6px);
     }
     .stamp .big{
-      font-weight:1000;
-      font-size:12px;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      background:var(--grad);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
+      font-weight:1000; font-size:12px; letter-spacing:.6px; text-transform:uppercase;
+      background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
     }
-    .stamp .small{
-      font-size:10px;
-      color:rgba(255,255,255,.88);
-      margin-top:2px;
-      text-align:center;
-    }
+    .stamp .small{ font-size:10px; color:rgba(255,255,255,.88); margin-top:2px; text-align:center; }
 
-    .ticket-body{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:12px;
-      padding:12px 14px 14px;
-    }
-    @media (min-width: 520px){
-      .ticket-body{grid-template-columns:1fr 1fr}
-    }
+    .ticket-body{ display:grid; grid-template-columns: 1fr; gap:12px; padding:12px 14px 14px; }
+    @media (min-width: 520px){ .ticket-body{grid-template-columns:1fr 1fr} }
+    
     .ticket-col h4{
-      margin:0 0 6px;
-      font-size:12px;
-      letter-spacing:.4px;
-      color:rgba(255,255,255,.92);
-      text-transform:uppercase;
+      margin:0 0 6px; font-size:12px; letter-spacing:.4px;
+      color:rgba(255,255,255,.92); text-transform:uppercase;
     }
     .kv{
-      display:grid;
-      grid-template-columns: 86px 1fr;
-      gap:8px 10px;
-      font-size:13px;
-      align-items:center;
+      display:grid; grid-template-columns: 86px 1fr; gap:8px 10px;
+      font-size:13px; align-items:center;
     }
     .k{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.3px}
     
+    /* FIX 1: Email Visibility & Cursor */
     .v{
-        font-weight:800;
-        color:var(--text); 
-        min-width:0; 
-        overflow:hidden; 
-        text-overflow:ellipsis;
-        white-space:nowrap;
+        font-weight:800; color:var(--text); min-width:0;
+        /* changed from overflow:hidden/ellipsis to break-all so full email shows on desktop */
+        word-break: break-all;
         display: block;
+        line-height: 1.3;
     }
+    #vEmail { cursor: pointer; transition: color 0.2s; }
+    #vEmail:hover { color: var(--sub); }
 
     .powered{
-      text-align:center;
-      font-size:10px;
-      color:rgba(255,255,255,.70);
-      padding:8px 10px 10px;
-      border-top:1px dashed rgba(255,255,255,.14);
+      text-align:center; font-size:10px; color:rgba(255,255,255,.70);
+      padding:8px 10px 10px; border-top:1px dashed rgba(255,255,255,.14);
     }
 
-    /* Schedule card */
-    .schedule-head{
-      display:flex;
-      align-items:center; justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .schedule-title{
-      display:flex; flex-direction:column; gap:2px;
-    }
-    .schedule-title .tag{
-      display:inline-flex; align-items:center; gap:7px;
-      font-weight:900;
-      letter-spacing:.2px;
-      font-size:12px;
-      color:white;
-    }
+    /* Schedule */
+    .schedule-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+    .schedule-title{ display:flex; flex-direction:column; gap:2px; }
+    .schedule-title .tag{ display:inline-flex; align-items:center; gap:7px; font-weight:900; font-size:12px; color:white; }
     .schedule-title .tag span{
       display:inline-flex; width:22px; height:22px; border-radius:8px;
       align-items:center; justify-content:center;
-      background: rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.14);
     }
-    .schedule-title .sub{
-      color:var(--sub);
-      font-size:12px;
-    }
+    .schedule-title .sub{ color:var(--sub); font-size:12px; }
 
     .btn{
-      border:0;
-      border-radius: var(--pill);
-      padding:10px 14px;
-      font-weight:900;
-      color:white;
-      background: var(--grad);
-      cursor:pointer;
+      border:0; border-radius: var(--pill); padding:10px 14px;
+      font-weight:900; color:white; background: var(--grad); cursor:pointer;
       box-shadow:0 16px 28px rgba(155,91,255,.22);
       transition: transform var(--t), box-shadow var(--t), opacity var(--t);
-      display:inline-flex; align-items:center; gap:8px;
-      white-space:nowrap;
+      display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
     }
     .btn:hover{transform: translateY(-1px); box-shadow:0 22px 34px rgba(155,91,255,.28);}
-    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;
-      box-shadow:none;}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none; box-shadow:none;}
     .btn-ghost{
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.16);
-      color:rgba(255,255,255,.92);
-      box-shadow:none;
+      background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+      color:rgba(255,255,255,.92); box-shadow:none;
     }
     .btn-ghost:hover{background:rgba(255,255,255,.12); transform: translateY(-1px);}
 
     .schedule-box{
-      display:grid;
-      grid-template-columns: 104px 1fr;
-      gap:12px;
-      align-items:center;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
-      overflow:visible;
+      display:grid; grid-template-columns: 104px 1fr; gap:12px; align-items:center;
+      padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,10,28,.72); overflow:visible;
     }
-
     .cal{
-      width:104px; height:104px;
-      border-radius:20px;
+      width:104px; height:104px; border-radius:20px;
       border:1px solid rgba(255,255,255,.14);
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.25), transparent 55%), rgba(10,13,42,.95);
-      display:flex; flex-direction:column;
-      overflow:hidden;
+      display:flex; flex-direction:column; overflow:hidden;
     }
     .cal .m{
-      padding:8px 10px;
-      background: rgba(255,255,255,.08);
-      border-bottom:1px solid rgba(255,255,255,.10);
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.8px;
-      text-transform:uppercase;
-      text-align:center;
+      padding:8px 10px; background: rgba(255,255,255,.08);
+      border-bottom:1px solid rgba(255,255,255,.10); font-size:12px; font-weight:900;
+      letter-spacing:.8px; text-transform:uppercase; text-align:center;
     }
-    .cal .d{
-      flex:1;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      gap:2px;
-    }
-    .cal .daynum{
-      font-size:34px;
-      font-weight:1000;
-      line-height:1;
-    }
-    .cal .dow{
-      font-size:12px;
-      color:rgba(255,255,255,.78);
-      font-weight:800;
-      letter-spacing:.4px;
-      text-transform:uppercase;
-    }
+    .cal .d{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+    .cal .daynum{ font-size:34px; font-weight:1000; line-height:1; }
+    .cal .dow{ font-size:12px; color:rgba(255,255,255,.78); font-weight:800; letter-spacing:.4px; text-transform:uppercase; }
 
-    .sched-info .line1{
-      font-weight:1000;
-      font-size:16px;
-      margin-bottom:4px;
-    }
-    .sched-info .line2{
-      color:var(--sub);
-      font-size:13px;
-      line-height:1.25;
-    }
-    .sched-actions{
-      margin-top:10px;
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
+    .sched-info .line1{ font-weight:1000; font-size:16px; margin-bottom:4px; }
+    .sched-info .line2{ color:var(--sub); font-size:13px; line-height:1.25; }
+    .sched-actions{ margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
 
-    /* calendar dropdown */
+    /* Dropdown */
     .dropdown{position:relative}
     .menu{
-      position:absolute;
-      left:0; top:44px;
-      width:260px;
-      background: rgba(11,15,36,.98);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;
-      box-shadow:0 22px 50px rgba(0,0,0,.6);
-      padding:8px;
-      display:none;
-      z-index:100;
+      position:absolute; left:0; top:44px; width:260px;
+      background: rgba(11,15,36,.98); border:1px solid rgba(255,255,255,.14);
+      border-radius:16px; box-shadow:0 22px 50px rgba(0,0,0,.6);
+      padding:8px; display:none; z-index:100;
     }
     .menu.open{display:block}
     .menu a, .menu button{
-      width:100%;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:10px 10px;
-      border-radius:12px;
-      border:0;
-      background: transparent;
-      color: rgba(255,255,255,.92);
-      text-decoration:none;
-      font-weight:800;
-      font-size:13px;
-      cursor:pointer;
+      width:100%; display:flex; justify-content:space-between; align-items:center;
+      gap:10px; padding:10px 10px; border-radius:12px; border:0;
+      background: transparent; color: rgba(255,255,255,.92);
+      text-decoration:none; font-weight:800; font-size:13px; cursor:pointer;
     }
     .menu a:hover, .menu button:hover{background: rgba(255,255,255,.08);}
 
-    /* fun facts */
+    /* FIX 2: Fun Facts - Remove Dead Space & Bad Loader */
     .facts{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
-      padding:12px;
-      overflow:hidden;
-      min-height: auto; 
-      display: flex; flex-direction: column; justify-content: space-between;
+      margin-top:12px; border-radius:18px; border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,10,28,.72); padding:12px;
+      min-height: auto; /* Allow shrinking */
+      display: flex; flex-direction: column; gap: 10px; /* Reduced gap */
     }
-    .facts-head{
-      display:flex; align-items:center;
-      justify-content:space-between; gap:10px;
-      margin-bottom:8px;
+    .facts-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .facts-head .t{ font-weight:1000; font-size:14px; display: flex; align-items: center; gap: 8px; }
+    
+    /* New Spinner Ring next to title instead of bar */
+    .timer-ring {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: #9b5bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
-    .facts-head .t{
-      font-weight:1000;
-      font-size:14px;
-    }
-    .facts-nav{display:flex;
-      gap:8px;}
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .facts-nav{display:flex; gap:8px;}
     .iconbtn{
-      width:36px; height:36px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:white;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform var(--t), background var(--t);
+      width:36px; height:36px; border-radius:12px; border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06); color:white; font-weight:900;
+      cursor:pointer; transition: transform var(--t), background var(--t);
     }
-    .iconbtn:hover{transform: translateY(-1px);
-      background: rgba(255,255,255,.10);}
+    .iconbtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
+    
     .factbox{
-      min-height:62px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px dashed rgba(255,255,255,.18);
+      min-height:62px; display:flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:14px; border:1px dashed rgba(255,255,255,.18);
       background: rgba(0,0,0,.18);
-      flex-grow: 1; 
     }
     .factemoji{font-size:20px}
-    .facttext{font-size:14px;
-      color:rgba(255,255,255,.92); font-weight:800;
-      line-height:1.25;}
+    .facttext{font-size:14px; color:rgba(255,255,255,.92); font-weight:800; line-height:1.25;}
 
-    /* Fun Fact Progress Bar (Slower) */
-    .fact-timer {
-      height: 2px; width: 100%;
-      background: rgba(255,255,255,0.08);
-      margin-top: 10px;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .fact-bar {
-      height: 100%;
-      width: 0%;
+    /* Welcome / Timer */
+    .welcome{ padding:16px 14px; }
+    .welcome h2{ margin:0 0 6px; font-size:22px; letter-spacing:.2px; }
+    .welcome p{ margin:0 0 10px; color:var(--sub); font-size:14px; line-height:1.35; }
+    
+    /* FIX 5: Gradient Text Class */
+    .grad-text {
       background: var(--grad);
-      /* Slowed down to 15s as requested */
-      animation: loadFact 15s linear infinite;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    @keyframes loadFact { 0% { width: 0%; } 100% { width: 100%; } }
 
-
-    /* Right side welcome/timer */
-    .welcome{
-      padding:16px 14px;
-    }
-    .welcome h2{
-      margin:0 0 6px;
-      font-size:22px;
-      letter-spacing:.2px;
-    }
-    .welcome p{
-      margin:0 0 10px;
-      color:var(--sub);
-      font-size:14px;
-      line-height:1.35;
-    }
     .timer{
-      display:flex; flex-direction:column; gap:10px;
-      margin-top:10px;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
+      display:flex; flex-direction:column; gap:10px; margin-top:10px;
+      padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,.12);
       background: rgba(7,10,28,.72);
     }
-    .timer-row{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
-      flex-wrap:wrap;
-    }
+    .timer-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; flex-wrap:wrap; }
     .timer-label{font-weight:1000; font-size:14px;}
-    .count{
-      font-variant-numeric: tabular-nums;
-      font-size:22px;
-      font-weight:1000;
-      letter-spacing:.6px;
-    }
-    .joinwrap{
-      display:flex;
-      justify-content:center;
-      margin-top:6px;
-    }
-    .disclaimer{
-      margin-top:10px;
-      font-size:11px;
-      color:rgba(255,255,255,.70);
-      line-height:1.35;
-    }
-    .linklike{
-      color:white;
-      text-decoration:underline;
-      cursor:pointer;
-      font-weight:900;
-    }
+    .count{ font-variant-numeric: tabular-nums; font-size:22px; font-weight:1000; letter-spacing:.6px; }
+    .joinwrap{ display:flex; justify-content:center; margin-top:6px; }
+    .disclaimer{ margin-top:10px; font-size:11px; color:rgba(255,255,255,.70); line-height:1.35; }
+    .linklike{ color:white; text-decoration:underline; cursor:pointer; font-weight:900; }
 
-    /* Reschedule */
+    /* Reschedule Drawer */
     .res-btn{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
-      border-radius: var(--pill);
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:white;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform var(--t), background var(--t);
-      white-space:nowrap;
+      display:inline-flex; align-items:center; gap:8px; padding:10px 12px;
+      border-radius: var(--pill); border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06); color:white; font-weight:900;
+      cursor:pointer; transition: transform var(--t), background var(--t); white-space:nowrap;
     }
     .res-btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
 
-    .drawer{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      z-index:80;
-    }
+    .drawer{ position:fixed; inset:0; background: rgba(0,0,0,.55); display:none; z-index:80; }
     .drawer.open{display:block}
     .panel{
-      position:absolute;
-      top:0;
-      right:0;
-      width:min(520px, 100%);
-      height:100%;
+      position:absolute; top:0; right:0; width:min(520px, 100%); height:100%;
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.20), transparent 55%), rgba(11,15,36,.98);
-      border-left:1px solid rgba(255,255,255,.12);
-      box-shadow:-22px 0 60px rgba(0,0,0,.65);
-      padding:14px 14px 18px;
-      overflow:auto;
+      border-left:1px solid rgba(255,255,255,.12); box-shadow:-22px 0 60px rgba(0,0,0,.65);
+      padding:14px 14px 18px; overflow:auto;
     }
     .panel h3{margin:8px 0 4px; font-size:18px;}
-    .panel .sub{margin:0 0 10px;
-      color:var(--sub); font-size:13px;}
-    .panel-top{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
+    .panel .sub{margin:0 0 10px; color:var(--sub); font-size:13px;}
+    .panel-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .xbtn{
-      width:40px; height:40px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color:white;
-      cursor:pointer;
-      font-size:18px;
-      font-weight:900;
+      width:40px; height:40px; border-radius:14px; border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06); color:white; cursor:pointer; font-size:18px; font-weight:900;
     }
 
     .select{
-      width:100%;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(7,10,28,.72);
-      color:white;
-      padding:10px 12px;
-      outline:none;
-      font-weight:800;
-      font-size:13px;
+      width:100%; border-radius:14px; border:1px solid rgba(255,255,255,.16);
+      background: rgba(7,10,28,.72); color:white; padding:10px 12px; outline:none; font-weight:800; font-size:13px;
     }
 
-    .pills{display:flex; flex-wrap:wrap; gap:10px;
-      margin-top:8px;}
+    .pills{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
     .pill{
-      padding:9px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      color:rgba(255,255,255,.86);
-      cursor:pointer;
-      font-weight:900;
-      font-size:13px;
-      transition: transform var(--t), background var(--t), border-color var(--t);
+      padding:9px 12px; border-radius:16px; border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06); color:rgba(255,255,255,.86); cursor:pointer;
+      font-weight:900; font-size:13px; transition: transform var(--t), background var(--t), border-color var(--t);
       min-width:120px;
     }
-    .pill:hover{transform: translateY(-1px);
-      background: rgba(255,255,255,.10);}
+    .pill:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .pill.active{
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
-      border-color: rgba(155,91,255,.55);
-      color:white;
+      border-color: rgba(155,91,255,.55); color:white;
     }
 
-    .slotgrid{
-      margin-top:10px;
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:10px;
-    }
-    @media (min-width:420px){
-      .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));}
-    }
+    .slotgrid{ margin-top:10px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; }
+    @media (min-width:420px){ .slotgrid{grid-template-columns: repeat(3, minmax(0,1fr));} }
     
+    /* FIX 3: Slot Padding for Star Badge */
     .slot{
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      padding:10px 10px;
-      cursor:pointer;
-      font-weight:1000;
-      text-align:center;
+      border-radius:14px; border:1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06);
+      padding:10px 10px; cursor:pointer; font-weight:1000; text-align:center;
       transition: transform var(--t), background var(--t), border-color var(--t);
-      font-size:13px;
-      position:relative;
-      min-height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color: #e9ecff; 
+      font-size:13px; position:relative; min-height:44px;
+      display:flex; align-items:center; justify-content:center; color: #e9ecff;
+      padding-right: 50px; /* Space for Star */
     }
-    .slot:hover{transform: translateY(-1px);
-      background: rgba(255,255,255,.10);}
+    .slot:hover{transform: translateY(-1px); background: rgba(255,255,255,.10);}
     .slot.active{
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.34), transparent 60%), rgba(10,13,42,.95);
-      border-color: rgba(155,91,255,.55);
-      color:white;
+      border-color: rgba(155,91,255,.55); color:white;
     }
     .star{
-      position:absolute; top:6px; right:6px;
-      font-size:10px;
-      padding:2px 6px;
-      border-radius:var(--pill);
-      border:1px solid rgba(255,222,140,.8);
-      background: rgba(79,54,7,.45);
-      color:#ffeec4;
-      font-weight:1000;
+      position:absolute; top:6px; right:6px; font-size:10px; padding:2px 6px;
+      border-radius:var(--pill); border:1px solid rgba(255,222,140,.8);
+      background: rgba(79,54,7,.45); color:#ffeec4; font-weight:1000;
     }
 
-    /* Modal - Terms */
-    .modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      background: rgba(0,0,0,.60);
-      z-index:90;
-      padding:18px 12px;
-    }
-    .modal.open{display:flex; align-items:center;
-      justify-content:center;}
+    .modal{ position:fixed; inset:0; display:none; background: rgba(0,0,0,.60); z-index:90; padding:18px 12px; }
+    .modal.open{display:flex; align-items:center; justify-content:center;}
     .modal-card{
-      width:min(760px, 100%);
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.14);
+      width:min(760px, 100%); border-radius:22px; border:1px solid rgba(255,255,255,.14);
       background: radial-gradient(circle at 0 0, rgba(155,91,255,.20), transparent 55%), rgba(11,15,36,.98);
-      box-shadow:0 22px 60px rgba(0,0,0,.75);
-      padding:16px 16px 14px;
+      box-shadow:0 22px 60px rgba(0,0,0,.75); padding:16px 16px 14px;
     }
-    .modal-top{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      margin-bottom:8px;
-    }
+    .modal-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:8px; }
     .modal-top h3{margin:0; font-size:18px;}
-    .modal-top p{margin:4px 0 0; color:var(--sub);
-      font-size:13px;}
-    .modal-card ul{
-      margin:10px 0 0;
-      padding-left:18px;
-      color:rgba(255,255,255,.88);
-      font-size:13px;
-      line-height:1.5;
-    }
+    .modal-top p{margin:4px 0 0; color:var(--sub); font-size:13px;}
+    .modal-card ul{ margin:10px 0 0; padding-left:18px; color:rgba(255,255,255,.88); font-size:13px; line-height:1.5; }
 
-    /* Loading / errors */
     .state{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(7,10,28,.72);
-      color:rgba(255,255,255,.86);
-      font-weight:800;
-      font-size:13px;
+      margin-top:12px; padding:12px 14px; border-radius:18px; border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,10,28,.72); color:rgba(255,255,255,.86); font-weight:800; font-size:13px;
     }
     .hide{display:none !important;}
 
-    /* MOBILE OPTIMIZATIONS */
     @media (max-width: 768px) {
-        .brand img { height: 24px;
-        } 
-        .topbar {
-            flex-direction: row; /* row for logo and tick */
-        }
-        .menu {
-            width: 220px;
-            left: -50px; 
-        }
-        .ticket-body { grid-template-columns: 1fr;
-        }
+        .brand img { height: 24px; } 
+        .topbar { flex-direction: row; }
+        .menu { width: 220px; left: -50px; }
+        .ticket-body { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -723,8 +430,7 @@
       </div>
     </div>
 
-    <div id="stateError" class="state hide">Booking not found.
-      Please check the link.</div>
+    <div id="stateError" class="state hide">Booking not found. Please check the link.</div>
     <div id="stateLoading" class="state hide">Loading...</div>
 
     <div id="section2" class="grid">
@@ -735,21 +441,18 @@
               <div class="big">VALUE<br/>WAIVED</div>
               <div class="small">$30</div>
             </div>
-     
             <div class="ticket-head">
               <div>
                 <div class="ticket-title">🎫 OFFICIAL FREE TRIAL PASS</div>
                 <div class="ticket-sub">Valid for 1 session • Powered by Unischooly</div>
               </div>
             </div>
-       
             <div class="ticket-body">
               <div class="ticket-col">
                 <h4>Admit One Student</h4>
                 <div class="kv">
                    <div class="k">Name</div><div class="v" id="vChild">—</div>
                   <div class="k">Grade</div><div class="v" id="vGrade">—</div>
- 
                   <div class="k">Course</div><div class="v" id="vCourse">—</div>
                 </div>
               </div>
@@ -758,7 +461,7 @@
                 <div class="kv">
                   <div class="k">Sent to</div><div class="v" id="vParent">—</div>
                   <div class="k">Cell</div><div class="v" id="vPhone">—</div>
-                  <div class="k">Email</div><div class="v" id="vEmail" title="Hover to see email">—</div>
+                  <div class="k">Email</div><div class="v" id="vEmail" title="Click to copy">—</div>
                 </div>
               </div>
             </div>
@@ -782,20 +485,18 @@
                 <div class="dow" id="calDow">—</div>
               </div>
             </div>
- 
             <div class="sched-info">
               <div class="line1" id="schedTime">—</div>
               <div class="line2" id="schedMeta">—</div>
-
               <div class="sched-actions">
                 <div class="dropdown">
                   <button class="btn" id="btnCalendar">📅 Initiate Calendar Sync</button>
                   <div class="menu" id="calMenu">
-                     <a id="calGoogle" target="_blank" rel="noreferrer">Google Calendar <span>↗</span></a>
+                    <a id="calGoogle" target="_blank" rel="noreferrer">Google Calendar <span>↗</span></a>
                     <a id="calApple" target="_blank" rel="noreferrer">Apple Calendar (ICS) <span>⬇</span></a>
                     <a id="calOutlook" target="_blank" rel="noreferrer">Outlook.com <span>↗</span></a>
                     <a id="calYahoo" target="_blank" rel="noreferrer">Yahoo Calendar <span>↗</span></a>
-                     <button id="calDownload">Download .ics <span>⬇</span></button>
+                    <button id="calDownload">Download .ics <span>⬇</span></button>
                   </div>
                 </div>
                 <button class="btn btn-ghost" id="btnCopy">🔗 Copy class time</button>
@@ -805,7 +506,10 @@
 
           <div class="facts">
             <div class="facts-head">
-              <div class="t">✨ Fun Facts</div>
+              <div class="t">
+                  ✨ Fun Facts
+                  <div class="timer-ring"></div>
+              </div>
               <div class="facts-nav">
                 <button class="iconbtn" id="factPrev">‹</button>
                 <button class="iconbtn" id="factNext">›</button>
@@ -815,8 +519,7 @@
               <div class="factemoji" id="factEmoji">💡</div>
               <div class="facttext" id="factText">—</div>
             </div>
-            <div class="fact-timer"><div class="fact-bar"></div></div>
-          </div>
+            </div>
         </div>
       </div>
 
@@ -830,14 +533,11 @@
               <div class="timer-label" id="timerLabel">Join class in</div>
               <div class="count" id="countdown">--:--:--</div>
             </div>
-
             <div class="joinwrap">
               <button class="btn" id="btnJoin" disabled>🎥 Join Class</button>
             </div>
-
             <div class="disclaimer">
-              By clicking join class, you are confirming that you have read, 
-              understood and agree to
+              By clicking join class, you are confirming that you have read, understood and agree to
               <span class="linklike" id="openTerms">Terms & Conditions</span>.
             </div>
           </div>
@@ -850,7 +550,6 @@
                 <button class="iconbtn" id="pNext">›</button>
               </div>
             </div>
-
             <div class="factbox" style="align-items:flex-start">
               <div class="factemoji">🧩</div>
               <div style="flex:1">
@@ -864,45 +563,33 @@
           <div class="facts" style="margin-top:12px">
             <div class="facts-head">
                 <div class="t">Mini Games 🎮</div>
-              <div style="font-size:11px;
-                color:rgba(255,255,255,.72); font-weight:800">Quick brain boosters</div>
+              <div style="font-size:11px; color:rgba(255,255,255,.72); font-weight:800">Quick brain boosters</div>
             </div>
-            <div class="factbox" style="flex-direction:column;
-                align-items:stretch; gap:10px">
-              <div style="display:flex; gap:10px;
-                flex-wrap:wrap">
+            <div class="factbox" style="flex-direction:column; align-items:stretch; gap:10px">
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
                 <button class="btn btn-ghost" id="tabSprint">Quick Sprint</button>
                 <button class="btn btn-ghost" id="tabMemory">Memory Match</button>
               </div>
 
               <div id="gameSprint" class="hide">
-                 <div style="display:flex;
-                    justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+                 <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
                   <div style="font-weight:1000">Quick Math Sprint (60s)</div>
-                  <div style="font-variant-numeric:tabular-nums;
-                    font-weight:1000" id="sprintTime">60</div>
+                  <div style="font-variant-numeric:tabular-nums; font-weight:1000" id="sprintTime">60</div>
                 </div>
-                <div style="margin-top:8px;
-                    font-size:14px; font-weight:1000" id="sprintQ">—</div>
+                <div style="margin-top:8px; font-size:14px; font-weight:1000" id="sprintQ">—</div>
                 <div class="pills" style="margin-top:10px" id="sprintChoices"></div>
-                <div style="margin-top:8px;
-                    font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
+                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="sprintStatus">Tap an answer to start.</div>
               </div>
 
               <div id="gameMemory" class="hide">
-                <div style="font-weight:1000;
-                    margin-bottom:6px">Memory Match (Emoji)</div>
-                <div style="display:grid;
-                    grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
-                <div style="margin-top:8px;
-                    font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
+                <div style="font-weight:1000; margin-bottom:6px">Memory Match (Emoji)</div>
+                <div style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px" id="memGrid"></div>
+                <div style="margin-top:8px; font-size:11px; color:rgba(255,255,255,.72); font-weight:800" id="memStatus">Find all pairs.</div>
               </div>
 
-              <div style="font-size:11px;
-                color:rgba(255,255,255,.70); font-weight:800">Tip: Solving puzzles helps warm up your brain before class!</div>
+              <div style="font-size:11px; color:rgba(255,255,255,.70); font-weight:800">Tip: Solving puzzles helps warm up your brain before class!</div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -913,17 +600,15 @@
       <div class="modal-top">
         <div>
           <h3>Terms & Conditions</h3>
-          
-          <p>Please keep these video conferencing etiquette tips in mind so you know what NOT to do during your demo/trial class:</p>
+          <p>Please keep these video conferencing etiquette tips in mind:</p>
         </div>
         <button class="xbtn" id="closeTerms">✕</button>
       </div>
-
       <ul>
-        <li>By taking this demo/trial session, you consent to Unischooly/Company recording this session.</li>
-        <li>This demo/trial session or class will be recorded for the whole duration for training, constant process improvement, and audit purposes.</li>
-        <li>Unischooly/Company adheres to zero tolerance towards sexual, non-sexual, verbal and visual abuse. Inappropriate hand gestures, threats, or any other indecent behaviour captured or reported during the session shall also be considered a violation of the Company’s internal policies.</li>
-        <li>While taking the demo/trial session, kindly avoid clothing with controversial messages, including but not limited to racial and/or religious slurs or any type of sexual or non-sexual abuse.</li>
+        <li>By taking this demo/trial session, you consent to recording.</li>
+        <li>Sessions are recorded for training and quality assurance.</li>
+        <li>Zero tolerance policy for inappropriate behavior.</li>
+        <li>Please avoid clothing with offensive messages.</li>
       </ul>
     </div>
   </div>
@@ -933,8 +618,7 @@
       <div class="panel-top">
         <div>
           <h3>Reschedule your class</h3>
-          <div class="sub">Timezone is prefilled.
-            You can change it.</div>
+          <div class="sub">Timezone is prefilled. You can change it.</div>
         </div>
         <button class="xbtn" id="closeRes">✕</button>
       </div>
@@ -960,888 +644,335 @@
         <button class="btn btn-ghost" id="cancelRes">Cancel</button>
         <button class="btn" id="confirmRes" disabled>Confirm Reschedule</button>
       </div>
-
-      <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70);
-        font-weight:800">
+      <div style="margin-top:10px; font-size:11px; color:rgba(255,255,255,.70); font-weight:800">
         Your class timing will update instantly once confirmed.
       </div>
     </div>
   </div>
-
   <script>
-    // =========================
-    // CONFIG: Supabase
-    // =========================
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // =========================
-    // URL params
-    // =========================
     const url = new URL(window.location.href);
-    const iduuid = url.searchParams.get("iduuid"); // IMPORTANT: demo_leads primary key
+    const iduuid = url.searchParams.get("iduuid");
     const courseId = parseInt(url.searchParams.get("courseId") || "1", 10);
 
-    // =========================
-    // Course mapping + facts + puzzles
-    // =========================
     const COURSE = {
-      1:{name:"Coding", emoji:"💻"},
-      2:{name:"Python", emoji:"🐍"},
-      3:{name:"Website Development", emoji:"🌐"},
-      4:{name:"Generative AI", emoji:"✨"},
-      5:{name:"Roblox", emoji:"🧱"},
-      6:{name:"Chess", emoji:"♟️"},
-      7:{name:"Mathematics", emoji:"➗"},
+      1:{name:"Coding", emoji:"💻"}, 2:{name:"Python", emoji:"🐍"}, 3:{name:"Website Development", emoji:"🌐"},
+      4:{name:"Generative AI", emoji:"✨"}, 5:{name:"Roblox", emoji:"🧱"}, 6:{name:"Chess", emoji:"♟️"}, 7:{name:"Mathematics", emoji:"➗"},
     };
     const FACT_BANK = {
-      1:[
-        ["💡","The first computer bug was an actual moth found in 1947!"],
-        ["🧠","Coding is like giving step-by-step instructions to a super-fast helper."],
-        ["🧩","Algorithms are just smart recipes for solving problems."],
-        ["🎮","Many games run at 60 frames per second—your code helps make that smooth!"],
-        ["🔁","Loops save time by repeating actions so you don’t write the same code again."],
-        ["🧱","Scratch blocks teach logic the same way real code does."],
-        ["🌍","The Internet works because of protocols—rules computers agree on."],
-        ["🔐","Encryption turns messages into secret code to keep them safe."],
-        ["🛰️","GPS relies on satellites + math + code to find your location."],
-        ["⚡","Computers love patterns—good coders learn to spot patterns too!"],
-      ],
-      2:[
-        ["🐍","Python is named after Monty Python—not the snake!"],
-        ["📦","Python has packages so you can add superpowers quickly."],
-        ["🧠","Indentation in Python matters—it shows what belongs together."],
-        ["🔢","Python is great for math, data, and AI projects."],
-        ["🧩","Lists in Python hold many items, like a backpack of values."],
-        ["🧪","You can test code in small pieces to find bugs faster."],
-        ["🤖","Many AI tools use Python behind the scenes."],
-        ["⚙️","Functions are mini-machines: input → work → output."],
-        ["🧯","Errors are normal—debugging is a coder’s superpower."],
-        ["🌟","Readable code is powerful code."],
-      ],
-      3:[
-        ["🌐","Web pages are built with HTML (structure), CSS (style), and JS (logic)."],
-        ["🎨","CSS can animate shapes without images!"],
-        ["📱","Responsive design makes sites look great on phones and desktops."],
-        ["🧭","Links connect pages like roads connect cities."],
-        ["⚡","Browsers run JavaScript to make sites interactive."],
-        ["🔤","A URL is an address to a page on the Internet."],
-        ["🧱","Components help reuse the same UI blocks."],
-        ["🖼️","Images should be optimized so pages load faster."],
-        ["🔐","HTTPS keeps website data secure."],
-        ["🧠","Good UX is about clarity and confidence."],
-      ],
-      4:[
-        ["✨","Generative AI can create text, images, and music from prompts."],
-        ["🧠","Models learn patterns from lots of examples."],
-        ["🧩","Prompts work best when they’re specific and clear."],
-        ["🧪","AI outputs should be checked—humans stay in control."],
-        ["📚","AI can help summarize, brainstorm, and explain concepts."],
-        ["🎨","AI art tools turn words into pictures."],
-        ["🧠","Training data shapes what AI knows."],
-        ["⚖️","Using AI responsibly is important—be kind and respectful."],
-        ["🔁","Iteration is key: prompt → result → improve prompt."],
-        ["🌟","AI is a tool—your ideas are the magic."],
-      ],
-      5:[
-        ["🧱","Roblox games are built with Lua scripting."],
-        ["🎮","Game loops update the world many times per second."],
-        ["🧠","Design + code = fun gameplay."],
-        ["🗺️","Levels are like puzzles you build for others."],
-        ["🔁","Events trigger actions—like when a player touches a part."],
-        ["🎨","Lighting and colors change the mood of a game."],
-        ["🧩","Physics rules make jumping and falling feel real."],
-        ["🔊","Sound effects make games feel alive."],
-        ["🧪","Testing helps you catch glitches before players do."],
-        ["🏆","Small improvements add up to big fun."],
-      ],
-      6:[
-        ["♟️","In chess, controlling the center gives you more options."],
-        ["🧠","Tactics are short puzzles; strategy is the long plan."],
-        ["🎯","Forks attack two pieces at once."],
-        ["🛡️","Develop pieces early to activate your army."],
-        ["🏰","Castling helps keep your king safe."],
-        ["📌","Pins stop a piece from moving."],
-        ["🔁","Checkmate means the king cannot escape."],
-        ["🧩","Good players look for threats AND defenses."],
-        ["⏱️","Time management matters in fast games."],
-        ["🌟","Every game teaches something new."],
-      ],
-      7:[
-        ["➗","Math is a language for patterns."],
-        ["🧠","Fractions are just parts of a whole."],
-        ["📈","Graphs show relationships visually."],
-        ["🔢","Prime numbers have only two factors: 1 and themselves."],
-        ["🧩","Geometry is like drawing with rules."],
-        ["⚡","Mental math is a skill—practice makes it fast."],
-        ["🧠","Estimation helps you check if answers make sense."],
-        ["🔁","Multiplication is repeated addition."],
-        ["📐","Angles tell you how much you turn."],
-        ["🌟","Math helps in games, coding, and real life."],
-      ]
+      1:[["💡","The first computer bug was an actual moth found in 1947!"], ["🧠","Coding is instructions for a helper."], ["🧩","Algorithms are smart recipes."], ["🎮","Code makes games smooth."], ["⚡","Computers love patterns."]],
+      2:[["🐍","Python is named after Monty Python!"], ["📦","Packages add superpowers."], ["🧠","Indentation matters."], ["🔢","Great for AI."], ["🧩","Lists are like backpacks."]],
+      3:[["🌐","HTML is structure, CSS is style."], ["🎨","CSS animates without images."], ["📱","Responsive fits all screens."], ["🧭","Links connect the web."], ["⚡","JS makes sites interactive."]],
+      4:[["✨","Gen AI creates text & images."], ["🧠","Models learn from patterns."], ["🧩","Be specific with prompts."], ["🧪","Humans stay in control."], ["🌟","AI is a tool, you are the magic."]],
+      5:[["🧱","Roblox uses Lua."], ["🎮","Game loops update the world."], ["🧠","Design + Code = Fun."], ["🗺️","Levels are puzzles."], ["🔁","Events trigger actions."]],
+      6:[["♟️","Control the center!"], ["🧠","Tactics are short puzzles."], ["🎯","Forks attack two pieces."], ["🛡️","Develop pieces early."], ["🏰","Castling keeps the King safe."]],
+      7:[["➗","Math is a pattern language."], ["🧠","Fractions are parts."], ["📈","Graphs show relationships."], ["🔢","Primes have 2 factors."], ["🧩","Geometry is drawing with rules."]]
     };
     const PUZZLES = {
-      1:[
-        {q:"What comes next? 2, 4, 8, 16, ?", choices:["18","24","32","34"], a:2},
-        {q:"If a loop runs 5 times, and prints 'Hi' each time, how many 'Hi'?", choices:["1","5","10","0"], a:1},
-        {q:"Which is a 'condition'?", choices:["Run fast","If it rains","Blue is nice","Hello!"], a:1},
-        {q:"Pick the best order to solve a task:", choices:["Plan → Code → Test","Code → Hope","Skip plan","Only test"], a:0},
-        {q:"Binary uses only:", choices:["0 and 1","1 and 2","2 and 3","A and B"], a:0},
-        {q:"A bug is:", choices:["A feature","A mistake in code","A keyboard","A mouse"], a:1},
-        {q:"Which repeats actions?", choices:["Loop","Variable","Comment","Pixel"], a:0},
-        {q:"Algorithm is like:", choices:["A recipe","A color","A shoe","A cloud"], a:0},
-        {q:"What stores a value?", choices:["Variable","Monitor","Speaker","Cable"], a:0},
-        {q:"Debugging means:", choices:["Adding bugs","Fixing issues","Deleting files","Shouting"], a:1},
-      ],
-      2:[
-        {q:"Python is great for:", choices:["Only painting","Data & AI","Only music","Only chess"], a:1},
-        {q:"In Python, indentation shows:", choices:["Color","Block of code","Volume","Speed"], a:1},
-        {q:"A list is:", choices:["One value","Many values together","A keyboard","A website"], a:1},
-        {q:"Function is like:", choices:["A mini-machine","A sandwich","A bus stop","A cloud"], a:0},
-        {q:"Which is a number?", choices:["'7'","7","Seven","None"], a:1},
-        {q:"Bug fixing is called:", choices:["Debugging","Painting","Sleeping","Singing"], a:0},
-        {q:"Print() does:", choices:["Shows output","Deletes code","Plays music","Makes tea"], a:0},
-        {q:"If x=3, x+2 = ?", choices:["3","4","5","6"], a:2},
-        {q:"A loop repeats until:", choices:["It wants","Condition ends","Keyboard breaks","Sun sets"], a:1},
-        {q:"Best coder habit:", choices:["Never test","Write readable code","Hide errors","Skip learning"], a:1},
-      ],
-      3:[
-        {q:"HTML is for:", choices:["Style","Structure","Music","Painting"], a:1},
-        {q:"CSS is for:", choices:["Style","Math","Storage","Network"], a:0},
-        {q:"JS is for:", choices:["Interactivity","Only images","Only fonts","Only paper"], a:0},
-        {q:"Responsive means:", choices:["Fast","Fits all screens","Only desktop","Only mobile"], a:1},
-        {q:"A link connects:", choices:["Shoes","Pages","Clouds","Books"], a:1},
-        {q:"URL is:", choices:["A page address","A game score","A color","A bug"], a:0},
-        {q:"Button click is handled by:", choices:["JavaScript","Paper","Wind","Paint"], a:0},
-        {q:"Best for speed:", choices:["Huge images","Optimized images","No images ever","Random"], a:1},
-        {q:"HTTPS means:", choices:["Secure site","Slow site","Fun site","Old site"], a:0},
-        {q:"UX is about:", choices:["Confusing users","User experience","Only colors","Only text"], a:1},
-      ],
-      4: [
-        {q:"Generative AI can:", choices:["Only sleep","Create content","Only run","Only paint walls"], a:1},
-        {q:"Good prompts are:", choices:["Vague","Specific","Empty","Angry"], a:1},
-        {q:"AI outputs should be:", choices:["Always trusted","Checked by humans","Ignored","Printed"], a:1},
-        {q:"AI learns from:", choices:["Patterns in data","Rain","Shoes","Cars"], a:0},
-        {q:"Iteration means:", choices:["Try once","Improve repeatedly","Stop","Delete"], a:1},
-        {q:"AI is a:", choices:["Tool","Wizard","Monster","Book"], a:0},
-        {q:"Responsible AI is:", choices:["Kind & safe","Mean","Secret","Lazy"], a:0},
-        {q:"Models are:", choices:["Pattern learners","Sandwiches","Shoes","Buses"], a:0},
-        {q:"Clear prompts help:", choices:["Confuse AI","Get better results","Break code","Slow down"], a:1},
-        {q:"Human role is:", choices:["None","In control","Only watch","Only sleep"], a:1},
-      ],
-      5: [
-        {q:"Roblox scripting uses:", choices:["Lua","Python","HTML","Cement"], a:0},
-        {q:"Game loop does:", choices:["Updates world","Stops time","Cooks","Draws"], a:0},
-        {q:"Events trigger:", choices:["Actions","Rain","Sand","Paper"], a:0},
-        {q:"Testing helps:", choices:["Catch glitches","Add bugs","Make noise","Hide work"], a:0},
-        {q:"Lighting changes:", choices:["Mood","Math","Keyboard","Cable"], a:0},
-        {q:"Physics makes:", choices:["Movement real","Only colors","Only text","Only sound"], a:0},
-        {q:"Levels are:", choices:["Puzzles you build","Shoes","Bikes","Clouds"], a:0},
-        {q:"Sound effects:", choices:["Add life","Remove fun","Break code","Delete"], a:0},
-        {q:"Design + code =", choices:["Fun gameplay","Nothing","Confusion","Sleep"], a:0},
-        {q:"Small improvements:", choices:["Add up big","Never matter","Break all","Stop"], a:0},
-      ],
-      6: [
-        {q:"Control the center gives:", choices:["More options","Less moves","No moves","Only pawns"], a:0},
-        {q:"Fork attacks:", choices:["Two pieces","Zero pieces","Only king","Only pawn"], a:0},
-        {q:"Castling keeps:", choices:["King safer","Queen faster","Pawns taller","Time slower"], a:0},
-        {q:"Pin means:", choices:["Piece can't move","Piece flies","Board breaks","Win instantly"], a:0},
-        {q:"Checkmate is:", choices:["King trapped","King happy","Queen gone","Draw"], a:0},
-        {q:"Strategy is:", choices:["Long plan","Short trick","Random","No plan"], a:0},
-        {q:"Tactics are:", choices:["Short puzzles","Long speeches","Books","Songs"], a:0},
-        {q:"Develop pieces:", choices:["Early","Never","Only end","Only start"], a:0},
-        {q:"Time matters in:", choices:["Fast games","Only slow","Never","Only puzzles"], a:0},
-        {q:"Every game teaches:", choices:["Something","Nothing","Only loss","Only win"], a:0},
-      ],
-      7: [
-        {q:"Prime numbers have:", choices:["2 factors","3 factors","0 factors","10 factors"], a:0},
-        {q:"Multiplication is:", choices:["Repeated addition","Repeated division","Drawing","Singing"], a:0},
-        {q:"Estimation helps:", choices:["Check answers","Confuse","Hide","Lose"], a:0},
-        {q:"Angles measure:", choices:["Turn","Speed","Weight","Sound"], a:0},
-        {q:"Graphs show:", choices:["Relationships","Only colors","Only sounds","Only bugs"], a:0},
-        {q:"Fractions are:", choices:["Parts of whole","Only big numbers","Only primes","Only shapes"], a:0},
-        {q:"Geometry is:", choices:["Drawing with rules","Cooking","Flying","Typing"], a:0},
-        {q:"Math is:", choices:["Pattern language","Random","Only hard","Only easy"], a:0},
-        {q:"Mental math is:", choices:["Practice skill","Magic","Luck","Sleep"], a:0},
-        {q:"Math helps in:", choices:["Life & coding","Only school","Only games","Nowhere"], a:0},
-      ]
+      1:[{q:"What comes next? 2, 4, 8, 16, ?", choices:["32","18"], a:0}, {q:"A bug is:", choices:["A mistake","A feature"], a:0}],
+      2:[{q:"Python is great for:", choices:["AI & Data","Painting"], a:0}, {q:"x=3, x+2=?", choices:["5","6"], a:0}],
+      3:[{q:"HTML is:", choices:["Structure","Style"], a:0}, {q:"CSS is:", choices:["Style","Logic"], a:0}],
+      4:[{q:"AI learns from:", choices:["Patterns","Magic"], a:0}, {q:"Prompts should be:", choices:["Specific","Vague"], a:0}],
+      5:[{q:"Roblox uses:", choices:["Lua","Java"], a:0}, {q:"Levels are:", choices:["Puzzles","Shoes"], a:0}],
+      6:[{q:"Castling helps:", choices:["King","Pawn"], a:0}, {q:"Checkmate is:", choices:["Win","Draw"], a:0}],
+      7:[{q:"Primes have:", choices:["2 factors","10 factors"], a:0}, {q:"Angles measure:", choices:["Turn","Weight"], a:0}]
     };
-    // =========================
-    // Helpers: timezone formatting
-    // =========================
-    function safeTZ(tz){
-      try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date());
-      return tz; } catch { return "Asia/Kolkata"; }
-    }
+
+    function safeTZ(tz){ try { Intl.DateTimeFormat("en-US",{timeZone:tz}).format(new Date()); return tz; } catch { return "Asia/Kolkata"; } }
     function fmtLocal(dt, tz){
-      const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: tz,
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-      }).formatToParts(dt);
+      const parts = new Intl.DateTimeFormat("en-US", {timeZone: tz, weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(dt);
       const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
       return {weekday: map.weekday, month: map.month, day: map.day, time: `${map.hour}:${map.minute} ${map.dayPeriod}`};
     }
-    function dateKeyInTZ(dt, tz){
-      const p = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit"}).format(dt);
-      return p;
-      // YYYY-MM-DD
-    }
-    // =========================
-    // Booking load
-    // =========================
-    let BOOKING = null;
-    let bookingTZ = "Asia/Kolkata";
-    let bookingRegion = null;
-    let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
+    function dateKeyInTZ(dt, tz){ return new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit"}).format(dt); }
+
+    let BOOKING=null, bookingTZ="Asia/Kolkata", bookingRegion=null, bookingCourseName="Coding";
+
     async function loadBooking(){
-      if(!iduuid){ return null;
-      }
-      const { data, error } = await sb
-        .from("demo_leads")
-        .select("*")
-        .eq("id", iduuid)
-        .single();
-      if(error || !data){ console.error(error); return null;
-      }
+      if(!iduuid) return null;
+      const { data } = await sb.from("demo_leads").select("*").eq("id", iduuid).single();
       return data;
     }
-    // =========================
-    // Derive class datetime for countdown + calendar
-    // preferred_date is date (no timezone), preferred_time_slot is local string (e.g., "10:00 AM")
-    // We'll compute a Date by combining preferred_date with local time in booking.timezone
-    // =========================
+
     function parseTime12hTo24(t){
-      // "10:00 AM" -> {h:10,m:0}
       const m = (t||"").trim().match(/^(\d{1,2})\s*:\s*(\d{2})\s*(AM|PM)$/i);
       if(!m) return null;
-      let h = parseInt(m[1],10);
-      const mm = parseInt(m[2],10);
-      const ap = m[3].toUpperCase();
-      if(ap==="PM" && h!==12) h += 12;
-      if(ap==="AM" && h===12) h = 0;
+      let h = parseInt(m[1],10); const mm = parseInt(m[2],10); const ap = m[3].toUpperCase();
+      if(ap==="PM" && h!==12) h += 12; if(ap==="AM" && h===12) h = 0;
       return {h, m:mm};
     }
     function makeDateInTZ(dateStr, timeStr, tz){
-      // Build a Date that represents the same wall-clock time in tz.
-      // Approach: create in UTC then adjust using tz offset at that moment by formatting.
-      const t = parseTime12hTo24(timeStr);
-      if(!dateStr || !t) return null;
-      // Start with UTC date
+      const t = parseTime12hTo24(timeStr); if(!dateStr || !t) return null;
       const [Y,M,D] = dateStr.split("-").map(x=>parseInt(x,10));
       const guessUTC = new Date(Date.UTC(Y, M-1, D, t.h, t.m, 0));
-      // Determine what wall clock that UTC time shows in tz; then shift
-      const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
-        .formatToParts(guessUTC);
+      const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(guessUTC);
       const map = Object.fromEntries(shown.map(p=>[p.type,p.value]));
-      const shownY = parseInt(map.year,10);
-      const shownM = parseInt(map.month,10);
-      const shownD = parseInt(map.day,10);
-      const shownH = parseInt(map.hour,10);
-      const shownMin = parseInt(map.minute,10);
-      // Calculate delta minutes between desired and shown in tz
-      const desired = Date.UTC(Y, M-1, D, t.h, t.m, 0);
-      const shownAsIfUTC = Date.UTC(shownY, shownM-1, shownD, shownH, shownMin, 0);
-      const deltaMs = desired - shownAsIfUTC;
-      return new Date(guessUTC.getTime() + deltaMs);
+      const shownAsIfUTC = Date.UTC(parseInt(map.year), parseInt(map.month)-1, parseInt(map.day), parseInt(map.hour), parseInt(map.minute), 0);
+      return new Date(guessUTC.getTime() + (Date.UTC(Y, M-1, D, t.h, t.m, 0) - shownAsIfUTC));
     }
-    function buildMeetLink(){
-      // Placeholder until meet link column exists (wise/zoom/etc).
-      // If you later store a meet link in demo_leads (e.g., meeting_link), read it here.
-      return null;
-    }
-    // =========================
-    // Render Section 2
-    // =========================
-    function setText(id, value){
-      const el = document.getElementById(id);
-      if(el) el.textContent = value ?? "—";
-    }
+
+    function setText(id, value){ const el = document.getElementById(id); if(el) el.textContent = value ?? "—"; }
+
     function renderBooking(b){
-      BOOKING = b;
-      bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
-      bookingRegion = b.region_key || null;
-      bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
-      // Ticket fields
-      setText("vChild", b.child_name);
-      setText("vGrade", b.child_grade);
-      setText("vParent", b.parent_name);
-      setText("vEmail", b.parent_email);
-      setText("vPhone", `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim());
-      setText("vCourse", bookingCourseName);
-      // Schedule
+      BOOKING = b; bookingTZ = safeTZ(b.timezone); bookingRegion = b.region_key; bookingCourseName = (COURSE[b.course_id]||COURSE[1]).name;
+      
+      setText("vChild", b.child_name); setText("vGrade", b.child_grade); setText("vParent", b.parent_name);
+      setText("vPhone", `${b.phone_country_code||""} ${b.phone_number||""}`); setText("vCourse", bookingCourseName);
+      
+      // FIX 1: Email Copy
+      const eBox = document.getElementById("vEmail"); 
+      eBox.textContent = b.parent_email; 
+      eBox.onclick = async () => { try{await navigator.clipboard.writeText(b.parent_email); toast("Email copied!");}catch{} };
+
       const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
       if(classDT){
         const s = fmtLocal(classDT, bookingTZ);
-        setText("calMonth", s.month);
-        setText("calDay", s.day);
-        setText("calDow", s.weekday);
-        setText("schedTime", `${s.time}`);
-        setText("schedMeta", `${b.preferred_date} • ${bookingTZ}`);
-        // calendar links
+        setText("calMonth", s.month); setText("calDay", s.day); setText("calDow", s.weekday);
+        setText("schedTime", s.time); setText("schedMeta", `${b.preferred_date} • ${bookingTZ}`);
         setupCalendarLinks(classDT, bookingTZ, bookingCourseName, b.child_name);
-        // copy
-        document.getElementById("btnCopy").onclick = async () => {
-          const txt = `Unischooly Trial Class for ${b.child_name} — ${s.weekday}, ${s.month} ${s.day} at ${s.time} (${bookingTZ})`;
-          try{ await navigator.clipboard.writeText(txt); toast("Copied!"); } catch { toast("Copy failed"); }
-        };
-        // countdown
-        startCountdown(classDT, bookingTZ);
+        document.getElementById("btnCopy").onclick=()=>{navigator.clipboard.writeText(`Trial Class: ${s.weekday}, ${s.time}`); toast("Copied!");};
+        startCountdown(classDT);
       } else {
-        setText("schedTime", "Schedule not set");
-        setText("schedMeta", "Please reschedule or contact support.");
-        document.getElementById("btnJoin").disabled = true;
-        document.getElementById("countdown").textContent = "--:--:--";
+        setText("schedTime", "Schedule not set"); document.getElementById("btnJoin").disabled=true;
       }
-      // Welcome
-      setText("welcomeTitle", `Welcome to ${b.child_name}’s ${bookingCourseName} Trial Class`);
-      setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
-      // facts
-      initFacts(b.course_id || courseId);
-      // puzzles & games
-      initPuzzle(b.course_id || courseId);
-      initMiniGames();
-      // reschedule prefill
-      initRescheduleUI();
-      // join button logic
-      const meetLink = buildMeetLink();
-      document.getElementById("btnJoin").onclick = () => {
-        if(meetLink){ window.open(meetLink, "_blank", "noopener,noreferrer");
-        } else toast("Meet link will appear 5 mins before class.");
-      };
+
+      // FIX 5: First Name Only + Gradient
+      const fName = b.child_name ? b.child_name.split(' ')[0] : 'Student';
+      document.getElementById("welcomeTitle").innerHTML = `Welcome to <span class="grad-text">${fName}</span>’s ${bookingCourseName} Trial Class`;
+
+      // Safely init games
+      const safeCID = b.course_id || courseId || 1;
+      initFacts(safeCID); initPuzzle(safeCID); initMiniGames(); initRescheduleUI();
+      document.getElementById("btnJoin").onclick=()=>{ window.open(null, "_blank"); };
     }
-    // =========================
-    // Toast (tiny)
-    // =========================
-    let toastTimer=null;
+
     function toast(msg){
       let el = document.getElementById("toast");
-      if(!el){
-        el=document.createElement("div");
-        el.id="toast";
-        el.style.position="fixed";
-        el.style.left="50%";
-        el.style.bottom="16px";
-        el.style.transform="translateX(-50%)";
-        el.style.padding="10px 12px";
-        el.style.borderRadius="14px";
-        el.style.background="rgba(11,15,36,.95)";
-        el.style.border="1px solid rgba(255,255,255,.14)";
-        el.style.color="white";
-        el.style.fontWeight="900";
-        el.style.fontSize="13px";
-        el.style.boxShadow="0 18px 40px rgba(0,0,0,.6)";
-        el.style.zIndex="120";
-        document.body.appendChild(el);
-      }
-      el.textContent=msg;
-      el.style.display="block";
-      clearTimeout(toastTimer);
-      toastTimer=setTimeout(()=>{el.style.display="none"}, 2200);
+      if(!el){ el=document.createElement("div"); el.id="toast"; el.style.cssText="position:fixed; left:50%; bottom:16px; transform:translateX(-50%); padding:10px 12px; border-radius:14px; background:rgba(11,15,36,.95); border:1px solid rgba(255,255,255,.14); color:white; font-weight:900; font-size:13px; z-index:120;"; document.body.appendChild(el); }
+      el.textContent=msg; el.style.display="block"; clearTimeout(window.tt); window.tt=setTimeout(()=>{el.style.display="none"},2200);
     }
-    // =========================
-    // Calendar integration
-    // =========================
-    function pad2(n){return String(n).padStart(2,"0");}
-    function toIcsDateUTC(d){
-      // YYYYMMDDTHHMMSSZ
-      return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
+
+    function setupCalendarLinks(dt, tz, c, ch){
+      const end=new Date(dt.getTime()+3600000); const t=`Trial: ${c}`, d=`For ${ch}. ${tz}`;
+      function icsDate(x){return x.toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";}
+      const g=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&details=${encodeURIComponent(d)}&dates=${icsDate(dt)}/${icsDate(end)}`;
+      document.getElementById("calGoogle").href=g;
     }
-    function escapeICS(s){ return String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");}
-    function makeICS({title, desc, startUTC, endUTC}){
-      return [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//Unischooly//Demo//EN",
-        "CALSCALE:GREGORIAN",
-        "METHOD:PUBLISH",
-        "BEGIN:VEVENT",
-        `UID:${Date.now()}@unischooly.com`,
-        `DTSTAMP:${toIcsDateUTC(new Date())}`,
-        `DTSTART:${toIcsDateUTC(startUTC)}`,
-        `DTEND:${toIcsDateUTC(endUTC)}`,
-        `SUMMARY:${escapeICS(title)}`,
-        `DESCRIPTION:${escapeICS(desc)}`,
-        "END:VEVENT",
-        "END:VCALENDAR"
-      ].join("\r\n");
+    const calBtn=document.getElementById("btnCalendar"), calMenu=document.getElementById("calMenu");
+    calBtn.onclick=(e)=>{e.stopPropagation(); calMenu.classList.toggle("open");};
+    document.onclick=()=>{calMenu.classList.remove("open");};
+
+    let factList=[], factIdx=0, fTimer=null;
+    function initFacts(id){ 
+        factList=FACT_BANK[id]||FACT_BANK[1]; factIdx=0; showFact(0); 
+        clearInterval(fTimer); fTimer=setInterval(()=>nextFact(1), 5200); 
+        document.getElementById("factPrev").onclick=()=>nextFact(-1,true); 
+        document.getElementById("factNext").onclick=()=>nextFact(1,true); 
     }
-    function setupCalendarLinks(classDT, tz, course, child){
-      const start = classDT;
-      // already actual instant
-      const end = new Date(start.getTime() + 60*60*1000);
-      const title = `Unischooly Trial Class - ${course}`;
-      const desc = `Trial class for ${child}. Timezone: ${tz}.`;
-      // Google Calendar uses dates in UTC in URL parameters
-      const gBase = "https://calendar.google.com/calendar/render?action=TEMPLATE";
-      const gDates = `${toIcsDateUTC(start)}/${toIcsDateUTC(end)}`;
-      const gUrl = `${gBase}&text=${encodeURIComponent(title)}&details=${encodeURIComponent(desc)}&dates=${encodeURIComponent(gDates)}`;
-      // Outlook.com
-      const oBase = "https://outlook.live.com/calendar/0/deeplink/compose";
-      const oUrl = `${oBase}?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(desc)}&startdt=${encodeURIComponent(start.toISOString())}&enddt=${encodeURIComponent(end.toISOString())}`;
-      // Yahoo
-      const yBase = "https://calendar.yahoo.com/";
-      const dur = "0100";
-      const yUrl = `${yBase}?v=60&title=${encodeURIComponent(title)}&st=${encodeURIComponent(toIcsDateUTC(start))}&dur=${dur}&desc=${encodeURIComponent(desc)}`;
-      // ICS download (Apple uses .ics)
-      const ics = makeICS({title, desc, startUTC:start, endUTC:end});
-      const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
-      const icsUrl = URL.createObjectURL(blob);
-      document.getElementById("calGoogle").href = gUrl;
-      document.getElementById("calOutlook").href = oUrl;
-      document.getElementById("calYahoo").href = yUrl;
-      document.getElementById("calApple").href = icsUrl;
-      document.getElementById("calDownload").onclick = () => {
-        const a = document.createElement("a");
-        a.href = icsUrl;
-        a.download = "unischooly-trial.ics";
-        a.click();
-      };
-    }
-    // Calendar dropdown
-    const calBtn = document.getElementById("btnCalendar");
-    const calMenu = document.getElementById("calMenu");
-    calBtn.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      calMenu.classList.toggle("open");
-      // subtle pulse animation by reflowing box-shadow
-      calBtn.animate([{transform:"translateY(0)"},{transform:"translateY(-2px)"},{transform:"translateY(0)"}], {duration:700});
-    });
-    document.addEventListener("click", ()=> calMenu.classList.remove("open"));
-    // =========================
-    // Fun Facts auto-rotate
-    // =========================
-    let factIdx=0, factList=[];
-    let factTimer=null;
-    function initFacts(cid){
-      factList = (FACT_BANK[cid]||FACT_BANK[1]).slice();
-      factIdx = 0;
-      showFact(0);
-      clearInterval(factTimer);
-      factTimer = setInterval(()=> nextFact(1), 5200);
-      document.getElementById("factPrev").onclick = ()=> nextFact(-1, true);
-      document.getElementById("factNext").onclick = ()=> nextFact(1, true);
-    }
-    function showFact(i){
-      const item = factList[(i+factList.length)%factList.length];
-      document.getElementById("factEmoji").textContent = item[0];
-      document.getElementById("factText").textContent = item[1];
-    }
-    function nextFact(delta, manual=false){
-      factIdx = (factIdx + delta + factList.length) % factList.length;
-      showFact(factIdx);
-      if(manual){
-        clearInterval(factTimer);
-        factTimer = setInterval(()=> nextFact(1), 5200);
-      }
-    }
-    // =========================
-    // Puzzles
-    // =========================
-    let pList=[], pIdx=0, pScore=0, pAnswered=0;
-    function initPuzzle(cid){
-      pList = (PUZZLES[cid]||PUZZLES[1]).slice();
-      pIdx = 0; pScore = 0; pAnswered = 0;
-      renderPuzzle();
-      document.getElementById("pPrev").onclick = ()=> { pIdx = (pIdx - 1 + pList.length)%pList.length; renderPuzzle(true); };
-      document.getElementById("pNext").onclick = ()=> { pIdx = (pIdx + 1)%pList.length; renderPuzzle(true); };
-    }
-    function renderPuzzle(resetMsg=false){
-      const p = pList[pIdx];
-      document.getElementById("pQuestion").textContent = p.q;
-      const choices = document.getElementById("pChoices");
-      choices.innerHTML = "";
-      p.choices.forEach((c, idx)=>{
-        const b=document.createElement("button");
-        b.className="pill";
-        b.textContent=c;
-        b.onclick=()=>{
-          pAnswered++;
-          if(idx===p.a){ pScore++; document.getElementById("pStatus").textContent=`✅ Correct! Score: ${pScore}/${pAnswered}`; }
-          else { document.getElementById("pStatus").textContent=`❌ Oops! Correct: ${p.choices[p.a]} • Score: ${pScore}/${pAnswered}`; }
-          // auto next
-          setTimeout(()=>{ pIdx = (pIdx + 1)%pList.length; renderPuzzle(); }, 700);
-        };
-        choices.appendChild(b);
+    function showFact(i){ const x=factList[(i+factList.length)%factList.length]; setText("factEmoji",x[0]); setText("factText",x[1]); }
+    function nextFact(d,m){ factIdx=(factIdx+d+factList.length)%factList.length; showFact(factIdx); if(m){clearInterval(fTimer); fTimer=setInterval(()=>nextFact(1),5200);} }
+
+    let pList=[], pIdx=0;
+    function initPuzzle(id){ pList=PUZZLES[id]||PUZZLES[1]; pIdx=0; renderPuzzle(); document.getElementById("pPrev").onclick=()=>{pIdx=(pIdx-1+pList.length)%pList.length;renderPuzzle();}; document.getElementById("pNext").onclick=()=>{pIdx=(pIdx+1)%pList.length;renderPuzzle();}; }
+    function renderPuzzle(){
+      const p=pList[pIdx]; setText("pQuestion",p.q); const c=document.getElementById("pChoices"); c.innerHTML="";
+      p.choices.forEach((txt,i)=>{
+        const b=document.createElement("button"); b.className="pill"; b.textContent=txt;
+        b.onclick=()=>{ setText("pStatus", i===p.a ? "✅ Correct!" : "❌ Try again"); setTimeout(()=>{pIdx=(pIdx+1)%pList.length;renderPuzzle()},700); };
+        c.appendChild(b);
       });
-      if(resetMsg){ document.getElementById("pStatus").textContent=`Score: ${pScore}/${pAnswered}`; }
-      if(pAnswered===0){ document.getElementById("pStatus").textContent="Pick an answer to start.";}
+      setText("pStatus","Pick an answer.");
     }
-    // =========================
-    // Mini games (super light)
-    // =========================
+
+    /* FIX 4: Mini Games Bug Fixes */
     function initMiniGames(){
-      const tabSprint = document.getElementById("tabSprint");
-      const tabMemory = document.getElementById("tabMemory");
-      const gameSprint = document.getElementById("gameSprint");
-      const gameMemory = document.getElementById("gameMemory");
-      let active = null;
-      function show(which){
-        gameSprint.classList.add("hide");
-        gameMemory.classList.add("hide");
-        if(which==="sprint"){ gameSprint.classList.remove("hide"); }
-        if(which==="memory"){ gameMemory.classList.remove("hide"); }
-        active = which;
-      }
-      tabSprint.onclick = ()=> { show("sprint"); startSprint(); };
-      tabMemory.onclick = ()=> { show("memory"); startMemory(); };
-      // default
-      show("sprint");
-      startSprint();
+      const s=document.getElementById("gameSprint"), m=document.getElementById("gameMemory");
+      document.getElementById("tabSprint").onclick=()=>{s.classList.remove("hide"); m.classList.add("hide");};
+      document.getElementById("tabMemory").onclick=()=>{m.classList.remove("hide"); s.classList.add("hide");};
+      s.classList.remove("hide"); m.classList.add("hide");
+      startSprint(); // Initial load
     }
-    // Quick Sprint
+    
+    // Sprint logic fix
     let sprintTimer=null, sprintLeft=60, sprintScore=0, sprintRunning=false;
-    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
-    function newSprintQ(){
-      const a=randInt(2,12), b=randInt(2,12);
-      const op = Math.random()<0.5 ? "+" : "×";
-      const ans = op==="+" ? (a+b) : (a*b);
-      const wrong1 = ans + randInt(-3,3) || ans+1;
-      const wrong2 = ans + randInt(-6,6) || ans+2;
-      const opts = [ans, wrong1, wrong2].sort(()=>Math.random()-0.5);
-      return {text:`${a} ${op} ${b} = ?`, ans, opts};
-    }
     let sprintQ=null;
+    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+    
+    function newSprintQ(){
+       const a=randInt(2,12), b=randInt(2,12);
+       const op=Math.random()<0.5?"+":"×";
+       const ans=op==="+"?(a+b):(a*b);
+       // Ensure unique options
+       let w1=ans+randInt(1,5);
+       let w2=ans-randInt(1,5);
+       if(w1===ans) w1=ans+1; if(w2===ans || w2===w1) w2=ans+2;
+       const opts=[ans,w1,w2].sort(()=>Math.random()-0.5);
+       return {text:`${a} ${op} ${b} = ?`, ans, opts};
+    }
+
     function startSprint(){
       clearInterval(sprintTimer);
       sprintLeft=60; sprintScore=0; sprintRunning=false;
-      document.getElementById("sprintTime").textContent = sprintLeft;
-      document.getElementById("sprintStatus").textContent = "Tap an answer to start.";
+      setText("sprintTime", sprintLeft);
+      setText("sprintStatus", "Tap an answer to start.");
       nextSprint();
     }
     function nextSprint(){
       sprintQ = newSprintQ();
-      document.getElementById("sprintQ").textContent = sprintQ.text;
+      setText("sprintQ", sprintQ.text);
       const box = document.getElementById("sprintChoices");
       box.innerHTML="";
       sprintQ.opts.forEach(v=>{
-        const b=document.createElement("button");
-        b.className="pill";
-        b.textContent=String(v);
+        const b=document.createElement("button"); b.className="pill"; b.textContent=String(v);
         b.onclick=()=>{
+          // Timer check prevents clicking after end
+          if(sprintLeft <= 0) return;
+
           if(!sprintRunning){
             sprintRunning=true;
             sprintTimer=setInterval(()=>{
               sprintLeft--;
-              document.getElementById("sprintTime").textContent = sprintLeft;
+              setText("sprintTime", sprintLeft);
               if(sprintLeft<=0){
                 clearInterval(sprintTimer);
                 sprintRunning=false;
-                document.getElementById("sprintStatus").textContent = `⏱️ Time! Score: ${sprintScore}`;
+                setText("sprintStatus", `⏱️ Time! Score: ${sprintScore}`);
               }
             },1000);
           }
-          if(sprintLeft<=0) return;
-          if(v===sprintQ.ans){ sprintScore++; document.getElementById("sprintStatus").textContent = `✅ Correct! Score: ${sprintScore}`; }
-          else { document.getElementById("sprintStatus").textContent = `❌ Try again! Score: ${sprintScore}`; }
-          setTimeout(nextSprint, 350);
+          if(v===sprintQ.ans){ sprintScore++; setText("sprintStatus", `✅ Correct! Score: ${sprintScore}`); }
+          else { setText("sprintStatus", `❌ Try again! Score: ${sprintScore}`); }
+          setTimeout(nextSprint, 250);
         };
         box.appendChild(b);
       });
     }
+
     // Memory Match
     let memFirst=null, memLock=false, memMatches=0;
     function startMemory(){
       const emojis=["🍀","🚀","⭐","🎯","🧠","🐍","🌈","🎮"];
       const deck = emojis.concat(emojis).sort(()=>Math.random()-0.5);
-      memFirst=null;
-      memLock=false;
-      memMatches=0;
-      const grid=document.getElementById("memGrid");
-      grid.innerHTML="";
-      deck.forEach((emo, idx)=>{
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.style.height="54px";
-        btn.dataset.emo=emo;
-        btn.dataset.open="0";
-        btn.textContent="❓";
+      memFirst=null; memLock=false; memMatches=0;
+      const grid=document.getElementById("memGrid"); grid.innerHTML="";
+      deck.forEach(emo=>{
+        const btn=document.createElement("button"); btn.className="slot"; btn.style.height="54px";
+        btn.dataset.emo=emo; btn.dataset.open="0"; btn.textContent="❓";
         btn.onclick=()=>{
-          if(memLock) return;
-          if(btn.dataset.open==="1") return;
-          btn.textContent=emo;
-          btn.dataset.open="1";
+          if(memLock || btn.dataset.open==="1") return;
+          btn.textContent=emo; btn.dataset.open="1";
           if(!memFirst){ memFirst=btn; return; }
           if(memFirst.dataset.emo===btn.dataset.emo){
-            memMatches++;
-            memFirst=null;
-            document.getElementById("memStatus").textContent = `✅ Matched ${memMatches}/8 pairs`;
-            if(memMatches===8){ document.getElementById("memStatus").textContent = "🏆 All pairs found!"; }
+            memMatches++; memFirst=null;
+            setText("memStatus", `✅ Matched ${memMatches}/8 pairs`);
+            if(memMatches===8) setText("memStatus", "🏆 All pairs found!");
           } else {
             memLock=true;
             setTimeout(()=>{
               btn.textContent="❓"; btn.dataset.open="0";
               memFirst.textContent="❓"; memFirst.dataset.open="0";
-              memFirst=null;
-              memLock=false;
+              memFirst=null; memLock=false;
             }, 650);
           }
         };
         grid.appendChild(btn);
       });
-      document.getElementById("memStatus").textContent="Find all pairs.";
+      setText("memStatus","Find all pairs.");
     }
-    // =========================
-    // Countdown + join enable (T-5min)
-    // Hide countdown if ended
-    // =========================
+
     let cdTimer=null;
-    function startCountdown(classDT, tz){
+    function startCountdown(dt){
       clearInterval(cdTimer);
-      const joinBtn=document.getElementById("btnJoin");
-      const cd=document.getElementById("countdown");
-      const label=document.getElementById("timerLabel");
       function tick(){
-        const now = new Date();
-        const diff = classDT.getTime() - now.getTime();
-        // ended if more than +60 min past start
-        if(now.getTime() > classDT.getTime() + 60*60*1000){
-          label.textContent = "Class status";
-          cd.textContent = "Ended";
-          joinBtn.disabled = true;
-          return;
-        }
-        if(diff <= 0){
-          label.textContent = "Class is live";
-          cd.textContent = "Now";
-          joinBtn.disabled = false;
-          return;
-        }
-        const totalSec = Math.floor(diff/1000);
-        const hh = Math.floor(totalSec/3600);
-        const mm = Math.floor((totalSec%3600)/60);
-        const ss = totalSec%60;
-        cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
-        // enable join at T-5 minutes
-        joinBtn.disabled = diff > 5*60*1000;
+        const diff=dt.getTime()-new Date().getTime();
+        if(diff<=0){ setText("countdown","Now"); document.getElementById("btnJoin").disabled=false; return; }
+        const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+        setText("countdown", `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`);
+        document.getElementById("btnJoin").disabled = diff > 300000;
       }
-      tick();
-      cdTimer=setInterval(tick, 1000);
+      tick(); cdTimer=setInterval(tick,1000);
     }
-    // =========================
-    // Terms modal
-    // =========================
-    const termsModal = document.getElementById("termsModal");
-    document.getElementById("openTerms").onclick = ()=> termsModal.classList.add("open");
-    document.getElementById("closeTerms").onclick = ()=> termsModal.classList.remove("open");
-    termsModal.addEventListener("click", (e)=>{ if(e.target===termsModal) termsModal.classList.remove("open"); });
-    // =========================
-    // Reschedule logic (Brightchamps-style drawer)
-    // Updates: preferred_date, preferred_time_slot, timezone (optional)
-    // and slot_id (optional) based on chosen slot
-    // =========================
-    const resDrawer = document.getElementById("resDrawer");
-    document.getElementById("btnReschedule").onclick = ()=> openRes();
-    document.getElementById("closeRes").onclick = ()=> closeRes();
-    document.getElementById("cancelRes").onclick = ()=> closeRes();
-    resDrawer.addEventListener("click", (e)=>{ if(e.target===resDrawer) closeRes(); });
-    function openRes(){
-      if(!BOOKING) return;
-      resDrawer.classList.add("open");
-      resDrawer.setAttribute("aria-hidden","false");
-      // default selection
-      buildResDates();
-      fetchResSlots();
-    }
-    function closeRes(){
-      resDrawer.classList.remove("open");
-      resDrawer.setAttribute("aria-hidden","true");
-      // reset active slot
-      selectedResSlot = null;
-      document.getElementById("confirmRes").disabled = true;
-    }
-    // timezone dropdown (like page 1 style, but simplified list)
-    const TZ_OPTIONS = [
+
+    const resDrawer=document.getElementById("resDrawer");
+    document.getElementById("btnReschedule").onclick=()=>{resDrawer.classList.add("open"); buildResDates(); fetchResSlots();};
+    document.getElementById("closeRes").onclick=()=>{resDrawer.classList.remove("open");};
+
+    const TZ_OPTIONS=[
       {label:"India (IST) — Asia/Kolkata", tz:"Asia/Kolkata"},
       {label:"UAE (GST) — Asia/Dubai", tz:"Asia/Dubai"},
       {label:"Saudi Arabia — Asia/Riyadh", tz:"Asia/Riyadh"},
       {label:"Singapore — Asia/Singapore", tz:"Asia/Singapore"},
-      {label:"Indonesia (Jakarta) — Asia/Jakarta", tz:"Asia/Jakarta"},
+      {label:"Indonesia — Asia/Jakarta", tz:"Asia/Jakarta"},
       {label:"Philippines — Asia/Manila", tz:"Asia/Manila"},
-      {label:"Vietnam — Asia/Ho_Chi_Minh", tz:"Asia/Ho_Chi_Minh"},
-      {label:"Thailand — Asia/Bangkok", tz:"Asia/Bangkok"},
       {label:"UK — Europe/London", tz:"Europe/London"},
-      {label:"Germany — Europe/Berlin", tz:"Europe/Berlin"},
-      {label:"USA (Eastern) — America/New_York", tz:"America/New_York"},
-      {label:"USA (Central) — America/Chicago", tz:"America/Chicago"},
+      {label:"USA (East) — America/New_York", tz:"America/New_York"},
       {label:"USA (Pacific) — America/Los_Angeles", tz:"America/Los_Angeles"},
-      {label:"Australia — Australia/Sydney", tz:"Australia/Sydney"},
-      {label:"New Zealand — Pacific/Auckland", tz:"Pacific/Auckland"},
     ];
-    let resTZ = "Asia/Kolkata";
-    let resDate = null; // YYYY-MM-DD (in IST date for DB fetch)
-    let selectedResSlot = null;
-    // {slot_id, display, localDate}
+    let resTZ="Asia/Kolkata", resDate=null, selectedResSlot=null;
+
     function initRescheduleUI(){
-      const sel = document.getElementById("tzSelect");
-      sel.innerHTML="";
+      const s=document.getElementById("tzSelect"); s.innerHTML="";
       let found = false;
       TZ_OPTIONS.forEach(o=>{
-        const op=document.createElement("option");
-        op.value=o.tz;
-        op.textContent=o.label;
-        if(o.tz === bookingTZ) found = true;
-        sel.appendChild(op);
+         const p=document.createElement("option"); p.value=o.tz; p.textContent=o.label; s.appendChild(p);
+         if(o.tz === bookingTZ) found = true;
       });
-      // FIX: If timezone is not in list, add it
       if(!found){
-        const op=document.createElement("option");
-        op.value=bookingTZ;
-        op.textContent=`Your Timezone (${bookingTZ})`;
-        sel.insertBefore(op, sel.firstChild);
+        const p=document.createElement("option"); p.value=bookingTZ; p.textContent=`Current (${bookingTZ})`; s.insertBefore(p, s.firstChild);
       }
-      resTZ = bookingTZ;
-      sel.value = resTZ;
-      sel.onchange = ()=>{
-        resTZ = safeTZ(sel.value);
-        fetchResSlots();
-      };
+      resTZ=bookingTZ; s.value=resTZ; 
+      s.onchange=()=>{resTZ=s.value; fetchResSlots();};
     }
+
     function buildResDates(){
-      const wrap=document.getElementById("resDates");
-      wrap.innerHTML="";
-      const now = new Date();
-      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
-      const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
-      const dates=[];
-      for(let i=0;i<7;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, "Asia/Kolkata");
-        dates.push(key);
+      const w=document.getElementById("resDates"); w.innerHTML="";
+      const now=new Date(); const todayKey=dateKeyInTZ(now,"Asia/Kolkata");
+      const [Y,M,D]=todayKey.split("-").map(x=>parseInt(x,10)); const base=new Date(Date.UTC(Y,M-1,D));
+      for(let i=0; i<7; i++){
+        const d=new Date(base.getTime()+i*86400000); const k=dateKeyInTZ(d,"Asia/Kolkata");
+        const b=document.createElement("button"); b.className="pill"; b.textContent=k;
+        b.onclick=()=>{resDate=k; fetchResSlots();}; w.appendChild(b);
+        if(i===0){ b.click(); }
       }
-      resDate = dates[0];
-      dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
-        const pill=document.createElement("button");
-        pill.className="pill"+(idx===0?" active":"");
-        pill.textContent = (idx===0?"Today • ":"")+shown;
-        pill.onclick=()=>{
-          [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-          pill.classList.add("active");
-          resDate = key;
-          fetchResSlots();
-        };
-        wrap.appendChild(pill);
-      });
     }
+
     async function fetchResSlots(){
-      const grid=document.getElementById("resSlots");
-      const empty=document.getElementById("resEmpty");
-      grid.innerHTML="";
-      empty.classList.add("hide");
-      selectedResSlot = null;
-      document.getElementById("confirmRes").disabled = true;
-      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
-      }
-      if(!resDate) buildResDates();
-      const { data, error } = await sb
-        .from("demo_slots_live_view")
-        .select("*")
-        .eq("region_key", bookingRegion)
-        .eq("course_id", BOOKING.course_id || courseId)
-        .eq("slot_date", resDate);
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return;
-      }
-      // convert to local tz, apply SEA hide <7am;
-      const slots=[];
+      const g=document.getElementById("resSlots"), e=document.getElementById("resEmpty"); g.innerHTML=""; e.classList.add("hide");
+      const { data } = await sb.from("demo_slots_live_view").select("*").eq("region_key", bookingRegion).eq("course_id", BOOKING.course_id).eq("slot_date", resDate);
+      if(!data || !data.length){ e.classList.remove("hide"); return; }
       const now = new Date();
       data.forEach(r=>{
-        const utc = new Date(r.slot_datetime_local);
-        if(utc < now) return; // Hide past slots
-        // convert by formatting in tz then re-parsing
-        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
-        let local = new Date(localStr);
-        // shift if local < 03:00
-        if(local.getHours() < 3){
-          local = new Date(local.getTime() + 24*60*60*1000);
-        }
-        // SEA hide < 7AM
-        if(bookingRegion === "SEA" && local.getHours() < 7) return;
-        const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
-        const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
-      });
-      // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      slots.sort((a,b)=>a.localInstant - b.localInstant);
-      if(slots.length===0){ empty.classList.remove("hide"); return; }
-      slots.forEach(s=>{
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.textContent = s.display;
-        if(s.isStar){
-          const tag=document.createElement("div");
-          tag.className="star";
-          tag.textContent="⭐ Star";
-          btn.appendChild(tag);
-        }
-        btn.onclick=()=>{
-          [...grid.querySelectorAll(".slot")].forEach(x=>x.classList.remove("active"));
-          btn.classList.add("active");
-          selectedResSlot = s;
-          document.getElementById("confirmRes").disabled = false;
-        };
-        grid.appendChild(btn);
+        const utc=new Date(r.slot_datetime_local); if(utc < now) return;
+        const disp=utc.toLocaleTimeString("en-US",{timeZone:resTZ,hour:"numeric",minute:"2-digit"});
+        const b=document.createElement("button"); b.className="slot"; b.textContent=disp;
+        if(r.is_star_teacher) b.innerHTML+=`<div class="star">⭐ Star</div>`;
+        b.onclick=()=>{selectedResSlot={slot_id:r.slot_id, display:disp}; document.getElementById("confirmRes").disabled=false;};
+        g.appendChild(b);
       });
     }
-    document.getElementById("confirmRes").onclick = async ()=>{
-      if(!BOOKING || !selectedResSlot) return;
-      // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
-      // Additionally store timezone if user changed it.
-      const upd = {
-        preferred_date: resDate,
-        preferred_time_slot: selectedResSlot.display,
-        slot_id: selectedResSlot.slot_id,
-        timezone: resTZ,
+
+    document.getElementById("confirmRes").onclick=async()=>{
+      await sb.from("demo_leads").update({
+        preferred_date:resDate, preferred_time_slot:selectedResSlot.display, 
+        slot_id:selectedResSlot.slot_id, timezone:resTZ,
         updated_at: new Date().toISOString()
-      };
-      const { error } = await sb
-        .from("demo_leads")
-        .update(upd)
-        .eq("id", iduuid);
-      if(error){
-        console.error(error);
-        toast("Reschedule failed. Try again.");
-        return;
-      }
-      toast("✅ Rescheduled!");
-      closeRes();
-      // reload booking fresh
-      document.getElementById("stateLoading").classList.remove("hide"); // kept for visual feedback on refresh
+      }).eq("id",iduuid);
+      toast("✅ Rescheduled!"); 
+      document.getElementById("closeRes").click();
+      const loading = document.getElementById("stateLoading");
+      if(loading) loading.classList.remove("hide");
       const fresh = await loadBooking();
-      document.getElementById("stateLoading").classList.add("hide");
+      if(loading) loading.classList.add("hide");
       if(fresh) renderBooking(fresh);
-    };
-    // =========================
-    // Boot
-    // =========================
-    (async function init(){
-      const loading=document.getElementById("stateLoading");
-      const err=document.getElementById("stateError");
-      const section2=document.getElementById("section2");
-      if(!iduuid){
-        // loading.classList.add("hide"); // REMOVED to keep UI visible
-        err.classList.remove("hide");
-        err.textContent = "Missing iduuid in URL. Example: ?iduuid=<demo_leads.id>";
-        return;
-      }
-      const b = await loadBooking();
-      // loading.classList.add("hide"); // REMOVED - element no longer exists in same form
-      if(!b){
-        err.classList.remove("hide");
-        return;
-      }
-      err.classList.add("hide");
-      // section2.classList.remove("hide"); // REMOVED - UI is visible by default
-      renderBooking(b);
+    }
+
+    (async()=>{ 
+        const b=await loadBooking(); 
+        if(b){ renderBooking(b); }
+        else{ const el = document.getElementById("stateError"); if(el) el.classList.remove("hide"); } 
     })();
   </script>
 </body>

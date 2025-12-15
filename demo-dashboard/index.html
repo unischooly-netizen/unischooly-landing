@@ -1858,7 +1858,7 @@
       const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
       const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
       const dates=[];
-      for(let i=0;i<3;i++){
+      for(let i=0;i<7;i++){
         const d = new Date(base.getTime() + i*24*60*60*1000);
         const key = dateKeyInTZ(d, "Asia/Kolkata");
         dates.push(key);

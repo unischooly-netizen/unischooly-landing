@@ -1762,11 +1762,13 @@
       const cd=document.getElementById("countdown");
       const label=document.getElementById("timerLabel");
       function tick(){
+        if (!cdTimer) return;
         const now = new Date();
         const diff = classDT.getTime() - now.getTime();
         // ended if more than +60 min past start
         if (now.getTime() > classDT.getTime() + 60*60*1000) {
-  clearInterval(cdTimer);   // ⬅️ THIS IS THE KEY FIX
+  clearInterval(cdTimer);
+  cdTimer = null; // 🔒 LOCK timer forever
 
   label.textContent = "Class status";
   cd.textContent = "Ended";
@@ -1775,22 +1777,16 @@
   joinBtn.textContent = "🎯 Pick a New Time Slot";
   joinBtn.onclick = () => openRes();
 
-  // Switch to missed UI ONCE
   setMissedUI(bookingCourseName);
 
   return;
 }
 
-  // DO NOT return — allow rest of tick to run once
-}
-
         if (diff <= 0) {
   label.textContent = "Class is live";
   cd.textContent = "Now";
-
   joinBtn.disabled = false;
   joinBtn.textContent = "🎥 Join Class";
-
   return;
 }
 

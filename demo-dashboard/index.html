@@ -1803,7 +1803,8 @@
         if(diff > 0){
   joinBtn.textContent = "🎥 Join Class";
 }
-        joinBtn.disabled = diff > 5*60*1000;
+        if (diff > 0) {
+  joinBtn.disabled = diff > 5*60*1000;
       }
       tick();
       cdTimer=setInterval(tick, 1000);

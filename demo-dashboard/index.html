@@ -1341,25 +1341,6 @@
       const el = document.getElementById(id);
       if(el) el.textContent = value ?? "—";
     }
-    function setMissedUI(courseName){
-  const titleEl = document.getElementById("welcomeTitle");
-  const subEl   = document.getElementById("welcomeSub");
-  const discEl  = document.querySelector(".disclaimer");
-
-  if(!titleEl || !subEl) return;
-
-  titleEl.innerHTML =
-    `You <span class="gradText">missed</span> your
-     <span class="gradText">${courseName}</span> Trial Class ☹️`;
-
-  subEl.textContent =
-    "We understand things come up - no worries. Pick a new slot and we’ll see you soon!";
-
-  if(discEl){
-    discEl.textContent =
-      "Don’t worry! You have one final opportunity to reschedule and enjoy the class.";
-  }
-}
 
     function renderBooking(b){
       BOOKING = b;
@@ -1415,7 +1396,12 @@
       // Welcome (first-name only + gradient)
       const rawChild = (b.child_name || "").trim();
       const firstName = rawChild ? rawChild.split(/\s+/)[0] : "Student";
-      setNormalUI(firstName, bookingCourseName);
+      const welcomeEl = document.getElementById("welcomeTitle");
+      if (welcomeEl){
+        welcomeEl.innerHTML =
+          `Welcome to <span class="grad-name">${firstName.replace(/</g,"&lt;").replace(/>/g,"&gt;")}’s</span> ${bookingCourseName} Trial Class`;
+      }
+      setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
       // facts
       initFacts(b.course_id || courseId);
       // puzzles & games
@@ -1762,33 +1748,22 @@
       const cd=document.getElementById("countdown");
       const label=document.getElementById("timerLabel");
       function tick(){
-        if (!cdTimer) return;
         const now = new Date();
         const diff = classDT.getTime() - now.getTime();
         // ended if more than +60 min past start
-        if (now.getTime() > classDT.getTime() + 60*60*1000) {
-  clearInterval(cdTimer);
-  cdTimer = null; // 🔒 LOCK timer forever
+        if(now.getTime() > classDT.getTime() + 60*60*1000){
+          label.textContent = "Class status";
+          cd.textContent = "Ended";
+          joinBtn.disabled = true;
+          return;
+        }
 
-  label.textContent = "Class status";
-  cd.textContent = "Ended";
-
-  joinBtn.disabled = false;
-  joinBtn.textContent = "🎯 Pick a New Time Slot";
-  joinBtn.onclick = () => openRes();
-
-  setMissedUI(bookingCourseName);
-
-  return;
-}
-
-        if (diff <= 0) {
-  label.textContent = "Class is live";
-  cd.textContent = "Now";
-  joinBtn.disabled = false;
-  joinBtn.textContent = "🎥 Join Class";
-  return;
-}
+        if(diff <= 0){
+          label.textContent = "Class is live";
+          cd.textContent = "Now";
+          joinBtn.disabled = false;
+          return;
+        }
 
         const totalSec = Math.floor(diff/1000);
         const hh = Math.floor(totalSec/3600);
@@ -1796,11 +1771,7 @@
         const ss = totalSec%60;
         cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
         // enable join at T-5 minutes
-        if(diff > 0){
-  joinBtn.textContent = "🎥 Join Class";
-}
-        if (diff > 0) {
-  joinBtn.disabled = diff > 5*60*1000;
+        joinBtn.disabled = diff > 5*60*1000;
       }
       tick();
       cdTimer=setInterval(tick, 1000);

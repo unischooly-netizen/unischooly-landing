@@ -1784,11 +1784,14 @@
   // DO NOT return — allow rest of tick to run once
 }
 
-        if(diff <= 0){
+        if (diff <= 0) {
   label.textContent = "Class is live";
   cd.textContent = "Now";
+
   joinBtn.disabled = false;
   joinBtn.textContent = "🎥 Join Class";
+
+  return;
 }
 
         const totalSec = Math.floor(diff/1000);

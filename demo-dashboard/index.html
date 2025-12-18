@@ -1769,15 +1769,18 @@
   label.textContent = "Class status";
   cd.textContent = "Ended";
 
-  // Switch UI to missed-class state
+  // Missed state UI
   setMissedUI(bookingCourseName);
 
-  // Change CTA to reschedule
+  // Button becomes reschedule
   joinBtn.disabled = false;
   joinBtn.textContent = "🎯 Pick a New Time Slot";
-  joinBtn.onclick = () => openRes();
+  joinBtn.onclick = ()=> {
+    openRes();
+    initRescheduleUI(); // 🔥 IMPORTANT
+  };
 
-  return;
+  // DO NOT return — allow rest of tick to run once
 }
 
         if(diff <= 0){
@@ -1785,7 +1788,6 @@
   cd.textContent = "Now";
   joinBtn.disabled = false;
   joinBtn.textContent = "🎥 Join Class";
-  return;
 }
 
         const totalSec = Math.floor(diff/1000);
@@ -1794,7 +1796,9 @@
         const ss = totalSec%60;
         cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
         // enable join at T-5 minutes
-        joinBtn.textContent = "🎥 Join Class";
+        if(diff > 0){
+  joinBtn.textContent = "🎥 Join Class";
+}
         joinBtn.disabled = diff > 5*60*1000;
       }
       tick();

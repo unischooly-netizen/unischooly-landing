@@ -1765,20 +1765,21 @@
         const now = new Date();
         const diff = classDT.getTime() - now.getTime();
         // ended if more than +60 min past start
-        if(now.getTime() > classDT.getTime() + 60*60*1000){
+        if (now.getTime() > classDT.getTime() + 60*60*1000) {
+  clearInterval(cdTimer);   // ⬅️ THIS IS THE KEY FIX
+
   label.textContent = "Class status";
   cd.textContent = "Ended";
 
-  // Missed state UI
-  setMissedUI(bookingCourseName);
-
-  // Button becomes reschedule
   joinBtn.disabled = false;
   joinBtn.textContent = "🎯 Pick a New Time Slot";
-  joinBtn.onclick = ()=> {
-    openRes();
-    initRescheduleUI(); // 🔥 IMPORTANT
-  };
+  joinBtn.onclick = () => openRes();
+
+  // Switch to missed UI ONCE
+  setMissedUI(bookingCourseName);
+
+  return;
+}
 
   // DO NOT return — allow rest of tick to run once
 }

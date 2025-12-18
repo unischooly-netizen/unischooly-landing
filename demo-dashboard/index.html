@@ -1342,7 +1342,64 @@
       if(el) el.textContent = value ?? "—";
     }
 
-    function renderBooking(b){
+    
+  // ===== Missed/Normal UI helpers (dashboard) =====
+  function escHtml(s){
+    return (s ?? "").toString()
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;");
+  }
+
+  function setMissedUI(courseName){
+    const titleEl = document.getElementById("welcomeTitle");
+    const subEl   = document.getElementById("welcomeSub");
+    const discEl  = document.querySelector(".disclaimer");
+    const lockEl  = document.querySelector(".locked");
+
+    if(titleEl){
+      titleEl.innerHTML =
+        `You <span class="gradText">missed</span> your <span class="gradText">${escHtml(courseName)}</span> Trial Class ☹️`;
+    }
+    if(subEl){
+      subEl.textContent = "We understand — things come up sometimes. Let’s help you get back on track 🚀";
+    }
+    if(discEl){
+      discEl.textContent = "Don’t worry! You still have one final opportunity to reschedule and enjoy this class.";
+    }
+    // Top-right pill (reuse locked styling)
+    if(lockEl){
+      lockEl.classList.add("missed");
+      lockEl.innerHTML = `<div class="tick">✕</div><span>Class time is over</span>`;
+    }
+  }
+
+  function setNormalUI(firstName, courseName){
+    const titleEl = document.getElementById("welcomeTitle");
+    const subEl   = document.getElementById("welcomeSub");
+    const discEl  = document.querySelector(".disclaimer");
+    const lockEl  = document.querySelector(".locked");
+
+    if(titleEl){
+      titleEl.innerHTML =
+        `Welcome to <span class="gradText">${escHtml(firstName)}’s</span> ${escHtml(courseName)} Trial Class`;
+    }
+    if(subEl){
+      subEl.textContent =
+        "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.";
+    }
+    if(discEl){
+      discEl.innerHTML =
+        `By clicking join class, you are confirming that you have read, understood and agree to <span class="linklike" id="openTerms">Terms & Conditions</span>.`;
+      const t = document.getElementById("openTerms");
+      if(t) t.onclick = ()=> document.getElementById("termsModal").classList.add("open");
+    }
+    if(lockEl){
+      lockEl.classList.remove("missed");
+      lockEl.innerHTML = `<div class="tick">✓</div><span>Your trial class is locked in!</span>`;
+    }
+  }
+function renderBooking(b){
       BOOKING = b;
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
@@ -1401,8 +1458,8 @@
         welcomeEl.innerHTML =
           `Welcome to <span class="grad-name">${firstName.replace(/</g,"&lt;").replace(/>/g,"&gt;")}’s</span> ${bookingCourseName} Trial Class`;
       }
-      setText("welcomeSub", "You’re all set. Explore fun puzzles & mini-games while you wait — and sync the class to your calendar.");
-      // facts
+      setNormalUI(firstName, bookingCourseName);
+// facts
       initFacts(b.course_id || courseId);
       // puzzles & games
       initPuzzle(b.course_id || courseId);
@@ -1744,24 +1801,64 @@
     let cdTimer=null;
     function startCountdown(classDT, tz){
       clearInterval(cdTimer);
-      const joinBtn=document.getElementById("btnJoin");
-      const cd=document.getElementById("countdown");
-      const label=document.getElementById("timerLabel");
+
+      const joinBtn = document.getElementById("btnJoin");
+      const cd      = document.getElementById("countdown");
+      const label   = document.getElementById("timerLabel");
+
+      // preserve original join behavior (set in renderBooking)
+      const originalJoinText = joinBtn ? joinBtn.textContent : "";
+      const originalJoinOnclick = joinBtn ? joinBtn.onclick : null;
+
+      let missedApplied = false;
+
       function tick(){
         const now = new Date();
         const diff = classDT.getTime() - now.getTime();
-        // ended if more than +60 min past start
+
+        // Class is over if more than +60 min past start
         if(now.getTime() > classDT.getTime() + 60*60*1000){
-          label.textContent = "Class status";
-          cd.textContent = "Ended";
-          joinBtn.disabled = true;
+          clearInterval(cdTimer);
+
+          if(label) label.textContent = "Class status";
+          if(cd) cd.textContent = "Class time is over";
+
+          // Switch to missed UI once (and keep games/facts visible)
+          if(!missedApplied){
+            missedApplied = true;
+            setMissedUI(bookingCourseName);
+          }
+
+          // Replace Join with reschedule CTA
+          if(joinBtn){
+            joinBtn.disabled = false;
+            joinBtn.textContent = "⏰ Pick a New Time Slot";
+            joinBtn.onclick = ()=> openRes();
+          }
           return;
         }
 
+        // restore normal locked pill if not missed (safety)
+        if(missedApplied){
+          missedApplied = false;
+          // restore welcome copy to normal in case user rescheduled
+          setNormalUI((BOOKING?.child_name || "").trim().split(/\s+/)[0] || "Student", bookingCourseName);
+          if(joinBtn){
+            joinBtn.textContent = originalJoinText || "🎥 Join Class";
+            joinBtn.onclick = originalJoinOnclick;
+          }
+        }
+
+        // Class is live (started, but not over)
         if(diff <= 0){
-          label.textContent = "Class is live";
-          cd.textContent = "Now";
-          joinBtn.disabled = false;
+          if(label) label.textContent = "Class is live";
+          if(cd) cd.textContent = "Now";
+          if(joinBtn){
+            joinBtn.disabled = false;
+            // keep original click (meeting link)
+            joinBtn.textContent = originalJoinText || "🎥 Join Class";
+            joinBtn.onclick = originalJoinOnclick;
+          }
           return;
         }
 
@@ -1769,12 +1866,21 @@
         const hh = Math.floor(totalSec/3600);
         const mm = Math.floor((totalSec%3600)/60);
         const ss = totalSec%60;
-        cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+
+        if(cd){
+          cd.textContent = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+        }
+
         // enable join at T-5 minutes
-        joinBtn.disabled = diff > 5*60*1000;
+        if(joinBtn){
+          joinBtn.textContent = originalJoinText || "🎥 Join Class";
+          joinBtn.onclick = originalJoinOnclick;
+          joinBtn.disabled = diff > 5*60*1000;
+        }
       }
+
       tick();
-      cdTimer=setInterval(tick, 1000);
+      cdTimer = setInterval(tick, 1000);
     }
 
     // =========================

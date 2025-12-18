@@ -89,7 +89,8 @@
         box-shadow:
         0 0 6px rgba(155, 91, 255, 0.6),
         0 0 14px rgba(155, 91, 255, 0.35);
-        animation: pulse 2s infinite;
+        animation: pulse 2s infinite ease-in-out both !important;
+        will-change: box-shadow, transform;
     }
     @keyframes pulse {
   0% {

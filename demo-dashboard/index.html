@@ -67,33 +67,39 @@
     }
 
     /* Animated Tick & Gradient for "Locked In" */
-    .locked{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 16px;
-      border-radius:var(--pill);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color:white;
-      font-weight:800;
-      letter-spacing:.2px;
-      font-size:13px;
-      white-space:nowrap;
-    }
-    .locked-icon {
-        width: 20px; height: 20px;
-        border-radius: 50%;
-        background: var(--grad);
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 0 10px rgba(155, 91, 255, 0.4);
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0.7); }
-        70% { box-shadow: 0 0 0 8px rgba(155, 91, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0); }
-    }
+    /* === Locked Tick Animation Restore === */
+.locked{
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--grad);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 rgba(162, 90, 255, 0.6);
+  animation: lockedPulse 2.2s infinite;
+}
+
+.locked-icon::after{
+  content: "✓";
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1;
+}
+
+@keyframes lockedPulse{
+  0%{
+    box-shadow: 0 0 0 0 rgba(162, 90, 255, 0.6);
+  }
+  70%{
+    box-shadow: 0 0 0 10px rgba(162, 90, 255, 0);
+  }
+  100%{
+    box-shadow: 0 0 0 0 rgba(162, 90, 255, 0);
+  }
+}
+
 
     /* Section 2 - Two column */
     .grid{

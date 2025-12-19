@@ -56,14 +56,6 @@
       box-shadow:0 10px 28px rgba(0,0,0,.35);
       backdrop-filter: blur(8px);
     }
-    /* 🔑 Allow glow to render outside header */
-.topbar{
-  overflow: visible !important;
-}
-
-.page{
-  overflow: visible !important;
-}
     .brand{
       display:flex; align-items:center; gap:10px; min-width:0;
     }
@@ -74,49 +66,34 @@
       filter: drop-shadow(0 6px 18px rgba(0,0,0,.55));
     }
 
-   .locked-glow{
-  position: relative;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--grad);
-
-  animation: glowPulse 2s ease-in-out infinite;
-}
-
-.locked-icon{
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--grad);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-}
-
-/* PURE FILTER GLOW — OUTSIDE backdrop-filter */
-@keyframes glowPulse{
-  0%{
-    filter:
-      drop-shadow(0 0 6px rgba(155,91,255,.6))
-      drop-shadow(0 0 14px rgba(155,91,255,.35));
-    transform: scale(1);
-  }
-  60%{
-    filter:
-      drop-shadow(0 0 14px rgba(155,91,255,.9))
-      drop-shadow(0 0 30px rgba(155,91,255,.6));
-    transform: scale(1.15);
-  }
-  100%{
-    filter:
-      drop-shadow(0 0 6px rgba(155,91,255,.6))
-      drop-shadow(0 0 14px rgba(155,91,255,.35));
-    transform: scale(1);
-  }
-}
+    /* Animated Tick & Gradient for "Locked In" */
+    .locked{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 16px;
+      border-radius:var(--pill);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color:white;
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .locked-icon {
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        background: var(--grad);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 10px rgba(155, 91, 255, 0.4);
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(155, 91, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(155, 91, 255, 0); }
+    }
 
     /* Section 2 - Two column */
     .grid{
@@ -830,14 +807,11 @@
         <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
       </div>
       <div class="locked">
-        <div class="locked-glow">
-  <div class="locked-icon">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-      stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
-  </div>
-</div>
+        <div class="locked-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
         Your trial class is locked in!
       </div>
     </div>

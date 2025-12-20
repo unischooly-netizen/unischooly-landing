@@ -2,36 +2,26 @@ import crypto from "crypto";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).send("Method Not Allowed");
+    return res.status(200).send("OK");
   }
 
-  const ZOOM_WEBHOOK_SECRET = process.env.ZOOM_WEBHOOK_SECRET;
+  const event = req.body?.event;
 
-  // 1️⃣ Handle Zoom URL validation (first time only)
-  if (req.body?.event === "endpoint.url_validation") {
-    const hash = crypto
-      .createHmac("sha256", ZOOM_WEBHOOK_SECRET)
-      .update(req.body.payload.plainToken)
+  // 🔐 Zoom URL validation
+  if (event === "endpoint.url_validation") {
+    const plainToken = req.body.payload.plainToken;
+
+    const encryptedToken = crypto
+      .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET)
+      .update(plainToken)
       .digest("hex");
 
-    return res.json({
-      plainToken: req.body.payload.plainToken,
-      encryptedToken: hash,
+    return res.status(200).json({
+      plainToken,
+      encryptedToken,
     });
   }
 
-  // 2️⃣ Handle real events
-  const event = req.body.event;
-  const payload = req.body.payload;
-
-  console.log("Zoom Event Received:", event);
-
-  if (event === "meeting.ended") {
-    const meetingId = payload.object.id;
-
-    // TODO: Update Supabase here (Step 13)
-    console.log("Meeting ended:", meetingId);
-  }
-
-  res.status(200).json({ received: true });
+  // ✅ Future events (meeting ended, started etc.)
+  return res.status(200).json({ status: "received" });
 }

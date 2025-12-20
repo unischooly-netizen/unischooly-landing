@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Unischooly | Demo Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="https://res.cloudinary.com/dpapyknn4/image/upload/v1766210020/favicon_lgxj0r.svg">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -796,6 +797,80 @@
       line-height:1.2;
       white-space:nowrap;
     }
+    /* ======================
+   DEMO DASHBOARD FOOTER
+====================== */
+
+.demo-footer{
+  margin-top:40px;
+  border-top:1px solid rgba(255,255,255,.12);
+  padding-top:28px;
+}
+
+.demo-footer .footer-mission{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 12px;
+}
+
+.demo-footer .footer-mission-logo{
+  width:180px;
+  margin-bottom:12px;
+}
+
+.demo-footer .footer-mission-logo img{
+  width:100%;
+  height:auto;
+}
+
+.demo-footer .footer-mission-text{
+  font-size:14px;
+  line-height:1.6;
+  color:rgba(255,255,255,.88);
+}
+
+.demo-footer .footer-offices{
+  margin-top:18px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  font-size:14px;
+  color:white;
+}
+
+.demo-footer .footer-office-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.demo-footer-bottom{
+  margin-top:26px;
+  padding:12px 0;
+  background:#21333D;
+}
+
+.demo-footer-bottom-inner{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+.demo-footer-bottom a{
+  color:white;
+  font-weight:600;
+  text-decoration:none;
+}
+
+.demo-footer-bottom a:hover{
+  text-decoration:underline;
+}
 
   </style>
 </head>
@@ -2123,5 +2198,37 @@ function renderBooking(b){
       renderBooking(b);
     })();
   </script>
+  <!-- DEMO DASHBOARD FOOTER -->
+<footer class="demo-footer">
+
+  <div class="footer-mission">
+    <div class="footer-mission-logo">
+      <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly">
+    </div>
+
+    <p class="footer-mission-text">
+      Unischooly is on a mission to make world-class education accessible to every child, everywhere.
+      Through live online classes in coding, mathematics, AI, chess and more, we help students build
+      creativity, logical thinking and problem-solving skills that prepare them for the future.
+      Our expert instructors and structured, project-based curriculum turn curious learners into
+      confident creators, innovators and leaders of tomorrow.
+    </p>
+
+    <div class="footer-offices">
+      <strong>Our offices are located in:</strong>
+      <div class="footer-office-item">🇸🇬 Singapore</div>
+      <div class="footer-office-item">🇺🇸 USA</div>
+      <div class="footer-office-item">🇮🇳 India</div>
+    </div>
+  </div>
+
+  <div class="demo-footer-bottom">
+    <div class="demo-footer-bottom-inner">
+      <div>Email us at <a href="mailto:support@unischooly.com">support@unischooly.com</a></div>
+      <div>© UNISCHOOLY 2025. All Rights Reserved</div>
+    </div>
+  </div>
+
+</footer>
 </body>
 </html>

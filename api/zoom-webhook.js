@@ -11,12 +11,13 @@ export default async function handler(req, res) {
     return res.status(200).send("OK");
   }
 
-  const { event, payload } = req.body || {};
+  const eventType = req.body?.event;
+  const payload = req.body?.payload;
+  const meeting = payload?.object;
 
-  // ✅ Zoom URL validation (KEEP THIS)
-  if (event === "endpoint.url_validation") {
+  // 1️⃣ Zoom URL validation
+  if (eventType === "endpoint.url_validation") {
     const plainToken = payload.plainToken;
-
     const encryptedToken = crypto
       .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET)
       .update(plainToken)
@@ -28,33 +29,30 @@ export default async function handler(req, res) {
     });
   }
 
-  // ✅ STORE ALL EVENTS IN SUPABASE
-  try {
-    const meetingId =
-      payload?.object?.id ||
-      payload?.object?.meeting_id ||
-      null;
+  // 2️⃣ Extract Zoom meeting ID
+  const zoomMeetingId = meeting?.id?.toString() || null;
+  const hostEmail = meeting?.host_email || null;
 
-    const accountEmail =
-      payload?.account_id || null;
+  // 3️⃣ Save raw webhook (already working, but now explicit)
+  await supabase.from("zoom_webhook_events").insert({
+    event_type: eventType,
+    zoom_meeting_id: zoomMeetingId,
+    zoom_account_email: hostEmail,
+    payload: req.body,
+  });
 
-    const { error } = await supabase
-      .from("zoom_webhook_events")
-      .insert({
-        event_type: event,
-        zoom_meeting_id: meetingId,
-        zoom_account_email: accountEmail,
-        payload,
-      });
+  // 4️⃣ Try linking to demo_zoom_meetings
+  if (zoomMeetingId) {
+    const { data: demoMeeting } = await supabase
+      .from("demo_zoom_meetings")
+      .select("id, demo_lead_id, teacher_id")
+      .eq("zoom_meeting_id", zoomMeetingId)
+      .maybeSingle();
 
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return res.status(500).json({ error: "DB insert failed" });
+    if (demoMeeting) {
+      console.log("Linked Zoom event to demo:", demoMeeting.id);
     }
-
-    return res.status(200).json({ status: "stored" });
-  } catch (err) {
-    console.error("Webhook error:", err);
-    return res.status(500).json({ error: "Webhook failed" });
   }
+
+  return res.status(200).json({ status: "received" });
 }

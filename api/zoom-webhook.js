@@ -11,38 +11,40 @@ export default async function handler(req, res) {
     return res.status(200).send("OK");
   }
 
-  const eventType = req.body?.event;
-  const payload = req.body?.payload;
+  const { event, payload } = req.body;
 
-  // ✅ 1) Zoom URL validation (keeps your "Validated" working)
-  if (eventType === "endpoint.url_validation") {
-    const plainToken = payload?.plainToken;
+  // 🔐 Zoom URL validation
+  if (event === "endpoint.url_validation") {
+    const plainToken = payload.plainToken;
 
     const encryptedToken = crypto
       .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET)
       .update(plainToken)
       .digest("hex");
 
-    return res.status(200).json({ plainToken, encryptedToken });
+    return res.status(200).json({
+      plainToken,
+      encryptedToken,
+    });
   }
 
-  // ✅ 2) Extract meeting id + host email from normal events
-  const meetingObj = payload?.object;
-  const zoomMeetingId = meetingObj?.id ? String(meetingObj.id) : null;
-  const hostEmail = meetingObj?.host_email || null;
+  // 📼 Recording completed event
+  if (event === "recording.completed") {
+    const meetingId = payload.object.id;
+    const hostEmail = payload.object.host_email;
+    const recordings = payload.object.recording_files || [];
 
-  // ✅ 3) Save raw event into Supabase table: zoom_webhook_events
-  const { error } = await supabase.from("zoom_webhook_events").insert({
-    event_type: eventType || "unknown",
-    zoom_meeting_id: zoomMeetingId,
-    zoom_account_email: hostEmail,
-    payload: req.body,
-  });
-
-  if (error) {
-    console.error("Supabase insert error:", error);
-    // Still respond 200 so Zoom doesn't retry forever
-    return res.status(200).json({ status: "received_with_db_error" });
+    for (const file of recordings) {
+      await supabase.from("zoom_meeting_events").insert({
+        meeting_id: meetingId,
+        event_type: "recording.completed",
+        participant_name: file.recording_type,
+        participant_email: hostEmail,
+        join_time: file.recording_start,
+        leave_time: file.recording_end,
+        payload: file,
+      });
+    }
   }
 
   return res.status(200).json({ status: "received" });

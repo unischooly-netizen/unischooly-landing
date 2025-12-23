@@ -11,10 +11,9 @@ export default async function handler(req, res) {
     return res.status(200).send("OK");
   }
 
-  const event = req.body?.event;
-  const payload = req.body?.payload;
+  const { event, payload } = req.body || {};
 
-  // 🔐 Zoom URL validation (DO NOT TOUCH)
+  // ✅ Zoom URL validation (KEEP THIS)
   if (event === "endpoint.url_validation") {
     const plainToken = payload.plainToken;
 
@@ -29,41 +28,33 @@ export default async function handler(req, res) {
     });
   }
 
+  // ✅ STORE ALL EVENTS IN SUPABASE
   try {
-    // 🧠 Extract useful data safely
-    const meetingId = payload?.object?.id?.toString() || null;
-    const meetingUUID = payload?.object?.uuid || null;
+    const meetingId =
+      payload?.object?.id ||
+      payload?.object?.meeting_id ||
+      null;
 
-    const participant =
-      payload?.object?.participant || payload?.object?.participants?.[0] || {};
+    const accountEmail =
+      payload?.account_id || null;
 
-    const joinTime =
-      payload?.object?.join_time || payload?.object?.start_time || null;
-
-    const leaveTime =
-      payload?.object?.leave_time || payload?.object?.end_time || null;
-
-    const participantRole =
-      participant?.role || payload?.object?.host_id ? "host" : "attendee";
-
-    // 💾 Save event in Supabase
-    await supabase.from("zoom_meeting_events").insert([
-      {
-        meeting_id: meetingId,
-        meeting_uuid: meetingUUID,
+    const { error } = await supabase
+      .from("zoom_webhook_events")
+      .insert({
         event_type: event,
-        participant_name: participant?.user_name || null,
-        participant_email: participant?.email || null,
-        participant_role: participantRole,
-        join_time: joinTime,
-        leave_time: leaveTime,
-        payload: req.body, // store full raw event
-      },
-    ]);
-  } catch (error) {
-    console.error("Zoom webhook error:", error);
-    // IMPORTANT: still return 200 or Zoom will retry endlessly
-  }
+        zoom_meeting_id: meetingId,
+        zoom_account_email: accountEmail,
+        payload,
+      });
 
-  return res.status(200).json({ status: "received" });
+    if (error) {
+      console.error("Supabase insert error:", error);
+      return res.status(500).json({ error: "DB insert failed" });
+    }
+
+    return res.status(200).json({ status: "stored" });
+  } catch (err) {
+    console.error("Webhook error:", err);
+    return res.status(500).json({ error: "Webhook failed" });
+  }
 }

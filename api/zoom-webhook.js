@@ -11,50 +11,39 @@ export default async function handler(req, res) {
     return res.status(200).send("OK");
   }
 
-  const { event, payload } = req.body || {};
+  const eventType = req.body?.event;
+  const payload = req.body?.payload;
 
-  // ✅ Zoom URL validation (KEEP THIS)
-  if (event === "endpoint.url_validation") {
-    const plainToken = payload.plainToken;
+  // ✅ 1) Zoom URL validation (keeps your "Validated" working)
+  if (eventType === "endpoint.url_validation") {
+    const plainToken = payload?.plainToken;
 
     const encryptedToken = crypto
       .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET)
       .update(plainToken)
       .digest("hex");
 
-    return res.status(200).json({
-      plainToken,
-      encryptedToken,
-    });
+    return res.status(200).json({ plainToken, encryptedToken });
   }
 
-  // ✅ STORE ALL EVENTS IN SUPABASE
-  try {
-    const meetingId =
-      payload?.object?.id ||
-      payload?.object?.meeting_id ||
-      null;
+  // ✅ 2) Extract meeting id + host email from normal events
+  const meetingObj = payload?.object;
+  const zoomMeetingId = meetingObj?.id ? String(meetingObj.id) : null;
+  const hostEmail = meetingObj?.host_email || null;
 
-    const accountEmail =
-      payload?.account_id || null;
+  // ✅ 3) Save raw event into Supabase table: zoom_webhook_events
+  const { error } = await supabase.from("zoom_webhook_events").insert({
+    event_type: eventType || "unknown",
+    zoom_meeting_id: zoomMeetingId,
+    zoom_account_email: hostEmail,
+    payload: req.body,
+  });
 
-    const { error } = await supabase
-      .from("zoom_webhook_events")
-      .insert({
-        event_type: event,
-        zoom_meeting_id: meetingId,
-        zoom_account_email: accountEmail,
-        payload,
-      });
-
-    if (error) {
-      console.error("Supabase insert error:", error);
-      return res.status(500).json({ error: "DB insert failed" });
-    }
-
-    return res.status(200).json({ status: "stored" });
-  } catch (err) {
-    console.error("Webhook error:", err);
-    return res.status(500).json({ error: "Webhook failed" });
+  if (error) {
+    console.error("Supabase insert error:", error);
+    // Still respond 200 so Zoom doesn't retry forever
+    return res.status(200).json({ status: "received_with_db_error" });
   }
+
+  return res.status(200).json({ status: "received" });
 }

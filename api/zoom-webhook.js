@@ -6,52 +6,36 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-/* ================================
-   HELPER: Resolve Internal Role
-================================ */
-async function resolveInternalRole(email) {
-  if (!email) return "student";
+/**
+ * Resolve participant role using:
+ * 1. Email match (if available)
+ * 2. Display name match (fallback)
+ * Default → student
+ */
+async function resolveInternalRole(email, displayName) {
+  if (email) {
+    const { data } = await supabase
+      .from("zoom_internal_users")
+      .select("role")
+      .eq("email", email.toLowerCase())
+      .maybeSingle();
 
-  const { data } = await supabase
-    .from("zoom_internal_users")
-    .select("role")
-    .eq("email", email.toLowerCase())
-    .maybeSingle();
-
-  return data?.role || "student";
-}
-
-/* ================================
-   HELPER: Get Live Meeting Roles
-================================ */
-async function getMeetingLiveRoles(meetingId) {
-  const { data } = await supabase
-    .from("zoom_meeting_events")
-    .select("participant_role,event_type,created_at")
-    .eq("meeting_id", String(meetingId))
-    .order("created_at", { ascending: true });
-
-  const active = new Set();
-
-  for (const row of data || []) {
-    if (row.event_type === "meeting.participant_joined") {
-      active.add(row.participant_role);
-    }
-    if (row.event_type === "meeting.participant_left") {
-      active.delete(row.participant_role);
-    }
+    if (data?.role) return data.role;
   }
 
-  return {
-    teacher: active.has("teacher"),
-    sales: active.has("sales"),
-    student: active.has("student"),
-  };
+  if (displayName) {
+    const { data } = await supabase
+      .from("zoom_internal_users")
+      .select("role")
+      .ilike("display_name", displayName)
+      .maybeSingle();
+
+    if (data?.role) return data.role;
+  }
+
+  return "student";
 }
 
-/* ================================
-   MAIN HANDLER
-================================ */
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(200).send("OK");
@@ -59,9 +43,11 @@ export default async function handler(req, res) {
 
   const { event, payload } = req.body;
 
-  /* ================================
-     ZOOM URL VALIDATION
-  ================================ */
+  console.log("ZOOM EVENT:", event);
+
+  // ======================================================
+  // STEP 1: Zoom Webhook URL Validation
+  // ======================================================
   if (event === "endpoint.url_validation") {
     const plainToken = payload.plainToken;
 
@@ -70,12 +56,27 @@ export default async function handler(req, res) {
       .update(plainToken)
       .digest("hex");
 
-    return res.status(200).json({ plainToken, encryptedToken });
+    return res.status(200).json({
+      plainToken,
+      encryptedToken,
+    });
   }
 
-  /* ================================
-     PARTICIPANT JOIN / LEAVE
-  ================================ */
+  // ======================================================
+  // STEP 2: Store ALL RAW Zoom Events (Audit Log)
+  // ======================================================
+  await supabase.from("zoom_webhook_events").insert({
+    event_type: event,
+    zoom_meeting_id: payload?.object?.id
+      ? String(payload.object.id)
+      : null,
+    zoom_account_email: payload?.account_id ?? null,
+    payload,
+  });
+
+  // ======================================================
+  // STEP 3: Participant Join / Leave Tracking
+  // ======================================================
   if (
     event === "meeting.participant_joined" ||
     event === "meeting.participant_left"
@@ -84,12 +85,14 @@ export default async function handler(req, res) {
     const meetingUUID = payload.object.uuid;
 
     const participant = payload.object.participant || {};
+
     const participantName = participant.user_name || null;
     const participantEmail = participant.email || null;
 
-    const participantRole = await resolveInternalRole(participantEmail);
-
-    const eventTime = new Date(payload.event_ts);
+    const participantRole = await resolveInternalRole(
+      participantEmail,
+      participantName
+    );
 
     await supabase.from("zoom_meeting_events").insert({
       meeting_id: String(meetingId),
@@ -99,39 +102,45 @@ export default async function handler(req, res) {
       participant_email: participantEmail,
       participant_role: participantRole,
       join_time:
-        event === "meeting.participant_joined" ? eventTime : null,
+        event === "meeting.participant_joined" && participant.join_time
+          ? new Date(participant.join_time)
+          : null,
       leave_time:
-        event === "meeting.participant_left" ? eventTime : null,
+        event === "meeting.participant_left" && participant.leave_time
+          ? new Date(participant.leave_time)
+          : null,
       payload,
     });
 
-    /* ================================
-       STEP 17: TEACHER LEFT LOGIC
-    ================================ */
-    if (event === "meeting.participant_left" && participantRole === "teacher") {
-      const roles = await getMeetingLiveRoles(meetingId);
-
-      console.log("MEETING STATE AFTER TEACHER LEFT:", roles);
-
-      if (roles.sales || roles.student) {
-        console.log(
-          `Teacher left meeting ${meetingId} but meeting remains active`
-        );
-      }
-    }
-
-    return res.status(200).json({ status: "participant processed" });
+    return res.status(200).json({
+      status: "participant event saved",
+    });
   }
 
-  /* ================================
-     STORE ALL RAW EVENTS
-  ================================ */
-  await supabase.from("zoom_webhook_events").insert({
-    event_type: event,
-    zoom_meeting_id: payload?.object?.id?.toString() ?? null,
-    zoom_account_email: payload?.account_id ?? null,
-    payload,
-  });
+  // ======================================================
+  // STEP 4: Recording Completed (Links come here)
+  // ======================================================
+  if (event === "recording.completed") {
+    const meetingId = payload.object.id;
+    const hostEmail = payload.object.host_email;
+    const recordings = payload.object.recording_files || [];
+
+    for (const file of recordings) {
+      await supabase.from("zoom_meeting_events").insert({
+        meeting_id: String(meetingId),
+        event_type: "recording.completed",
+        participant_name: file.recording_type,
+        participant_email: hostEmail,
+        join_time: file.recording_start
+          ? new Date(file.recording_start)
+          : null,
+        leave_time: file.recording_end
+          ? new Date(file.recording_end)
+          : null,
+        payload: file, // ⬅ contains download_url + play_url
+      });
+    }
+  }
 
   return res.status(200).json({ status: "received" });
 }

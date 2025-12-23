@@ -12,11 +12,11 @@ export default async function handler(req, res) {
   }
 
   const { event, payload } = req.body;
+  console.log("ZOOM EVENT RECEIVED:", event);
 
-  // 🔐 Zoom URL validation
+  // Zoom URL validation
   if (event === "endpoint.url_validation") {
     const plainToken = payload.plainToken;
-
     const encryptedToken = crypto
       .createHmac("sha256", process.env.ZOOM_WEBHOOK_SECRET)
       .update(plainToken)
@@ -28,16 +28,24 @@ export default async function handler(req, res) {
     });
   }
 
-  // 📼 Recording completed event
-  if (event === "recording.completed") {
+  // Store ALL events
+  await supabase.from("zoom_webhook_events").insert({
+    event_type: event,
+    zoom_meeting_id: payload?.object?.id?.toString() ?? null,
+    zoom_account_email: payload?.account_id ?? null,
+    payload,
+  });
+
+  // Recording stopped event
+  if (event === "recording.stopped") {
     const meetingId = payload.object.id;
     const hostEmail = payload.object.host_email;
-    const recordings = payload.object.recording_files || [];
+    const recordings = payload?.object?.recording_files ?? [];
 
     for (const file of recordings) {
       await supabase.from("zoom_meeting_events").insert({
         meeting_id: meetingId,
-        event_type: "recording.completed",
+        event_type: "recording.stopped",
         participant_name: file.recording_type,
         participant_email: hostEmail,
         join_time: file.recording_start,

@@ -45,14 +45,21 @@ if (
 
   let participantRole = "student";
 
-  if (participantEmail && participantEmail === hostEmail) {
-    participantRole = "teacher";
-  } else if (
-    participantEmail &&
-    participantEmail.endsWith("@unischooly.com")
-  ) {
-    participantRole = "sales";
-  }
+// Zoom-provided role is MOST reliable
+const zoomRole = participant.role || null;
+
+// Host or co-host → teacher
+if (zoomRole === "host" || zoomRole === "co-host") {
+  participantRole = "teacher";
+}
+
+// Internal team (sales / ops)
+else if (
+  participantEmail &&
+  participantEmail.endsWith("@unischooly.com")
+) {
+  participantRole = "sales";
+}
 
   await supabase.from("zoom_meeting_events").insert({
     meeting_id: String(meetingId),

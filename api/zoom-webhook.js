@@ -27,6 +27,53 @@ export default async function handler(req, res) {
       encryptedToken,
     });
   }
+  // ===============================
+// STEP 15: Participant Join / Leave
+// ===============================
+if (
+  event === "meeting.participant_joined" ||
+  event === "meeting.participant_left"
+) {
+  const meetingId = payload.object.id;
+  const meetingUUID = payload.object.uuid;
+
+  const participant = payload.object.participant || {};
+  const participantEmail = participant.email || null;
+  const participantName = participant.user_name || null;
+
+  const hostEmail = payload.object.host_email;
+
+  let participantRole = "student";
+
+  if (participantEmail && participantEmail === hostEmail) {
+    participantRole = "teacher";
+  } else if (
+    participantEmail &&
+    participantEmail.endsWith("@unischooly.com")
+  ) {
+    participantRole = "sales";
+  }
+
+  await supabase.from("zoom_meeting_events").insert({
+    meeting_id: String(meetingId),
+    meeting_uuid: meetingUUID,
+    event_type: event,
+    participant_name: participantName,
+    participant_email: participantEmail,
+    participant_role: participantRole,
+    join_time:
+      event === "meeting.participant_joined"
+        ? new Date(payload.event_ts)
+        : null,
+    leave_time:
+      event === "meeting.participant_left"
+        ? new Date(payload.event_ts)
+        : null,
+    payload,
+  });
+
+  return res.status(200).json({ status: "participant event saved" });
+}
 
   // Store ALL events
   await supabase.from("zoom_webhook_events").insert({

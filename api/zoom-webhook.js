@@ -90,6 +90,33 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ status: "participant event saved" });
   }
+  // ======================================
+// STEP 18 — Recording Completed
+// ======================================
+if (event === "recording.completed") {
+  const meetingId = payload.object.id;
+  const hostEmail = payload.object.host_email;
+  const recordings = payload.object.recording_files || [];
+
+  for (const file of recordings) {
+    await supabase.from("zoom_meeting_events").insert({
+      meeting_id: String(meetingId),
+      event_type: "recording.completed",
+      participant_name: file.recording_type, // e.g. "shared_screen"
+      participant_email: hostEmail,
+      participant_role: "teacher",
+      join_time: file.recording_start
+        ? new Date(file.recording_start)
+        : null,
+      leave_time: file.recording_end
+        ? new Date(file.recording_end)
+        : null,
+      payload: file,
+    });
+  }
+
+  return res.status(200).json({ status: "recording saved" });
+}
 
   // ======================================
   // STEP 14 — Store ALL Raw Zoom Events

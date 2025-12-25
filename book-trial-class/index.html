@@ -568,7 +568,22 @@
 .uni-cta-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 12px 26px rgba(155, 91, 255, 0.8);
-}    
+}
+/* ===============================
+   FORCE HEADER TO BE TOP BAR
+================================ */
+
+.uni-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+body {
+  padding-top: 80px;
+}
 </style>
 </head>
 <body>
@@ -578,7 +593,7 @@
     <div class="uni-logo">
       <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg" alt="Unischooly" />
     </div>
-
+    
     <a href="#step-1" class="uni-cta-btn">
       Book Free Trial Class
     </a>

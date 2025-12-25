@@ -527,9 +527,67 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+/* ===============================
+   Unischooly Landing Header
+=============================== */
+.uni-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(5, 8, 22, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.uni-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.uni-logo img {
+  height: 32px;
+  display: block;
+}
+
+.uni-cta-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(135deg, #9b5bff, #ff7b5f);
+  box-shadow: 0 8px 20px rgba(155, 91, 255, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.uni-cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(155, 91, 255, 0.8);
+}    
 </style>
 </head>
 <body>
+  <!-- ===== Unischooly Landing Header ===== -->
+<header class="uni-header">
+  <div class="uni-header-inner">
+    <div class="uni-logo">
+      <img
+        src="https://res.cloudinary.com/dpapyknn4/image/upload/v1766210020/unischooly_logo_white.svg"
+        alt="Unischooly"
+      />
+    </div>
+
+    <a href="#step-1" class="uni-cta-btn">
+      Book Free Trial Class
+    </a>
+  </div>
+</header>
+<!-- ===== End Header ===== -->
   <div class="form-shell">
     <div class="form-header">
       <h1 class="form-title">Book Now &amp; Get Certified</h1>

@@ -1462,12 +1462,6 @@
       return new Date(guessUTC.getTime() + deltaMs);
     }
 
-    function buildMeetLink(){
-      // Placeholder until meet link column exists (wise/zoom/etc).
-      // If you later store a meet link in demo_leads (e.g., meeting_link), read it here.
-      return null;
-    }
-
     // =========================
     // Render Section 2
     // =========================
@@ -1602,11 +1596,18 @@ function renderBooking(b){
       initRescheduleUI();
 
       // join button logic
-      const meetLink = buildMeetLink();
-      document.getElementById("btnJoin").onclick = () => {
-        if(meetLink){ window.open(meetLink, "_blank", "noopener,noreferrer"); }
-        else toast("Meet link will appear 5 mins before class.");
-      };
+const btnJoin = document.getElementById("btnJoin");
+
+btnJoin.onclick = () => {
+  if (BOOKING && BOOKING.zoom_join_url) {
+    window.location.href = BOOKING.zoom_join_url;
+  } else {
+    toast("Zoom link not available yet. Please wait.");
+  }
+};
+
+// Optional but recommended: disable button if link missing
+btnJoin.disabled = !(BOOKING && BOOKING.zoom_join_url);
     }
 
     // =========================
@@ -2283,22 +2284,22 @@ function renderBooking(b){
 
   <!-- BOTTOM BAR -->
   <div class="demo-footer-bottom">
-    <div class="demo-footer-bottom-inner">
+    <div class="demo--bottom-inner">
 
       <!-- LEFT -->
-      <div class="demo-footer-left">
+      <div class="demo--left">
         Email us at <a href="mailto:support@unischooly.com">support@unischooly.com</a>
       </div>
 
       <!-- CENTER -->
-      <div class="demo-footer-center">
+      <div class="demo--center">
         © UNISCHOOLY 2025. All Rights Reserved
       </div>
 
       <!-- RIGHT -->
-      <div class="demo-footer-right">
+      <div class="demo--right">
         <span>Follow us on:</span>
-        <div class="demo-footer-social">
+        <div class="demo--social">
           <a href="https://www.facebook.com/" target="_blank">
             <img src="https://res.cloudinary.com/dpapyknn4/image/upload/v1764348909/Facebook-icon-design-on-transparent-background-PNG_i4jaan.png" alt="Facebook">
           </a>
@@ -2320,6 +2321,6 @@ function renderBooking(b){
     </div>
   </div>
 
-</footer>
+</>
 </body>
 </html>

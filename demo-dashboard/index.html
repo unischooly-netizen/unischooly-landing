@@ -1055,7 +1055,15 @@
             </div>
 
             <div class="joinwrap">
-              <button class="btn" id="btnJoin" disabled>🎥 Join Class</button>
+              <a
+  class="btn disabled"
+  id="btnJoin"
+  href="#"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  🎥 Join Class
+</a>
             </div>
 
             <div class="disclaimer">
@@ -1529,6 +1537,20 @@
   }
 function renderBooking(b){
       BOOKING = b;
+  const btnJoin = document.getElementById("btnJoin");
+
+if (btnJoin) {
+  if (b.zoom_join_url) {
+    btnJoin.href = b.zoom_join_url;
+    btnJoin.classList.remove("disabled");
+  } else {
+    btnJoin.href = "#";
+    btnJoin.onclick = (e) => {
+      e.preventDefault();
+      toast("Zoom link not available yet. Please wait.");
+    };
+  }
+}
       console.log("BOOKING.zoom_join_url =", b.zoom_join_url);
       console.log("btnJoin element =", document.getElementById("btnJoin"));
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");

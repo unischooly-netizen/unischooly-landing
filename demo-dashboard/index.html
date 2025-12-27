@@ -1539,6 +1539,16 @@
   }
 function renderBooking(b){
       BOOKING = b;
+  const btnJoin = document.getElementById("btnJoin");
+
+if (btnJoin && b.zoom_join_url) {
+  btnJoin.disabled = false;
+
+  btnJoin.onclick = () => {
+    console.log("Joining Zoom:", b.zoom_join_url);
+    window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
+  };
+}
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
       bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;

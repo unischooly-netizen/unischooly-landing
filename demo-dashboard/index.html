@@ -853,7 +853,7 @@
   background:#21333D;
 }
 
-.demo-footer-bottom-inner{
+.demo--bottom-inner{
   max-width:1200px;
   margin:0 auto;
   padding:0 12px;
@@ -865,25 +865,25 @@
   color:white;
 }
 
-/* Left */
-.demo-footer-left a{
+/* LEFT */
+.demo--left a{
   color:white;
   font-weight:600;
   text-decoration:none;
 }
 
-.demo-footer-left a:hover{
+.demo--left a:hover{
   text-decoration:underline;
 }
 
-/* Center */
-.demo-footer-center{
+/* CENTER */
+.demo--center{
   text-align:center;
   font-weight:500;
 }
 
-/* Right */
-.demo-footer-right{
+/* RIGHT */
+.demo--right{
   display:flex;
   justify-content:flex-end;
   align-items:center;
@@ -891,42 +891,43 @@
   white-space:nowrap;
 }
 
-.demo-footer-right span{
+.demo--right span{
   font-weight:500;
 }
 
-.demo-footer-social{
+/* ✅ FIXED SOCIAL ICON SIZE */
+.demo--social{
   display:flex;
   gap:8px;
 }
 
-.demo-footer-social a{
-  width:26px;
-  height:26px;
+.demo--social a{
+  width:24px;
+  height:24px;
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
-.demo-footer-social img{
+.demo--social img{
   width:100%;
   height:100%;
   object-fit:contain;
   transition:opacity .2s ease;
 }
 
-.demo-footer-social a:hover img{
+.demo--social a:hover img{
   opacity:.8;
 }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width:768px){
-  .demo-footer-bottom-inner{
+  .demo--bottom-inner{
     grid-template-columns:1fr;
     text-align:left;
   }
 
-  .demo-footer-right{
+  .demo--right{
     justify-content:flex-start;
   }
 }

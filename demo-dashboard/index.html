@@ -1055,13 +1055,7 @@
             </div>
 
             <div class="joinwrap">
-              <a
-  class="btn disabled"
-  id="btnJoin"
-  href="#"
->
-  🎥 Join Class
-</a>
+              <button class="btn" id="btnJoin" disabled>🎥 Join Class</button>
             </div>
 
             <div class="disclaimer">
@@ -1468,6 +1462,16 @@
       return new Date(guessUTC.getTime() + deltaMs);
     }
 
+    function buildMeetLink(){
+      // Uses Zoom link saved in demo_leads.zoom_join_url
+      // Returns null if not yet available.
+      const url = (BOOKING && BOOKING.zoom_join_url) ? String(BOOKING.zoom_join_url).trim() : "";
+      if(!url) return null;
+      // Basic safety: only allow http/https
+      if(!/^https?:\/\//i.test(url)) return null;
+      return url;
+    }
+
     // =========================
     // Render Section 2
     // =========================
@@ -1533,56 +1537,30 @@
       lockEl.innerHTML = `<div class="tick">✓</div><span>Your trial class is locked in!</span>`;
     }
   }
-function renderBooking(b) {
-  BOOKING = b;
-
-  const btnJoin = document.getElementById("btnJoin");
-
-  if (btnJoin) {
-    if (b.zoom_join_url) {
-      btnJoin.href = b.zoom_join_url;
-      btnJoin.classList.remove("disabled");
-    } else {
-      btnJoin.href = "#";
-      btnJoin.onclick = (e) => {
-        e.preventDefault();
-        toast("Zoom link not available yet. Please wait.");
-      };
-    }
-  }
-
-  bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
-  bookingRegion = b.region_key || null;
-  bookingCourseName =
-    (COURSE[b.course_id] || COURSE[courseId] || COURSE[1]).name;
-
-  setText("vChild", b.child_name);
-  setText("vGrade", b.child_grade);
-  setText("vParent", b.parent_name);
-  setText("vEmail", b.parent_email);
-
-  const emailEl = document.getElementById("vEmail");
-  if (emailEl) {
-    emailEl.title = b.parent_email || "";
-    emailEl.onclick = async () => {
-      const email = b.parent_email || "";
-      if (!email) return;
-      try {
-        await navigator.clipboard.writeText(email);
-        toast("Copied email");
-      } catch {
-        toast("Copy failed");
+function renderBooking(b){
+      BOOKING = b;
+      bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
+      bookingRegion = b.region_key || null;
+      bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
+      // Ticket fields
+      setText("vChild", b.child_name);
+      setText("vGrade", b.child_grade);
+      setText("vParent", b.parent_name);
+      setText("vEmail", b.parent_email);
+      // Email: tooltip + click-to-copy
+      const emailEl = document.getElementById("vEmail");
+      if(emailEl){
+        emailEl.title = b.parent_email || "";
+        emailEl.onclick = async () => {
+          const email = b.parent_email || "";
+          if(!email) return;
+          try{ await navigator.clipboard.writeText(email); toast("Copied email"); }
+          catch{ toast("Copy failed"); }
+        };
       }
-    };
-  }
+      setText("vPhone", `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim());
+      setText("vCourse", bookingCourseName);
 
-  setText(
-    "vPhone",
-    `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim()
-  );
-
-  setText("vCourse", bookingCourseName);
-}
       // Schedule
       const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
       if(classDT){
@@ -1626,20 +1604,18 @@ function renderBooking(b) {
       initMiniGames();
       // reschedule prefill
       initRescheduleUI();
+      // join button logic (Zoom)
+      // NOTE: we compute the link at click-time so if DB updates and page re-renders, it stays correct.
+      document.getElementById("btnJoin").onclick = () => {
+        const meetLink = buildMeetLink();
+        if(meetLink){
+          // Redirect to Zoom in the same tab
+          window.location.href = meetLink;
+        } else {
+          toast("Meet link will appear 5 mins before class.");
+        }
+      };
 
-      // join button logic
-const btnJoin = document.getElementById("btnJoin");
-
-btnJoin.onclick = () => {
-  if (BOOKING && BOOKING.zoom_join_url) {
-    window.location.href = BOOKING.zoom_join_url;
-  } else {
-    toast("Zoom link not available yet. Please wait.");
-  }
-};
-
-// Optional but recommended: disable button if link missing
-btnJoin.disabled = !(BOOKING && BOOKING.zoom_join_url);
     }
 
     // =========================

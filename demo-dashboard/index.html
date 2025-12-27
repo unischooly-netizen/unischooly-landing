@@ -1528,6 +1528,8 @@
     }
   }
 function renderBooking(b){
+  console.log("BOOKING.zoom_join_url =", b.zoom_join_url);
+console.log("btnJoin element =", document.getElementById("btnJoin"));
       BOOKING = b;
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;

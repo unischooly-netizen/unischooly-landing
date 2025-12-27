@@ -1528,9 +1528,9 @@
     }
   }
 function renderBooking(b){
-  console.log("BOOKING.zoom_join_url =", b.zoom_join_url);
-console.log("btnJoin element =", document.getElementById("btnJoin"));
       BOOKING = b;
+      console.log("BOOKING.zoom_join_url =", b.zoom_join_url);
+      console.log("btnJoin element =", document.getElementById("btnJoin"));
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
       bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;

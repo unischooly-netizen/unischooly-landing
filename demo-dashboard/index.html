@@ -1550,31 +1550,39 @@ function renderBooking(b) {
       };
     }
   }
-}
-      console.log("BOOKING.zoom_join_url =", b.zoom_join_url);
-      console.log("btnJoin element =", document.getElementById("btnJoin"));
-      bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
-      bookingRegion = b.region_key || null;
-      bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
-      // Ticket fields
-      setText("vChild", b.child_name);
-      setText("vGrade", b.child_grade);
-      setText("vParent", b.parent_name);
-      setText("vEmail", b.parent_email);
-      // Email: tooltip + click-to-copy
-      const emailEl = document.getElementById("vEmail");
-      if(emailEl){
-        emailEl.title = b.parent_email || "";
-        emailEl.onclick = async () => {
-          const email = b.parent_email || "";
-          if(!email) return;
-          try{ await navigator.clipboard.writeText(email); toast("Copied email"); }
-          catch{ toast("Copy failed"); }
-        };
-      }
-      setText("vPhone", `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim());
-      setText("vCourse", bookingCourseName);
 
+  bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
+  bookingRegion = b.region_key || null;
+  bookingCourseName =
+    (COURSE[b.course_id] || COURSE[courseId] || COURSE[1]).name;
+
+  setText("vChild", b.child_name);
+  setText("vGrade", b.child_grade);
+  setText("vParent", b.parent_name);
+  setText("vEmail", b.parent_email);
+
+  const emailEl = document.getElementById("vEmail");
+  if (emailEl) {
+    emailEl.title = b.parent_email || "";
+    emailEl.onclick = async () => {
+      const email = b.parent_email || "";
+      if (!email) return;
+      try {
+        await navigator.clipboard.writeText(email);
+        toast("Copied email");
+      } catch {
+        toast("Copy failed");
+      }
+    };
+  }
+
+  setText(
+    "vPhone",
+    `${b.phone_country_code || ""} ${b.phone_number || ""}`.trim()
+  );
+
+  setText("vCourse", bookingCourseName);
+}
       // Schedule
       const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
       if(classDT){

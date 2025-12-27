@@ -1059,8 +1059,6 @@
   class="btn disabled"
   id="btnJoin"
   href="#"
-  target="_blank"
-  rel="noopener noreferrer"
 >
   🎥 Join Class
 </a>
@@ -1535,20 +1533,22 @@
       lockEl.innerHTML = `<div class="tick">✓</div><span>Your trial class is locked in!</span>`;
     }
   }
-function renderBooking(b){
-      BOOKING = b;
+function renderBooking(b) {
+  BOOKING = b;
+
   const btnJoin = document.getElementById("btnJoin");
 
-if (btnJoin) {
-  if (b.zoom_join_url) {
-    btnJoin.href = b.zoom_join_url;
-    btnJoin.classList.remove("disabled");
-  } else {
-    btnJoin.href = "#";
-    btnJoin.onclick = (e) => {
-      e.preventDefault();
-      toast("Zoom link not available yet. Please wait.");
-    };
+  if (btnJoin) {
+    if (b.zoom_join_url) {
+      btnJoin.href = b.zoom_join_url;
+      btnJoin.classList.remove("disabled");
+    } else {
+      btnJoin.href = "#";
+      btnJoin.onclick = (e) => {
+        e.preventDefault();
+        toast("Zoom link not available yet. Please wait.");
+      };
+    }
   }
 }
       console.log("BOOKING.zoom_join_url =", b.zoom_join_url);

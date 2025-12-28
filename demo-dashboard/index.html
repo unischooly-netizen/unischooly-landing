@@ -1424,45 +1424,6 @@
     // preferred_date is date (no timezone), preferred_time_slot is local string (e.g., "10:00 AM")
     // We'll compute a Date by combining preferred_date with local time in booking.timezone
     // =========================
-    function parseTime12hTo24(t){
-      // "10:00 AM" -> {h:10,m:0}
-      const m = (t||"").trim().match(/^(\d{1,2})\s*:\s*(\d{2})\s*(AM|PM)$/i);
-      if(!m) return null;
-      let h = parseInt(m[1],10);
-      const mm = parseInt(m[2],10);
-      const ap = m[3].toUpperCase();
-      if(ap==="PM" && h!==12) h += 12;
-      if(ap==="AM" && h===12) h = 0;
-      return {h, m:mm};
-    }
-
-    function makeDateInTZ(dateStr, timeStr, tz){
-      // Build a Date that represents the same wall-clock time in tz.
-      // Approach: create in UTC then adjust using tz offset at that moment by formatting.
-      const t = parseTime12hTo24(timeStr);
-      if(!dateStr || !t) return null;
-
-      // Start with UTC date
-      const [Y,M,D] = dateStr.split("-").map(x=>parseInt(x,10));
-      const guessUTC = new Date(Date.UTC(Y, M-1, D, t.h, t.m, 0));
-      // Determine what wall clock that UTC time shows in tz; then shift.
-      // We want the tz wall clock == (Y-M-D + t.h:t.m).
-      const shown = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
-        .formatToParts(guessUTC);
-      const map = Object.fromEntries(shown.map(p=>[p.type,p.value]));
-      const shownY = parseInt(map.year,10);
-      const shownM = parseInt(map.month,10);
-      const shownD = parseInt(map.day,10);
-      const shownH = parseInt(map.hour,10);
-      const shownMin = parseInt(map.minute,10);
-
-      // Calculate delta minutes between desired and shown in tz
-      const desired = Date.UTC(Y, M-1, D, t.h, t.m, 0);
-      const shownAsIfUTC = Date.UTC(shownY, shownM-1, shownD, shownH, shownMin, 0);
-      const deltaMs = desired - shownAsIfUTC;
-      return new Date(guessUTC.getTime() + deltaMs);
-    }
-
     function buildMeetLink(){
       // Uses Zoom link saved in demo_leads.zoom_join_url
       // Returns null if not yet available.
@@ -1573,14 +1534,14 @@ if (btnJoin && b.zoom_join_url) {
       setText("vCourse", bookingCourseName);
 
       // Schedule
-      const classDT = makeDateInTZ(b.preferred_date, b.preferred_time_slot, bookingTZ);
-      if(classDT){
+      const classDT = b.scheduled_at_utc ? new Date(b.scheduled_at_utc) : null;
+if(classDT && !isNaN(classDT.getTime())){
         const s = fmtLocal(classDT, bookingTZ);
         setText("calMonth", s.month);
         setText("calDay", s.day);
         setText("calDow", s.weekday);
         setText("schedTime", `${s.time}`);
-        setText("schedMeta", `${b.preferred_date} • ${bookingTZ}`);
+        setText("schedMeta", `${b.scheduled_local_date || ""} • ${bookingTZ}`.trim());
 
         // calendar links
         setupCalendarLinks(classDT, bookingTZ, bookingCourseName, b.child_name);

@@ -1660,16 +1660,11 @@ async function handleStep2Next() {
   const btn = document.getElementById("step-2-next");
   if (btn) btn.disabled = true;
 
-  const { error } = await supabaseClient
-    .from(DEMO_LEADS_TABLE)
-    .update({
-      preferred_date: state.selectedDateKey,
-      preferred_time_slot: state.selectedSlotLabel,
-      slot_id: state.selectedSlotId,
-      lang: lang,
-      page_completed: 2
-    })
-    .eq("id", state.leadId);
+  const { error } = await supabaseClient.rpc("finalize_demo_booking", {
+  p_lead_id: state.leadId,
+  p_slot_live_id: state.selectedSlotId,   // this is demo_slots_live.id
+  p_timezone: state.selectedTimeZone      // already set in your state
+});
 
   if (btn) btn.disabled = false;
 

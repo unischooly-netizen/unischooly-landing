@@ -1698,7 +1698,7 @@ async function handleStep2Next() {
 }
 
 // =========================
-// STEP 3 → motivations
+// STEP 3 → motivations (FIXED)
 // =========================
 async function handleStep3Submit() {
   if (!state.leadId) {
@@ -1706,9 +1706,20 @@ async function handleStep3Submit() {
     return;
   }
 
-  const who = document.querySelector("input[name='who-are-you']:checked")?.value || null;
-  const reason = document.querySelector("input[name='booking-reason']:checked")?.value || null;
-  const timeline = document.querySelector("input[name='purchase-timeline']:checked")?.value || null;
+  // 🔥 FORCE BIGINT
+  const leadIdBigInt = parseInt(state.leadId, 10);
+  if (isNaN(leadIdBigInt)) {
+    showGlobalError("Invalid booking reference. Please refresh.");
+    console.error("Invalid leadId:", state.leadId);
+    return;
+  }
+
+  const who =
+    document.querySelector("input[name='who-are-you']:checked")?.value || null;
+  const reason =
+    document.querySelector("input[name='booking-reason']:checked")?.value || null;
+  const timeline =
+    document.querySelector("input[name='purchase-timeline']:checked")?.value || null;
 
   if (!who || !reason || !timeline) {
     showGlobalError("Please answer all questions to help us personalise your class.");
@@ -1726,24 +1737,28 @@ async function handleStep3Submit() {
       who_are_you: who,
       booking_reason: reason,
       purchase_timeline: timeline,
-      page_completed: 3
+      page_completed: 3,
+      updated_at: new Date().toISOString()
     })
-    .eq("id", state.leadId);
+    // ✅ THIS IS THE ONLY CORRECT CONDITION
+    .eq("lead_id", leadIdBigInt);
 
   if (error) {
     console.error("Update step3 error", error);
-    showGlobalError("Something went wrong while finalising your booking. Please try again.");
+    showGlobalError(
+      "Something went wrong while finalising your booking. Please try again."
+    );
     hideBookingOverlay();
     if (btn) btn.disabled = false;
     return;
   }
 
+  // ✅ REDIRECT USING BIGINT
   setTimeout(() => {
-    const url = `https://portal.unischooly.com/demo-dashboard/?iduuid=${state.leadId}&medium=dashboard&courseId=${state.courseId}&post_booking=true`;
+    const url = `https://portal.unischooly.com/demo-dashboard/?leadId=${leadIdBigInt}&medium=dashboard&courseId=${state.courseId}&post_booking=true`;
     window.location.href = url;
   }, 2000);
 }
-
 // =========================
 // Radio chip helpers & lang pills
 // =========================

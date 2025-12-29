@@ -2192,6 +2192,18 @@ if(classDT && !isNaN(classDT.getTime())){
         const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
         slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
       });
+      // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
+      try {
+        const todayTz = fmtDateSQL(new Date(), resTZ);
+        if (resDate === todayTz) {
+          const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
+          for (let i = slots.length - 1; i >= 0; i--) {
+            const d = slots[i].localInstant;
+            if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
+          }
+        }
+      } catch (e) { console.warn("Reschedule slot filter failed", e); }
+
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       slots.sort((a,b)=>a.localInstant - b.localInstant);
       if(slots.length===0){ empty.classList.remove("hide"); return; }
@@ -2220,13 +2232,37 @@ if(classDT && !isNaN(classDT.getTime())){
       if(!BOOKING || !selectedResSlot) return;
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
       // Additionally store timezone if user changed it.
-      const upd = {
-        preferred_date: resDate,
-        preferred_time_slot: selectedResSlot.display,
-        slot_id: selectedResSlot.slot_id,
-        timezone: resTZ,
-        updated_at: new Date().toISOString()
-      };
+      const upd = (function(){
+        const d = selectedResSlot.localInstant; // UTC instant as Date
+        return {
+          // user-facing
+          preferred_date: resDate,
+          preferred_time_slot: selectedResSlot.display,
+
+          // slot linkage
+          slot_live_id: selectedResSlot.slot_id,
+          slot_id: selectedResSlot.slot_id,
+
+          // schedule (source of truth for Zoom automation)
+          scheduled_at_utc: d.toISOString(),
+          scheduled_at_ist: fmtDateTimeSQL(d, "Asia/Kolkata"),
+          scheduled_local_date: fmtDateSQL(d, resTZ),
+          scheduled_local_label: fmtLabel(d, resTZ),
+          lead_timezone: resTZ,
+          timezone: resTZ,
+
+          // IMPORTANT: reset Zoom so CRON recreates meeting
+          zoom_status: "not_created",
+          zoom_account_id: null,
+          zoom_meeting_id: null,
+          zoom_join_url: null,
+          zoom_start_url: null,
+          meeting_created_at: null,
+
+          booking_status: "rescheduled",
+          updated_at: new Date().toISOString()
+        };
+      })();
 
       const { error } = await sb
         .from("demo_leads")

@@ -1657,25 +1657,27 @@ async function handleStep2Next() {
 
   const lang = state.selectedLang || "English";
 
-  const btn = document.getElementById("step-2-next");
-  if (btn) btn.disabled = true;
+const btn = document.getElementById("step-2-next");
+if (btn) btn.disabled = true;
 
-  const { error } = await supabaseClient.rpc("finalize_demo_booking", {
-  p_lead_id: Number(state.leadId),          // ✅ MUST BE NUMBER
-  p_slot_live_id: state.selectedSlotId,     // ✅ UUID (correct)
+const { error } = await supabaseClient.rpc("finalize_demo_booking", {
+  p_lead_id: Number(state.leadId),          // ✅ correct
+  p_slot_live_id: state.selectedSlotId,     // uuid
   p_timezone: state.selectedTimeZone,
-  p_lang: state.selectedLang
+  p_lang: lang
 });
 
+if (error) {
+  console.error("Step 2 RPC error:", error);
+  alert("Unable to save your selected slot. Please try again.");
   if (btn) btn.disabled = false;
+  return;
+}
 
-  if (error) {
-    console.error("Update step2 error", error);
-    showGlobalError("Unable to save your selected slot. Please try again.");
-    return;
-  }
+if (btn) btn.disabled = false;
 
-  goToStep(3);
+// ✅ MOVE FORWARD ONLY ON SUCCESS
+goToStep(3);
 }
 
 // =========================

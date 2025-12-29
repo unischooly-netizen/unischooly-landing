@@ -1193,6 +1193,16 @@
   url.searchParams.get("leadId") ||
   url.searchParams.get("leadRaw");
 
+// FIX (GLOBAL): Single source of truth for fetching the lead
+// If leadId is numeric => use lead_id (BIGINT). Otherwise assume UUID => use id.
+const leadFilter = (() => {
+  if (!leadId) return null;
+  const asNum = Number(leadId);
+  if (Number.isFinite(asNum) && String(asNum) === String(parseInt(leadId, 10))) {
+    return { col: "lead_id", val: asNum };
+  }
+  return { col: "id", val: String(leadId) };
+})();
 if (!leadId) {
   document.getElementById("stateError")?.classList.remove("hide");
   throw new Error("Missing leadId in URL");
@@ -1513,7 +1523,10 @@ function renderBooking(b){
 if (btnJoin && b.zoom_join_url) {
   btnJoin.disabled = false;
 
-  btnJoin.onclick = function(){ if(b.zoom_join_url){ window.open(b.zoom_join_url,'_blank','noopener,noreferrer'); } else { alert('Zoom link will appear shortly before class'); } };
+  btnJoin.onclick = () => {
+    console.log("Joining Zoom:", b.zoom_join_url);
+    window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
+  };
 }
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
@@ -2196,7 +2209,7 @@ if(classDT && !isNaN(classDT.getTime())){
       const { error } = await sb
         .from("demo_leads")
         .update(upd)
-        .eq("id", leadRaw);
+        .eq(leadFilter.col, leadFilter.val);
 
       if(error){
         console.error(error);

@@ -1450,12 +1450,39 @@ async function handleStep1Next() {
   state.selectedTimeZone = country.timeZone;
 
   await buildDatePillsAndSlots();
+  setupLanguagePills();
   goToStep(2);
 }
 
 // =========================
 // STEP 2 → dates & slots
 // =========================
+  // =========================
+// Language selection (FIX)
+// =========================
+function setupLanguagePills() {
+  const pills = document.querySelectorAll(".lang-pill");
+  if (!pills.length) return;
+
+  pills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      // remove active from all
+      pills.forEach(p => p.classList.remove("active"));
+
+      // activate clicked
+      pill.classList.add("active");
+
+      // SAVE selected language
+      state.selectedLang = pill.dataset.lang;
+
+      console.log("Language selected:", state.selectedLang);
+    });
+  });
+
+  // Default active = English
+  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
+  if (defaultPill) defaultPill.classList.add("active");
+}
 async function fetchSlotsForSixDays() {
   const regionKey = state.selectedRegionKey;
   const courseId = state.courseId;

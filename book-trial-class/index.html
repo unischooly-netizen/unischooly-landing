@@ -1833,11 +1833,34 @@ function init() {
 
   setupRadioGroups();
   setupLangPills();
+  setupLangPills();
   setupBackLinks();
-
   updateStepUI();
 }
+<script>
+function setupLangPills() {
+  const pills = document.querySelectorAll(".lang-pill");
 
+  pills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      // remove active state
+      pills.forEach(p => p.classList.remove("active"));
+
+      // mark selected
+      pill.classList.add("active");
+
+      // SAVE LANGUAGE TO STATE (THIS WAS MISSING)
+      state.selectedLang = pill.dataset.lang;
+
+      console.log("LANG SELECTED:", state.selectedLang);
+    });
+  });
+
+  // default = English
+  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
+  if (defaultPill) defaultPill.classList.add("active");
+}
+</script>
 document.addEventListener("DOMContentLoaded", init);
 </script>
 <!-- ===============================

@@ -1207,6 +1207,44 @@
       const p = fmtParts(d, tz, { hour:"numeric", minute:"2-digit", hour12:true });
       return `${p.hour}:${p.minute} ${p.dayPeriod}`;
     }
+
+    // =========================
+    // Timezone-safe wall-time -> UTC instant (NO browser-timezone guessing)
+    // =========================
+    function parseTime12To24(time12){
+      // "12:30 PM" -> {hh:12, mm:30} in 24h
+      const m = String(time12 || "").trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+      if(!m) return null;
+      let hh = parseInt(m[1],10);
+      const mm = parseInt(m[2]||"00",10);
+      const ap = m[3].toUpperCase();
+      if(ap === "AM"){ if(hh === 12) hh = 0; }
+      if(ap === "PM"){ if(hh !== 12) hh += 12; }
+      return {hh, mm};
+    }
+    function zonedTimeToUtc(dateStr, time12, tz){
+      // dateStr: "YYYY-MM-DD", time12: "12:00 PM"
+      const t = parseTime12To24(time12);
+      if(!t) return null;
+      const [y,m,d] = dateStr.split("-").map(n=>parseInt(n,10));
+      const utcGuess = new Date(Date.UTC(y, (m||1)-1, d||1, t.hh, t.mm, 0));
+      const p = fmtParts(utcGuess, tz, {
+        year:"numeric", month:"2-digit", day:"2-digit",
+        hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false
+      });
+      const asIfUtc = new Date(Date.UTC(
+        parseInt(p.year,10), parseInt(p.month,10)-1, parseInt(p.day,10),
+        parseInt(p.hour,10), parseInt(p.minute,10), parseInt(p.second,10)
+      ));
+      const diff = asIfUtc.getTime() - utcGuess.getTime(); // tz offset at that moment
+      return new Date(utcGuess.getTime() - diff);
+    }
+    function addDaysInTZ(baseDateStr, days, tz){
+      // moves by local calendar days safely enough for UI pills (DST-safe via noon anchor)
+      const anchor = zonedTimeToUtc(baseDateStr, "12:00 PM", tz);
+      const next = new Date(anchor.getTime() + days * 86400000);
+      return fmtDateSQL(next, tz);
+    }
 // =========================
     // URL params
     // =========================
@@ -2314,19 +2352,6 @@ if(classDT && !isNaN(classDT.getTime())){
     })();
   
 // Init dashboard
-(async function initDashboard() {
-  try {
-    const booking = await loadBooking();
-    if (!booking) {
-      document.getElementById("stateError")?.classList.remove("hide");
-      return;
-    }
-    renderBooking(booking);
-  } catch (e) {
-    console.error("Dashboard init failed", e);
-    document.getElementById("stateError")?.classList.remove("hide");
-  }
-})();
 </script>
   <!-- DEMO DASHBOARD FOOTER -->
 <footer class="demo-footer">

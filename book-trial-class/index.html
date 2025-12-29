@@ -1664,7 +1664,7 @@ async function handleStep2Next() {
   p_lead_id: state.leadId,
   p_slot_live_id: state.selectedSlotId,
   p_timezone: state.selectedTimeZone,
-  p_lang: state.selectedLang
+  p_lang: (state.selectedLang || "English")
 });
 
   if (btn) btn.disabled = false;
@@ -1753,12 +1753,15 @@ function setupLangPills() {
       pills.forEach(p => p.classList.remove("active"));
       pill.classList.add("active");
       state.selectedLang = pill.getAttribute("data-lang") || "English";
+      console.log("LANG SELECTED:", state.selectedLang);
     });
   });
-  const first = pills[0];
-  if (first) {
-    first.classList.add("active");
-    state.selectedLang = first.getAttribute("data-lang") || "English";
+
+  // default = English
+  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
+  if (defaultPill) {
+    defaultPill.classList.add("active");
+    state.selectedLang = "English";
   }
 }
 
@@ -1837,7 +1840,7 @@ function init() {
   setupBackLinks();
   updateStepUI();
 }
-<script>
+  
 function setupLangPills() {
   const pills = document.querySelectorAll(".lang-pill");
 

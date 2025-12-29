@@ -1445,7 +1445,7 @@ async function handleStep1Next() {
     return;
   }
 
-  state.leadId = data.lead_id;     // BIGINT ✅
+  state.leadId = data.id;
   state.selectedRegionKey = country.regionKey;
   state.selectedTimeZone = country.timeZone;
 

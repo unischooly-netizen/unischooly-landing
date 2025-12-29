@@ -1646,38 +1646,55 @@ function renderSlotsForSelectedDate() {
 
 // STEP 2 Next
 async function handleStep2Next() {
+
+  // 🚨 HARD STOP: validate lead id before calling RPC
   if (!state.leadId) {
-    showGlobalError("We could not find your booking. Please refresh and start again.");
+    alert("Lead ID missing. Please refresh and try again.");
+    console.error("Missing leadId in state:", state);
     return;
   }
+
+  // 🔥 FORCE bigint
+  const leadIdBigInt = parseInt(state.leadId, 10);
+
+  if (isNaN(leadIdBigInt)) {
+    alert("Invalid Lead ID. Please refresh.");
+    console.error("Invalid leadId:", state.leadId);
+    return;
+  }
+
+  // 🚨 Ensure slot is selected
   if (!state.selectedSlotId || !state.selectedDateKey) {
-    showGlobalError("Please select a date and time slot.");
+    alert("Please select a date and time slot.");
     return;
   }
 
   const lang = state.selectedLang || "English";
 
-const btn = document.getElementById("step-2-next");
-if (btn) btn.disabled = true;
+  const btn = document.getElementById("step-2-next");
+  if (btn) btn.disabled = true;
 
-const { error } = await supabaseClient.rpc("finalize_demo_booking", {
-  p_lead_id: Number(state.leadId),          // ✅ correct
-  p_slot_live_id: state.selectedSlotId,     // uuid
-  p_timezone: state.selectedTimeZone,
-  p_lang: lang
-});
+  const { error } = await supabaseClient.rpc(
+    "finalize_demo_booking",
+    {
+      p_lead_id: leadIdBigInt,              // ✅ bigint
+      p_slot_live_id: state.selectedSlotId, // ✅ uuid
+      p_timezone: state.selectedTimeZone,   // ✅ text
+      p_lang: lang                          // ✅ text
+    }
+  );
 
-if (error) {
-  console.error("Step 2 RPC error:", error);
-  alert("Unable to save your selected slot. Please try again.");
+  if (error) {
+    console.error("Step 2 RPC error:", error);
+    alert(error.message || "Unable to save slot. Please try again.");
+    if (btn) btn.disabled = false;
+    return;
+  }
+
   if (btn) btn.disabled = false;
-  return;
-}
 
-if (btn) btn.disabled = false;
-
-// ✅ MOVE FORWARD ONLY ON SUCCESS
-goToStep(3);
+  // ✅ MOVE ONLY ON SUCCESS
+  goToStep(3);
 }
 
 // =========================

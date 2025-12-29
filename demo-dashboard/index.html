@@ -1197,12 +1197,6 @@ if (!leadId) {
   document.getElementById("stateError")?.classList.remove("hide");
   throw new Error("Missing leadId in URL");
 } // this is BIGINT lead_id
-    const leadFilter = { col: "lead_id", val: Number(leadId) }; // FIX: define leadFilter
-    if(!Number.isFinite(leadFilter.val)){
-      document.getElementById("stateError")?.classList.remove("hide");
-      throw new Error("Invalid leadId in URL");
-    }
-
     const courseId = parseInt(url.searchParams.get("courseId") || "1", 10);
 
     // =========================
@@ -1516,22 +1510,12 @@ function renderBooking(b){
       BOOKING = b;
   const btnJoin = document.getElementById("btnJoin");
 
-      // FIX: Join button should work when zoom link exists, otherwise show a message
-      if (btnJoin) {
-        if (b.zoom_join_url) {
-          btnJoin.disabled = false;
-          btnJoin.onclick = () => {
-            console.log("Joining Zoom:", b.zoom_join_url);
-            window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
-          };
-        } else {
-          btnJoin.disabled = true;
-          btnJoin.onclick = () => {
-            toast("Meet link will appear 5 mins before class.");
-          };
-        }
-      }
-bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
+if (btnJoin && b.zoom_join_url) {
+  btnJoin.disabled = false;
+
+  btnJoin.onclick = function(){ if(b.zoom_join_url){ window.open(b.zoom_join_url,'_blank','noopener,noreferrer'); } else { alert('Zoom link will appear shortly before class'); } };
+}
+      bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
       bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
       // Ticket fields
@@ -2210,9 +2194,9 @@ if(classDT && !isNaN(classDT.getTime())){
       };
 
       const { error } = await sb
-        ).from("demo_leads")
+        .from("demo_leads")
         .update(upd)
-        .eq((BOOKING && BOOKING.id) ? "id" : "lead_id", (BOOKING && BOOKING.id) ? BOOKING.id : Number(leadId));
+        .eq("id", leadRaw);
 
       if(error){
         console.error(error);
@@ -2224,9 +2208,9 @@ if(classDT && !isNaN(classDT.getTime())){
       closeRes();
 
       // reload booking fresh
-      (function(){const el=document.getElementById("stateLoading"); if(el) el.classList.remove("hide");})();; // kept for visual feedback on refresh
+      document.getElementById("stateLoading").classList.remove("hide"); // kept for visual feedback on refresh
       const fresh = await loadBooking();
-      (function(){const el=document.getElementById("stateLoading"); if(el) el.classList.add("hide");})();;
+      document.getElementById("stateLoading").classList.add("hide");
       if(fresh) renderBooking(fresh);
     };
 
@@ -2334,24 +2318,6 @@ if(classDT && !isNaN(classDT.getTime())){
       return;
     }
     renderBooking(booking);
-
-    // FIX: Auto-refresh until Zoom link appears (keeps Join button working once link is created)
-    if (!booking.zoom_join_url) {
-      let tries = 0;
-      const poll = setInterval(async () => {
-        tries++;
-        if (tries > 20) { clearInterval(poll); return; } // ~10 minutes
-        try {
-          const fresh = await loadBooking();
-          if (fresh && fresh.zoom_join_url) {
-            clearInterval(poll);
-            renderBooking(fresh);
-          }
-        } catch (e) {
-          console.warn("Zoom link poll failed", e);
-        }
-      }, 30000);
-    }
   } catch (e) {
     console.error("Dashboard init failed", e);
     document.getElementById("stateError")?.classList.remove("hide");

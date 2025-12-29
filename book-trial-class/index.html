@@ -1802,6 +1802,28 @@ function hideBookingOverlay() {
 // =========================
 // INIT
 // =========================
+  function setupLangPills() {
+  const pills = document.querySelectorAll(".lang-pill");
+  if (!pills.length) return;
+
+  pills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      // remove active from all
+      pills.forEach(p => p.classList.remove("active"));
+
+      // mark current active
+      pill.classList.add("active");
+
+      // SAVE selected language
+      state.selectedLang = pill.dataset.lang;
+    });
+  });
+
+  // default highlight English
+  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
+  if (defaultPill) defaultPill.classList.add("active");
+}
+
 function init() {
   const { courseId, utm } = getQueryParams();
   state.courseId = courseId || 1;
@@ -1809,6 +1831,7 @@ function init() {
 
   populateCountrySelect();
   autodetectCountry();
+  setupLangPills();
   detectIpAndCity();
 
   const countrySelect = document.getElementById("country-select");

@@ -1450,39 +1450,12 @@ async function handleStep1Next() {
   state.selectedTimeZone = country.timeZone;
 
   await buildDatePillsAndSlots();
-  setupLanguagePills();
   goToStep(2);
 }
 
 // =========================
 // STEP 2 → dates & slots
 // =========================
-  // =========================
-// Language selection (FIX)
-// =========================
-function setupLanguagePills() {
-  const pills = document.querySelectorAll(".lang-pill");
-  if (!pills.length) return;
-
-  pills.forEach(pill => {
-    pill.addEventListener("click", () => {
-      // remove active from all
-      pills.forEach(p => p.classList.remove("active"));
-
-      // activate clicked
-      pill.classList.add("active");
-
-      // SAVE selected language
-      state.selectedLang = pill.dataset.lang;
-
-      console.log("Language selected:", state.selectedLang);
-    });
-  });
-
-  // Default active = English
-  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
-  if (defaultPill) defaultPill.classList.add("active");
-}
 async function fetchSlotsForSixDays() {
   const regionKey = state.selectedRegionKey;
   const courseId = state.courseId;
@@ -1689,9 +1662,8 @@ async function handleStep2Next() {
 
   const { error } = await supabaseClient.rpc("finalize_demo_booking", {
   p_lead_id: state.leadId,
-  p_slot_live_id: state.selectedSlotId,
-  p_timezone: state.selectedTimeZone,
-  p_lang: (state.selectedLang || "English")
+  p_slot_live_id: state.selectedSlotId,   // this is demo_slots_live.id
+  p_timezone: state.selectedTimeZone      // already set in your state
 });
 
   if (btn) btn.disabled = false;
@@ -1772,7 +1744,7 @@ function setupRadioGroups() {
     });
   });
 }
-<script>
+
 function setupLangPills() {
   const pills = document.querySelectorAll(".lang-pill");
   pills.forEach(pill => {
@@ -1780,15 +1752,12 @@ function setupLangPills() {
       pills.forEach(p => p.classList.remove("active"));
       pill.classList.add("active");
       state.selectedLang = pill.getAttribute("data-lang") || "English";
-      console.log("LANG SELECTED:", state.selectedLang);
     });
   });
-
-  // default = English
-  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
-  if (defaultPill) {
-    defaultPill.classList.add("active");
-    state.selectedLang = "English";
+  const first = pills[0];
+  if (first) {
+    first.classList.add("active");
+    state.selectedLang = first.getAttribute("data-lang") || "English";
   }
 }
 
@@ -1863,34 +1832,11 @@ function init() {
 
   setupRadioGroups();
   setupLangPills();
-  setupLangPills();
   setupBackLinks();
+
   updateStepUI();
 }
-  
-function setupLangPills() {
-  const pills = document.querySelectorAll(".lang-pill");
 
-  pills.forEach(pill => {
-    pill.addEventListener("click", () => {
-      // remove active state
-      pills.forEach(p => p.classList.remove("active"));
-
-      // mark selected
-      pill.classList.add("active");
-
-      // SAVE LANGUAGE TO STATE (THIS WAS MISSING)
-      state.selectedLang = pill.dataset.lang;
-
-      console.log("LANG SELECTED:", state.selectedLang);
-    });
-  });
-
-  // default = English
-  const defaultPill = document.querySelector('.lang-pill[data-lang="English"]');
-  if (defaultPill) defaultPill.classList.add("active");
-}
-</script>
 document.addEventListener("DOMContentLoaded", init);
 </script>
 <!-- ===============================

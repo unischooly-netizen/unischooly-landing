@@ -1189,7 +1189,7 @@
     // URL params
     // =========================
     const url = new URL(window.location.href);
-    const iduuid = url.searchParams.get("iduuid"); // IMPORTANT: demo_leads primary key
+    const leadId = url.searchParams.get("iduuid"); // this is BIGINT lead_id
     const courseId = parseInt(url.searchParams.get("courseId") || "1", 10);
 
     // =========================
@@ -1411,10 +1411,10 @@
     async function loadBooking(){
       if(!iduuid){ return null; }
       const { data, error } = await sb
-        .from("demo_leads")
-        .select("*")
-        .eq("id", iduuid)
-        .single();
+      .from("demo_leads")
+      .select("*")
+      .eq("lead_id", leadId)   // ✅ BIGINT MATCH
+      .single();
       if(error || !data){ console.error(error); return null; }
       return data;
     }
@@ -2221,7 +2221,7 @@ if(classDT && !isNaN(classDT.getTime())){
       if(!iduuid){
         // loading.classList.add("hide"); // REMOVED to keep UI visible
         err.classList.remove("hide");
-        err.textContent = "Missing iduuid in URL. Example: ?iduuid=<demo_leads.id>";
+        err.textContent = "Missing booking reference. Please check the link or contact support.";
         return;
       }
 

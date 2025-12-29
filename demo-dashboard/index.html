@@ -1415,16 +1415,20 @@ if (!leadId) {
     let bookingTZ = "Asia/Kolkata";
     let bookingRegion = null;
     let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
-    async function loadBooking(){
-      if(!leadFilter){ return null; }
-      const { data, error } = await sb
-      .from("demo_leads")
-      .select("*")
-      .eq(leadFilter.col, leadFilter.val)   // ✅ BIGINT MATCH
-      .single();
-      if(error || !data){ console.error(error); return null; }
-      return data;
-    }
+    async function loadBooking() {
+  const { data, error } = await sb
+    .from("demo_leads")
+    .select("*")
+    .eq("lead_id", Number(leadId))   // ✅ BIGINT MATCH
+    .single();
+
+  if (error || !data) {
+    console.error("Booking load failed", error);
+    return null;
+  }
+
+  return data;
+}
 
     // =========================
     // Derive class datetime for countdown + calendar

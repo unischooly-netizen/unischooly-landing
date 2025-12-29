@@ -6,7 +6,22 @@
   <title>Unischooly | Demo Dashboard</title>
   <link rel="icon" type="image/svg+xml" href="https://res.cloudinary.com/dpapyknn4/image/upload/v1766210020/favicon_lgxj0r.svg">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// Init dashboard safely
+(async function initDashboard(){
+  try {
+    const booking = await loadBooking();
+    if (!booking) {
+      document.getElementById('stateError')?.classList.remove('hide');
+      return;
+    }
+    renderBooking(booking);
+  } catch (e) {
+    console.error('Dashboard init failed', e);
+    document.getElementById('stateError')?.classList.remove('hide');
+  }
+})();
+</script>
 
   <style>
     :root{
@@ -2321,18 +2336,3 @@ if(classDT && !isNaN(classDT.getTime())){
 </>
 </body>
 </html>
-
-
-(async function initDashboard() {
-  try {
-    const booking = await loadBooking();
-    if (!booking) {
-      document.getElementById("stateError")?.classList.remove("hide");
-      return;
-    }
-    renderBooking(booking);
-  } catch (e) {
-    console.error("Dashboard init failed", e);
-    document.getElementById("stateError")?.classList.remove("hide");
-  }
-})();

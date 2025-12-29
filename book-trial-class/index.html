@@ -1662,8 +1662,9 @@ async function handleStep2Next() {
 
   const { error } = await supabaseClient.rpc("finalize_demo_booking", {
   p_lead_id: state.leadId,
-  p_slot_live_id: state.selectedSlotId,   // this is demo_slots_live.id
-  p_timezone: state.selectedTimeZone      // already set in your state
+  p_slot_live_id: state.selectedSlotId,
+  p_timezone: state.selectedTimeZone,
+  p_lang: state.selectedLang   // ✅ THIS IS THE FIX
 });
 
   if (btn) btn.disabled = false;

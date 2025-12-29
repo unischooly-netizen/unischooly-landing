@@ -1434,7 +1434,7 @@ async function handleStep1Next() {
       browser: navigator.userAgent || null,
       device_type: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? "mobile" : "desktop"
     })
-    .select("id")
+    .select("lead_id")
     .single();
 
   if (submitBtn) submitBtn.disabled = false;
@@ -1445,7 +1445,7 @@ async function handleStep1Next() {
     return;
   }
 
-  state.leadId = data.id;
+  state.leadId = data.lead_id; // ✅ BIGINT ONLY
   state.selectedRegionKey = country.regionKey;
   state.selectedTimeZone = country.timeZone;
 

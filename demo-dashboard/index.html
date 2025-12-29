@@ -1209,42 +1209,37 @@
     }
 
     // =========================
-    // Timezone-safe wall-time -> UTC instant (NO browser-timezone guessing)
+    // Timezone-safe helpers (used by Reschedule)
     // =========================
     function parseTime12To24(time12){
-      // "12:30 PM" -> {hh:12, mm:30} in 24h
-      const m = String(time12 || "").trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+      const m = String(time12||"").trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
       if(!m) return null;
       let hh = parseInt(m[1],10);
       const mm = parseInt(m[2]||"00",10);
       const ap = m[3].toUpperCase();
-      if(ap === "AM"){ if(hh === 12) hh = 0; }
-      if(ap === "PM"){ if(hh !== 12) hh += 12; }
+      if(ap==="AM"){ if(hh===12) hh=0; }
+      if(ap==="PM"){ if(hh!==12) hh+=12; }
       return {hh, mm};
     }
     function zonedTimeToUtc(dateStr, time12, tz){
-      // dateStr: "YYYY-MM-DD", time12: "12:00 PM"
+      // Convert a wall-clock time in `tz` to an absolute UTC Date (handles DST via Intl offset)
       const t = parseTime12To24(time12);
       if(!t) return null;
       const [y,m,d] = dateStr.split("-").map(n=>parseInt(n,10));
       const utcGuess = new Date(Date.UTC(y, (m||1)-1, d||1, t.hh, t.mm, 0));
-      const p = fmtParts(utcGuess, tz, {
-        year:"numeric", month:"2-digit", day:"2-digit",
-        hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false
-      });
-      const asIfUtc = new Date(Date.UTC(
-        parseInt(p.year,10), parseInt(p.month,10)-1, parseInt(p.day,10),
-        parseInt(p.hour,10), parseInt(p.minute,10), parseInt(p.second,10)
-      ));
-      const diff = asIfUtc.getTime() - utcGuess.getTime(); // tz offset at that moment
+      const p = fmtParts(utcGuess, tz, {year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false});
+      const asIfUtc = new Date(Date.UTC(parseInt(p.year,10), parseInt(p.month,10)-1, parseInt(p.day,10), parseInt(p.hour,10), parseInt(p.minute,10), parseInt(p.second,10)));
+      const diff = asIfUtc.getTime() - utcGuess.getTime();
       return new Date(utcGuess.getTime() - diff);
     }
     function addDaysInTZ(baseDateStr, days, tz){
-      // moves by local calendar days safely enough for UI pills (DST-safe via noon anchor)
-      const anchor = zonedTimeToUtc(baseDateStr, "12:00 PM", tz);
-      const next = new Date(anchor.getTime() + days * 86400000);
-      return fmtDateSQL(next, tz);
+      // Move by calendar days in tz using a noon anchor to avoid DST edge cases
+      const anchorUtc = zonedTimeToUtc(baseDateStr, "12:00 PM", tz);
+      const moved = new Date(anchorUtc.getTime() + days * 86400000);
+      return fmtDateSQL(moved, tz);
     }
+
+
 // =========================
     // URL params
     // =========================
@@ -2151,6 +2146,7 @@ if(classDT && !isNaN(classDT.getTime())){
       sel.value = resTZ;
       sel.onchange = ()=>{
         resTZ = safeTZ(sel.value);
+        buildResDates();
         fetchResSlots();
       };
     }
@@ -2158,28 +2154,28 @@ if(classDT && !isNaN(classDT.getTime())){
     function buildResDates(){
       const wrap=document.getElementById("resDates");
       wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
-      const now = new Date();
-      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
-      const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
+
+      // Next 7 days INCLUDING today, based on SELECTED timezone (resTZ)
+      const todayKey = fmtDateSQL(new Date(), resTZ); // correct local date for resTZ
       const dates=[];
       for(let i=0;i<7;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, "Asia/Kolkata");
-        dates.push(key);
+        dates.push(addDaysInTZ(todayKey, i, resTZ)); // local date keys in resTZ
       }
+
       resDate = dates[0];
+
       dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
+        // render label in selected timezone using a safe noon anchor
+        const noonUtc = zonedTimeToUtc(key, "12:00 PM", resTZ);
+        const shown = new Intl.DateTimeFormat("en-US",{timeZone:resTZ, weekday:"short", month:"short", day:"numeric"}).format(noonUtc);
+
         const pill=document.createElement("button");
         pill.className="pill"+(idx===0?" active":"");
         pill.textContent = (idx===0?"Today • ":"")+shown;
         pill.onclick=()=>{
           [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
           pill.classList.add("active");
-          resDate = key;
+          resDate = key; // local date in resTZ
           fetchResSlots();
         };
         wrap.appendChild(pill);
@@ -2194,62 +2190,81 @@ if(classDT && !isNaN(classDT.getTime())){
       selectedResSlot = null;
       document.getElementById("confirmRes").disabled = true;
 
-      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
+      if(!BOOKING || !bookingRegion) {
+        empty.classList.remove("hide");
+        empty.textContent="Missing region. Please contact support.";
+        return;
       }
       if(!resDate) buildResDates();
+
+      // IMPORTANT:
+      // UI uses resDate as LOCAL date in resTZ.
+      // DB slots are stored by IST day key (slot_date). To avoid timezone date-jumps,
+      // we query a small IST window (prev/today/next) and then FILTER by local date in resTZ.
+      const noonUtc = zonedTimeToUtc(resDate, "12:00 PM", resTZ);
+      const istToday = fmtDateSQL(noonUtc, "Asia/Kolkata");
+      const istPrev  = fmtDateSQL(new Date(noonUtc.getTime() - 86400000), "Asia/Kolkata");
+      const istNext  = fmtDateSQL(new Date(noonUtc.getTime() + 86400000), "Asia/Kolkata");
+      const istKeys = Array.from(new Set([istPrev, istToday, istNext]));
 
       const { data, error } = await sb
         .from("demo_slots_live_view")
         .select("*")
         .eq("region_key", bookingRegion)
         .eq("course_id", BOOKING.course_id || courseId)
-        .eq("slot_date", resDate);
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return;
-      }
+        .in("slot_date", istKeys);
 
-      // convert to local tz, apply SEA hide <7am;
-      // also shift if local time <3am to next day (only for display grouping)
+      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
+      if(!data || data.length===0){ empty.classList.remove("hide"); return; }
+
       const slots=[];
       data.forEach(r=>{
-        const utc = new Date(r.slot_datetime_local);
-        // convert by formatting in tz then re-parsing
-        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
-        let local = new Date(localStr);
+        const utc = new Date(r.slot_start_utc);
 
-        // shift if local < 03:00
-        if(local.getHours() < 3){
-          local = new Date(local.getTime() + 24*60*60*1000);
-        }
+        // filter strictly to the selected LOCAL date
+        const localDate = fmtDateSQL(utc, resTZ);
+        if(localDate !== resDate) return;
 
-        // SEA hide < 7AM
-        if(bookingRegion === "SEA" && local.getHours() < 7) return;
+        // SEA hide < 7AM in local time
+        const p24 = fmtParts(utc, resTZ, {hour:"2-digit", minute:"2-digit", hour12:false});
+        const hh24 = parseInt(p24.hour,10);
+        const mm24 = parseInt(p24.minute,10);
+        if(bookingRegion === "SEA" && hh24 < 7) return;
 
-        const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
-        const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
+        const p12 = fmtParts(utc, resTZ, {hour:"numeric", minute:"2-digit", hour12:true});
+        const display = `${p12.hour}:${p12.minute} ${p12.dayPeriod}`;
+
+        slots.push({
+          slot_id: r.slot_id,
+          isStar: r.is_star_teacher,
+          display,
+          minutes: (hh24*60 + mm24),
+          utcInstant: utc
+        });
       });
-      // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
+
+      // If this is "today" in the selected timezone, hide slots earlier than now + 60 minutes (timezone-safe)
       try {
-        const todayTz = fmtDateSQL(new Date(), resTZ);
-        if (resDate === todayTz) {
-          const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
+        const todayKey = fmtDateSQL(new Date(), resTZ);
+        if (resDate === todayKey) {
+          const nowP = fmtParts(new Date(), resTZ, {hour:"2-digit", minute:"2-digit", hour12:false});
+          const nowMin = (parseInt(nowP.hour,10)*60) + parseInt(nowP.minute,10);
+          const minAllowed = nowMin + 60; // +60 minutes buffer
           for (let i = slots.length - 1; i >= 0; i--) {
-            const d = slots[i].localInstant;
-            if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
+            if (slots[i].minutes < minAllowed) slots.splice(i, 1);
           }
         }
       } catch (e) { console.warn("Reschedule slot filter failed", e); }
 
-      // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      slots.sort((a,b)=>a.localInstant - b.localInstant);
+      // Sort strictly from 12:00 AM -> 11:59 PM
+      slots.sort((a,b)=>a.minutes - b.minutes);
+
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 
       slots.forEach(s=>{
         const btn=document.createElement("button");
         btn.className="slot";
-        btn.textContent = s.display;
+        btn.innerHTML=`<div class="t">${s.display}</div>`;
         if(s.isStar){
           const tag=document.createElement("div");
           tag.className="star";
@@ -2271,7 +2286,7 @@ if(classDT && !isNaN(classDT.getTime())){
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
       // Additionally store timezone if user changed it.
       const upd = (function(){
-        const d = selectedResSlot.localInstant; // UTC instant as Date
+        const d = selectedResSlot.utcInstant; // UTC instant as Date
         return {
           // user-facing
           preferred_date: resDate,
@@ -2352,6 +2367,19 @@ if(classDT && !isNaN(classDT.getTime())){
     })();
   
 // Init dashboard
+(async function initDashboard() {
+  try {
+    const booking = await loadBooking();
+    if (!booking) {
+      document.getElementById("stateError")?.classList.remove("hide");
+      return;
+    }
+    renderBooking(booking);
+  } catch (e) {
+    console.error("Dashboard init failed", e);
+    document.getElementById("stateError")?.classList.remove("hide");
+  }
+})();
 </script>
   <!-- DEMO DASHBOARD FOOTER -->
 <footer class="demo-footer">

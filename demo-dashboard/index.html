@@ -1191,7 +1191,7 @@
     const url = new URL(window.location.href);
     const leadId =
   url.searchParams.get("leadId") ||
-  url.searchParams.get("iduuid");
+  url.searchParams.get("leadRaw");
 
 if (!leadId) {
   document.getElementById("stateError")?.classList.remove("hide");
@@ -1416,11 +1416,11 @@ if (!leadId) {
     let bookingRegion = null;
     let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
     async function loadBooking(){
-      if(!iduuid){ return null; }
+      if(!leadFilter){ return null; }
       const { data, error } = await sb
       .from("demo_leads")
       .select("*")
-      .eq("lead_id", Number(leadId))   // ✅ BIGINT MATCH
+      .eq(leadFilter.col, leadFilter.val)   // ✅ BIGINT MATCH
       .single();
       if(error || !data){ console.error(error); return null; }
       return data;
@@ -2199,7 +2199,7 @@ if(classDT && !isNaN(classDT.getTime())){
       const { error } = await sb
         .from("demo_leads")
         .update(upd)
-        .eq("id", iduuid);
+        .eq("id", leadRaw);
 
       if(error){
         console.error(error);
@@ -2225,7 +2225,7 @@ if(classDT && !isNaN(classDT.getTime())){
       const err=document.getElementById("stateError");
       const section2=document.getElementById("section2");
 
-      if(!iduuid){
+      if(!leadFilter){
         // loading.classList.add("hide"); // REMOVED to keep UI visible
         err.classList.remove("hide");
         err.textContent = "Missing booking reference. Please check the link or contact support.";

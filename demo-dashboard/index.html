@@ -6,22 +6,7 @@
   <title>Unischooly | Demo Dashboard</title>
   <link rel="icon" type="image/svg+xml" href="https://res.cloudinary.com/dpapyknn4/image/upload/v1766210020/favicon_lgxj0r.svg">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-// Init dashboard safely
-(async function initDashboard(){
-  try {
-    const booking = await loadBooking();
-    if (!booking) {
-      document.getElementById('stateError')?.classList.remove('hide');
-      return;
-    }
-    renderBooking(booking);
-  } catch (e) {
-    console.error('Dashboard init failed', e);
-    document.getElementById('stateError')?.classList.remove('hide');
-  }
-})();
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root{
@@ -1201,6 +1186,26 @@
     const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // =========================
+    // Time formatting helpers (for DB + display)
+    // =========================
+    function fmtParts(d, tz, opts){
+      const parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts }).formatToParts(d);
+      return Object.fromEntries(parts.filter(p=>p.type!=="literal").map(p=>[p.type,p.value]));
+    }
+    function fmtDateSQL(d, tz){
+      const p = fmtParts(d, tz, { year:"numeric", month:"2-digit", day:"2-digit" });
+      return `${p.year}-${p.month}-${p.day}`;
+    }
+    function fmtDateTimeSQL(d, tz){
+      const p = fmtParts(d, tz, { year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false });
+      return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}:${p.second}`;
+    }
+    function fmtLabel(d, tz){
+      const p = fmtParts(d, tz, { hour:"numeric", minute:"2-digit", hour12:true });
+      return `${p.hour}:${p.minute} ${p.dayPeriod}`;
+    }
+
+    // =========================
     // URL params
     // =========================
     const url = new URL(window.location.href);
@@ -1208,20 +1213,17 @@
   url.searchParams.get("leadId") ||
   url.searchParams.get("leadRaw");
 
-// FIX (GLOBAL): Single source of truth for fetching the lead
-// If leadId is numeric => use lead_id (BIGINT). Otherwise assume UUID => use id.
-const leadFilter = (() => {
-  if (!leadId) return null;
-  const asNum = Number(leadId);
-  if (Number.isFinite(asNum) && String(asNum) === String(parseInt(leadId, 10))) {
-    return { col: "lead_id", val: asNum };
-  }
-  return { col: "id", val: String(leadId) };
-})();
 if (!leadId) {
   document.getElementById("stateError")?.classList.remove("hide");
   throw new Error("Missing leadId in URL");
 } // this is BIGINT lead_id
+    // FIX: single source of truth for DB lookup (lead_id)
+    const leadFilter = { col: "lead_id", val: Number(leadId) };
+    if(!Number.isFinite(leadFilter.val)){
+      document.getElementById("stateError")?.classList.remove("hide");
+      throw new Error("Invalid leadId in URL");
+    }
+
     const courseId = parseInt(url.searchParams.get("courseId") || "1", 10);
 
     // =========================
@@ -1535,13 +1537,16 @@ function renderBooking(b){
       BOOKING = b;
   const btnJoin = document.getElementById("btnJoin");
 
-if (btnJoin && b.zoom_join_url) {
-  btnJoin.disabled = false;
-
-  btnJoin.onclick = () => {
-    console.log("Joining Zoom:", b.zoom_join_url);
-    window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
-  };
+if (btnJoin) {
+        if (b.zoom_join_url) {
+          btnJoin.disabled = false;
+          btnJoin.onclick = () => window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
+        } else {
+          btnJoin.disabled = true;
+          btnJoin.onclick = () => toast("Meet link will appear shortly before class.");
+        }
+      }
+;
 }
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
@@ -2185,6 +2190,20 @@ if(classDT && !isNaN(classDT.getTime())){
         const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
         slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
       });
+
+      // FIX: Do not show past slots. For 'today' in selected timezone, only show slots >= now + 60 minutes.
+      try{
+        const todayTz = fmtDateSQL(new Date(), resTZ);
+        if(resDate === todayTz){
+          const minAllowedMs = Date.now() + 60*60*1000; // +60 minutes buffer
+          for(let i=slots.length-1;i>=0;i--){
+            if(slots[i].localInstant && slots[i].localInstant.getTime() < minAllowedMs){
+              slots.splice(i,1);
+            }
+          }
+        }
+      }catch(e){ console.warn("Slot filter failed", e); }
+
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       slots.sort((a,b)=>a.localInstant - b.localInstant);
       if(slots.length===0){ empty.classList.remove("hide"); return; }
@@ -2213,13 +2232,38 @@ if(classDT && !isNaN(classDT.getTime())){
       if(!BOOKING || !selectedResSlot) return;
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
       // Additionally store timezone if user changed it.
-      const upd = {
-        preferred_date: resDate,
-        preferred_time_slot: selectedResSlot.display,
-        slot_id: selectedResSlot.slot_id,
-        timezone: resTZ,
-        updated_at: new Date().toISOString()
-      };
+      const upd = (function(){
+        const d = selectedResSlot.localInstant; // JS Date of the chosen slot (instant)
+        return {
+          // keep user-facing fields
+          preferred_date: resDate,
+          preferred_time_slot: selectedResSlot.display,
+
+          // slot linkage (keep both for compatibility)
+          slot_live_id: selectedResSlot.slot_id,
+          slot_id: selectedResSlot.slot_id,
+
+          // schedule (source of truth for Zoom automation)
+          scheduled_at_utc: d.toISOString(),                 // ISO with Z
+          scheduled_at_ist: fmtDateTimeSQL(d, "Asia/Kolkata"),
+          scheduled_local_date: fmtDateSQL(d, resTZ),
+          scheduled_local_label: fmtLabel(d, resTZ),
+          lead_timezone: resTZ,
+          timezone: resTZ,
+
+          // IMPORTANT: reset Zoom so CRON recreates the meeting
+          zoom_status: "not_created",
+          zoom_account_id: null,
+          zoom_meeting_id: null,
+          zoom_join_url: null,
+          zoom_start_url: null,
+          meeting_created_at: null,
+
+          // optional tracking
+          booking_status: "rescheduled",
+          updated_at: new Date().toISOString()
+        };
+      })();
 
       const { error } = await sb
         .from("demo_leads")
@@ -2336,3 +2380,18 @@ if(classDT && !isNaN(classDT.getTime())){
 </>
 </body>
 </html>
+
+
+(async function initDashboard() {
+  try {
+    const booking = await loadBooking();
+    if (!booking) {
+      document.getElementById("stateError")?.classList.remove("hide");
+      return;
+    }
+    renderBooking(booking);
+  } catch (e) {
+    console.error("Dashboard init failed", e);
+    document.getElementById("stateError")?.classList.remove("hide");
+  }
+})();

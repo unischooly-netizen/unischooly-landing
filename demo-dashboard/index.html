@@ -2160,8 +2160,8 @@ if(classDT && !isNaN(classDT.getTime())){
       const wrap=document.getElementById("resDates");
       wrap.innerHTML="";
       // Next 3 days including today, based on IST date for DB (same as your slot generation)
-      const now = new Date();
-      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
+      const now = nowInTZ(resTZ);          // use selected timezone
+      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB still uses IST dates
       const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
       const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
       const dates=[];
@@ -2233,9 +2233,9 @@ if(classDT && !isNaN(classDT.getTime())){
       });
       // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
       try {
-        const todayTz = fmtDateSQL(new Date(), resTZ);
+        const todayTz = fmtDateSQL(nowInTZ(resTZ), resTZ);
         if (resDate === todayTz) {
-          const minAllowedMs = nowInTZ(resTZ).getTime() + 60 * 60 * 1000; // +60 minutes buffer
+        const minAllowedMs = nowInTZ(resTZ).getTime() + 60 * 60 * 1000;
           for (let i = slots.length - 1; i >= 0; i--) {
             const d = slots[i].localInstant;
             if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
@@ -2244,7 +2244,11 @@ if(classDT && !isNaN(classDT.getTime())){
       } catch (e) { console.warn("Reschedule slot filter failed", e); }
 
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      slots.sort((a,b)=>a.localInstant - b.localInstant);
+      slots.sort((a,b)=>{
+  const ta = new Date(a.localInstant.toLocaleString("en-US",{timeZone:resTZ}));
+  const tb = new Date(b.localInstant.toLocaleString("en-US",{timeZone:resTZ}));
+  return ta - tb;
+});
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 
       slots.forEach(s=>{

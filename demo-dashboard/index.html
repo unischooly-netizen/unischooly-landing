@@ -2167,7 +2167,7 @@ const todayLocalKey = dateKeyInTZ(now, resTZ);
       const dates=[];
       for(let i=0;i<7;i++){
         const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, "Asia/Kolkata");
+        const key = dateKeyInTZ(d, resTZ);
         dates.push(key);
       }
       resDate = dates[0];

@@ -2241,12 +2241,18 @@ let selectedResSlot = null;
       }
       if(!resDateDb || !resDateLocal) buildResDates();
 
+// Build IST day range for DB filtering
+const istStart = `${resDateDb} 00:00:00+05:30`;
+const istEnd   = `${resDateDb} 23:59:59+05:30`;
+
 const { data, error } = await sb
   .from("demo_slots_live_view")
   .select("*")
   .eq("region_key", bookingRegion)
   .eq("course_id", BOOKING.course_id || courseId)
-  .eq("slot_date", resDateDb);
+  .gte("slot_datetime_ist", istStart)
+  .lte("slot_datetime_ist", istEnd);
+
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
       if(!data || data.length===0){ empty.classList.remove("hide"); return;
       }

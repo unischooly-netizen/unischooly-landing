@@ -2156,36 +2156,51 @@ if(classDT && !isNaN(classDT.getTime())){
     }
 
     function buildResDates(){
-      const wrap=document.getElementById("resDates");
-      wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
-      const now = new Date();
-      // FIX: calculate "today" using selected timezone, not IST
-const todayLocalKey = dateKeyInTZ(now, resTZ);
-      const [Y,M,D] = todayLocalKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
-      const dates=[];
-      for(let i=0;i<7;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, resTZ);
-        dates.push(key);
-      }
-      resDate = dates[0];
-      dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
-        const pill=document.createElement("button");
-        pill.className="pill"+(idx===0?" active":"");
-        pill.textContent = (idx===0?"Today • ":"")+shown;
-        pill.onclick=()=>{
-          [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-          pill.classList.add("active");
-          resDate = key;
-          fetchResSlots();
-        };
-        wrap.appendChild(pill);
-      });
-    }
+  const wrap = document.getElementById("resDates");
+  wrap.innerHTML = "";
+
+  const now = new Date();
+
+  // ✅ today in selected timezone
+  const todayLocalKey = dateKeyInTZ(now, resTZ);
+  const [Y,M,D] = todayLocalKey.split("-").map(n=>parseInt(n,10));
+  const base = new Date(Date.UTC(Y, M-1, D, 0, 0, 0));
+
+  const dates = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(base.getTime() + i*24*60*60*1000);
+
+    // ✅ FIX: use resTZ here, NOT Asia/Kolkata
+    const key = dateKeyInTZ(d, resTZ);
+
+    dates.push(key);
+  }
+
+  resDate = dates[0];
+
+  dates.forEach((key, idx)=>{
+    const dt = new Date(key+"T00:00:00Z");
+    const shown = new Intl.DateTimeFormat("en-US",{
+      timeZone: resTZ,
+      weekday:"short",
+      month:"short",
+      day:"numeric"
+    }).format(dt);
+
+    const pill = document.createElement("button");
+    pill.className = "pill"+(idx===0?" active":"");
+    pill.textContent = (idx===0?"Today • ":"")+shown;
+
+    pill.onclick = ()=>{
+      [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+      pill.classList.add("active");
+      resDate = key;
+      fetchResSlots();
+    };
+
+    wrap.appendChild(pill);
+  });
+}
 
     async function fetchResSlots(){
       const grid=document.getElementById("resSlots");

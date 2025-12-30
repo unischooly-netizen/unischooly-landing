@@ -2155,133 +2155,235 @@ if(classDT && !isNaN(classDT.getTime())){
       };
     }
 
-    function buildResDates(){
-      const wrap=document.getElementById("resDates");
-      wrap.innerHTML="";
-      // FIX: Build date pills based on the SELECTED TIMEZONE (resTZ), not IST.
-      const now = new Date();
-      const todayKey = dateKeyInTZ(now, resTZ);
+    
+function pad2(n){return String(n).padStart(2,"0");}
 
-      const [Y,M,D] = todayKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
+function ymdInTZ(date, tz){
+  // returns YYYY-MM-DD as seen in tz
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const p = Object.fromEntries(parts.map(x=>[x.type,x.value]));
+  return `${p.year}-${p.month}-${p.day}`;
+}
 
-      const dates=[];
-      for(let i=0;i<7;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, resTZ);
-        dates.push(key);
-      }
+function labelForYMD(ymd, tz){
+  // "Today • Tue, Dec 30" or "Wed, Dec 31"
+  const [y,m,d]=ymd.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m-1, d, 12, 0, 0)); // noon UTC avoids DST edge
+  const dow = new Intl.DateTimeFormat("en-US", { timeZone: tz, weekday: "short" }).format(dt);
+  const mon = new Intl.DateTimeFormat("en-US", { timeZone: tz, month: "short" }).format(dt);
+  const day = new Intl.DateTimeFormat("en-US", { timeZone: tz, day: "numeric" }).format(dt);
+  const todayYMD = ymdInTZ(new Date(), tz);
+  if(ymd === todayYMD) return `Today • ${dow}, ${mon} ${day}`;
+  return `${dow}, ${mon} ${day}`;
+}
 
-      resDate = dates[0];
+function addDaysYMD(ymd, days){
+  const [y,m,d]=ymd.split("-").map(Number);
+  const base = new Date(Date.UTC(y, m-1, d, 12, 0, 0));
+  base.setUTCDate(base.getUTCDate()+days);
+  return ymdInTZ(base, resTZ || "UTC");
+}
 
-      dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
-        const pill=document.createElement("button");
-        pill.className="pill"+(idx===0?" active":"");
-        pill.textContent = (idx===0?"Today • ":"")+shown;
-        pill.onclick=()=>{
-          [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-          pill.classList.add("active");
-          resDate = key;
-          fetchResSlots();
-        };
-        wrap.appendChild(pill);
-      });
-    }
+function getTzOffsetMinutes(tz, date){
+  // minutes to add to UTC to get tz local at that instant
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+  const parts = Object.fromEntries(dtf.formatToParts(date).map(p=>[p.type,p.value]));
+  const asUTC = new Date(`${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}Z`);
+  return (asUTC.getTime() - date.getTime())/60000;
+}
 
-    async function fetchResSlots(){
-      const grid=document.getElementById("resSlots");
-      const empty=document.getElementById("resEmpty");
-      grid.innerHTML="";
-      empty.classList.add("hide");
+function utcStartOfLocalDay(ymd, tz){
+  const [y,m,d]=ymd.split("-").map(Number);
+  const utcMid = new Date(Date.UTC(y, m-1, d, 0, 0, 0));
+  const off = getTzOffsetMinutes(tz, utcMid);
+  return new Date(utcMid.getTime() - off*60000);
+}
+
+function utcRangeForLocalDay(ymd, tz){
+  const start = utcStartOfLocalDay(ymd, tz);
+  // next day start (handles DST 23/25h days)
+  const [y,m,d]=ymd.split("-").map(Number);
+  const next = new Date(Date.UTC(y, m-1, d, 0, 0, 0));
+  next.setUTCDate(next.getUTCDate()+1);
+  const nextYMD = ymdInTZ(next, tz);
+  const end = utcStartOfLocalDay(nextYMD, tz);
+  return { startISO: start.toISOString(), endISO: end.toISOString() };
+}
+
+function fmtTimeFromUTC(isoUTC, tz){
+  const dt = new Date(isoUTC);
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).format(dt);
+}
+
+function minutesFromUTCInTZ(isoUTC, tz){
+  const dt = new Date(isoUTC);
+  const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit"
+  }).formatToParts(dt).map(p=>[p.type,p.value]));
+  return (parseInt(parts.hour,10)*60) + parseInt(parts.minute,10);
+}
+
+function buildResDates(){
+  const wrap = document.getElementById("resDates");
+  wrap.innerHTML = "";
+  const tz = resTZ || "UTC";
+  const todayYMD = ymdInTZ(new Date(), tz);
+
+  // default selection
+  if(!resDate) resDate = todayYMD;
+
+  for(let i=0;i<7;i++){
+    const ymd = (i===0) ? todayYMD : addDaysYMD(todayYMD, i);
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pill" + (ymd===resDate ? " active" : "");
+    b.dataset.date = ymd;
+    b.textContent = labelForYMD(ymd, tz);
+    b.onclick = ()=>{
+      resDate = ymd;
+      // update active
+      [...wrap.querySelectorAll(".pill")].forEach(x=>x.classList.toggle("active", x.dataset.date===ymd));
       selectedResSlot = null;
       document.getElementById("confirmRes").disabled = true;
+      fetchResSlots();
+    };
+    wrap.appendChild(b);
+  }
+}
 
-      if(!BOOKING || !bookingRegion){ empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return; }
-      if(!resDate) buildResDates();
+async function fetchResSlots(){
+  const grid = document.getElementById("resSlots");
+  const empty = document.getElementById("resEmpty");
+  grid.innerHTML = "";
+  empty.classList.add("hide");
+  document.getElementById("confirmRes").disabled = true;
 
-      // FIX: Fetch a small window and filter by LOCAL DATE in selected timezone.
-      const minISO = addDaysInTZ(resDate, -2, resTZ);
-      const maxISO = addDaysInTZ(resDate,  2, resTZ);
+  const tz = resTZ || "UTC";
+  if(!BOOKING){
+    empty.textContent = "Booking not loaded.";
+    empty.classList.remove("hide");
+    return;
+  }
+  const region = BOOKING.region || BOOKING.lead_region || BOOKING.booking_region || BOOKING.slot_region;
+  const courseId = BOOKING.course_id || BOOKING.courseId || BOOKING.course;
+  if(!region || !courseId){
+    empty.textContent = "Missing region/course for slot search.";
+    empty.classList.remove("hide");
+    return;
+  }
+  if(!resDate){
+    empty.textContent = "Pick a date.";
+    empty.classList.remove("hide");
+    return;
+  }
 
-      const { data, error } = await sb
-        .from("demo_slots_live_view")
-        .select("*")
-        .eq("region_key", bookingRegion)
-        .eq("course_id", BOOKING.course_id || courseId)
-        .gte("slot_date", minISO)
-        .lte("slot_date", maxISO);
+  const cacheKey = `${region}__${courseId}__${tz}__${resDate}`;
+  if(resSlotsCache[cacheKey]){
+    renderResSlots(resSlotsCache[cacheKey], tz);
+    return;
+  }
 
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return; }
+  const {startISO, endISO} = utcRangeForLocalDay(resDate, tz);
 
-      const todayTz = dateKeyInTZ(new Date(), resTZ);
-      const minAllowedMs = Date.now() + 60*60*1000; // +60 minutes
+  try{
+    const {data, error} = await sb
+      .from("demo_slots_live_view")
+      .select("slot_id,course_id,region,is_active,is_star_teacher,scheduled_at_utc,capacity,booked_count")
+      .eq("region", region)
+      .eq("course_id", courseId)
+      .eq("is_active", true)
+      .gte("scheduled_at_utc", startISO)
+      .lt("scheduled_at_utc", endISO)
+      .order("scheduled_at_utc", {ascending:true});
 
-      const slots=[];
-      for(const r of data){
-        const utc = new Date(
-          r.slot_start_utc || r.scheduled_at_utc || r.slot_start_time_utc || r.slot_time_utc ||
-          r.slot_datetime_utc || r.slot_datetime || r.start_time_utc
-        );
-        if(isNaN(utc.getTime())) continue;
+    if(error) throw error;
 
-        // Filter by selected local date
-        const localKey = dateKeyInTZ(utc, resTZ);
-        if(localKey !== resDate) continue;
+    const slots = (data || []).map(r=>{
+      const timeLabel = fmtTimeFromUTC(r.scheduled_at_utc, tz);
+      const mins = minutesFromUTCInTZ(r.scheduled_at_utc, tz);
+      return {...r, _timeLabel: timeLabel, _mins: mins};
+    }).sort((a,b)=>a._mins-b._mins);
 
-        // SEA hide < 7AM (based on local time)
-        const localTmp = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
-        if(bookingRegion === "SEA" && localTmp.getHours() < 7) continue;
+    resSlotsCache[cacheKey] = slots;
+    renderResSlots(slots, tz);
+  }catch(e){
+    console.error(e);
+    empty.textContent = "Failed to load slots.";
+    empty.classList.remove("hide");
+  }
+}
 
-        // Hide past-time slots for TODAY only
-        if(resDate === todayTz && utc.getTime() < minAllowedMs) continue;
+function renderResSlots(slots, tz){
+  const grid = document.getElementById("resSlots");
+  const empty = document.getElementById("resEmpty");
+  grid.innerHTML = "";
+  empty.classList.add("hide");
+  selectedResSlot = null;
+  document.getElementById("confirmRes").disabled = true;
 
-        // Display label in resTZ
-        const p12 = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const m12 = Object.fromEntries(p12.map(p=>[p.type,p.value]));
-        const display = `${m12.hour}:${m12.minute} ${m12.dayPeriod}`;
+  if(!slots || slots.length===0){
+    empty.textContent = "No slots available for this date.";
+    empty.classList.remove("hide");
+    return;
+  }
 
-        // Sort key: minutes since midnight in resTZ
-        const p24 = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(utc);
-        const m24 = Object.fromEntries(p24.map(p=>[p.type,p.value]));
-        const mins = (parseInt(m24.hour,10) * 60) + parseInt(m24.minute,10);
+  slots.forEach(s=>{
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "slotbtn";
+    btn.dataset.slotId = s.slot_id;
 
-        slots.push({
-          slot_id: r.slot_id || r.id || r.slot_live_id,
-          isStar: !!(r.is_star_teacher ?? r.star_teacher ?? r.is_star),
-          display,
-          mins
-        });
-      }
+    // time text
+    const t = document.createElement("span");
+    t.textContent = s._timeLabel;
+    btn.appendChild(t);
 
-      // Strict order: 12:00 AM -> 11:59 PM
-      slots.sort((a,b)=>a.mins - b.mins);
-
-      if(slots.length===0){ empty.classList.remove("hide"); return; }
-
-      for(const s of slots){
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.textContent=s.display;
-        if(s.isStar){
-          const tag=document.createElement("div");
-          tag.className="star";
-          tag.textContent="⭐ Star";
-          btn.appendChild(tag);
-        }
-        btn.onclick=()=>{
-          [...grid.querySelectorAll(".slot")].forEach(x=>x.classList.remove("active"));
-          btn.classList.add("active");
-          selectedResSlot = s;
-          document.getElementById("confirmRes").disabled = false;
-        };
-        grid.appendChild(btn);
-      }
+    // star tag
+    if(s.is_star_teacher){
+      const tag = document.createElement("span");
+      tag.className = "tag star";
+      const star = document.createElement("span");
+      star.className = "star";
+      star.textContent = "★";
+      tag.appendChild(star);
+      tag.appendChild(document.createTextNode(" Star Teacher"));
+      btn.appendChild(tag);
     }
 
-    document.getElementById("confirmRes").onclick = async ()=>{
+    btn.onclick = ()=>{
+      [...grid.querySelectorAll(".slotbtn")].forEach(x=>x.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedResSlot = s;
+      document.getElementById("confirmRes").disabled = false;
+    };
+
+    grid.appendChild(btn);
+  });
+}
+
+document.getElementById("confirmRes").onclick = async ()=>{
       if(!BOOKING || !selectedResSlot) return;
       // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
       // Additionally store timezone if user changed it.

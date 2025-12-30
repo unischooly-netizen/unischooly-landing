@@ -1473,7 +1473,8 @@ if (!leadId) {
       const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
       return {weekday: map.weekday, month: map.month, day: map.day, time: `${map.hour}:${map.minute} ${map.dayPeriod}`};
     }
-    function dateKeyInTZ(dt, tz){
+    function nowInTZ(tz){ return new Date(new Date().toLocaleString('en-US',{timeZone:tz})); }
+function dateKeyInTZ(dt, tz){
       const p = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit"}).format(dt);
       return p; // YYYY-MM-DD
     }
@@ -1715,7 +1716,7 @@ if(classDT && !isNaN(classDT.getTime())){
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         "BEGIN:VEVENT",
-        `UID:${Date.now()}@unischooly.com`,
+        `UID:${nowInTZ(resTZ).getTime()}@unischooly.com`,
         `DTSTAMP:${toIcsDateUTC(new Date())}`,
         `DTSTART:${toIcsDateUTC(startUTC)}`,
         `DTEND:${toIcsDateUTC(endUTC)}`,
@@ -2234,7 +2235,7 @@ if(classDT && !isNaN(classDT.getTime())){
       try {
         const todayTz = fmtDateSQL(new Date(), resTZ);
         if (resDate === todayTz) {
-          const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
+          const minAllowedMs = nowInTZ(resTZ).getTime() + 60 * 60 * 1000; // +60 minutes buffer
           for (let i = slots.length - 1; i >= 0; i--) {
             const d = slots[i].localInstant;
             if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
@@ -2419,5 +2420,3 @@ if(classDT && !isNaN(classDT.getTime())){
 </>
 </body>
 </html>
-
-

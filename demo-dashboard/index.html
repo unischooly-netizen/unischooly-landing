@@ -2163,11 +2163,6 @@ let selectedResSlot = null;
   const wrap = document.getElementById("resDates");
   wrap.innerHTML = "";
 
-  // We will keep TWO dates:
-  // - resDateLocal = date user sees/chooses in resTZ (USA/UK/AU etc)
-  // - resDateDb    = date used to fetch slots from DB (IST-based slot_date)
-  // This fixes “select Dec 30 but saves Dec 31” issue.
-
   const dates = [];
 
   // Get "today" in the selected timezone (resTZ)
@@ -2180,44 +2175,43 @@ let selectedResSlot = null;
     // Convert that local day (in resTZ) to a real UTC instant (noon)
     const anchorUtc = zonedTimeToUtc(localKey, "12:00 PM", resTZ);
 
-    // Now compute which IST date this corresponds to (DB slot_date is IST-based)
+    // DB slot_date is IST-based
     const dbKey = fmtDateSQL(anchorUtc, "Asia/Kolkata"); // YYYY-MM-DD in IST
 
     dates.push({ localKey, dbKey });
   }
 
-  // default selection = first pill
+  // default selection
   resDateLocal = dates[0].localKey;
-  resDateDb = dates[0].dbKey;
+  resDateDb    = dates[0].dbKey;
 
   dates.forEach((dobj, idx)=>{
-  // SAFE noon anchor (fixes USA/Canada date shift)
-  const noonUtc = zonedTimeToUtc(dobj.localKey, "12:00 PM", resTZ);
+    const noonUtc = zonedTimeToUtc(dobj.localKey, "12:00 PM", resTZ);
 
-  const shown = new Intl.DateTimeFormat("en-US",{
-    timeZone: resTZ,
-    weekday:"short",
-    month:"short",
-    day:"numeric"
-  }).format(noonUtc);
+    const shown = new Intl.DateTimeFormat("en-US",{
+      timeZone: resTZ,
+      weekday:"short",
+      month:"short",
+      day:"numeric"
+    }).format(noonUtc);
 
-  const pill = document.createElement("button");
-  pill.className = "pill" + (idx===0 ? " active" : "");
-  pill.textContent = (idx===0 ? "Today • " : "") + shown;
+    const pill = document.createElement("button");
+    pill.className = "pill" + (idx===0 ? " active" : "");
+    pill.textContent = (idx===0 ? "Today • " : "") + shown;
 
-  pill.onclick = ()=>{
-    [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-    pill.classList.add("active");
+    pill.onclick = ()=>{
+      [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+      pill.classList.add("active");
 
-    resDateLocal = dobj.localKey;
-    resDateDb    = dobj.dbKey;
+      resDateLocal = dobj.localKey;
+      resDateDb    = dobj.dbKey;
 
-    fetchResSlots();
-  };
+      fetchResSlots();
+    };
 
-  wrap.appendChild(pill);
-});
-
+    wrap.appendChild(pill);
+  });
+} // ✅ THIS CLOSING BRACE WAS MISSING
     async function fetchResSlots(){
       const grid=document.getElementById("resSlots");
       const empty=document.getElementById("resEmpty");
@@ -2431,6 +2425,5 @@ slots.sort((a, b) => {
     </div>
   </div>
 
-</>
 </body>
 </html>

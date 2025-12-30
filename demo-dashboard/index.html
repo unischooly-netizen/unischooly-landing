@@ -1473,9 +1473,7 @@ if (!leadId) {
       const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
       return {weekday: map.weekday, month: map.month, day: map.day, time: `${map.hour}:${map.minute} ${map.dayPeriod}`};
     }
-    
-function nowInTZ(tz){ return new Date(new Date().toLocaleString('en-US',{timeZone:tz})); }
-function dateKeyInTZ(dt, tz){
+    function dateKeyInTZ(dt, tz){
       const p = new Intl.DateTimeFormat("en-CA", {timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit"}).format(dt);
       return p; // YYYY-MM-DD
     }
@@ -2218,11 +2216,10 @@ if(classDT && !isNaN(classDT.getTime())){
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
       if(!data || data.length===0){ empty.classList.remove("hide"); return; }
 
-      const todayTz = dateKeyInTZ(nowInTZ(resTZ), resTZ);
-      const minAllowedMs = nowInTZ(resTZ).getTime() + 60*60*1000; // +60 minutes
+      const todayTz = dateKeyInTZ(new Date(), resTZ);
+      const minAllowedMs = Date.now() + 60*60*1000; // +60 minutes
 
       const slots=[];
-      const slotOrder = s=> new Date(s.utc.toLocaleString('en-US',{timeZone:resTZ})).getHours()*60 + new Date(s.utc.toLocaleString('en-US',{timeZone:resTZ})).getMinutes();
       for(const r of data){
         const utc = new Date(
           r.slot_start_utc || r.scheduled_at_utc || r.slot_start_time_utc || r.slot_time_utc ||

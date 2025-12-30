@@ -2158,25 +2158,30 @@ if(classDT && !isNaN(classDT.getTime())){
     function buildResDates(){
       const wrap=document.getElementById("resDates");
       wrap.innerHTML="";
-      // FIX: Build date pills based on the SELECTED TIMEZONE (resTZ), not IST.
+
+      // Build date pills based on the SELECTED TIMEZONE (resTZ) and in a timezone-safe way.
       const now = new Date();
-      const todayKey = dateKeyInTZ(now, resTZ);
+      const todayKey = dateKeyInTZ(now, resTZ); // "YYYY-MM-DD" in resTZ
 
-      const [Y,M,D] = todayKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
+      // Helper: add days to an ISO date string without timezone drift
+      const addDaysISO = (iso, days)=>{
+        const [y,m,d]=iso.split("-").map(n=>parseInt(n,10));
+        const ms = Date.UTC(y, m-1, d, 0, 0, 0) + days*24*60*60*1000;
+        return new Date(ms).toISOString().slice(0,10);
+      };
 
-      const dates=[];
+      const dates = [];
       for(let i=0;i<7;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, resTZ);
-        dates.push(key);
+        dates.push(addDaysISO(todayKey, i));
       }
 
+      // Default selection
       resDate = dates[0];
 
       dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
+        // Use noon UTC so formatting to resTZ never falls on the previous day
+        const dt = new Date(key+"T12:00:00Z");
+        const shown = new Intl.DateTimeFormat("en-US",{timeZone:resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
         const pill=document.createElement("button");
         pill.className="pill"+(idx===0?" active":"");
         pill.textContent = (idx===0?"Today • ":"")+shown;
@@ -2190,95 +2195,123 @@ if(classDT && !isNaN(classDT.getTime())){
       });
     }
 
-    async function fetchResSlots(){
-      const grid=document.getElementById("resSlots");
-      const empty=document.getElementById("resEmpty");
-      grid.innerHTML="";
-      empty.classList.add("hide");
+    async async async function fetchResSlots(){
+      const grid = document.getElementById("resSlots");
+      const empty = document.getElementById("resEmpty");
+      const confirmBtn = document.getElementById("confirmRes");
+
+      grid.innerHTML = "";
+      empty.style.display = "none";
+      confirmBtn.disabled = true;
       selectedResSlot = null;
-      document.getElementById("confirmRes").disabled = true;
 
-      if(!BOOKING || !bookingRegion){ empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return; }
-      if(!resDate) buildResDates();
+      // Safety
+      if(!resTZ || !resDate){
+        empty.textContent = "No slots available for this date.";
+        empty.style.display = "block";
+        return;
+      }
 
-      // FIX: Fetch a small window and filter by LOCAL DATE in selected timezone.
-      const minISO = addDaysInTZ(resDate, -2, resTZ);
-      const maxISO = addDaysInTZ(resDate,  2, resTZ);
+      // Helper: add days to ISO date string
+      const addDaysISO = (iso, days)=>{
+        const [y,m,d]=iso.split("-").map(n=>parseInt(n,10));
+        const ms = Date.UTC(y, m-1, d, 0, 0, 0) + days*24*60*60*1000;
+        return new Date(ms).toISOString().slice(0,10);
+      };
 
-      const { data, error } = await sb
-        .from("demo_slots_live_view")
-        .select("*")
-        .eq("region_key", bookingRegion)
-        .eq("course_id", BOOKING.course_id || courseId)
-        .gte("slot_date", minISO)
-        .lte("slot_date", maxISO);
+      // IMPORTANT:
+      // slot_date in DB is NOT guaranteed to match the user's local date (resTZ).
+      // So we fetch a small window and then filter by LOCAL date in resTZ.
+      const rangeStart = addDaysISO(resDate, -2);
+      const rangeEnd   = addDaysISO(resDate,  2);
 
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
-      if(!data || data.length===0){ empty.classList.remove("hide"); return; }
+      const { data, error } = await supabase
+        .from("demo_slots_live")
+        .select("id,slot_datetime_start_utc,is_star_teacher,slot_date")
+        .eq("course_id", courseId)
+        .eq("region", bookingRegion)  // keep existing region filter
+        .gte("slot_date", rangeStart)
+        .lte("slot_date", rangeEnd)
+        .order("slot_datetime_start_utc", { ascending: true });
 
-      const todayTz = dateKeyInTZ(new Date(), resTZ);
-      const minAllowedMs = Date.now() + 60*60*1000; // +60 minutes
+      if(error){
+        console.error(error);
+        empty.textContent = "No slots available for this date.";
+        empty.style.display = "block";
+        return;
+      }
 
-      const slots=[];
-      for(const r of data){
-        const utc = new Date(
-          r.slot_start_utc || r.scheduled_at_utc || r.slot_start_time_utc || r.slot_time_utc ||
-          r.slot_datetime_utc || r.slot_datetime || r.start_time_utc
-        );
-        if(isNaN(utc.getTime())) continue;
+      const fmtTime = new Intl.DateTimeFormat("en-US",{ timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true });
 
-        // Filter by selected local date
-        const localKey = dateKeyInTZ(utc, resTZ);
-        if(localKey !== resDate) continue;
+      // Now in resTZ
+      const todayKey = dateKeyInTZ(new Date(), resTZ);
+      const nowParts = new Intl.DateTimeFormat("en-US",{
+        timeZone: resTZ,
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit"
+      }).formatToParts(new Date());
+      const nowHH = parseInt(nowParts.find(p=>p.type==="hour")?.value || "0", 10);
+      const nowMM = parseInt(nowParts.find(p=>p.type==="minute")?.value || "0", 10);
+      const nowMin = nowHH*60 + nowMM;
 
-        // SEA hide < 7AM (based on local time)
-        const localTmp = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
-        if(bookingRegion === "SEA" && localTmp.getHours() < 7) continue;
+      const slots = [];
+      (data||[]).forEach(r=>{
+        const dtUTC = new Date(r.slot_datetime_start_utc);
 
-        // Hide past-time slots for TODAY only
-        if(resDate === todayTz && utc.getTime() < minAllowedMs) continue;
+        // Filter to selected LOCAL date (in resTZ)
+        const localKey = dateKeyInTZ(dtUTC, resTZ);
+        if(localKey !== resDate) return;
 
-        // Display label in resTZ
-        const p12 = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const m12 = Object.fromEntries(p12.map(p=>[p.type,p.value]));
-        const display = `${m12.hour}:${m12.minute} ${m12.dayPeriod}`;
+        // local minutes for ordering + cutoff
+        const parts = new Intl.DateTimeFormat("en-US",{
+          timeZone: resTZ,
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit"
+        }).formatToParts(dtUTC);
+        const h = parseInt(parts.find(p=>p.type==="hour")?.value || "0", 10);
+        const m = parseInt(parts.find(p=>p.type==="minute")?.value || "0", 10);
+        const mins = h*60 + m;
 
-        // Sort key: minutes since midnight in resTZ
-        const p24 = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(utc);
-        const m24 = Object.fromEntries(p24.map(p=>[p.type,p.value]));
-        const mins = (parseInt(m24.hour,10) * 60) + parseInt(m24.minute,10);
+        // If viewing Today (in resTZ), hide slots starting within next 60 minutes
+        if(resDate === todayKey){
+          if(mins < nowMin + 60) return;
+        }
 
         slots.push({
-          slot_id: r.slot_id || r.id || r.slot_live_id,
-          isStar: !!(r.is_star_teacher ?? r.star_teacher ?? r.is_star),
-          display,
-          mins
+          id: r.id,
+          dtUTC,
+          localMins: mins,
+          label: fmtTime.format(dtUTC),
+          isStar: !!r.is_star_teacher
         });
+      });
+
+      // Sort by LOCAL time so it always shows 12:00 AM -> 11:59 PM order
+      slots.sort((a,b)=>a.localMins - b.localMins);
+
+      if(!slots.length){
+        empty.textContent = "No slots available for this date.";
+        empty.style.display = "block";
+        return;
       }
 
-      // Strict order: 12:00 AM -> 11:59 PM
-      slots.sort((a,b)=>a.mins - b.mins);
-
-      if(slots.length===0){ empty.classList.remove("hide"); return; }
-
-      for(const s of slots){
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.textContent=s.display;
-        if(s.isStar){
-          const tag=document.createElement("div");
-          tag.className="star";
-          tag.textContent="⭐ Star";
-          btn.appendChild(tag);
-        }
-        btn.onclick=()=>{
-          [...grid.querySelectorAll(".slot")].forEach(x=>x.classList.remove("active"));
+      slots.forEach(s=>{
+        const btn = document.createElement("button");
+        btn.className = "slotPill";
+        btn.innerHTML = `
+          <span class="slotTime">${s.label}</span>
+          ${s.isStar ? '<span class="starTag">★ Star</span>' : ''}
+        `;
+        btn.onclick = ()=>{
+          [...grid.querySelectorAll(".slotPill")].forEach(b=>b.classList.remove("active"));
           btn.classList.add("active");
           selectedResSlot = s;
-          document.getElementById("confirmRes").disabled = false;
+          confirmBtn.disabled = false;
         };
         grid.appendChild(btn);
-      }
+      });
     }
 
     document.getElementById("confirmRes").onclick = async ()=>{

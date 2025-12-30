@@ -2127,8 +2127,12 @@ if(classDT && !isNaN(classDT.getTime())){
       {label:"New Zealand — Pacific/Auckland", tz:"Pacific/Auckland"},
     ];
     let resTZ = "Asia/Kolkata";
-    let resDate = null; // YYYY-MM-DD (in IST date for DB fetch)
-    let selectedResSlot = null;
+
+// NEW: keep both dates
+let resDateLocal = null; // YYYY-MM-DD in selected timezone (USA/UK/AU)
+let resDateDb = null;    // YYYY-MM-DD used for DB slot_date query (IST-based)
+
+let selectedResSlot = null;
     // {slot_id, display, localDate}
 
     function initRescheduleUI(){
@@ -2159,27 +2163,35 @@ if(classDT && !isNaN(classDT.getTime())){
   const wrap = document.getElementById("resDates");
   wrap.innerHTML = "";
 
-  const now = new Date();
-
-  // ✅ today in selected timezone
-  const todayLocalKey = dateKeyInTZ(now, resTZ);
-  const [Y,M,D] = todayLocalKey.split("-").map(n=>parseInt(n,10));
-  const base = new Date(Date.UTC(Y, M-1, D, 0, 0, 0));
+  // We will keep TWO dates:
+  // - resDateLocal = date user sees/chooses in resTZ (USA/UK/AU etc)
+  // - resDateDb    = date used to fetch slots from DB (IST-based slot_date)
+  // This fixes “select Dec 30 but saves Dec 31” issue.
 
   const dates = [];
-  for(let i=0;i<7;i++){
-    const d = new Date(base.getTime() + i*24*60*60*1000);
 
-    // ✅ FIX: use resTZ here, NOT Asia/Kolkata
-    const key = dateKeyInTZ(d, resTZ);
+  // Get "today" in the selected timezone (resTZ)
+  const todayLocalKey = dateKeyInTZ(new Date(), resTZ); // YYYY-MM-DD in resTZ
 
-    dates.push(key);
+  // Build 7 days pills using a safe “noon” anchor (prevents DST issues)
+  for (let i = 0; i < 7; i++) {
+    const localKey = addDaysInTZ(todayLocalKey, i, resTZ); // YYYY-MM-DD in resTZ
+
+    // Convert that local day (in resTZ) to a real UTC instant (noon)
+    const anchorUtc = zonedTimeToUtc(localKey, "12:00 PM", resTZ);
+
+    // Now compute which IST date this corresponds to (DB slot_date is IST-based)
+    const dbKey = fmtDateSQL(anchorUtc, "Asia/Kolkata"); // YYYY-MM-DD in IST
+
+    dates.push({ localKey, dbKey });
   }
 
-  resDate = dates[0];
+  // default selection = first pill
+  resDateLocal = dates[0].localKey;
+  resDateDb = dates[0].dbKey;
 
-  dates.forEach((key, idx)=>{
-    const dt = new Date(key+"T00:00:00Z");
+  dates.forEach((dobj, idx)=>{
+    const dt = new Date(dobj.localKey + "T00:00:00Z");
     const shown = new Intl.DateTimeFormat("en-US",{
       timeZone: resTZ,
       weekday:"short",
@@ -2188,13 +2200,17 @@ if(classDT && !isNaN(classDT.getTime())){
     }).format(dt);
 
     const pill = document.createElement("button");
-    pill.className = "pill"+(idx===0?" active":"");
-    pill.textContent = (idx===0?"Today • ":"")+shown;
+    pill.className = "pill" + (idx===0 ? " active" : "");
+    pill.textContent = (idx===0 ? "Today • " : "") + shown;
 
     pill.onclick = ()=>{
       [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
       pill.classList.add("active");
-      resDate = key;
+
+      // store both values
+      resDateLocal = dobj.localKey; // user-selected date in resTZ
+      resDateDb    = dobj.dbKey;    // matching IST date for DB query
+
       fetchResSlots();
     };
 
@@ -2212,14 +2228,14 @@ if(classDT && !isNaN(classDT.getTime())){
 
       if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
       }
-      if(!resDate) buildResDates();
+      if(!resDateDb || !resDateLocal) buildResDates();
 
-      const { data, error } = await sb
-        .from("demo_slots_live_view")
-        .select("*")
-        .eq("region_key", bookingRegion)
-        .eq("course_id", BOOKING.course_id || courseId)
-        .eq("slot_date", resDate);
+const { data, error } = await sb
+  .from("demo_slots_live_view")
+  .select("*")
+  .eq("region_key", bookingRegion)
+  .eq("course_id", BOOKING.course_id || courseId)
+  .eq("slot_date", resDateDb);
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
       if(!data || data.length===0){ empty.classList.remove("hide"); return;
       }
@@ -2244,7 +2260,7 @@ if(classDT && !isNaN(classDT.getTime())){
       // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
       try {
         const todayTz = fmtDateSQL(new Date(), resTZ);
-        if (resDate === todayTz) {
+if (resDateLocal === todayTz) {
           const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
           for (let i = slots.length - 1; i >= 0; i--) {
             const d = slots[i].localInstant;
@@ -2292,62 +2308,35 @@ slots.sort((a, b) => {
       });
     }
 
-    document.getElementById("confirmRes").onclick = async ()=>{
-      if(!BOOKING || !selectedResSlot) return;
-      // We store preferred_date as DB date (IST date) and preferred_time_slot as display string
-      // Additionally store timezone if user changed it.
-      const upd = (function(){
-        const d = selectedResSlot.localInstant; // UTC instant as Date
-        return {
-          // user-facing
-          preferred_date: resDate,
-          preferred_time_slot: selectedResSlot.display,
+    document.getElementById("confirmRes").onclick = async () => {
+  if (!BOOKING || !selectedResSlot) return;
 
-          // slot linkage
-          slot_live_id: selectedResSlot.slot_id,
-          slot_id: selectedResSlot.slot_id,
+  // RPC requires BIGINT lead_id (not UUID id)
+  const leadIdBigInt = Number(BOOKING.lead_id);
+  const selectedSlotId = selectedResSlot.slot_id; // uuid from demo_slots_live
+  const selectedTimezone = resTZ;
+  const selectedLang = BOOKING.lang || null;
 
-          // schedule (source of truth for Zoom automation)
-          scheduled_at_utc: d.toISOString(),
-          scheduled_at_ist: fmtDateTimeSQL(d, "Asia/Kolkata"),
-          scheduled_local_date: fmtDateSQL(d, resTZ),
-          scheduled_local_label: fmtLabel(d, resTZ),
-          lead_timezone: resTZ,
-          timezone: resTZ,
+  const { error } = await sb.rpc("reschedule_demo_booking", {
+    p_lead_id: leadIdBigInt,
+    p_slot_live_id: selectedSlotId,
+    p_timezone: selectedTimezone,
+    p_lang: selectedLang
+  });
 
-          // IMPORTANT: reset Zoom so CRON recreates meeting
-          zoom_status: "not_created",
-          zoom_account_id: null,
-          zoom_meeting_id: null,
-          zoom_join_url: null,
-          zoom_start_url: null,
-          meeting_created_at: null,
+  if (error) {
+    console.error(error);
+    toast("Reschedule failed. Try again.");
+    return;
+  }
 
-          booking_status: "rescheduled",
-          updated_at: new Date().toISOString()
-        };
-      })();
+  toast("✅ Rescheduled!");
+  closeRes();
 
-      const { error } = await sb
-        .from("demo_leads")
-        .update(upd)
-        .eq(leadFilter.col, leadFilter.val);
-
-      if(error){
-        console.error(error);
-        toast("Reschedule failed. Try again.");
-        return;
-      }
-
-      toast("✅ Rescheduled!");
-      closeRes();
-
-      // reload booking fresh
-      document.getElementById("stateLoading").classList.remove("hide"); // kept for visual feedback on refresh
-      const fresh = await loadBooking();
-      document.getElementById("stateLoading").classList.add("hide");
-      if(fresh) renderBooking(fresh);
-    };
+  // reload booking fresh
+  const fresh = await loadBooking();
+  if (fresh) renderBooking(fresh);
+};
 
     // =========================
     // Boot

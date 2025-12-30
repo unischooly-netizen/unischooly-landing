@@ -2305,34 +2305,30 @@ slots.sort((a, b) => {
     document.getElementById("confirmRes").onclick = async () => {
   if (!BOOKING || !selectedResSlot) return;
 
-  const leadId = BOOKING.id; // bigint from demo_leads
-  const slotLiveId = selectedResSlot.slot_id; // uuid from demo_slots_live
-  const timezone = resTZ;
-  const lang = BOOKING.lang || "English";
+  // ✅ Use the URL leadId directly (works if it's BIGINT or UUID)
+  const leadRef = String(leadId);
 
-  document.getElementById("confirmRes").disabled = true;
+  const selectedSlotId = selectedResSlot.slot_id; // uuid from demo_slots_live
+  const selectedTimezone = resTZ;
+  const selectedLang = BOOKING.lang || null;
 
-  const { data, error } = await sb.rpc("reschedule_demo_booking", {
-    p_lead_id: leadId,
-    p_slot_live_id: slotLiveId,
-    p_timezone: timezone,
-    p_lang: lang
+  const { error } = await sb.rpc("reschedule_demo_booking_v2", {
+    p_lead_ref: leadRef,
+    p_slot_live_id: selectedSlotId,
+    p_timezone: selectedTimezone,
+    p_lang: selectedLang
   });
 
   if (error) {
     console.error(error);
     toast("Reschedule failed. Try again.");
-    document.getElementById("confirmRes").disabled = false;
     return;
   }
 
   toast("✅ Rescheduled!");
-
   closeRes();
 
-  document.getElementById("stateLoading").classList.remove("hide");
   const fresh = await loadBooking();
-  document.getElementById("stateLoading").classList.add("hide");
   if (fresh) renderBooking(fresh);
 };
 

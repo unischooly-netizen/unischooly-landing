@@ -2158,18 +2158,22 @@ if(classDT && !isNaN(classDT.getTime())){
     function buildResDates(){
       const wrap=document.getElementById("resDates");
       wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
+      // FIX: Build date pills based on the SELECTED TIMEZONE (resTZ), not IST.
       const now = new Date();
-      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB dates are built in IST
-      const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
+      const todayKey = dateKeyInTZ(now, resTZ);
+
+      const [Y,M,D] = todayKey.split("-").map(n=>parseInt(n,10));
       const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
+
       const dates=[];
       for(let i=0;i<7;i++){
         const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, "Asia/Kolkata");
+        const key = dateKeyInTZ(d, resTZ);
         dates.push(key);
       }
+
       resDate = dates[0];
+
       dates.forEach((key, idx)=>{
         const dt = new Date(key+"T00:00:00Z");
         const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
@@ -2209,30 +2213,32 @@ if(classDT && !isNaN(classDT.getTime())){
       }
 
       // convert to local tz, apply SEA hide <7am;
-      // also shift if local time <3am to next day (only for display grouping)
       const slots=[];
       data.forEach(r=>{
-        const utc = new Date(r.slot_datetime_local);
-        // convert by formatting in tz then re-parsing
-        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
-        let local = new Date(localStr);
+        const utc = new Date(r.slot_start_utc || r.scheduled_at_utc || r.slot_start_time_utc || r.slot_time_utc || r.slot_datetime_utc || r.slot_datetime || r.start_time_utc);
+        if(isNaN(utc.getTime())) return;
 
-        // shift if local < 03:00
-        if(local.getHours() < 3){
-          local = new Date(local.getTime() + 24*60*60*1000);
-        }
+        const local = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
 
         // SEA hide < 7AM
         if(bookingRegion === "SEA" && local.getHours() < 7) return;
 
-        const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
-        const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
+        // Build display label in resTZ
+        const parts12 = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
+        const map12 = Object.fromEntries(parts12.map(p=>[p.type,p.value]));
+        const display = `${map12.hour}:${map12.minute} ${map12.dayPeriod}`;
+
+        // Strict sort key: minutes since midnight in resTZ (12:00 AM -> 11:59 PM)
+        const parts24 = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"2-digit", minute:"2-digit", hour12:false}).formatToParts(utc);
+        const map24 = Object.fromEntries(parts24.map(p=>[p.type,p.value]));
+        const mins = (parseInt(map24.hour,10) * 60) + parseInt(map24.minute,10);
+
+        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc, mins});
       });
-      // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
+
+      // FIX (A): Hide past-time slots today, based on SELECTED TIMEZONE current date
       try {
-        const todayTz = fmtDateSQL(new Date(), resTZ);
+        const todayTz = dateKeyInTZ(new Date(), resTZ);
         if (resDate === todayTz) {
           const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
           for (let i = slots.length - 1; i >= 0; i--) {
@@ -2242,14 +2248,15 @@ if(classDT && !isNaN(classDT.getTime())){
         }
       } catch (e) { console.warn("Reschedule slot filter failed", e); }
 
-      // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      slots.sort((a,b)=>a.localInstant - b.localInstant);
+      // FIX: Strict order 12:00 AM -> 11:59 PM (local minutes)
+      slots.sort((a,b)=>a.mins - b.mins);
+
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 
       slots.forEach(s=>{
         const btn=document.createElement("button");
         btn.className="slot";
-        btn.textContent = s.display;
+        btn.textContent=s.display;
         if(s.isStar){
           const tag=document.createElement("div");
           tag.className="star";
@@ -2419,5 +2426,3 @@ if(classDT && !isNaN(classDT.getTime())){
 </>
 </body>
 </html>
-
-

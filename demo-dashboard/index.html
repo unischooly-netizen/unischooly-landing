@@ -2156,148 +2156,126 @@ if(classDT && !isNaN(classDT.getTime())){
     }
 
     function buildResDates(){
-  const wrap = document.getElementById("resDates");
-  if(!wrap) return;
-  wrap.innerHTML = "";
-
-  const todayKey = dateKeyInTZ(new Date(), resTZ);
-  const days = [];
-  for(let i=0;i<7;i++) days.push(addDaysInTZ(todayKey, i, resTZ));
-
-  // ensure selected date is valid for current timezone
-  if(!resDate || !days.includes(resDate)) resDate = todayKey;
-
-  days.forEach((key)=>{
-    // Build a stable Date for label rendering (UTC midnight is fine; label uses timeZone)
-    const dt = new Date(key + "T00:00:00Z");
-    const label = new Intl.DateTimeFormat("en-US", {
-      timeZone: resTZ,
-      weekday: "short",
-      month: "short",
-      day: "numeric"
-    }).format(dt);
-
-    const pill = document.createElement("button");
-    pill.type = "button";
-    pill.className = "pill" + (key === resDate ? " active" : "");
-    pill.textContent = (key === todayKey ? "Today • " : "") + label;
-
-    pill.addEventListener("click", ()=>{
-      resDate = key;
-      wrap.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
-      pill.classList.add("active");
-      fetchResSlots();
-    });
-
-    wrap.appendChild(pill);
-  });
-}
+      const wrap=document.getElementById("resDates");
+      wrap.innerHTML="";
+      // Next 3 days including today, based on IST date for DB (same as your slot generation)
+      const now = new Date();
+      // FIX: calculate "today" using selected timezone, not IST
+const todayLocalKey = dateKeyInTZ(now, resTZ);
+      const [Y,M,D] = todayLocalKey.split("-").map(n=>parseInt(n,10));
+      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
+      const dates=[];
+      for(let i=0;i<7;i++){
+        const d = new Date(base.getTime() + i*24*60*60*1000);
+        const key = dateKeyInTZ(d, "Asia/Kolkata");
+        dates.push(key);
+      }
+      resDate = dates[0];
+      dates.forEach((key, idx)=>{
+        const dt = new Date(key+"T00:00:00Z");
+        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
+        const pill=document.createElement("button");
+        pill.className="pill"+(idx===0?" active":"");
+        pill.textContent = (idx===0?"Today • ":"")+shown;
+        pill.onclick=()=>{
+          [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+          pill.classList.add("active");
+          resDate = key;
+          fetchResSlots();
+        };
+        wrap.appendChild(pill);
+      });
+    }
 
     async function fetchResSlots(){
-  const slotsWrap = document.getElementById("resSlots");
-  if(!slotsWrap) return;
+      const grid=document.getElementById("resSlots");
+      const empty=document.getElementById("resEmpty");
+      grid.innerHTML="";
+      empty.classList.add("hide");
+      selectedResSlot = null;
+      document.getElementById("confirmRes").disabled = true;
 
-  slotsWrap.innerHTML = '<div class="slotsMsg">Loading slots...</div>';
+      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
+      }
+      if(!resDate) buildResDates();
 
-  try{
-    if(!resDate) resDate = dateKeyInTZ(new Date(), resTZ);
+      const { data, error } = await sb
+        .from("demo_slots_live_view")
+        .select("*")
+        .eq("region_key", bookingRegion)
+        .eq("course_id", BOOKING.course_id || courseId)
+        .eq("slot_date", resDate);
+      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
+      if(!data || data.length===0){ empty.classList.remove("hide"); return;
+      }
 
-    // Pull slots for the selected LOCAL day in the selected timezone, using UTC range
-    const dayStartUTC = zonedTimeToUtc(resDate, "12:00 AM", resTZ);
-    const nextKey = addDaysInTZ(resDate, 1, resTZ);
-    const dayEndUTC = zonedTimeToUtc(nextKey, "12:00 AM", resTZ);
+      // convert to local tz, apply SEA hide <7am;
+      // also shift if local time <3am to next day (only for display grouping)
+      const slots=[];
+      data.forEach(r=>{
+        const utc = new Date(r.slot_datetime_local);
+        // convert by formatting in tz then re-parsing
+        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
+        let local = new Date(localStr);
 
-    const { data, error } = await supabase
-      .from("demo_slots_live_view")
-      .select("slot_id,slot_datetime_local,is_star_teacher")
-      .gte("slot_datetime_local", dayStartUTC.toISOString())
-      .lt("slot_datetime_local", dayEndUTC.toISOString())
-      .order("slot_datetime_local", { ascending: true });
+        // SEA hide < 7AM
+        if(bookingRegion === "SEA" && local.getHours() < 7) return;
 
-    if(error) throw error;
+        const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
+        const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
+        const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
+        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
+      });
+      // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
+      try {
+        const todayTz = fmtDateSQL(new Date(), resTZ);
+        if (resDate === todayTz) {
+          const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
+          for (let i = slots.length - 1; i >= 0; i--) {
+            const d = slots[i].localInstant;
+            if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
+          }
+        }
+      } catch (e) { console.warn("Reschedule slot filter failed", e); }
 
-    // Current time in selected timezone (for filtering past slots on 'today')
-    const now = new Date();
-    const nowKey = dateKeyInTZ(now, resTZ);
-    const nowHM = fmtParts(now, resTZ, { hour: "2-digit", minute: "2-digit", hour12: false });
-    const nowMins = (+nowHM.hour) * 60 + (+nowHM.minute);
-
-    const timeFmt = new Intl.DateTimeFormat("en-US", {
+      // sort by local display using localInstant numeric in resTZ via formatted hour/min
+      // FIX: strict 12:00 AM → 11:59 PM ordering
+slots.sort((a, b) => {
+  const getMinutes = (d) => {
+    const parts = new Intl.DateTimeFormat("en-US", {
       timeZone: resTZ,
       hour: "numeric",
-      minute: "2-digit"
-    });
+      minute: "numeric",
+      hour12: false
+    }).formatToParts(d);
 
-    let items = (data || []).map(r=>{
-      const utc = new Date(r.slot_datetime_local);
-      const hm = fmtParts(utc, resTZ, { hour: "2-digit", minute: "2-digit", hour12: false });
-      const mins = (+hm.hour) * 60 + (+hm.minute);
-      return {
-        slot_id: r.slot_id,
-        is_star_teacher: !!r.is_star_teacher,
-        utc,
-        mins,
-        label: timeFmt.format(utc)
-      };
-    });
+    const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+    return (parseInt(map.hour) * 60) + parseInt(map.minute);
+  };
 
-    // Keep only slots that belong to the selected local date (safety) and are in the future for today
-    items = items.filter(it=>{
-      const k = dateKeyInTZ(it.utc, resTZ);
-      if(k !== resDate) return false;
-      if(resDate === nowKey && it.mins <= nowMins) return false;
-      return true;
-    });
+  return getMinutes(a.localInstant) - getMinutes(b.localInstant);
+});
+      if(slots.length===0){ empty.classList.remove("hide"); return; }
 
-    // Ensure 12:00 AM -> 11:59 PM ordering
-    items.sort((a,b)=>a.mins - b.mins);
-
-    // Reset selection if it is not available anymore
-    if(selectedResSlot && !items.some(x=>x.slot_id === selectedResSlot.slot_id)){
-      selectedResSlot = null;
-    }
-
-    slotsWrap.innerHTML = "";
-
-    if(!items.length){
-      slotsWrap.innerHTML = '<div class="slotsMsg">No slots available for this date.</div>';
-      const cbtn = document.getElementById("confirmRes");
-      if(cbtn) cbtn.disabled = true;
-      return;
-    }
-
-    items.forEach(it=>{
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "slotBtn" + ((selectedResSlot && selectedResSlot.slot_id) === it.slot_id ? " active" : "");
-      btn.setAttribute("data-slot-id", it.slot_id);
-
-      btn.innerHTML = `
-        <span class="slotTime">${it.label}</span>
-        ${it.is_star_teacher ? '<span class="starTag">⭐ Star Teacher</span>' : ''}
-      `;
-
-      btn.addEventListener("click", ()=>{
-        selectedResSlot = it;
-        slotsWrap.querySelectorAll(".slotBtn").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const cbtn = document.getElementById("confirmRes");
-        if(cbtn) cbtn.disabled = false;
+      slots.forEach(s=>{
+        const btn=document.createElement("button");
+        btn.className="slot";
+        btn.textContent = s.display;
+        if(s.isStar){
+          const tag=document.createElement("div");
+          tag.className="star";
+          tag.textContent="⭐ Star";
+          btn.appendChild(tag);
+        }
+        btn.onclick=()=>{
+          [...grid.querySelectorAll(".slot")].forEach(x=>x.classList.remove("active"));
+          btn.classList.add("active");
+          selectedResSlot = s;
+          document.getElementById("confirmRes").disabled = false;
+        };
+        grid.appendChild(btn);
       });
-
-      slotsWrap.appendChild(btn);
-    });
-
-    const cbtn = document.getElementById("confirmRes");
-    if(cbtn) cbtn.disabled = !selectedResSlot;
-
-  }catch(e){
-    console.error(e);
-    slotsWrap.innerHTML = '<div class="slotsMsg">Failed to load slots.</div>';
-    const cbtn = document.getElementById("confirmRes");
-    if(cbtn) cbtn.disabled = true;
-  }
-}
+    }
 
     document.getElementById("confirmRes").onclick = async ()=>{
       if(!BOOKING || !selectedResSlot) return;

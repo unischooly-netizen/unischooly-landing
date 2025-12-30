@@ -2161,16 +2161,18 @@ if(classDT && !isNaN(classDT.getTime())){
 
   const now = new Date();
 
-  // today in selected timezone
+  // ✅ today in selected timezone
   const todayLocalKey = dateKeyInTZ(now, resTZ);
-
-  // 🔥 FIXED: use timezone-safe anchor, NOT UTC midnight
-  const base = zonedTimeToUtc(todayLocalKey, "12:00 PM", resTZ);
+  const [Y,M,D] = todayLocalKey.split("-").map(n=>parseInt(n,10));
+  const base = new Date(Date.UTC(Y, M-1, D, 0, 0, 0));
 
   const dates = [];
   for(let i=0;i<7;i++){
-    const d = new Date(base.getTime() + i*86400000);
+    const d = new Date(base.getTime() + i*24*60*60*1000);
+
+    // ✅ FIX: use resTZ here, NOT Asia/Kolkata
     const key = dateKeyInTZ(d, resTZ);
+
     dates.push(key);
   }
 
@@ -2443,5 +2445,3 @@ slots.sort((a, b) => {
 </>
 </body>
 </html>
-
-

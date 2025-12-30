@@ -2191,32 +2191,32 @@ let selectedResSlot = null;
   resDateDb = dates[0].dbKey;
 
   dates.forEach((dobj, idx)=>{
-    const dt = new Date(dobj.localKey + "T00:00:00Z");
-    const shown = new Intl.DateTimeFormat("en-US",{
-      timeZone: resTZ,
-      weekday:"short",
-      month:"short",
-      day:"numeric"
-    }).format(dt);
+  // SAFE noon anchor (fixes USA/Canada date shift)
+  const noonUtc = zonedTimeToUtc(dobj.localKey, "12:00 PM", resTZ);
 
-    const pill = document.createElement("button");
-    pill.className = "pill" + (idx===0 ? " active" : "");
-    pill.textContent = (idx===0 ? "Today • " : "") + shown;
+  const shown = new Intl.DateTimeFormat("en-US",{
+    timeZone: resTZ,
+    weekday:"short",
+    month:"short",
+    day:"numeric"
+  }).format(noonUtc);
 
-    pill.onclick = ()=>{
-      [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-      pill.classList.add("active");
+  const pill = document.createElement("button");
+  pill.className = "pill" + (idx===0 ? " active" : "");
+  pill.textContent = (idx===0 ? "Today • " : "") + shown;
 
-      // store both values
-      resDateLocal = dobj.localKey; // user-selected date in resTZ
-      resDateDb    = dobj.dbKey;    // matching IST date for DB query
+  pill.onclick = ()=>{
+    [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+    pill.classList.add("active");
 
-      fetchResSlots();
-    };
+    resDateLocal = dobj.localKey;
+    resDateDb    = dobj.dbKey;
 
-    wrap.appendChild(pill);
-  });
-}
+    fetchResSlots();
+  };
+
+  wrap.appendChild(pill);
+});
 
     async function fetchResSlots(){
       const grid=document.getElementById("resSlots");

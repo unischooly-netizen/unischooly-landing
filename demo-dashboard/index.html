@@ -2159,59 +2159,76 @@ let selectedResSlot = null;
       };
     }
 
-    function buildResDates(){
+    function buildResDates() {
   const wrap = document.getElementById("resDates");
   wrap.innerHTML = "";
 
   const dates = [];
 
-  // Get "today" in the selected timezone (resTZ)
-  const todayLocalKey = dateKeyInTZ(new Date(), resTZ); // YYYY-MM-DD in resTZ
+  // 1️⃣ Get "today" in USER timezone (not IST)
+  const now = new Date();
+  const todayLocal = new Intl.DateTimeFormat("en-CA", {
+    timeZone: resTZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(now); // YYYY-MM-DD
 
-  // Build 7 days pills using a safe “noon” anchor (prevents DST issues)
+  // 2️⃣ Build next 7 LOCAL days
   for (let i = 0; i < 7; i++) {
-    const localKey = addDaysInTZ(todayLocalKey, i, resTZ); // YYYY-MM-DD in resTZ
+    const localDate = new Date(
+      new Date(`${todayLocal}T12:00:00`).getTime() + i * 86400000
+    );
 
-    // Convert that local day (in resTZ) to a real UTC instant (noon)
-    const anchorUtc = zonedTimeToUtc(localKey, "12:00 PM", resTZ);
+    const localKey = new Intl.DateTimeFormat("en-CA", {
+      timeZone: resTZ,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(localDate);
 
-    // DB slot_date is IST-based
-    const dbKey = fmtDateSQL(anchorUtc, "Asia/Kolkata"); // YYYY-MM-DD in IST
+    // 🔑 Convert that LOCAL day → IST day for DB
+    const istKey = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(localDate);
 
-    dates.push({ localKey, dbKey });
+    dates.push({ localKey, istKey });
   }
 
-  // default selection
+  // Default selection
   resDateLocal = dates[0].localKey;
-  resDateDb    = dates[0].dbKey;
+  resDateDb = dates[0].istKey;
 
-  dates.forEach((dobj, idx)=>{
-    const noonUtc = zonedTimeToUtc(dobj.localKey, "12:00 PM", resTZ);
-
-    const shown = new Intl.DateTimeFormat("en-US",{
-      timeZone: resTZ,
-      weekday:"short",
-      month:"short",
-      day:"numeric"
-    }).format(noonUtc);
-
+  dates.forEach((d, idx) => {
     const pill = document.createElement("button");
-    pill.className = "pill" + (idx===0 ? " active" : "");
-    pill.textContent = (idx===0 ? "Today • " : "") + shown;
+    pill.className = "pill" + (idx === 0 ? " active" : "");
 
-    pill.onclick = ()=>{
-      [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+    const label = new Intl.DateTimeFormat("en-US", {
+      timeZone: resTZ,
+      weekday: "short",
+      month: "short",
+      day: "numeric"
+    }).format(new Date(`${d.localKey}T12:00:00`));
+
+    pill.textContent = (idx === 0 ? "Today • " : "") + label;
+
+    pill.onclick = () => {
+      document.querySelectorAll("#resDates .pill").forEach(p => p.classList.remove("active"));
       pill.classList.add("active");
 
-      resDateLocal = dobj.localKey;
-      resDateDb    = dobj.dbKey;
+      resDateLocal = d.localKey;
+      resDateDb = d.istKey;
 
       fetchResSlots();
     };
 
     wrap.appendChild(pill);
   });
-} // ✅ THIS CLOSING BRACE WAS MISSING
+}
+
     async function fetchResSlots(){
       const grid=document.getElementById("resSlots");
       const empty=document.getElementById("resEmpty");
@@ -2236,21 +2253,30 @@ const { data, error } = await sb
 
       // convert to local tz, apply SEA hide <7am;
       // also shift if local time <3am to next day (only for display grouping)
-      const slots=[];
-      data.forEach(r=>{
-        const utc = new Date(r.slot_datetime_local);
-        // convert by formatting in tz then re-parsing
-        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
-        let local = new Date(localStr);
+      const slots = [];
 
-        // SEA hide < 7AM
-        if(bookingRegion === "SEA" && local.getHours() < 7) return;
+data.forEach(r => {
+  // slot_datetime_ist is the SOURCE OF TRUTH
+  const istInstant = new Date(r.slot_datetime_ist);
 
-        const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
-        const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
-        const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
-      });
+  // Convert to selected timezone for display
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: resTZ,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).formatToParts(istInstant);
+
+  const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+  const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
+
+  slots.push({
+    slot_id: r.id,
+    isStar: r.is_star_teacher,
+    display,
+    instant: istInstant
+  });
+});
       // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
       try {
         const todayTz = fmtDateSQL(new Date(), resTZ);
@@ -2266,19 +2292,19 @@ if (resDateLocal === todayTz) {
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       // FIX: strict 12:00 AM → 11:59 PM ordering
 slots.sort((a, b) => {
-  const getMinutes = (d) => {
-    const parts = new Intl.DateTimeFormat("en-US", {
+  const toMinutes = d => {
+    const p = new Intl.DateTimeFormat("en-US", {
       timeZone: resTZ,
       hour: "numeric",
       minute: "numeric",
       hour12: false
     }).formatToParts(d);
 
-    const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
-    return (parseInt(map.hour) * 60) + parseInt(map.minute);
+    const m = Object.fromEntries(p.map(x => [x.type, x.value]));
+    return Number(m.hour) * 60 + Number(m.minute);
   };
 
-  return getMinutes(a.localInstant) - getMinutes(b.localInstant);
+  return toMinutes(a.instant) - toMinutes(b.instant);
 });
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 

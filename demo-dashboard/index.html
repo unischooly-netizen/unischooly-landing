@@ -2225,12 +2225,11 @@ if(classDT && !isNaN(classDT.getTime())){
       const slots=[];
       data.forEach(r=>{
         const utc = new Date(r.slot_datetime_local);
-const local = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
+let local = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
 
-        // shift if local < 03:00
-        if(local.getHours() < 3){
-          local = new Date(local.getTime() + 24*60*60*1000);
-        }
+if(local.getHours() < 3){
+  local = new Date(local.getTime() + 24*60*60*1000);
+}
 
         // SEA hide < 7AM
         if(bookingRegion === "SEA" && local.getHours() < 7) return;
@@ -2247,7 +2246,7 @@ const local = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
       // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
       try {
   const nowTz = nowInTZ(resTZ);
-  const todayTz = dateKeyInTZ(nowTz, resTZ);   // true “today” in selected timezone
+  const todayTz = dateKeyInTZ(nowTz, "Asia/Kolkata");
 
   if (resDate === todayTz) {
     const minAllowedMs = nowTz.getTime() + 60 * 60 * 1000; // now + 1 hour in selected TZ
@@ -2261,11 +2260,8 @@ const local = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
 }
 
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      slots.sort((a,b)=>{
-  const ta = new Date(a.localInstant.toLocaleString("en-US",{timeZone:resTZ}));
-  const tb = new Date(b.localInstant.toLocaleString("en-US",{timeZone:resTZ}));
-  return ta - tb;
-});
+      slots.sort((a,b)=>a.localInstant.getTime() - b.localInstant.getTime());
+
       if(slots.length===0){ empty.classList.remove("hide"); return; }
       slots.sort((a,b)=>a.localInstant.getTime() - b.localInstant.getTime());
       slots.forEach(s=>{

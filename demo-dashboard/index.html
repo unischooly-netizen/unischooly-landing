@@ -934,7 +934,7 @@
 
   
 /* Star pill on slot buttons (Reschedule modal) */
-.starTag{
+.slot-tag{
   display:inline-flex;
   align-items:center;
   gap:6px;
@@ -948,7 +948,7 @@
   line-height:1;
   white-space:nowrap;
 }
-.starTag::before{
+.slot-tag::before{
   content:"★";
   font-size:12px;
   line-height:1;
@@ -1172,7 +1172,15 @@
 
       <div style="margin-top:10px">
         <div style="font-weight:1000; font-size:13px; margin-bottom:8px">Timezone</div>
-        <select id="tzSelect" class="select"></select>
+        <select id="tzSelect" class="select">
+<option value="Asia/Kolkata">India (IST) — Asia/Kolkata</option>
+<option value="America/Chicago">USA (Central) — America/Chicago</option>
+<option value="America/New_York">USA (Eastern) — America/New_York</option>
+<option value="America/Los_Angeles">USA (Pacific) — America/Los_Angeles</option>
+<option value="Europe/London">UK — Europe/London</option>
+<option value="Asia/Dubai">UAE — Asia/Dubai</option>
+<option value="Asia/Singapore">Singapore — Asia/Singapore</option>
+</select>
       </div>
 
       <div style="margin-top:12px">
@@ -2400,8 +2408,8 @@ let resTZ = "Asia/Kolkata";
 
         if (s.is_star) {
           const tag = document.createElement("span");
-          tag.className = "starTag";
-          tag.textContent = "★ Star";
+          tag.className = "slot-tag";
+          tag.textContent = "⭐ Star Teacher";
           btn.appendChild(tag);
         }
 

@@ -2157,35 +2157,46 @@ if(classDT && !isNaN(classDT.getTime())){
     }
 
     function buildResDates(){
-      const wrap=document.getElementById("resDates");
-      wrap.innerHTML="";
-      // Next 3 days including today, based on IST date for DB (same as your slot generation)
-      const now = nowInTZ(resTZ);          // use selected timezone
-      const todayISTKey = dateKeyInTZ(now, "Asia/Kolkata"); // DB still uses IST dates
-      const [Y,M,D] = todayISTKey.split("-").map(n=>parseInt(n,10));
-      const base = new Date(Date.UTC(Y,M-1,D,0,0,0));
-      const dates=[];
-      for(let i=0;i<7;i++){
-        const d = new Date(base.getTime() + i*24*60*60*1000);
-        const key = dateKeyInTZ(d, "Asia/Kolkata");
-        dates.push(key);
-      }
-      resDate = dates[0];
-      dates.forEach((key, idx)=>{
-        const dt = new Date(key+"T00:00:00Z");
-        const shown = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, weekday:"short", month:"short", day:"numeric"}).format(dt);
-        const pill=document.createElement("button");
-        pill.className="pill"+(idx===0?" active":"");
-        pill.textContent = (idx===0?"Today • ":"")+shown;
-        pill.onclick=()=>{
-          [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
-          pill.classList.add("active");
-          resDate = key;
-          fetchResSlots();
-        };
-        wrap.appendChild(pill);
-      });
-    }
+  const wrap = document.getElementById("resDates");
+  wrap.innerHTML = "";
+
+  const nowTz = nowInTZ(resTZ); // current time in selected timezone
+
+  const dates = [];
+
+  for(let i=0;i<7;i++){
+    const d = new Date(nowTz.getTime() + i * 86400000);
+
+    const tzKey = dateKeyInTZ(d, resTZ); // YYYY-MM-DD in selected TZ
+    const istKey = dateKeyInTZ(d, "Asia/Kolkata"); // map same day to IST for DB
+
+    dates.push({ tzKey, istKey, dateObj:d });
+  }
+
+  resDate = dates[0].istKey;
+
+  dates.forEach((o, idx)=>{
+    const shown = new Intl.DateTimeFormat("en-US",{
+      timeZone: resTZ,
+      weekday:"short",
+      month:"short",
+      day:"numeric"
+    }).format(o.dateObj);
+
+    const pill = document.createElement("button");
+    pill.className = "pill" + (idx===0 ? " active":"");
+    pill.textContent = (idx===0 ? "Today • ":"") + shown;
+
+    pill.onclick = ()=>{
+      [...wrap.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+      pill.classList.add("active");
+      resDate = o.istKey; // DB always uses IST
+      fetchResSlots();
+    };
+
+    wrap.appendChild(pill);
+  });
+}
 
     async function fetchResSlots(){
       const grid=document.getElementById("resSlots");
@@ -2214,9 +2225,7 @@ if(classDT && !isNaN(classDT.getTime())){
       const slots=[];
       data.forEach(r=>{
         const utc = new Date(r.slot_datetime_local);
-        // convert by formatting in tz then re-parsing
-        const localStr = utc.toLocaleString("en-US",{timeZone: resTZ});
-        let local = new Date(localStr);
+const local = new Date(utc.toLocaleString("en-US",{timeZone: resTZ}));
 
         // shift if local < 03:00
         if(local.getHours() < 3){
@@ -2229,19 +2238,27 @@ if(classDT && !isNaN(classDT.getTime())){
         const parts = new Intl.DateTimeFormat("en-US",{timeZone: resTZ, hour:"numeric", minute:"2-digit", hour12:true}).formatToParts(utc);
         const map = Object.fromEntries(parts.map(p=>[p.type,p.value]));
         const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-        slots.push({slot_id:r.slot_id, isStar:r.is_star_teacher, display, localInstant: utc});
+        slots.push({
+  slot_id: r.slot_id,
+  isStar: r.is_star_teacher,
+  display,
+  localInstant: local
       });
       // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
       try {
-        const todayTz = fmtDateSQL(nowInTZ(resTZ), resTZ);
-        if (resDate === todayTz) {
-        const minAllowedMs = nowInTZ(resTZ).getTime() + 60 * 60 * 1000;
-          for (let i = slots.length - 1; i >= 0; i--) {
-            const d = slots[i].localInstant;
-            if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
-          }
-        }
-      } catch (e) { console.warn("Reschedule slot filter failed", e); }
+  const nowTz = nowInTZ(resTZ);
+  const todayTz = dateKeyInTZ(nowTz, resTZ);   // true “today” in selected timezone
+
+  if (resDate === todayTz) {
+    const minAllowedMs = nowTz.getTime() + 60 * 60 * 1000; // now + 1 hour in selected TZ
+    for (let i = slots.length - 1; i >= 0; i--) {
+      const d = slots[i].localInstant;
+      if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
+    }
+  }
+} catch (e) {
+  console.warn("Reschedule slot filter failed", e);
+}
 
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       slots.sort((a,b)=>{
@@ -2250,7 +2267,7 @@ if(classDT && !isNaN(classDT.getTime())){
   return ta - tb;
 });
       if(slots.length===0){ empty.classList.remove("hide"); return; }
-
+      slots.sort((a,b)=>a.localInstant.getTime() - b.localInstant.getTime());
       slots.forEach(s=>{
         const btn=document.createElement("button");
         btn.className="slot";

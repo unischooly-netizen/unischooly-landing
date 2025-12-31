@@ -847,6 +847,10 @@ body {
             <option value="6">Chess</option>
             <option value="7">Mathematics</option>
           </select>
+
+          <div id="course-microcopy" style="margin-top:6px;font-size:12px;color:var(--text-sub);line-height:1.5;">
+            <span>👆 Select a course to see what your child will learn</span>
+          </div>
         </div>
 
 <div class="field" style="margin-top: 10px;">
@@ -1963,6 +1967,36 @@ document.addEventListener("DOMContentLoaded", init);
         }
       }, true);
     }
+  });
+})();
+
+
+// =========================
+// COURSE MICRO COPY (TEXT ONLY)
+// =========================
+(function(){
+  const MICRO = {
+    1: "🧠 Build logic & problem-solving • 🎮 Create fun mini-games • 👶 Grades 1–4",
+    2: "🐍 Learn real Python • 💻 Write actual code • 🎯 Grades 5–9",
+    3: "🌐 Design & build your own website • 🎨 HTML, CSS & projects",
+    4: "🤖 Create AI tools using ChatGPT • 🚀 Future-ready skills",
+    5: "🎮 Build your own Roblox games • 🧩 Game logic + creativity",
+    6: "♟️ Improve focus & strategy • 🏆 Learn from expert coaches",
+    7: "➕ Strengthen math concepts • 📘 Boost confidence & scores"
+  };
+
+  document.addEventListener("DOMContentLoaded", function(){
+    const box = document.getElementById("course-microcopy");
+    const sel = document.getElementById("course-select");
+    if (!box || !sel) return;
+
+    function update(){
+      const v = Number(sel.value);
+      box.innerHTML = MICRO[v] ? MICRO[v] : "👆 Select a course to see what your child will learn";
+    }
+
+    update();
+    sel.addEventListener("change", update);
   });
 })();
 

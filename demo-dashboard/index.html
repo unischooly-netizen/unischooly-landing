@@ -2271,11 +2271,11 @@ data.forEach(r => {
   const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
 
   slots.push({
-    slot_id: r.id,
-    isStar: r.is_star_teacher,
-    display,
-    instant: slotInstant
-  });
+  slot_id: r.slot_id,   // ✅ FIXED
+  isStar: r.is_star_teacher,
+  display,
+  instant: slotInstant
+});
   });
 
      // ✅ Safe "now" instant (absolute), compared in selected timezone

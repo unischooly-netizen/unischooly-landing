@@ -2299,15 +2299,6 @@ if (resDateLocal === todayLocalKey) {
   }
 }
 
-if (resDateLocal === fmtDateSQL(nowInTz, resTZ)) {
-  const cutoff = nowInTz.getTime() + 60 * 60 * 1000; // +1 hour buffer
-  for (let i = slots.length - 1; i >= 0; i--) {
-    if (slots[i].instant.getTime() < cutoff) {
-      slots.splice(i, 1);
-    }
-  }
-}
-
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       // FIX: strict 12:00 AM → 11:59 PM ordering
 slots.sort((a, b) => {

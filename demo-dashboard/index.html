@@ -2278,19 +2278,26 @@ data.forEach(r => {
   });
   });
 
-      // ✅ Hide past slots ONLY for "today" in selected timezone
-const nowInTz = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: resTZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-  }).format(new Date()).replace(" ", "T")
-);
+     // ✅ Safe "now" instant (absolute), compared in selected timezone
+const nowInstant = new Date();
+
+// Get today's date key in selected timezone
+const todayLocalKey = new Intl.DateTimeFormat("en-CA", {
+  timeZone: resTZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+}).format(nowInstant);
+
+if (resDateLocal === todayLocalKey) {
+  const cutoffMs = nowInstant.getTime() + 60 * 60 * 1000; // +1 hour buffer
+
+  for (let i = slots.length - 1; i >= 0; i--) {
+    if (slots[i].instant.getTime() < cutoffMs) {
+      slots.splice(i, 1);
+    }
+  }
+}
 
 if (resDateLocal === fmtDateSQL(nowInTz, resTZ)) {
   const cutoff = nowInTz.getTime() + 60 * 60 * 1000; // +1 hour buffer

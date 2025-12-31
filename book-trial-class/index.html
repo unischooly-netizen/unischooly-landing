@@ -835,6 +835,22 @@ body {
 
         <div class="field" style="margin-top: 10px;">
           <div class="field-label-row">
+            <label>Select Your Course<span class="required">*</span></label>
+          </div>
+          <select id="course-select" class="select">
+            <option value="">Select a course</option>
+            <option value="1">Coding</option>
+            <option value="2">Python</option>
+            <option value="3">Website Development</option>
+            <option value="4">Generative AI</option>
+            <option value="5">Roblox</option>
+            <option value="6">Chess</option>
+            <option value="7">Mathematics</option>
+          </select>
+        </div>
+
+<div class="field" style="margin-top: 10px;">
+          <div class="field-label-row">
             <label>Do you have a Laptop or Desktop?<span class="required">*</span></label>
           </div>
           <div id="has-laptop-group" class="radio-chip-group">
@@ -1896,6 +1912,60 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
+// =========================
+// UNIVERSAL COURSE SUPPORT (SAFE ADD-ON)
+// =========================
+(function(){
+  const COURSE_MAP = {
+    1:"Coding",
+    2:"Python",
+    3:"Website Development",
+    4:"Generative AI",
+    5:"Roblox",
+    6:"Chess",
+    7:"Mathematics"
+  };
+
+  // Read courseId from URL without changing existing logic
+  try {
+    const p = new URLSearchParams(window.location.search);
+    const cid = p.get("courseId");
+    if (cid && COURSE_MAP[Number(cid)]) {
+      state.courseId = Number(cid);
+    }
+  } catch(e){}
+
+  // Dropdown wiring
+  document.addEventListener("DOMContentLoaded", function(){
+    const sel = document.getElementById("course-select");
+    if (!sel) return;
+
+    // Preselect if available
+    if (state.courseId && COURSE_MAP[state.courseId]) {
+      sel.value = String(state.courseId);
+    }
+
+    sel.addEventListener("change", function(e){
+      const v = Number(e.target.value);
+      if (COURSE_MAP[v]) state.courseId = v;
+    });
+
+    // Enforce selection on Step-1 submit without modifying existing handlers
+    const btn = document.getElementById("step-1-next");
+    if (btn) {
+      btn.addEventListener("click", function(ev){
+        if (!state.courseId || !COURSE_MAP[state.courseId]) {
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+          showGlobalError("Please select a course to continue.");
+          return false;
+        }
+      }, true);
+    }
+  });
+})();
+
 </script>
 <!-- ===============================
      DEMO DASHBOARD FOOTER (SAME)

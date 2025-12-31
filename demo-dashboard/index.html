@@ -2341,10 +2341,8 @@ slots.sort((a, b) => {
     document.getElementById("confirmRes").onclick = async () => {
   if (!BOOKING || !selectedResSlot) return;
 
-  // ✅ Use the URL leadId directly (works if it's BIGINT or UUID)
   const leadRef = String(leadId);
-
-  const selectedSlotId = selectedResSlot.slot_id; // uuid from demo_slots_live
+  const selectedSlotId = selectedResSlot.slot_id;
   const selectedTimezone = resTZ;
   const selectedLang = BOOKING.lang || null;
 

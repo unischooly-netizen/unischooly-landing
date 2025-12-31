@@ -2257,7 +2257,7 @@ const { data, error } = await sb
       const slots = [];
 
 data.forEach(r => {
-  const istInstant = new Date(r.slot_datetime_local);
+  const slotInstant = new Date(r.slot_datetime_local);
 
   // Convert to selected timezone for display
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -2265,7 +2265,7 @@ data.forEach(r => {
     hour: "numeric",
     minute: "2-digit",
     hour12: true
-  }).formatToParts(istInstant);
+  }).formatToParts(slotInstant);
 
   const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
   const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
@@ -2274,21 +2274,32 @@ data.forEach(r => {
     slot_id: r.id,
     isStar: r.is_star_teacher,
     display,
-    instant: istInstant
+    instant: slotInstant
   });
   });
 
-      // FIX: For 'today' in selected timezone, hide slots that are < now + 60 minutes
-      try {
-        const todayTz = fmtDateSQL(new Date(), resTZ);
-if (resDateLocal === todayTz) {
-          const minAllowedMs = Date.now() + 60 * 60 * 1000; // +60 minutes buffer
-          for (let i = slots.length - 1; i >= 0; i--) {
-            const d = slots[i].localInstant;
-            if (d && d.getTime() < minAllowedMs) slots.splice(i, 1);
-          }
-        }
-      } catch (e) { console.warn("Reschedule slot filter failed", e); }
+      // ✅ Hide past slots ONLY for "today" in selected timezone
+const nowInTz = new Date(
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: resTZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).format(new Date()).replace(" ", "T")
+);
+
+if (resDateLocal === fmtDateSQL(nowInTz, resTZ)) {
+  const cutoff = nowInTz.getTime() + 60 * 60 * 1000; // +1 hour buffer
+  for (let i = slots.length - 1; i >= 0; i--) {
+    if (slots[i].instant.getTime() < cutoff) {
+      slots.splice(i, 1);
+    }
+  }
+}
 
       // sort by local display using localInstant numeric in resTZ via formatted hour/min
       // FIX: strict 12:00 AM → 11:59 PM ordering

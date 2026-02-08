@@ -1482,23 +1482,6 @@ if (!leadId) {
     // Booking load
     // =========================
     let BOOKING = null;
-    // =========================
-// Secure Join Redirect
-// =========================
-
-function buildJoinRedirect(role = "parent") {
-  if (!BOOKING || !BOOKING.demo_id || !leadId) return null;
-
-  const base = "https://portal.unischooly.com/join-demo";
-
-  const params = new URLSearchParams({
-    lead: leadId,
-    demo: BOOKING.demo_id,
-    role: role
-  });
-
-  return base + "?" + params.toString();
-}
     let bookingTZ = "Asia/Kolkata";
     let bookingRegion = null;
     let bookingCourseName = (COURSE[courseId]||COURSE[1]).name;
@@ -1518,6 +1501,16 @@ function buildJoinRedirect(role = "parent") {
     // preferred_date is date (no timezone), preferred_time_slot is local string (e.g., "10:00 AM")
     // We'll compute a Date by combining preferred_date with local time in booking.timezone
     // =========================
+    function buildMeetLink(){
+      // Uses Zoom link saved in demo_leads.zoom_join_url
+      // Returns null if not yet available.
+      const url = (BOOKING && BOOKING.zoom_join_url) ? String(BOOKING.zoom_join_url).trim() : "";
+      if(!url) return null;
+      // Basic safety: only allow http/https
+      if(!/^https?:\/\//i.test(url)) return null;
+      return url;
+    }
+
     // =========================
     // Render Section 2
     // =========================
@@ -1587,6 +1580,14 @@ function renderBooking(b){
       BOOKING = b;
   const btnJoin = document.getElementById("btnJoin");
 
+if (btnJoin && b.zoom_join_url) {
+  btnJoin.disabled = false;
+
+  btnJoin.onclick = () => {
+    console.log("Joining Zoom:", b.zoom_join_url);
+    window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
+  };
+}
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
       bookingRegion = b.region_key || null;
       bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
@@ -1652,21 +1653,18 @@ if(classDT && !isNaN(classDT.getTime())){
       initMiniGames();
       // reschedule prefill
       initRescheduleUI();
-  // Secure join redirect
-if (btnJoin) {
-  btnJoin.onclick = () => {
-    const url = buildJoinRedirect("parent");
-
-    if (!url) {
-      toast("Join link not ready yet.");
-      return;
-    }
-
-    window.location.href = url;
-  };
-}
       // join button logic (Zoom)
-      // NOTE: we compute the link at click-time so if DB updates and page re-renders, it stays correct
+      // NOTE: we compute the link at click-time so if DB updates and page re-renders, it stays correct.
+      document.getElementById("btnJoin").onclick = () => {
+        const meetLink = buildMeetLink();
+        if(meetLink){
+          // Redirect to Zoom in the same tab
+          window.location.href = meetLink;
+        } else {
+          toast("Meet link will appear 5 mins before class.");
+        }
+      };
+
     }
 
     // =========================

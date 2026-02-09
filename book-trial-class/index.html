@@ -1529,12 +1529,7 @@ function convertSlotRowToLocal(slotRow, timeZone, todayLocalKey, localDayKeysSet
   const istBase = new Date(slotRow.slot_datetime_ist);
   const localStr = istBase.toLocaleString("en-US", { timeZone });
   let local = new Date(localStr);
-
-  // Shift rule: any slot whose LOCAL time < 03:00 belongs to NEXT DAY
-  if (local.getHours() < 3) {
-    local.setDate(local.getDate() + 1);
-  }
-
+  
   const y = local.getFullYear();
   const m = String(local.getMonth() + 1).padStart(2, "0");
   const d = String(local.getDate()).padStart(2, "0");

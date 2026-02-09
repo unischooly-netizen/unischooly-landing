@@ -1488,23 +1488,13 @@ if (!leadId) {
     async function loadBooking(){
       if(!leadFilter){ return null; }
       const { data, error } = await sb
-  .from("demo_leads")
-  .select("*")
-  .or(`lead_id.eq.${leadId},id.eq.${leadId}`)
-  .limit(1);
-
-if (error) {
-  console.error("Load booking error:", error);
-  alert("Booking Load Error: " + error.message);
-  return null;
-}
-
-if (!data || data.length === 0) {
-  alert("Booking not found for ID: " + leadId);
-  return null;
-}
-
-return data[0];
+      .from("demo_leads")
+      .select("*")
+      .eq(leadFilter.col, leadFilter.val)   // ✅ BIGINT MATCH
+      .single();
+      if(error || !data){ console.error(error); return null; }
+      return data;
+    }
 
     // =========================
     // Derive class datetime for countdown + calendar
@@ -2330,9 +2320,6 @@ let selectedResSlot = null;
 
     const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
 
-// ❌ Remove wrong 12:00 AM slots
-if (display === "12:00 AM") return;
-
     slots.push({
       slot_id: r.slot_id,
       isStar: r.is_star_teacher,
@@ -2358,23 +2345,12 @@ if (display === "12:00 AM") return;
 
     const cutoff = now.getTime() + 60 * 60 * 1000;
 
-for (let i = slots.length - 1; i >= 0; i--) {
-  const slotTime = slots[i].instant.getTime();
-
-  // ❌ remove ONLY duplicate midnight (00:00)
-  const isMidnight =
-    slots[i].display === "12:00 AM";
-
-  if (isMidnight && i > 0) {
-    slots.splice(i, 1);
-    continue;
+    for (let i = slots.length - 1; i >= 0; i--) {
+      if (slots[i].instant.getTime() < cutoff) {
+        slots.splice(i, 1);
+      }
+    }
   }
-
-  // ❌ remove past slots
-  if (slotTime < cutoff) {
-    slots.splice(i, 1);
-  }
-}
 
   /* -----------------------------------
      Sort ONCE (UTC)

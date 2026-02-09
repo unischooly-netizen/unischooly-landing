@@ -2255,13 +2255,26 @@ const dayEndUtc   = zonedTimeToUtc(resDateLocal, "11:59 PM", resTZ);
 
 const { data, error } = await sb
   .from("demo_slots_live_view")
-  .select("*")
+  .select(`
+    slot_id,
+    region_key,
+    course_id,
+    slot_datetime,
+    is_star_teacher
+  `)
   .eq("region_key", bookingRegion)
   .eq("course_id", BOOKING.course_id || courseId)
   .gte("slot_datetime", dayStartUtc.toISOString())
-.lte("slot_datetime", dayEndUtc.toISOString());
+  .lte("slot_datetime", dayEndUtc.toISOString())
+  .order("slot_datetime", { ascending: true });
 
-      if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
+      if (error) {
+  console.error("❌ SLOT FETCH ERROR:", error);
+  empty.classList.remove("hide");
+  empty.textContent = error.message || "Failed to load slots.";
+  alert("Slot error: " + error.message);
+  return;
+}
       if(!data || data.length===0){ empty.classList.remove("hide"); return;
       }
 

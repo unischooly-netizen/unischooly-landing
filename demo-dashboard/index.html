@@ -2302,31 +2302,36 @@ let selectedResSlot = null;
   ----------------------------------- */
 
   const slots = [];
+const seenDisplay = new Set(); // 👈 KEY FIX
 
-  data.forEach(r => {
+data.forEach(r => {
 
-    const instant = new Date(r.slot_datetime_ist);
+  const instant = new Date(r.slot_datetime_ist);
 
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: resTZ,
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true
-    }).formatToParts(instant);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: resTZ,
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).formatToParts(instant);
 
-    const map = Object.fromEntries(
-      parts.map(p => [p.type, p.value])
-    );
+  const map = Object.fromEntries(
+    parts.map(p => [p.type, p.value])
+  );
 
-    const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
+  const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
 
-    slots.push({
-      slot_id: r.slot_id,
-      isStar: r.is_star_teacher,
-      display,
-      instant
-    });
+  // ✅ REMOVE DUPLICATE 12:00 AM (or any duplicate display)
+  if (seenDisplay.has(display)) return;
+  seenDisplay.add(display);
+
+  slots.push({
+    slot_id: r.slot_id,
+    isStar: r.is_star_teacher,
+    display,
+    instant
   });
+});
 
   /* -----------------------------------
      Filter past slots (today only)

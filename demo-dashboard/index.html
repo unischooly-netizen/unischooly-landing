@@ -1488,13 +1488,23 @@ if (!leadId) {
     async function loadBooking(){
       if(!leadFilter){ return null; }
       const { data, error } = await sb
-      .from("demo_leads")
-      .select("*")
-      .eq(leadFilter.col, leadFilter.val)   // ✅ BIGINT MATCH
-      .single();
-      if(error || !data){ console.error(error); return null; }
-      return data;
-    }
+  .from("demo_leads")
+  .select("*")
+  .or(`lead_id.eq.${leadId},id.eq.${leadId}`)
+  .limit(1);
+
+if (error) {
+  console.error("Load booking error:", error);
+  alert("Booking Load Error: " + error.message);
+  return null;
+}
+
+if (!data || data.length === 0) {
+  alert("Booking not found for ID: " + leadId);
+  return null;
+}
+
+return data[0];
 
     // =========================
     // Derive class datetime for countdown + calendar

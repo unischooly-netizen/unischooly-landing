@@ -2165,8 +2165,10 @@ let selectedResSlot = null;
 
   const dates = [];
 
-  // 1️⃣ Get "today" in USER timezone (not IST)
+  // Get current time
   const now = new Date();
+
+  // Today in selected timezone (NOT browser)
   const todayLocal = new Intl.DateTimeFormat("en-CA", {
     timeZone: resTZ,
     year: "numeric",
@@ -2174,35 +2176,37 @@ let selectedResSlot = null;
     day: "2-digit"
   }).format(now); // YYYY-MM-DD
 
-  // 2️⃣ Build next 7 LOCAL days
   for (let i = 0; i < 7; i++) {
-    const localDate = new Date(
-      new Date(`${todayLocal}T12:00:00`).getTime() + i * 86400000
-    );
 
+    // Move days safely in selected timezone
+    const baseUtc = zonedTimeToUtc(todayLocal, "12:00 PM", resTZ);
+    const nextUtc = new Date(baseUtc.getTime() + i * 86400000);
+
+    // Local date (UI)
     const localKey = new Intl.DateTimeFormat("en-CA", {
       timeZone: resTZ,
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    }).format(localDate);
+    }).format(nextUtc);
 
-    // 🔑 Convert that LOCAL day → IST day for DB
+    // IST date (DB query)
     const istKey = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Kolkata",
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
-    }).format(localDate);
+    }).format(nextUtc);
 
     dates.push({ localKey, istKey });
   }
 
-  // Default selection
+  // Default selected
   resDateLocal = dates[0].localKey;
   resDateDb = dates[0].istKey;
 
   dates.forEach((d, idx) => {
+
     const pill = document.createElement("button");
     pill.className = "pill" + (idx === 0 ? " active" : "");
 
@@ -2216,7 +2220,11 @@ let selectedResSlot = null;
     pill.textContent = (idx === 0 ? "Today • " : "") + label;
 
     pill.onclick = () => {
-      document.querySelectorAll("#resDates .pill").forEach(p => p.classList.remove("active"));
+
+      document
+        .querySelectorAll("#resDates .pill")
+        .forEach(p => p.classList.remove("active"));
+
       pill.classList.add("active");
 
       resDateLocal = d.localKey;
@@ -2257,7 +2265,7 @@ const { data, error } = await sb
       const slots = [];
 
 data.forEach(r => {
-  const slotInstant = new Date(r.slot_datetime_local);
+  const slotInstant = new Date(r.slot_datetime_local || r.slot_datetime_ist);
 
   // Convert to selected timezone for display
   const parts = new Intl.DateTimeFormat("en-US", {

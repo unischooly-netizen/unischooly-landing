@@ -2237,132 +2237,163 @@ let selectedResSlot = null;
   });
 }
 
-    async function fetchResSlots(){
-      const grid=document.getElementById("resSlots");
-      const empty=document.getElementById("resEmpty");
-      grid.innerHTML="";
-      empty.classList.add("hide");
-      selectedResSlot = null;
-      document.getElementById("confirmRes").disabled = true;
+    async function fetchResSlots() {
+  const grid = document.getElementById("resSlots");
+  const empty = document.getElementById("resEmpty");
 
-      if(!BOOKING || !bookingRegion) { empty.classList.remove("hide"); empty.textContent="Missing region. Please contact support."; return;
-      }
-      if(!resDateDb || !resDateLocal) buildResDates();
+  grid.innerHTML = "";
+  empty.classList.add("hide");
 
-// Build day range in selected timezone
-const dayStartUtc = new Date(`${resDateDb}T00:00:00+05:30`);
-const dayEndUtc   = new Date(`${resDateDb}T23:59:59+05:30`);
+  selectedResSlot = null;
+  document.getElementById("confirmRes").disabled = true;
 
-const { data, error } = await sb
-  .from("demo_slots_live_view")
-  .select(`
-    slot_id,
-    region_key,
-    course_id,
-    slot_datetime_ist,
-    is_star_teacher
-  `)
-  .eq("region_key", bookingRegion)
-  .eq("course_id", BOOKING.course_id || courseId)
-  .gte("slot_datetime_ist", dayStartUtc.toISOString())
-  .lte("slot_datetime_ist", dayEndUtc.toISOString())
-  .order("slot_datetime_ist", { ascending: true });
-
-      if (error) {
-  console.error("❌ SLOT FETCH ERROR:", error);
-  empty.classList.remove("hide");
-  empty.textContent = error.message || "Failed to load slots.";
-  alert("Slot error: " + error.message);
-  return;
-}
-      if(!data || data.length===0){ empty.classList.remove("hide"); return;
-      }
-
-      // convert to local tz, apply SEA hide <7am;
-      // also shift if local time <3am to next day (only for display grouping)
-      const slots = [];
-
-data.forEach(r => {
-  const slotInstant = new Date(r.slot_datetime_ist);
-
-  // Convert to selected timezone for display
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: resTZ,
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).formatToParts(slotInstant);
-
-  const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
-  const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
-
-  slots.push({
-  slot_id: r.slot_id,   // ✅ FIXED
-  isStar: r.is_star_teacher,
-  display,
-  instant: slotInstant
-});
-  });
-
-     // ✅ Safe "now" instant (absolute), compared in selected timezone
-const nowInstant = new Date();
-
-// Get today's date key in selected timezone
-const todayLocalKey = new Intl.DateTimeFormat("en-CA", {
-  timeZone: resTZ,
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit"
-}).format(nowInstant);
-
-if (resDateLocal === todayLocalKey) {
-  const cutoffMs = nowInstant.getTime() + 60 * 60 * 1000; // +1 hour buffer
-
-  for (let i = slots.length - 1; i >= 0; i--) {
-    if (slots[i].instant.getTime() < cutoffMs) {
-      slots.splice(i, 1);
-    }
+  if (!BOOKING || !bookingRegion) {
+    empty.classList.remove("hide");
+    empty.textContent = "Missing region.";
+    return;
   }
-}
 
-      // sort by local display using localInstant numeric in resTZ via formatted hour/min
-      // FIX: strict 12:00 AM → 11:59 PM ordering
-slots.sort((a, b) => {
-  const toMinutes = d => {
-    const p = new Intl.DateTimeFormat("en-US", {
+  if (!resDateLocal) buildResDates();
+
+  /* -----------------------------------
+     Build UTC range from LOCAL DATE
+  ----------------------------------- */
+
+  // Noon anchor in selected timezone
+  const baseUtc = zonedTimeToUtc(resDateLocal, "12:00 PM", resTZ);
+
+  // Get real start/end of that local day
+  const startUtc = new Date(baseUtc.getTime() - 12 * 60 * 60 * 1000);
+  const endUtc   = new Date(baseUtc.getTime() + 12 * 60 * 60 * 1000);
+
+  /* -----------------------------------
+     Fetch from DB (UTC based)
+  ----------------------------------- */
+
+  const { data, error } = await sb
+    .from("demo_slots_live_view")
+    .select(`
+      slot_id,
+      region_key,
+      course_id,
+      slot_datetime_ist,
+      is_star_teacher
+    `)
+    .eq("region_key", bookingRegion)
+    .eq("course_id", BOOKING.course_id || courseId)
+    .gte("slot_datetime_ist", startUtc.toISOString())
+    .lte("slot_datetime_ist", endUtc.toISOString())
+    .order("slot_datetime_ist", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    empty.classList.remove("hide");
+    empty.textContent = error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    empty.classList.remove("hide");
+    return;
+  }
+
+  /* -----------------------------------
+     Convert to selected timezone
+  ----------------------------------- */
+
+  const slots = [];
+
+  data.forEach(r => {
+
+    const instant = new Date(r.slot_datetime_ist);
+
+    const parts = new Intl.DateTimeFormat("en-US", {
       timeZone: resTZ,
       hour: "numeric",
-      minute: "numeric",
-      hour12: false
-    }).formatToParts(d);
+      minute: "2-digit",
+      hour12: true
+    }).formatToParts(instant);
 
-    const m = Object.fromEntries(p.map(x => [x.type, x.value]));
-    return Number(m.hour) * 60 + Number(m.minute);
-  };
+    const map = Object.fromEntries(
+      parts.map(p => [p.type, p.value])
+    );
 
-  slots.sort((a, b) => a.instant.getTime() - b.instant.getTime());
-});
-      if(slots.length===0){ empty.classList.remove("hide"); return; }
+    const display = `${map.hour}:${map.minute} ${map.dayPeriod}`;
 
-      slots.forEach(s=>{
-        const btn=document.createElement("button");
-        btn.className="slot";
-        btn.textContent = s.display;
-        if(s.isStar){
-          const tag=document.createElement("div");
-          tag.className="star";
-          tag.textContent="⭐ Star";
-          btn.appendChild(tag);
-        }
-        btn.onclick=()=>{
-          [...grid.querySelectorAll(".slot")].forEach(x=>x.classList.remove("active"));
-          btn.classList.add("active");
-          selectedResSlot = s;
-          document.getElementById("confirmRes").disabled = false;
-        };
-        grid.appendChild(btn);
-      });
+    slots.push({
+      slot_id: r.slot_id,
+      isStar: r.is_star_teacher,
+      display,
+      instant
+    });
+  });
+
+  /* -----------------------------------
+     Filter past slots (today only)
+  ----------------------------------- */
+
+  const now = new Date();
+
+  const todayKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone: resTZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(now);
+
+  if (resDateLocal === todayKey) {
+
+    const cutoff = now.getTime() + 60 * 60 * 1000;
+
+    for (let i = slots.length - 1; i >= 0; i--) {
+      if (slots[i].instant.getTime() < cutoff) {
+        slots.splice(i, 1);
+      }
     }
+  }
+
+  /* -----------------------------------
+     Sort ONCE (UTC)
+  ----------------------------------- */
+
+  slots.sort((a, b) => a.instant - b.instant);
+
+  if (!slots.length) {
+    empty.classList.remove("hide");
+    return;
+  }
+
+  /* -----------------------------------
+     Render
+  ----------------------------------- */
+
+  slots.forEach(s => {
+
+    const btn = document.createElement("button");
+    btn.className = "slot";
+    btn.textContent = s.display;
+
+    if (s.isStar) {
+      const tag = document.createElement("div");
+      tag.className = "star";
+      tag.textContent = "⭐ Star";
+      btn.appendChild(tag);
+    }
+
+    btn.onclick = () => {
+
+      [...grid.querySelectorAll(".slot")]
+        .forEach(x => x.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      selectedResSlot = s;
+      document.getElementById("confirmRes").disabled = false;
+    };
+
+    grid.appendChild(btn);
+  });
+}
 
     document.getElementById("confirmRes").onclick = async () => {
   if (!BOOKING || !selectedResSlot) return;

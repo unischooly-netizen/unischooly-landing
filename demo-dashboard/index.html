@@ -2348,12 +2348,23 @@ if (display === "12:00 AM") return;
 
     const cutoff = now.getTime() + 60 * 60 * 1000;
 
-    for (let i = slots.length - 1; i >= 0; i--) {
-      if (slots[i].instant.getTime() < cutoff) {
-        slots.splice(i, 1);
-      }
-    }
+for (let i = slots.length - 1; i >= 0; i--) {
+  const slotTime = slots[i].instant.getTime();
+
+  // ❌ remove ONLY duplicate midnight (00:00)
+  const isMidnight =
+    slots[i].display === "12:00 AM";
+
+  if (isMidnight && i > 0) {
+    slots.splice(i, 1);
+    continue;
   }
+
+  // ❌ remove past slots
+  if (slotTime < cutoff) {
+    slots.splice(i, 1);
+  }
+}
 
   /* -----------------------------------
      Sort ONCE (UTC)

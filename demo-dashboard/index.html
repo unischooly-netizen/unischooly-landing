@@ -2259,14 +2259,14 @@ const { data, error } = await sb
     slot_id,
     region_key,
     course_id,
-    slot_datetime,
+    slot_datetime_ist,
     is_star_teacher
   `)
   .eq("region_key", bookingRegion)
   .eq("course_id", BOOKING.course_id || courseId)
-  .gte("slot_datetime", dayStartUtc.toISOString())
-  .lte("slot_datetime", dayEndUtc.toISOString())
-  .order("slot_datetime", { ascending: true });
+  .gte("slot_datetime_ist", dayStartUtc.toISOString())
+  .lte("slot_datetime_ist", dayEndUtc.toISOString())
+  .order("slot_datetime_ist", { ascending: true });
 
       if (error) {
   console.error("❌ SLOT FETCH ERROR:", error);

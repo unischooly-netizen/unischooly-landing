@@ -2258,8 +2258,8 @@ const { data, error } = await sb
   .select("*")
   .eq("region_key", bookingRegion)
   .eq("course_id", BOOKING.course_id || courseId)
-  .gte("slot_datetime_ist", dayStartUtc.toISOString())
-  .lte("slot_datetime_ist", dayEndUtc.toISOString());
+  .gte("slot_datetime", dayStartUtc.toISOString())
+.lte("slot_datetime", dayEndUtc.toISOString());
 
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
       if(!data || data.length===0){ empty.classList.remove("hide"); return;
@@ -2270,7 +2270,7 @@ const { data, error } = await sb
       const slots = [];
 
 data.forEach(r => {
-  const slotInstant = new Date(r.slot_datetime_local || r.slot_datetime_ist);
+  const slotInstant = new Date(r.slot_datetime);
 
   // Convert to selected timezone for display
   const parts = new Intl.DateTimeFormat("en-US", {

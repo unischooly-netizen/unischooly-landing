@@ -2306,6 +2306,7 @@ let selectedResSlot = null;
   data.forEach(r => {
 
     const instant = new Date(r.slot_datetime_ist);
+    instant.setMinutes(instant.getMinutes() + 30);
 
     const parts = new Intl.DateTimeFormat("en-US", {
       timeZone: resTZ,

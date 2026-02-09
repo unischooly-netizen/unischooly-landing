@@ -2250,8 +2250,8 @@ let selectedResSlot = null;
       if(!resDateDb || !resDateLocal) buildResDates();
 
 // Build day range in selected timezone
-const dayStartUtc = zonedTimeToUtc(resDateLocal, "12:00 AM", resTZ);
-const dayEndUtc   = zonedTimeToUtc(resDateLocal, "11:59 PM", resTZ);
+const dayStartUtc = new Date(`${resDateDb}T00:00:00+05:30`);
+const dayEndUtc   = new Date(`${resDateDb}T23:59:59+05:30`);
 
 const { data, error } = await sb
   .from("demo_slots_live_view")
@@ -2283,7 +2283,7 @@ const { data, error } = await sb
       const slots = [];
 
 data.forEach(r => {
-  const slotInstant = new Date(r.slot_datetime);
+  const slotInstant = new Date(r.slot_datetime_ist);
 
   // Convert to selected timezone for display
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -2340,7 +2340,7 @@ slots.sort((a, b) => {
     return Number(m.hour) * 60 + Number(m.minute);
   };
 
-  return toMinutes(a.instant) - toMinutes(b.instant);
+  slots.sort((a, b) => a.instant.getTime() - b.instant.getTime());
 });
       if(slots.length===0){ empty.classList.remove("hide"); return; }
 

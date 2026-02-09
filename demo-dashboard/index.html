@@ -2253,17 +2253,13 @@ let selectedResSlot = null;
 const dayStartUtc = zonedTimeToUtc(resDateLocal, "12:00 AM", resTZ);
 const dayEndUtc   = zonedTimeToUtc(resDateLocal, "11:59 PM", resTZ);
 
-// Convert that range to IST (DB stored in IST/UTC hybrid)
-const rangeStart = fmtDateTimeSQL(dayStartUtc, "Asia/Kolkata");
-const rangeEnd   = fmtDateTimeSQL(dayEndUtc, "Asia/Kolkata");
-
 const { data, error } = await sb
   .from("demo_slots_live_view")
   .select("*")
   .eq("region_key", bookingRegion)
   .eq("course_id", BOOKING.course_id || courseId)
-  .gte("slot_datetime_ist", rangeStart)
-  .lte("slot_datetime_ist", rangeEnd);
+  .gte("slot_datetime_ist", dayStartUtc.toISOString())
+  .lte("slot_datetime_ist", dayEndUtc.toISOString());
 
       if(error){ console.error(error); empty.classList.remove("hide"); empty.textContent="Failed to load slots."; return; }
       if(!data || data.length===0){ empty.classList.remove("hide"); return;

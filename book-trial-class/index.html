@@ -710,28 +710,7 @@ body {
   .demo-footer-right{
     justify-content:flex-start;
   }
-}
-    /* ===============================
-   WINDOWS DROPDOWN FIX
-=============================== */
-
-/* Force dark dropdown UI */
-select {
-  color-scheme: dark;
-}
-
-/* Fix option text + background */
-.select option {
-  background-color: #0b0f24;
-  color: #ffffff;
-}
-
-/* Hover / Selected on Windows */
-.select option:checked,
-.select option:hover {
-  background-color: #7b3ffc;
-  color: #ffffff;
-}
+}    
 </style>
 </head>
 <body>
@@ -868,10 +847,6 @@ select {
             <option value="6">Chess</option>
             <option value="7">Mathematics</option>
           </select>
-
-          <div id="course-microcopy" style="margin-top:6px;font-size:12px;color:var(--text-sub);line-height:1.5;">
-            <span>👆 Select a course to see what your child will learn</span>
-          </div>
         </div>
 
 <div class="field" style="margin-top: 10px;">
@@ -1529,7 +1504,12 @@ function convertSlotRowToLocal(slotRow, timeZone, todayLocalKey, localDayKeysSet
   const istBase = new Date(slotRow.slot_datetime_ist);
   const localStr = istBase.toLocaleString("en-US", { timeZone });
   let local = new Date(localStr);
-  
+
+  // Shift rule: any slot whose LOCAL time < 03:00 belongs to NEXT DAY
+  if (local.getHours() < 3) {
+    local.setDate(local.getDate() + 1);
+  }
+
   const y = local.getFullYear();
   const m = String(local.getMonth() + 1).padStart(2, "0");
   const d = String(local.getDate()).padStart(2, "0");
@@ -1983,36 +1963,6 @@ document.addEventListener("DOMContentLoaded", init);
         }
       }, true);
     }
-  });
-})();
-
-
-// =========================
-// COURSE MICRO COPY (TEXT ONLY)
-// =========================
-(function(){
-  const MICRO = {
-    1: "🧠 Build logic & problem-solving • 🎮 Create fun mini-games • 👶 Grades 1–7",
-    2: "🐍 Learn real Python • 💻 Write actual code • 🎯 Grades 5–12",
-    3: "🌐 Design & build your own website • 🎨 HTML, CSS & projects",
-    4: "🤖 Create AI tools using ChatGPT • 🚀 Future-ready skills",
-    5: "🎮 Build your own Roblox games • 🧩 Game logic + creativity",
-    6: "♟️ Improve focus & strategy • 🏆 Learn from expert coaches",
-    7: "➕ Strengthen math concepts • 📘 Boost confidence & scores"
-  };
-
-  document.addEventListener("DOMContentLoaded", function(){
-    const box = document.getElementById("course-microcopy");
-    const sel = document.getElementById("course-select");
-    if (!box || !sel) return;
-
-    function update(){
-      const v = Number(sel.value);
-      box.innerHTML = MICRO[v] ? MICRO[v] : "👆 Select a course to see what your child will learn";
-    }
-
-    update();
-    sel.addEventListener("change", update);
   });
 })();
 

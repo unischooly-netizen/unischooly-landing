@@ -710,7 +710,28 @@ body {
   .demo-footer-right{
     justify-content:flex-start;
   }
-}    
+}
+    /* ===============================
+   WINDOWS DROPDOWN FIX
+=============================== */
+
+/* Force dark dropdown UI */
+select {
+  color-scheme: dark;
+}
+
+/* Fix option text + background */
+.select option {
+  background-color: #0b0f24;
+  color: #ffffff;
+}
+
+/* Hover / Selected on Windows */
+.select option:checked,
+.select option:hover {
+  background-color: #7b3ffc;
+  color: #ffffff;
+}
 </style>
 </head>
 <body>

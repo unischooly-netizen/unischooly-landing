@@ -1502,14 +1502,17 @@ if (!leadId) {
     // We'll compute a Date by combining preferred_date with local time in booking.timezone
     // =========================
     function buildMeetLink(){
-      // Uses Zoom link saved in demo_leads.zoom_join_url
-      // Returns null if not yet available.
-      const url = (BOOKING && BOOKING.zoom_join_url) ? String(BOOKING.zoom_join_url).trim() : "";
-      if(!url) return null;
-      // Basic safety: only allow http/https
-      if(!/^https?:\/\//i.test(url)) return null;
-      return url;
-    }
+  if (!BOOKING) return null;
+
+  const url = String(BOOKING.zoom_join_url || "").trim();
+
+  if (!url) return null;
+
+  // Allow only secure Zoom links
+  if (!url.startsWith("https://")) return null;
+
+  return url;
+}
 
     // =========================
     // Render Section 2
@@ -1580,12 +1583,23 @@ function renderBooking(b){
       BOOKING = b;
   const btnJoin = document.getElementById("btnJoin");
 
-if (btnJoin && b.zoom_join_url) {
-  btnJoin.disabled = false;
+if (btnJoin) {
+  btnJoin.disabled = !b.zoom_join_url;
 
   btnJoin.onclick = () => {
+    if (!b.zoom_join_url) {
+      toast("Meet link will appear 5 mins before class.");
+      return;
+    }
+
     console.log("Joining Zoom:", b.zoom_join_url);
-    window.open(b.zoom_join_url, "_blank", "noopener,noreferrer");
+
+    // Always open in new tab (safe)
+    window.open(
+      b.zoom_join_url,
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 }
       bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
@@ -1655,16 +1669,6 @@ if(classDT && !isNaN(classDT.getTime())){
       initRescheduleUI();
       // join button logic (Zoom)
       // NOTE: we compute the link at click-time so if DB updates and page re-renders, it stays correct.
-      document.getElementById("btnJoin").onclick = () => {
-        const meetLink = buildMeetLink();
-        if(meetLink){
-          // Redirect to Zoom in the same tab
-          window.location.href = meetLink;
-        } else {
-          toast("Meet link will appear 5 mins before class.");
-        }
-      };
-
     }
 
     // =========================

@@ -1580,31 +1580,100 @@ if (!leadId) {
     }
   }
 function renderBooking(b){
-      BOOKING = b;
+  BOOKING = b;
+
   const btnJoin = document.getElementById("btnJoin");
+  const classDT = b.scheduled_at_utc ? new Date(b.scheduled_at_utc) : null;
 
-if (btnJoin) {
-  btnJoin.disabled = !b.zoom_join_url;
+  // helper: minutes to start (based on scheduled_at_utc)
+  function minsToStart(){
+    if(!classDT || isNaN(classDT.getTime())) return null;
+    return Math.floor((classDT.getTime() - Date.now()) / 60000);
+  }
 
-  btnJoin.onclick = () => {
-    if (!b.zoom_join_url) {
-      toast("Meet link will appear 5 mins before class.");
+  // helper: refresh booking from DB (so newly created zoom link appears)
+  async function refreshBooking(){
+    const fresh = await loadBooking();
+    if(fresh){
+      BOOKING = fresh;
+      return fresh;
+    }
+    return null;
+  }
+
+  // helper: decide button state
+  async function updateJoinState(){
+    if(!btnJoin) return;
+
+    const m = minsToStart();
+
+    // If schedule missing, keep disabled
+    if(m === null){
+      btnJoin.disabled = true;
       return;
     }
 
-    console.log("Joining Zoom:", b.zoom_join_url);
+    // Rule: Parent can join only in last 5 mins before start, and during class
+    // (>= -60 means class window, adjust if your demo length differs)
+    const withinJoinWindow = (m <= 5 && m >= -60);
 
-    // Always open in new tab (safe)
-    window.open(
-      b.zoom_join_url,
-      "_blank",
-      "noopener,noreferrer"
-    );
-  };
-}
-      bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
-      bookingRegion = b.region_key || null;
-      bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
+    // If within window but zoom link is missing, try refresh once
+    if(withinJoinWindow && !BOOKING?.zoom_join_url){
+      const fresh = await refreshBooking();
+      if(fresh) BOOKING = fresh;
+    }
+
+    // Enable only if in window AND zoom link exists
+    btnJoin.disabled = !(withinJoinWindow && BOOKING?.zoom_join_url);
+  }
+
+  if(btnJoin){
+    // Click behaviour
+    btnJoin.onclick = async () => {
+      const m = minsToStart();
+
+      // Not yet in join window
+      if(m === null || m > 5){
+        toast("Meet link will appear 5 mins before class.");
+        return;
+      }
+
+      // In join window but link missing -> refresh and try
+      if(!BOOKING?.zoom_join_url){
+        toast("Preparing meeting link… please try again in 10 seconds.");
+        await refreshBooking();
+      }
+
+      if(!BOOKING?.zoom_join_url){
+        toast("Meeting link not ready yet. Please try again in 10 seconds.");
+        return;
+      }
+
+      window.open(BOOKING.zoom_join_url, "_blank", "noopener,noreferrer");
+    };
+
+    // 1) Set state immediately
+    updateJoinState();
+
+    // 2) Keep checking every 10 seconds until class ends
+    // so if zoom link is created after page load, it will appear automatically.
+    if(window.__joinPoll) clearInterval(window.__joinPoll);
+    window.__joinPoll = setInterval(async () => {
+      const m = minsToStart();
+      if(m !== null && m < -70){
+        clearInterval(window.__joinPoll);
+        window.__joinPoll = null;
+        return;
+      }
+      await updateJoinState();
+    }, 10000);
+  }
+
+  // keep rest of your renderBooking code below unchanged
+  bookingTZ = safeTZ(b.timezone || "Asia/Kolkata");
+  bookingRegion = b.region_key || null;
+  bookingCourseName = (COURSE[b.course_id]||COURSE[courseId]||COURSE[1]).name;
+
       // Ticket fields
       setText("vChild", b.child_name);
       setText("vGrade", b.child_grade);

@@ -1694,7 +1694,6 @@ function renderBooking(b){
       setText("vCourse", bookingCourseName);
 
       // Schedule
-      const classDT = b.scheduled_at_utc ? new Date(b.scheduled_at_utc) : null;
 if(classDT && !isNaN(classDT.getTime())){
         const s = fmtLocal(classDT, bookingTZ);
         setText("calMonth", s.month);

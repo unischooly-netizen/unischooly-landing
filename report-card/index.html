@@ -7,174 +7,440 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #1f5e67, #0c1722 35%, #071018 70%);
-      color: white;
-      padding: 20px;
+
+    :root {
+      --bg-1: #05111c;
+      --bg-2: #0b1f2c;
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --soft: #94a3b8;
+      --teal: #2dd4bf;
+      --cyan: #38bdf8;
+      --gold: #fbbf24;
+      --navy-card: rgba(2, 8, 23, 0.45);
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
     }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(45,212,191,0.20), transparent 20%),
+        radial-gradient(circle at 80% 10%, rgba(56,189,248,0.20), transparent 18%),
+        linear-gradient(180deg, #07111a 0%, #071827 40%, #04111b 100%);
+      color: var(--text);
+      padding: 24px;
+      min-height: 100vh;
+    }
+
     .container {
-      max-width: 1100px;
+      max-width: 1240px;
       margin: 0 auto;
     }
+
     .card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      padding: 24px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(12px);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      margin-bottom: 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
     }
+
     .hero {
-      background: linear-gradient(135deg, rgba(45,212,191,0.16), rgba(56,189,248,0.08), rgba(255,255,255,0.02));
+      position: relative;
+      overflow: hidden;
+      padding: 34px 28px 30px;
+      background:
+        radial-gradient(circle at top right, rgba(45,212,191,0.18), transparent 28%),
+        linear-gradient(135deg, rgba(45,212,191,0.12), rgba(56,189,248,0.08), rgba(255,255,255,0.02));
     }
-    .title {
-      font-size: 40px;
-      font-weight: bold;
-      margin-bottom: 10px;
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      pointer-events: none;
     }
-    .subtitle {
-      color: #dbeafe;
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
       margin-bottom: 20px;
-      line-height: 1.6;
+      position: relative;
+      z-index: 1;
     }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 12px 16px;
+      border-radius: 18px;
+    }
+
+    .brand-box img {
+      height: 42px;
+      width: auto;
+      display: block;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .brand-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: #c7f9f1;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .premium-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(251,191,36,0.25);
+      color: #fde68a;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .title {
+      font-size: 54px;
+      line-height: 1.02;
+      font-weight: 800;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      line-height: 1.55;
+      color: #e2e8f0;
+      max-width: 980px;
+      position: relative;
+      z-index: 1;
+    }
+
     .pill-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 12px;
+      margin-top: 28px;
+      position: relative;
+      z-index: 1;
     }
+
     .pill {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.11);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 999px;
-      padding: 10px 16px;
-      font-size: 14px;
+      padding: 12px 16px;
+      font-size: 15px;
+      color: white;
+      font-weight: 600;
     }
+
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 22px;
     }
+
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 22px;
     }
+
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      gap: 18px;
     }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.24em;
+      color: #99f6e4;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .mini-card {
+      background: linear-gradient(180deg, rgba(2,6,23,0.45), rgba(15,23,42,0.35));
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+
     .label {
       font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #94a3b8;
+      letter-spacing: 0.16em;
+      color: var(--soft);
       margin-bottom: 8px;
     }
+
     .value {
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
+      line-height: 1.4;
+      color: white;
     }
-    .section-title {
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 16px;
+
+    .small-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--muted);
     }
-    .mini-card {
-      background: rgba(2,6,23,0.35);
-      border-radius: 18px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,0.1);
+
+    .metric-card {
+      background: linear-gradient(180deg, rgba(2,6,23,0.5), rgba(15,23,42,0.38));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 20px;
     }
+
     .metric-value {
-      font-size: 34px;
-      font-weight: bold;
+      font-size: 38px;
+      font-weight: 800;
       margin: 10px 0;
+      color: white;
     }
+
+    .metric-sub {
+      font-size: 14px;
+      color: #e2e8f0;
+      line-height: 1.65;
+      margin-top: 14px;
+    }
+
     .bar {
       width: 100%;
       height: 10px;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.10);
       border-radius: 999px;
       overflow: hidden;
-      margin: 10px 0 14px;
+      margin-top: 8px;
     }
+
     .bar-fill {
       height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #5eead4, #38bdf8);
+      background: linear-gradient(90deg, var(--teal), var(--cyan));
     }
-    .small-text {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #dbeafe;
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
     }
+
+    .progress-circle {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 12px solid rgba(45,212,191,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 6px auto 24px;
+      background: rgba(2,6,23,0.36);
+      box-shadow: inset 0 0 35px rgba(0,0,0,0.3);
+    }
+
+    .progress-inner {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .big-number {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .center {
+      text-align: center;
+    }
+
     .tag-list {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
     }
+
     .tag {
       border-radius: 999px;
-      padding: 10px 14px;
-      background: rgba(2,6,23,0.35);
-      border: 1px solid rgba(45,212,191,0.2);
+      padding: 11px 14px;
+      background: rgba(2,6,23,0.42);
+      border: 1px solid rgba(45,212,191,0.18);
       font-size: 14px;
+      color: white;
+      font-weight: 600;
     }
+
     .badge-box {
       text-align: center;
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(2,6,23,0.26));
     }
+
     .badge-emoji {
-      width: 64px;
-      height: 64px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 12px;
-      font-size: 30px;
-      background: rgba(255,255,255,0.1);
+      margin: 0 auto 14px;
+      font-size: 34px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.08);
     }
-    .progress-circle {
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      border: 10px solid rgba(45,212,191,0.25);
+
+    .journey-card {
+      background: linear-gradient(180deg, rgba(2,6,23,0.52), rgba(15,23,42,0.34));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 20px;
+    }
+
+    .journey-top {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      background: rgba(2,6,23,0.4);
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
     }
-    .progress-inner {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+
+    .journey-class {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #99f6e4;
+      font-weight: 700;
     }
-    .big-number {
-      font-size: 32px;
-      font-weight: bold;
+
+    .journey-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.3;
     }
-    .center {
-      text-align: center;
+
+    .journey-outcome {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
     }
+
+    .teacher-card {
+      background:
+        linear-gradient(180deg, rgba(251,191,36,0.10), rgba(255,255,255,0.03)),
+        linear-gradient(180deg, rgba(2,6,23,0.45), rgba(15,23,42,0.34));
+      border: 1px solid rgba(251,191,36,0.16);
+    }
+
+    .renewal-card {
+      background:
+        radial-gradient(circle at top right, rgba(45,212,191,0.16), transparent 34%),
+        linear-gradient(135deg, rgba(45,212,191,0.10), rgba(56,189,248,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(45,212,191,0.20);
+    }
+
+    .renewal-highlight {
+      margin-top: 18px;
+      background: rgba(2,6,23,0.42);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
     .loading, .error {
-      font-size: 20px;
+      font-size: 22px;
       text-align: center;
-      padding: 40px;
+      padding: 50px;
+      color: white;
     }
-    @media (max-width: 900px) {
-      .grid-2, .grid-3, .grid-4 {
+
+    @media (max-width: 1100px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .journey-grid { grid-template-columns: 1fr; }
+      .hero-top { flex-direction: column; align-items: flex-start; }
+      .title { font-size: 42px; }
+      .subtitle { font-size: 18px; }
+    }
+
+    @media (max-width: 860px) {
+      body { padding: 14px; }
+      .grid-2, .grid-3, .grid-4, .profile-grid {
         grid-template-columns: 1fr;
       }
-      .title {
-        font-size: 30px;
+      .title { font-size: 34px; }
+      .subtitle { font-size: 17px; }
+      .card { padding: 20px; border-radius: 24px; }
+      .section-title { font-size: 24px; }
+      .pill { font-size: 14px; }
+      .progress-circle {
+        width: 150px;
+        height: 150px;
+      }
+      .progress-inner {
+        width: 102px;
+        height: 102px;
       }
     }
   </style>
@@ -188,6 +454,8 @@
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
 
+    const BRAND_LOGO = "https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg";
+
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     function getTokenFromURL() {
@@ -198,6 +466,17 @@
     function safeArray(value) {
       if (Array.isArray(value)) return value;
       return [];
+    }
+
+    function metricHTML(label, value, note) {
+      return `
+        <div class="metric-card">
+          <div class="label">${label}</div>
+          <div class="metric-value">${(value / 10).toFixed(1)} <span style="font-size:16px;color:#cbd5e1;">/ 10</span></div>
+          <div class="bar"><div class="bar-fill" style="width:${value}%"></div></div>
+          <div class="metric-sub">${note}</div>
+        </div>
+      `;
     }
 
     async function loadReportCard() {
@@ -221,30 +500,52 @@
         return;
       }
 
-      const classesAway = (data.certificate_target || 12) - (data.classes_consumed || 0);
       const projects = safeArray(data.projects);
       const skills = safeArray(data.skills);
       const badges = safeArray(data.badges);
       const nextPathway = safeArray(data.next_pathway);
+      const classJourney = safeArray(data.class_journey);
+
+      const certificateTarget = data.certificate_target || 20;
+      const classesConsumed = data.classes_consumed || 0;
+      const classesPaid = data.classes_paid || 0;
+      const classesAway = Math.max(certificateTarget - classesConsumed, 0);
+      const progressWidth = Math.min((classesConsumed / certificateTarget) * 100, 100);
 
       app.innerHTML = `
         <div class="card hero">
+          <div class="hero-top">
+            <div class="brand-box">
+              <img src="${BRAND_LOGO}" alt="Unischooly logo" />
+              <div class="brand-text">
+                <div class="brand-eyebrow">Premium Parent Report</div>
+                <div class="brand-title">Unischooly Monthly Progress Card</div>
+              </div>
+            </div>
+
+            <div class="premium-badge">✦ Growth • Confidence • Future Skills</div>
+          </div>
+
           <div class="title">Monthly Progress Report</div>
           <div class="subtitle">
-            A premium monthly learning snapshot designed to celebrate progress,
-            highlight future-ready growth, and guide the next stage of ${data.student_name || "the student"}'s learning journey.
+            A premium monthly learning snapshot designed to celebrate progress, highlight future-ready growth,
+            and guide the next stage of ${data.student_name || "the student"}'s learning journey.
           </div>
+
           <div class="pill-row">
             <div class="pill">Student: ${data.student_name || "-"}</div>
             <div class="pill">Programme: ${data.program || "-"}</div>
             <div class="pill">Grade: ${data.grade || "-"}</div>
+            <div class="pill">Parent: ${data.parent_name || "-"}</div>
           </div>
         </div>
 
         <div class="grid-2">
           <div class="card">
+            <div class="section-eyebrow">Student Snapshot</div>
             <div class="section-title">Learner Profile</div>
-            <div class="grid-2">
+
+            <div class="profile-grid">
               <div class="mini-card"><div class="label">Student Name</div><div class="value">${data.student_name || "-"}</div></div>
               <div class="mini-card"><div class="label">Parent Name</div><div class="value">${data.parent_name || "-"}</div></div>
               <div class="mini-card"><div class="label">Programme</div><div class="value">${data.program || "-"}</div></div>
@@ -252,46 +553,65 @@
               <div class="mini-card"><div class="label">Teacher</div><div class="value">${data.teacher_name || "-"}</div></div>
               <div class="mini-card"><div class="label">Relationship Manager</div><div class="value">${data.relationship_manager || "-"}</div></div>
             </div>
+
+            <div style="margin-top:18px;" class="profile-grid">
+              <div class="mini-card"><div class="label">Subscription</div><div class="value">${data.subscription_name || "-"}</div></div>
+              <div class="mini-card"><div class="label">Amount Paid</div><div class="value">${data.amount_paid || "-"}</div></div>
+              <div class="mini-card"><div class="label">Classes Paid</div><div class="value">${classesPaid}</div></div>
+              <div class="mini-card"><div class="label">Classes Consumed</div><div class="value">${classesConsumed}</div></div>
+            </div>
           </div>
 
-          <div class="card">
+          <div class="card renewal-card">
+            <div class="section-eyebrow">Progress Summary</div>
             <div class="section-title">Certification Milestone</div>
+
             <div class="progress-circle">
               <div class="progress-inner">
-                <div class="big-number">${data.classes_consumed || 0}</div>
+                <div class="big-number">${classesConsumed}</div>
                 <div class="label center">Classes Done</div>
               </div>
             </div>
+
             <div class="mini-card">
               <div class="label">Certificate Progress</div>
               <div class="value">Just ${classesAway} classes away from Level 1 Certification</div>
               <div class="bar">
-                <div class="bar-fill" style="width:${((data.classes_consumed || 0) / (data.certificate_target || 12)) * 100}%"></div>
+                <div class="bar-fill" style="width:${progressWidth}%"></div>
               </div>
-              <div class="small-text">${data.classes_consumed || 0}/${data.certificate_target || 12} completed</div>
+              <div class="small-text" style="margin-top:12px;">${classesConsumed}/${certificateTarget} completed</div>
+            </div>
+
+            <div class="renewal-highlight">
+              <div class="label">Why It Matters Now</div>
+              <div class="small-text">
+                ${data.student_name || "The student"} has already built strong momentum. Continuing at this stage helps convert good early engagement into deeper confidence, stronger independent execution, and visible certification progress.
+              </div>
             </div>
           </div>
         </div>
 
         <div class="card">
+          <div class="section-eyebrow">Core Metrics</div>
           <div class="section-title">Learning Progress Snapshot</div>
           <div class="grid-4">
-            ${metricHTML("Curiosity Score", data.curiosity_score || 0, "Actively explores new project ideas with excitement and interest.")}
-            ${metricHTML("Confidence Index", data.confidence_index || 0, "Shows growing comfort in coding tasks and guided execution.")}
-            ${metricHTML("Resilience Rating", data.resilience_rating || 0, "Stays engaged through challenge, correction, and unfinished tasks.")}
-            ${metricHTML("Future Readiness", data.future_readiness || 0, "Building strong early foundations in logic, creativity, and digital thinking.")}
+            ${metricHTML("Curiosity Score", data.curiosity_score || 0, "Actively explores new ideas with energy, curiosity, and strong participation during projects.")}
+            ${metricHTML("Confidence Index", data.confidence_index || 0, "Shows growing comfort while handling coding tasks, guided steps, and creative project building.")}
+            ${metricHTML("Resilience Rating", data.resilience_rating || 0, "Stays engaged through correction, challenge, and unfinished tasks without losing momentum.")}
+            ${metricHTML("Future Readiness", data.future_readiness || 0, "Developing strong foundations in logic, digital creativity, structured thinking, and problem solving.")}
           </div>
         </div>
 
         <div class="grid-2">
           <div class="card">
+            <div class="section-eyebrow">Project Journey</div>
             <div class="section-title">Projects Built This Month</div>
             <div class="grid-2">
               ${projects.map((project, index) => `
                 <div class="mini-card">
                   <div class="label">Project ${index + 1}</div>
                   <div class="value">${project}</div>
-                  <div class="small-text" style="margin-top:10px;">Built with guided coding practice, creativity, and growing confidence.</div>
+                  <div class="small-text" style="margin-top:10px;">Built through guided coding, creative thinking, and growing confidence in project execution.</div>
                 </div>
               `).join("")}
             </div>
@@ -299,20 +619,43 @@
 
           <div>
             <div class="card">
+              <div class="section-eyebrow">Future Skills</div>
               <div class="section-title">Skills Developed</div>
               <div class="tag-list">
                 ${skills.map(skill => `<div class="tag">${skill}</div>`).join("")}
               </div>
             </div>
 
-            <div class="card">
-              <div class="section-title">Teacher Reflection</div>
+            <div class="card teacher-card">
+              <div class="section-eyebrow">Teacher Reflection</div>
+              <div class="section-title">What ${data.teacher_name || "the teacher"} Observed</div>
               <div class="small-text">${data.teacher_reflection || "-"}</div>
             </div>
           </div>
         </div>
 
         <div class="card">
+          <div class="section-eyebrow">Class-by-Class Progress</div>
+          <div class="section-title">${data.student_name || "Student"}'s Learning Journey Across Classes</div>
+          <div class="journey-grid">
+            ${classJourney.map(item => `
+              <div class="journey-card">
+                <div class="journey-top">
+                  <div class="journey-class">Class ${item.class_no || "-"}</div>
+                </div>
+                <div class="journey-title">${item.title || "Class Session"}</div>
+                <div class="small-text">${item.interaction || ""}</div>
+                <div class="journey-outcome">
+                  <div class="label">Outcome</div>
+                  <div class="small-text">${item.outcome || ""}</div>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-eyebrow">Recognition</div>
           <div class="section-title">Achievement Badges</div>
           <div class="grid-3">
             ${badges.map(badge => `
@@ -327,6 +670,7 @@
 
         <div class="grid-2">
           <div class="card">
+            <div class="section-eyebrow">Next Month</div>
             <div class="section-title">Next Learning Pathway</div>
             ${nextPathway.map(item => `
               <div class="mini-card" style="margin-bottom:12px;">
@@ -335,29 +679,19 @@
             `).join("")}
           </div>
 
-          <div class="card">
+          <div class="card renewal-card">
+            <div class="section-eyebrow">Continuation Note</div>
             <div class="section-title">Why This Is The Right Time To Continue</div>
             <div class="small-text">${data.progress_summary || "-"}</div>
-            <div class="mini-card" style="margin-top:16px;">
+
+            <div class="renewal-highlight">
               <div class="label">Renewal Momentum</div>
-              <div class="value">Continue now to unlock the first certificate milestone</div>
-              <div class="small-text" style="margin-top:10px;">
-                This is the ideal stage to continue the learning journey and deepen confidence,
-                creativity, and independent project-building.
+              <div class="value" style="margin-bottom:10px;">Continue now to strengthen confidence and unlock certification progress</div>
+              <div class="small-text">
+                ${data.student_name || "The student"} is at the ideal continuation stage. Another learning cycle will help deepen coding fluency, increase project independence, and move closer to a major learning milestone.
               </div>
             </div>
           </div>
-        </div>
-      `;
-    }
-
-    function metricHTML(label, value, note) {
-      return `
-        <div class="mini-card">
-          <div class="label">${label}</div>
-          <div class="metric-value">${(value / 10).toFixed(1)} <span style="font-size:16px;color:#cbd5e1;">/ 10</span></div>
-          <div class="bar"><div class="bar-fill" style="width:${value}%"></div></div>
-          <div class="small-text">${note}</div>
         </div>
       `;
     }

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unischooly Report Card</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #1f5e67, #0c1722 35%, #071018 70%);
+      color: white;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(45,212,191,0.16), rgba(56,189,248,0.08), rgba(255,255,255,0.02));
+    }
+    .title {
+      font-size: 40px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #dbeafe;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .pill {
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+    .value {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .section-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    .mini-card {
+      background: rgba(2,6,23,0.35);
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .metric-value {
+      font-size: 34px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 14px;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #5eead4, #38bdf8);
+    }
+    .small-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #dbeafe;
+    }
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tag {
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(2,6,23,0.35);
+      border: 1px solid rgba(45,212,191,0.2);
+      font-size: 14px;
+    }
+    .badge-box {
+      text-align: center;
+    }
+    .badge-emoji {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 30px;
+      background: rgba(255,255,255,0.1);
+    }
+    .progress-circle {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 10px solid rgba(45,212,191,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      background: rgba(2,6,23,0.4);
+    }
+    .progress-inner {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .big-number {
+      font-size: 32px;
+      font-weight: bold;
+    }
+    .center {
+      text-align: center;
+    }
+    .loading, .error {
+      font-size: 20px;
+      text-align: center;
+      padding: 40px;
+    }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .title {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="loading">Loading report card...</div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    function getTokenFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("token");
+    }
+
+    function safeArray(value) {
+      if (Array.isArray(value)) return value;
+      return [];
+    }
+
+    async function loadReportCard() {
+      const token = getTokenFromURL();
+      const app = document.getElementById("app");
+
+      if (!token) {
+        app.innerHTML = '<div class="error">Token missing in URL. Example: ?token=elijah-uk-001</div>';
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("student_report_cards")
+        .select("*")
+        .eq("report_token", token)
+        .eq("is_active", true)
+        .single();
+
+      if (error || !data) {
+        app.innerHTML = '<div class="error">Report card not found.</div>';
+        return;
+      }
+
+      const classesAway = (data.certificate_target || 12) - (data.classes_consumed || 0);
+      const projects = safeArray(data.projects);
+      const skills = safeArray(data.skills);
+      const badges = safeArray(data.badges);
+      const nextPathway = safeArray(data.next_pathway);
+
+      app.innerHTML = `
+        <div class="card hero">
+          <div class="title">Monthly Progress Report</div>
+          <div class="subtitle">
+            A premium monthly learning snapshot designed to celebrate progress,
+            highlight future-ready growth, and guide the next stage of ${data.student_name || "the student"}'s learning journey.
+          </div>
+          <div class="pill-row">
+            <div class="pill">Student: ${data.student_name || "-"}</div>
+            <div class="pill">Programme: ${data.program || "-"}</div>
+            <div class="pill">Grade: ${data.grade || "-"}</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">Learner Profile</div>
+            <div class="grid-2">
+              <div class="mini-card"><div class="label">Student Name</div><div class="value">${data.student_name || "-"}</div></div>
+              <div class="mini-card"><div class="label">Parent Name</div><div class="value">${data.parent_name || "-"}</div></div>
+              <div class="mini-card"><div class="label">Programme</div><div class="value">${data.program || "-"}</div></div>
+              <div class="mini-card"><div class="label">Grade</div><div class="value">${data.grade || "-"}</div></div>
+              <div class="mini-card"><div class="label">Teacher</div><div class="value">${data.teacher_name || "-"}</div></div>
+              <div class="mini-card"><div class="label">Relationship Manager</div><div class="value">${data.relationship_manager || "-"}</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">Certification Milestone</div>
+            <div class="progress-circle">
+              <div class="progress-inner">
+                <div class="big-number">${data.classes_consumed || 0}</div>
+                <div class="label center">Classes Done</div>
+              </div>
+            </div>
+            <div class="mini-card">
+              <div class="label">Certificate Progress</div>
+              <div class="value">Just ${classesAway} classes away from Level 1 Certification</div>
+              <div class="bar">
+                <div class="bar-fill" style="width:${((data.classes_consumed || 0) / (data.certificate_target || 12)) * 100}%"></div>
+              </div>
+              <div class="small-text">${data.classes_consumed || 0}/${data.certificate_target || 12} completed</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Learning Progress Snapshot</div>
+          <div class="grid-4">
+            ${metricHTML("Curiosity Score", data.curiosity_score || 0, "Actively explores new project ideas with excitement and interest.")}
+            ${metricHTML("Confidence Index", data.confidence_index || 0, "Shows growing comfort in coding tasks and guided execution.")}
+            ${metricHTML("Resilience Rating", data.resilience_rating || 0, "Stays engaged through challenge, correction, and unfinished tasks.")}
+            ${metricHTML("Future Readiness", data.future_readiness || 0, "Building strong early foundations in logic, creativity, and digital thinking.")}
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">Projects Built This Month</div>
+            <div class="grid-2">
+              ${projects.map((project, index) => `
+                <div class="mini-card">
+                  <div class="label">Project ${index + 1}</div>
+                  <div class="value">${project}</div>
+                  <div class="small-text" style="margin-top:10px;">Built with guided coding practice, creativity, and growing confidence.</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="section-title">Skills Developed</div>
+              <div class="tag-list">
+                ${skills.map(skill => `<div class="tag">${skill}</div>`).join("")}
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="section-title">Teacher Reflection</div>
+              <div class="small-text">${data.teacher_reflection || "-"}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Achievement Badges</div>
+          <div class="grid-3">
+            ${badges.map(badge => `
+              <div class="mini-card badge-box">
+                <div class="badge-emoji">${badge.emoji || "🏆"}</div>
+                <div class="value">${badge.title || "Achievement"}</div>
+                <div class="small-text" style="margin-top:10px;">${badge.text || ""}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">Next Learning Pathway</div>
+            ${nextPathway.map(item => `
+              <div class="mini-card" style="margin-bottom:12px;">
+                <div class="small-text">✦ ${item}</div>
+              </div>
+            `).join("")}
+          </div>
+
+          <div class="card">
+            <div class="section-title">Why This Is The Right Time To Continue</div>
+            <div class="small-text">${data.progress_summary || "-"}</div>
+            <div class="mini-card" style="margin-top:16px;">
+              <div class="label">Renewal Momentum</div>
+              <div class="value">Continue now to unlock the first certificate milestone</div>
+              <div class="small-text" style="margin-top:10px;">
+                This is the ideal stage to continue the learning journey and deepen confidence,
+                creativity, and independent project-building.
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function metricHTML(label, value, note) {
+      return `
+        <div class="mini-card">
+          <div class="label">${label}</div>
+          <div class="metric-value">${(value / 10).toFixed(1)} <span style="font-size:16px;color:#cbd5e1;">/ 10</span></div>
+          <div class="bar"><div class="bar-fill" style="width:${value}%"></div></div>
+          <div class="small-text">${note}</div>
+        </div>
+      `;
+    }
+
+    loadReportCard();
+  </script>
+</body>
+</html>

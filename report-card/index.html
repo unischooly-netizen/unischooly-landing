@@ -9,36 +9,40 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg-dark: #06121c;
-      --bg-deep: #081c2a;
-      --card: rgba(255,255,255,0.08);
-      --card-2: rgba(10,20,35,0.55);
+      --bg-1: #03111b;
+      --bg-2: #071a28;
+      --bg-3: #0a2433;
+      --card: rgba(255,255,255,0.07);
+      --card-dark: rgba(4,12,24,0.60);
+      --card-soft: rgba(255,255,255,0.05);
       --border: rgba(255,255,255,0.10);
       --text: #f8fafc;
-      --muted: #cbd5e1;
-      --soft: #94a3b8;
+      --muted: #dbe7f2;
+      --soft: #9fb4c7;
       --teal: #2dd4bf;
       --cyan: #38bdf8;
-      --gold: #fbbf24;
-      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --gold: #f6c453;
+      --gold-soft: rgba(246,196,83,0.18);
+      --success: #34d399;
       --radius-xl: 30px;
       --radius-lg: 22px;
       --radius-md: 18px;
+      --shadow: 0 24px 60px rgba(0,0,0,0.32);
     }
 
     body {
       font-family: Inter, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(45,212,191,0.18), transparent 18%),
-        radial-gradient(circle at 85% 10%, rgba(56,189,248,0.14), transparent 20%),
-        linear-gradient(180deg, #04111b 0%, #071827 45%, #04111b 100%);
       color: var(--text);
-      padding: 24px;
+      padding: 22px;
       min-height: 100vh;
+      background:
+        radial-gradient(circle at top center, rgba(45,212,191,0.18), transparent 20%),
+        radial-gradient(circle at 82% 8%, rgba(56,189,248,0.12), transparent 18%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 42%, #04111b 100%);
     }
 
     .container {
-      max-width: 1220px;
+      max-width: 1240px;
       margin: 0 auto;
     }
 
@@ -55,13 +59,14 @@
     .hero {
       position: relative;
       overflow: hidden;
-      padding: 34px 30px;
+      padding: 34px 30px 30px;
       background:
         radial-gradient(circle at top right, rgba(45,212,191,0.16), transparent 26%),
+        radial-gradient(circle at 15% 10%, rgba(56,189,248,0.08), transparent 18%),
         linear-gradient(135deg, rgba(45,212,191,0.10), rgba(56,189,248,0.08), rgba(255,255,255,0.02));
     }
 
-    .hero::after {
+    .hero::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -80,13 +85,13 @@
     }
 
     .brand-box {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 14px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.10);
       padding: 12px 16px;
       border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
     .brand-box img {
@@ -95,17 +100,19 @@
       display: block;
     }
 
-    .brand-text small {
+    .brand-copy small {
       display: block;
       font-size: 11px;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      letter-spacing: 0.22em;
-      color: #c7f9f1;
-      margin-bottom: 3px;
+      color: #bafaf0;
+      margin-bottom: 2px;
+      font-weight: 700;
     }
 
-    .brand-text strong {
+    .brand-copy strong {
       font-size: 16px;
+      font-weight: 800;
       color: white;
     }
 
@@ -121,13 +128,17 @@
       cursor: pointer;
       border-radius: 999px;
       padding: 12px 18px;
-      font-weight: 700;
       font-size: 14px;
+      font-weight: 800;
       transition: 0.2s ease;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.97;
     }
 
     .btn-primary {
@@ -137,29 +148,43 @@
 
     .btn-secondary {
       background: rgba(255,255,255,0.10);
-      color: white;
       border: 1px solid rgba(255,255,255,0.10);
+      color: white;
     }
 
-    .btn:hover {
-      transform: translateY(-1px);
-      opacity: 0.96;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(246,196,83,0.10);
+      border: 1px solid rgba(246,196,83,0.18);
+      color: #fde7a1;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
     }
 
     .title {
-      font-size: 54px;
-      line-height: 1.02;
-      font-weight: 800;
-      margin-top: 22px;
+      font-size: 60px;
+      line-height: 0.98;
+      font-weight: 900;
+      margin-top: 18px;
       margin-bottom: 14px;
+      letter-spacing: -0.03em;
       position: relative;
       z-index: 1;
     }
 
     .subtitle {
-      font-size: 21px;
-      line-height: 1.6;
-      color: #e2e8f0;
+      font-size: 22px;
+      line-height: 1.55;
+      color: var(--muted);
       max-width: 980px;
       position: relative;
       z-index: 1;
@@ -169,33 +194,33 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 26px;
+      margin-top: 28px;
       position: relative;
       z-index: 1;
     }
 
     .pill {
+      padding: 11px 16px;
+      border-radius: 999px;
       background: rgba(255,255,255,0.11);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 999px;
-      padding: 11px 16px;
       font-size: 14px;
-      color: white;
       font-weight: 700;
+      color: white;
     }
 
     .section-eyebrow {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.24em;
-      color: #99f6e4;
+      letter-spacing: 0.26em;
+      color: #9ff6e5;
       margin-bottom: 10px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .section-title {
       font-size: 30px;
-      font-weight: 800;
+      font-weight: 900;
       margin-bottom: 18px;
       letter-spacing: -0.02em;
     }
@@ -209,13 +234,47 @@
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 18px;
     }
 
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 18px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .summary-box {
+      border-radius: 24px;
+      padding: 24px 18px;
+      text-align: center;
+      background:
+        radial-gradient(circle at top center, rgba(56,189,248,0.08), transparent 28%),
+        linear-gradient(180deg, rgba(2,6,23,0.55), rgba(15,23,42,0.34));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .summary-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .summary-number {
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .summary-label {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
     .mini-card {
@@ -246,91 +305,32 @@
       color: var(--muted);
     }
 
-    .summary-grid {
+    .profile-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 18px;
     }
 
-    .summary-box {
-      text-align: center;
-      padding: 22px 18px;
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(2,6,23,0.55), rgba(15,23,42,0.34));
+    .progress-box {
+      background: rgba(2,6,23,0.48);
       border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .summary-icon {
-      font-size: 34px;
-      margin-bottom: 10px;
-    }
-
-    .summary-number {
-      font-size: 34px;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .grade-card {
-      background: linear-gradient(180deg, rgba(2,6,23,0.52), rgba(15,23,42,0.34));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
+      border-radius: 22px;
       padding: 22px;
-      text-align: center;
     }
 
-    .grade-letter {
-      font-size: 42px;
-      font-weight: 900;
-      line-height: 1;
-      margin: 10px 0 8px;
-      color: white;
-    }
-
-    .grade-line {
+    .progress-bar {
       width: 100%;
-      height: 6px;
+      height: 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
       overflow: hidden;
+      background: rgba(255,255,255,0.10);
       margin: 14px 0 10px;
     }
 
-    .grade-fill {
+    .progress-fill {
       height: 100%;
       border-radius: 999px;
       background: linear-gradient(90deg, var(--teal), var(--cyan));
-    }
-
-    .project-card {
-      overflow: hidden;
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(2,6,23,0.52), rgba(15,23,42,0.34));
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .project-image {
-      height: 190px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 62px;
-      background:
-        radial-gradient(circle at top, rgba(45,212,191,0.18), transparent 30%),
-        linear-gradient(135deg, rgba(45,212,191,0.10), rgba(56,189,248,0.08), rgba(255,255,255,0.02));
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .project-content {
-      padding: 18px;
-    }
-
-    .teacher-card {
-      background:
-        linear-gradient(180deg, rgba(251,191,36,0.10), rgba(255,255,255,0.03)),
-        linear-gradient(180deg, rgba(2,6,23,0.48), rgba(15,23,42,0.34));
-      border: 1px solid rgba(251,191,36,0.16);
     }
 
     .renewal-card {
@@ -348,37 +348,111 @@
       padding: 18px;
     }
 
-    .progress-box {
-      background: rgba(2,6,23,0.46);
-      border: 1px solid rgba(255,255,255,0.08);
+    .achievement-card {
       border-radius: 22px;
-      padding: 22px;
+      padding: 20px;
+      background:
+        radial-gradient(circle at top, rgba(246,196,83,0.08), transparent 28%),
+        linear-gradient(180deg, rgba(2,6,23,0.50), rgba(15,23,42,0.35));
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .progress-bar {
+    .achievement-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .grade-card {
+      text-align: center;
+      border-radius: 24px;
+      padding: 22px;
+      background:
+        radial-gradient(circle at top center, rgba(56,189,248,0.08), transparent 28%),
+        linear-gradient(180deg, rgba(2,6,23,0.52), rgba(15,23,42,0.34));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .grade-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .grade-letter {
+      font-size: 46px;
+      line-height: 1;
+      font-weight: 900;
+      margin: 10px 0 8px;
+      color: white;
+    }
+
+    .grade-line {
       width: 100%;
-      height: 12px;
-      background: rgba(255,255,255,0.10);
+      height: 6px;
       border-radius: 999px;
       overflow: hidden;
+      background: rgba(255,255,255,0.08);
       margin: 14px 0 10px;
     }
 
-    .progress-fill {
+    .grade-fill {
       height: 100%;
       border-radius: 999px;
       background: linear-gradient(90deg, var(--teal), var(--cyan));
     }
 
+    .project-card {
+      overflow: hidden;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(2,6,23,0.52), rgba(15,23,42,0.34));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .project-image {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      background:
+        radial-gradient(circle at top, rgba(45,212,191,0.18), transparent 30%),
+        radial-gradient(circle at center, rgba(56,189,248,0.08), transparent 30%),
+        linear-gradient(135deg, rgba(45,212,191,0.10), rgba(56,189,248,0.08), rgba(255,255,255,0.02));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .project-content {
+      padding: 18px;
+    }
+
+    .teacher-card {
+      background:
+        radial-gradient(circle at top left, rgba(246,196,83,0.10), transparent 30%),
+        linear-gradient(180deg, rgba(2,6,23,0.48), rgba(15,23,42,0.34));
+      border: 1px solid rgba(246,196,83,0.18);
+    }
+
+    .teacher-quote {
+      margin-top: 14px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border-left: 3px solid rgba(246,196,83,0.65);
+    }
+
     .badge-box {
       text-align: center;
-      padding: 22px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(2,6,23,0.26));
+      padding: 24px 20px;
+      background:
+        radial-gradient(circle at top center, rgba(246,196,83,0.08), transparent 26%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(2,6,23,0.26));
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .badge-emoji {
-      width: 72px;
-      height: 72px;
+      width: 74px;
+      height: 74px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -387,6 +461,14 @@
       font-size: 34px;
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 24px rgba(255,255,255,0.03);
+    }
+
+    .badge-title {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 8px;
     }
 
     .roadmap-item {
@@ -412,37 +494,125 @@
     }
 
     @media print {
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
       body {
         background: white !important;
         color: black !important;
-        padding: 0;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
-      .btn, .footer-note {
+
+      .container {
+        max-width: 100% !important;
+      }
+
+      .btn,
+      .footer-note {
         display: none !important;
       }
-      .card, .project-card, .grade-card, .summary-box, .mini-card {
+
+      .card,
+      .project-card,
+      .grade-card,
+      .summary-box,
+      .mini-card,
+      .achievement-card,
+      .badge-box {
         box-shadow: none !important;
         break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .hero {
+        background: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+      }
+
+      .title,
+      .section-title,
+      .value,
+      .summary-number,
+      .grade-letter,
+      .achievement-title,
+      .badge-title {
+        color: black !important;
+      }
+
+      .subtitle,
+      .small-text,
+      .label,
+      .summary-label,
+      .pill,
+      .footer-note {
+        color: #374151 !important;
+      }
+
+      .card,
+      .mini-card,
+      .project-card,
+      .grade-card,
+      .summary-box,
+      .progress-box,
+      .renewal-highlight,
+      .achievement-card,
+      .badge-box,
+      .roadmap-item,
+      .teacher-quote {
+        background: white !important;
+        border: 1px solid #d1d5db !important;
+      }
+
+      .project-image,
+      .badge-emoji {
+        background: #f3f4f6 !important;
+        color: black !important;
       }
     }
 
     @media (max-width: 1100px) {
-      .grid-4, .summary-grid { grid-template-columns: repeat(2, 1fr); }
-      .title { font-size: 42px; }
-      .subtitle { font-size: 18px; }
+      .summary-grid, .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .title {
+        font-size: 46px;
+      }
+      .subtitle {
+        font-size: 18px;
+      }
     }
 
     @media (max-width: 860px) {
-      body { padding: 14px; }
-      .grid-2, .grid-3, .grid-4, .summary-grid {
+      body {
+        padding: 14px;
+      }
+      .grid-2, .grid-3, .grid-4, .summary-grid, .profile-grid {
         grid-template-columns: 1fr;
       }
-      .title { font-size: 34px; }
-      .subtitle { font-size: 17px; }
-      .card { padding: 20px; border-radius: 24px; }
-      .section-title { font-size: 24px; }
-      .project-image { height: 160px; font-size: 52px; }
-      .hero-actions { width: 100%; }
+      .card {
+        padding: 20px;
+        border-radius: 24px;
+      }
+      .title {
+        font-size: 36px;
+      }
+      .subtitle {
+        font-size: 17px;
+      }
+      .section-title {
+        font-size: 24px;
+      }
+      .project-image {
+        height: 165px;
+        font-size: 54px;
+      }
+      .hero-actions {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -454,7 +624,6 @@
   <script>
     const SUPABASE_URL = "https://binklfyiypbhuzsvnlzg.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpbmtsZnlpeXBiaHV6c3ZubHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwMzA5NjgsImV4cCI6MjA4MDYwNjk2OH0.PYCRN7ubQA2XnVy8BYd6746iAGATjBuBAlvsCdLdbqw";
-
     const BRAND_LOGO = "https://res.cloudinary.com/dpapyknn4/image/upload/v1763143023/Unischooly_Horizontal_logo_qbu1l7.svg";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -498,18 +667,28 @@
       return "💡";
     }
 
-    function buildShareLink() {
-      return window.location.href;
-    }
-
     function shareWhatsApp() {
-      const url = buildShareLink();
-      const text = `Hi, here is the Unischooly progress report: ${url}`;
+      const url = window.location.href;
+      const text = `Hi, here is ${document.title} from Unischooly: ${url}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
     }
 
     function downloadPDF() {
       window.print();
+    }
+
+    function gradeCardHTML(icon, label, value) {
+      return `
+        <div class="grade-card">
+          <div class="grade-icon">${icon}</div>
+          <div class="label">${label}</div>
+          <div class="grade-letter">${getGrade(value)}</div>
+          <div class="small-text">${getDescriptor(value)}</div>
+          <div class="grade-line">
+            <div class="grade-fill" style="width:${value}%"></div>
+          </div>
+        </div>
+      `;
     }
 
     async function loadReportCard() {
@@ -534,39 +713,41 @@
       }
 
       const projects = safeArray(data.projects);
-      const skills = safeArray(data.skills);
       const badges = safeArray(data.badges);
       const nextPathway = safeArray(data.next_pathway);
 
       const certificateTarget = data.certificate_target || 20;
       const classesConsumed = data.classes_consumed || 0;
-      const classesPaid = data.classes_paid || 0;
       const classesAway = Math.max(certificateTarget - classesConsumed, 0);
       const progressWidth = Math.min((classesConsumed / certificateTarget) * 100, 100);
 
       const featuredProjects = projects.slice(0, 4);
+
+      document.title = `${data.student_name || "Student"}'s Progress Report`;
 
       app.innerHTML = `
         <div class="card hero">
           <div class="hero-top">
             <div class="brand-box">
               <img src="${BRAND_LOGO}" alt="Unischooly logo" />
-              <div class="brand-text">
+              <div class="brand-copy">
                 <small>Premium Parent Report</small>
                 <strong>Unischooly Progress Card</strong>
               </div>
             </div>
 
             <div class="hero-actions">
-              <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download Report</button>
+              <button class="btn btn-primary" onclick="downloadPDF()">⬇ Save as PDF</button>
               <button class="btn btn-secondary" onclick="shareWhatsApp()">📲 Share on WhatsApp</button>
             </div>
           </div>
 
+          <div class="hero-badge">✦ Celebrating Progress • Building Future-Ready Skills</div>
+
           <div class="title">${data.student_name || "Student"}'s Progress Report</div>
           <div class="subtitle">
-            A premium monthly learning snapshot celebrating progress, project achievements, future-ready growth,
-            and the next stage of ${data.student_name || "the student"}'s learning journey at Unischooly.
+            A premium monthly learning snapshot celebrating progress, achievements, and the next stage of
+            ${data.student_name || "the student"}'s learning journey at Unischooly.
           </div>
 
           <div class="pill-row">
@@ -585,25 +766,65 @@
             <div class="summary-box">
               <div class="summary-icon">🎓</div>
               <div class="summary-number">${classesConsumed}</div>
-              <div class="small-text">Classes Completed</div>
+              <div class="summary-label">Classes Completed</div>
             </div>
 
             <div class="summary-box">
               <div class="summary-icon">🚀</div>
               <div class="summary-number">${projects.length}</div>
-              <div class="small-text">Projects Built</div>
+              <div class="summary-label">Projects Built</div>
             </div>
 
             <div class="summary-box">
               <div class="summary-icon">🏅</div>
               <div class="summary-number">${badges.length}</div>
-              <div class="small-text">Badges Earned</div>
+              <div class="summary-label">Badges Earned</div>
             </div>
 
             <div class="summary-box">
               <div class="summary-icon">📈</div>
               <div class="summary-number">${classesAway}</div>
-              <div class="small-text">Classes To Level 1</div>
+              <div class="summary-label">Classes To Level 1</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-eyebrow">Achievement Highlights</div>
+          <div class="section-title">${data.student_name || "Student"}'s Key Achievements This Month</div>
+
+          <div class="grid-2">
+            <div class="achievement-card">
+              <div class="label">Creative Progress</div>
+              <div class="achievement-title">Built ${projects.length} coding projects with strong enthusiasm</div>
+              <div class="small-text">
+                ${data.student_name || "The student"} explored a variety of coding formats including game creation,
+                visual interactions, storytelling concepts, and logic-based projects.
+              </div>
+            </div>
+
+            <div class="achievement-card">
+              <div class="label">Skill Performance</div>
+              <div class="achievement-title">Achieved strong A / A+ learning grades across core future-ready skills</div>
+              <div class="small-text">
+                Current performance reflects strong curiosity, growing confidence, consistent engagement, and excellent future-readiness.
+              </div>
+            </div>
+
+            <div class="achievement-card">
+              <div class="label">Learning Momentum</div>
+              <div class="achievement-title">Completed ${classesConsumed} classes and is progressing toward Level 1 Certification</div>
+              <div class="small-text">
+                This is an important continuation point where regular learning can significantly strengthen independent project execution.
+              </div>
+            </div>
+
+            <div class="achievement-card">
+              <div class="label">Teacher Observation</div>
+              <div class="achievement-title">Demonstrated discipline, consistency, and strong engagement throughout the month</div>
+              <div class="small-text">
+                ${data.student_name || "The student"} has shown sincere participation and positive energy across sessions, creating a strong foundation for continued growth.
+              </div>
             </div>
           </div>
         </div>
@@ -613,7 +834,7 @@
             <div class="section-eyebrow">Student Snapshot</div>
             <div class="section-title">Learner Profile</div>
 
-            <div class="grid-2">
+            <div class="profile-grid">
               <div class="mini-card"><div class="label">Student Name</div><div class="value">${data.student_name || "-"}</div></div>
               <div class="mini-card"><div class="label">Parent Name</div><div class="value">${data.parent_name || "-"}</div></div>
               <div class="mini-card"><div class="label">Teacher</div><div class="value">${data.teacher_name || "-"}</div></div>
@@ -681,7 +902,9 @@
           <div class="card teacher-card">
             <div class="section-eyebrow">Teacher Reflection</div>
             <div class="section-title">What ${data.teacher_name || "the teacher"} Observed</div>
-            <div class="small-text">${data.teacher_reflection || "-"}</div>
+            <div class="teacher-quote">
+              <div class="small-text">${data.teacher_reflection || "-"}</div>
+            </div>
           </div>
 
           <div class="card">
@@ -690,10 +913,10 @@
 
             <div class="grid-3">
               ${badges.map(badge => `
-                <div class="mini-card badge-box">
+                <div class="badge-box">
                   <div class="badge-emoji">${badge.emoji || "🏆"}</div>
-                  <div class="value">${badge.title || "Achievement"}</div>
-                  <div class="small-text" style="margin-top:10px;">${badge.text || ""}</div>
+                  <div class="badge-title">${badge.title || "Achievement"}</div>
+                  <div class="small-text">${badge.text || ""}</div>
                 </div>
               `).join("")}
             </div>
@@ -720,28 +943,15 @@
               <div class="label">Parent Action</div>
               <div class="value" style="margin-bottom:10px;">Continue now to strengthen confidence and unlock certificate progress</div>
               <div class="small-text">
-                Another monthly cycle will help ${data.student_name || "the student"} build stronger independent coding ability, deeper project completion confidence, and continued momentum toward Level 1 achievement.
+                Another monthly cycle will help ${data.student_name || "the student"} build stronger independent coding ability,
+                deeper project completion confidence, and continued momentum toward Level 1 achievement.
               </div>
             </div>
           </div>
         </div>
 
         <div class="footer-note">
-          Unischooly • Premium Progress Report • Shareable by link and downloadable as PDF
-        </div>
-      `;
-    }
-
-    function gradeCardHTML(icon, label, value) {
-      return `
-        <div class="grade-card">
-          <div style="font-size:28px;">${icon}</div>
-          <div class="label" style="margin-top:10px;">${label}</div>
-          <div class="grade-letter">${getGrade(value)}</div>
-          <div class="small-text">${getDescriptor(value)}</div>
-          <div class="grade-line">
-            <div class="grade-fill" style="width:${value}%"></div>
-          </div>
+          Prepared with care by the Unischooly Learning Team
         </div>
       `;
     }
